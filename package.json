@@ -1,0 +1,25 @@
+{
+  "name": "vanilajs-at1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server && watch:css",
+    "watch:css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thegicode/vanilaJS-at1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thegicode/vanilaJS-at1/issues"
+  },
+  "homepage": "https://github.com/thegicode/vanilaJS-at1#readme",
+  "devDependencies": {
+    "express": "^4.17.3",
+    "sass": "^1.49.9"
+  }
+}
