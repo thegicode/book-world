@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server && watch:css",
+    "start": "node server",
     "watch:css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,5 +21,8 @@
   "devDependencies": {
     "express": "^4.17.3",
     "sass": "^1.49.9"
+  },
+  "dependencies": {
+    "axios": "^0.26.1"
   }
 }

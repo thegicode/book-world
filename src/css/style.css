@@ -1,1 +1,1 @@
-body{height:100%}/*# sourceMappingURL=style.css.map */
+p{margin:0}html{height:100%}body{height:100%;margin:0;background-color:#fff}.root{display:block;height:100%}.container{display:flex;height:100%}.container .ly-1{flex:1;background-color:rgba(0,100,50,.05)}.container .ly-2{flex:1}.container .ly-3{flex:1;background-color:rgba(0,100,200,.05)}.book-list{display:block}.book-item{display:block;padding:1rem;border-bottom:1px solid #ddd}.test-list{display:block}/*# sourceMappingURL=style.css.map */
