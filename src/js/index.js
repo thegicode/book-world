@@ -4,8 +4,16 @@ import TestList from './TestList.js'
 customElements.define('book-list', BookList)
 customElements.define('test-list', TestList)
 
+const isbn13 = '9788960532410'
+const libCode = '111007'
 
-fetch('/api', {
+fetch(`/a?isbn13=${isbn13}&libCode=${libCode}`, {
+    method: 'GET'
+})
+.then( data => console.log(data))
+
+
+fetch(`/b?isbn13=${isbn13}&libCode=${libCode}`, {
     method: 'GET'
 })
 .then((data) => data.json()) 
@@ -38,9 +46,7 @@ fetch('/api', {
         <div>${no}</div>
         <div>${publication_date}</div>
         <div>${publication_year}</div>
-        <div>${publisher}</div>
-        
-        `
+        <div>${publisher}</div>`
     document.querySelector('.lib')
         .innerHTML = `
             <div>도선관 코드 : ${libCode}</div>
