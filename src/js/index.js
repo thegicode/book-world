@@ -9,20 +9,27 @@ const libCode = '111007'
 
 
 
-fetch(`/naver?name=${'토지'}&display=${10}&start=${1}`, {
+fetch(`/naver?keyword=${encodeURIComponent('토지 대하소설 박경리 1부')}&display=${30}&start=${1}`, {
     method: 'GET'
 })
 .then( data => data.json())
 .then( response => {
     console.log(response)
     const { total, start, display, items } = response
-    const names = items.map( item => item.title).join('</p><p> ')
+    const contents = items.map( item => {
+        return `
+            <p>
+                <img src="${item.image}" width="100px"><br>
+                ${item.title}
+            </p>
+        `;
+    }).join('')
     document.querySelector('.ly-2')
         .innerHTML =`
             <div>total: ${total}</div>
             <div>start: ${start}</div>
             <div>display: ${display}</div>
-            <p>${names}</p>
+            ${contents}
         `
 })
 .catch(e => {

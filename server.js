@@ -9,10 +9,10 @@ const { libKey, naverKey } = require("./user.js")
 
 
 app.get('/naver', function(req, res) {
-    const { name, display, start } = req.query
+    const { keyword, display, start } = req.query
     axios.get(`https://openapi.naver.com/v1/search/book.json`, {
         params: {
-            query: name, 
+            query: keyword, 
             display, 
             start
         },
@@ -22,6 +22,7 @@ app.get('/naver', function(req, res) {
         }
     })
     .then( response => {
+        // console.log(response.data)
         const { total, start, display, items } = response.data
         res.send({total, start, display, items})
     })
@@ -32,27 +33,31 @@ app.get('/naver', function(req, res) {
 
 
 
-// const host = 'http://data4library.kr/api'
-// const authKey = `authKey=${libKey}`
-// const foramt = 'format=json'
+const host = 'http://data4library.kr/api'
+const authKey = `authKey=${libKey}`
+const foramt = 'format=json'
 
-// app.get('/a', function(req, res) {
-//     const { isbn13, libCode } = req.query
+app.get('/libSearch', function(req, res) {
+    const { isbn13, libCode } = req.query
+
+    console.log(isbn13, libCode)
     
-//     const isbn = `isbn13=${isbn13}`
-//     const lib = `libCode=${libCode}`
+    const isbn = `isbn13=${isbn13}`
+    const lib = `libCode=${libCode}`
 
-//     const url = `${host}/itemSrch?type=ALL&${lib}&${authKey}&pageNo=1&pageSize=10&${foramt}`
+    // const url = `${host}/itemSrch?type=ALL&${lib}&${authKey}&pageNo=1&pageSize=10&${foramt}`
+    const url = `${host}/bookExist?${authKey}&${isbn}&${lib}&${foramt}`
+    console.log(url)
 
-//     axios.get(url)
-//         .then( response => {
-//             console.log(response.data.response)
-//             res.send(response.data.response)
-//         })
-//         .catch(errors => {
-//             console.log(error)
-//         })
-// });
+    axios.get(url)
+        .then( response => {
+            // console.log(response.data)
+            res.send(response.data.response.result)
+        })
+        .catch(errors => {
+            console.log(error)
+        })
+});
 
 
 // app.get('/b', function(req, res) {
