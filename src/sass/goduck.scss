@@ -60,20 +60,25 @@ body {
         display: flex;
         justify-content: space-between;
     }
-    .books {
-        list-style: none;
-        padding: 0;
-    }
-    .book {
-        padding: 1rem 0;
-        border-bottom: 1px solid #ccc;
-    }
     a {
         color: #333;
     }
 
 }
 
+.books {
+    list-style: none;
+    padding: 0;
+}
+.book {
+    padding: 1rem 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.observe {
+    height: 10px;
+    // background-color: rgba(10, 100, 200, 0.5);
+}
 
 
 

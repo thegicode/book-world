@@ -25,12 +25,13 @@ export default class InputSearch extends HTMLElement {
 
 
     request(keyword) {
-        fetch(`/naver?keyword=${encodeURIComponent(keyword)}&display=${20}&start=${1}`, {
+        fetch(`/naver?keyword=${encodeURIComponent(keyword)}&display=${10}&start=${1}`, {
             method: 'GET'
         })
         .then(data => data.json())
         .then(response => {
             selectors.bookList.data = response
+            selectors.bookList.keyword = keyword 
         })
         .catch(e => {
             console.log(e);

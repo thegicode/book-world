@@ -7,7 +7,9 @@ app.use(express.static(`${__dirname}/src/`));
 
 const { libKey, naverKey } = require("./user.js")
 
+/** NAVER */
 
+// 키워드 검색
 app.get('/naver', function(req, res) {
     const { keyword, display, start } = req.query
     axios.get(`https://openapi.naver.com/v1/search/book.json`, {
@@ -33,31 +35,54 @@ app.get('/naver', function(req, res) {
 
 
 
+/** 도서관 정보나루 */
 const host = 'http://data4library.kr/api'
 const authKey = `authKey=${libKey}`
 const foramt = 'format=json'
 
-app.get('/libSearch', function(req, res) {
+
+// 지정 도서관, 책 소장 & 대출 가능 여부
+app.get('/library-bookExist', function(req, res) {
     const { isbn13, libCode } = req.query
 
-    console.log(isbn13, libCode)
-    
     const isbn = `isbn13=${isbn13}`
     const lib = `libCode=${libCode}`
 
-    // const url = `${host}/itemSrch?type=ALL&${lib}&${authKey}&pageNo=1&pageSize=10&${foramt}`
     const url = `${host}/bookExist?${authKey}&${isbn}&${lib}&${foramt}`
-    console.log(url)
 
     axios.get(url)
         .then( response => {
-            // console.log(response.data)
             res.send(response.data.response.result)
         })
         .catch(errors => {
             console.log(error)
         })
 });
+
+// 도서 상세 조회
+app.get('/library-itemSrch', function(req, res) {
+    const { libCode, keyword } = req.query
+
+    // console.log(keyword, libCode)
+    
+    const lib = `libCode=${libCode}`
+    const keywordStr = `keyword=${encodeURIComponent(keyword)}`
+
+    const url = `${host}/srchBooks?${authKey}&keyword=%EC%97%AD%EC%82%AC&pageNo=1&pageSize=10&format=json`
+    // console.log(url)
+
+    axios.get(url)
+        .then( response => {
+            res.send(response.data.response.docs)
+        })
+        .catch(errors => {
+            console.log(error)
+        })
+});
+
+
+
+
 
 
 // app.get('/b', function(req, res) {
