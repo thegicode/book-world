@@ -3,18 +3,23 @@ export default class BookList extends HTMLElement {
     constructor() {
         super()
         this.length = 0
+        this.books = this.querySelector('.books')
     }
 
     set data(v) {
         this.render(v)
     }
 
+    // set keyword(v) {
+      
+    // }
+
     connectedCallback() {
         this.observer = new IntersectionObserver( changes => {
             changes.forEach( change => {
                 if (change.isIntersecting) {
-                    console.log('isIntersecting', change.target)
                     this.observer.unobserve(change.target)
+                    // console.log(this.length)
                     fetch(`/naver?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`, {
                         method: 'GET'
                     })
@@ -36,30 +41,29 @@ export default class BookList extends HTMLElement {
     }
 
     render(data) {
-        const books = this.querySelector('.books')
-
         const { total, start, display, items } = data
         this.querySelector('.__total').textContent = `total: ${total}`
         this.querySelector('.__start').textContent = `start: ${start}`
         this.querySelector('.__display').textContent = `display: ${display}`
 
-        this.length = Number(start)-1 + Number(display)
-        console.log(this.length)
 
         const fragment = new DocumentFragment()
-        items.forEach( item => {
-            const el = this.getElement(item)
+        items.forEach( (item, index) => {
+            const el = this.getElement(item, this.length + index)
             fragment.appendChild(el)
 
         })
-        this.querySelector('.books').appendChild(fragment)
+        this.books.appendChild(fragment)
+
+        this.length += Number(display)
+
         
         const target = this.querySelector('.observe')
         this.observer.observe(target)
 
     }
 
-    getElement(item) {
+    getElement(item, index) {
         const { author,
             description,
             discount,
@@ -82,6 +86,7 @@ export default class BookList extends HTMLElement {
         el.querySelector('.__price').innerHTML = `price: ${price}`
         el.querySelector('.__pubdate').innerHTML = `pubdate: ${pubdate}`
         el.querySelector('.__publisher').innerHTML = `publisher: ${publisher}`
+        el.dataset.index = index
 
         const isbn13 = isbn.split(' ')[0]
         this.addEvents(el, isbn13)
