@@ -9,7 +9,7 @@ export default class BookItem extends HTMLElement {
         this.render()
         this.libraryButton.addEventListener('click', this.onClick.bind(this))
     }
-    
+
     disConnectedCallback() {
         this.libraryButton.removeEventListener('click', this.onClick.bind(this))
     }
@@ -30,7 +30,7 @@ export default class BookItem extends HTMLElement {
         this.querySelector('img').src = image
         this.querySelector('.__author').innerHTML = `작가: ${author}`
         this.querySelector('.__description').innerHTML = `${description}`
-        this.querySelector('.__price').innerHTML = `가격: ${Number(price).toLocaleString()}`
+        this.querySelector('.__price').innerHTML = `가격: ${Number(price).toLocaleString()}원`
         this.querySelector('.__pubdate').innerHTML = `출판일: ${pubdate}`
         this.querySelector('.__publisher').innerHTML = `출판사: ${publisher}`
         this.querySelector('.__isbn').innerHTML = `isbn: ${isbn.split(' ').join(', ')}`

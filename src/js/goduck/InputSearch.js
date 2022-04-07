@@ -21,6 +21,7 @@ export default class InputSearch extends HTMLElement {
         event.preventDefault()
 
         const keyword = this.input.value
+        this.input.value = ''
 
         if (keyword !== $.bookContent.keyword) {
             $.bookContent.initialize(keyword)
