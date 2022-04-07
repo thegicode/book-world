@@ -27,14 +27,14 @@ export default class BookItem extends HTMLElement {
         this.querySelector('.__link').href = link
         this.querySelector('.__title').innerHTML = `${title}`
         this.querySelector('img').src = image
-        this.querySelector('.__author').innerHTML = `author: ${author}`
+        this.querySelector('.__author').innerHTML = `작가: ${author}`
         this.querySelector('.__description').innerHTML = `${description}`
-        this.querySelector('.__isbn').innerHTML = `isbn: ${isbn}`
-        this.querySelector('.__price').innerHTML = `price: ${Number(price).toLocaleString()}`
-        this.querySelector('.__pubdate').innerHTML = `pubdate: ${pubdate}`
-        this.querySelector('.__publisher').innerHTML = `publisher: ${publisher}`
-        this.dataset.index = this.index
+        this.querySelector('.__price').innerHTML = `가격: ${Number(price).toLocaleString()}`
+        this.querySelector('.__pubdate').innerHTML = `출판일: ${pubdate}`
+        this.querySelector('.__publisher').innerHTML = `출판사: ${publisher}`
+        this.querySelector('.__isbn').innerHTML = `isbn: ${isbn.split(' ').join(', ')}`
 
+        this.dataset.index = this.index
         this.isbn13 = isbn.split(' ')[0]
     }
 
@@ -56,8 +56,6 @@ export default class BookItem extends HTMLElement {
         .catch(e => {
             console.log(e);
         });
-
     }
-
 
 }
