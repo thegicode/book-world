@@ -9,6 +9,7 @@ export default class BookItem extends HTMLElement {
         this.render()
         this.libraryButton.addEventListener('click', this.onClick.bind(this))
     }
+    
     disConnectedCallback() {
         this.libraryButton.removeEventListener('click', this.onClick.bind(this))
     }

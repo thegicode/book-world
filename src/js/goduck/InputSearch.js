@@ -1,5 +1,5 @@
 
-import { selectors } from './selectors.js'
+import { $ } from './selectors.js'
 
 
 export default class InputSearch extends HTMLElement {
@@ -22,8 +22,8 @@ export default class InputSearch extends HTMLElement {
 
         const keyword = this.input.value
 
-        if (keyword !== selectors.bookContent.keyword) {
-            selectors.bookContent.initialize(keyword)
+        if (keyword !== $.bookContent.keyword) {
+            $.bookContent.initialize(keyword)
         }
     }
 }

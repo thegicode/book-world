@@ -1,4 +1,4 @@
-import { selectors } from './selectors.js'
+// import { $ } from './selectors.js'
 
 export default class BookList extends HTMLElement {
     constructor() {
