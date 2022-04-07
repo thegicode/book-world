@@ -1,3 +1,4 @@
+import { selectors } from './selectors.js'
 
 export default class BookList extends HTMLElement {
     constructor() {
@@ -20,10 +21,10 @@ export default class BookList extends HTMLElement {
                 }
             })
         })
-
     }
 
     disconnectedCallback() {
+        this.observer = null
     }
 
     request() {
@@ -52,70 +53,21 @@ export default class BookList extends HTMLElement {
 
         this.summary.hidden = false
 
-        const fragment = new DocumentFragment()
-        items.forEach( (item, index) => {
-            const el = this.getElement(item, prevLength + index)
-            fragment.appendChild(el)
+        this.bookItems(items, prevLength)
 
-        })
-        this.books.appendChild(fragment)
-        
         const target = this.querySelector('.observe')
         this.observer.observe(target)
-
     }
 
-    getElement(item, index) {
-        const { author,
-            description,
-            discount,
-            image,
-            isbn,
-            link,
-            price,
-            pubdate,
-            publisher,
-            title } = item
-
-        const el = document.querySelector('[data-tp=book')
-                    .content.firstElementChild.cloneNode(true)
-        el.querySelector('.__link').href = link
-        el.querySelector('.__title').innerHTML = `${title}`
-        el.querySelector('img').src = image
-        el.querySelector('.__author').innerHTML = `author: ${author}`
-        el.querySelector('.__description').innerHTML = `${description}`
-        el.querySelector('.__isbn').innerHTML = `isbn: ${isbn}`
-        el.querySelector('.__price').innerHTML = `price: ${Number(price).toLocaleString()}`
-        el.querySelector('.__pubdate').innerHTML = `pubdate: ${pubdate}`
-        el.querySelector('.__publisher').innerHTML = `publisher: ${publisher}`
-        el.dataset.index = index
-
-        const isbn13 = isbn.split(' ')[0]
-        this.addEvents(el, isbn13)
-        return el
-    }
-
-    addEvents(el, isbn13) {
-        const libCode = '111007'
-        el.querySelector('[data-button="search-lib"]')
-            .addEventListener('click', () => {
-                fetch(`/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, {
-                    method: 'GET'
-                })
-                .then( data => data.json())
-                .then( response => {
-                    const { hasBook, loanAvailable } = response
-                    const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
-                    el.querySelector('.__hasBook').textContent = `소장: ${_hasBook}`
-                    if ( hasBook === 'Y' ) {
-                        const _loan = loanAvailable === 'Y' ? '가능' : '불가'
-                        el.querySelector('.__loanAvailable').textContent = `대출: ${_loan}`
-                    }
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-            })
+    bookItems(items, prevLength) {
+        const fragment = new DocumentFragment()
+        items.forEach( (item, index) => {
+            const el = document.querySelector('[data-template=book-item').content.firstElementChild.cloneNode(true)
+            el.data = item
+            el.index = prevLength + index
+            fragment.appendChild(el)
+        })
+        this.books.appendChild(fragment)
     }
 
     initialize(keyword) {

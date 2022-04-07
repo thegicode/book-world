@@ -26,14 +26,14 @@
             <span class="__display"></span>
         </div>
         <div class="book-list">
-            <ul class="books"></ul>
+            <div class="books"></div>
             <div class="observe"></div>
         </div>
     </book-content>
 </div>
 
-<template data-tp="book">
-    <li class="book">
+<template data-template="book-item">
+    <book-item class="book">
         <p class="__title"></p>
         <img src="" alt="">
         
@@ -51,11 +51,11 @@
         <!-- <hr> -->
         <!-- <h4>도서관 조회</h4> -->
         <div class="library">
-            <button type="button" data-button="search-lib">도서관 소장 | 대출 조회</button>
+            <button type="button" data-button="search-library">도서관 소장 | 대출 조회</button>
             <p class="__hasBook"></p>
             <p class="__loanAvailable"></p>
         </div>
-    </li>
+    </book-item>
 </template>
 
 <script type="module" src="/js/goduck/index.js"></script>
