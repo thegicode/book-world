@@ -85,7 +85,7 @@ export default class BookList extends HTMLElement {
         el.querySelector('.__author').innerHTML = `author: ${author}`
         el.querySelector('.__description').innerHTML = `${description}`
         el.querySelector('.__isbn').innerHTML = `isbn: ${isbn}`
-        el.querySelector('.__price').innerHTML = `price: ${price}`
+        el.querySelector('.__price').innerHTML = `price: ${Number(price).toLocaleString()}`
         el.querySelector('.__pubdate').innerHTML = `pubdate: ${pubdate}`
         el.querySelector('.__publisher').innerHTML = `publisher: ${publisher}`
         el.dataset.index = index
