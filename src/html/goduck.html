@@ -13,21 +13,57 @@
     <header class="header">
         <input-search class="input-search">
             <form>
-                <input type="search" value="자유론" title="책 키워드">
+                <input type="search" value="자유론" title="책 키워드" required>
                 <button type="submit">찾기</button>
             </form>
         </input-search>
     </header>
-    <book-list class="book-list">
-        <div class="book-list-summary">
-            <p class="__total"></p>
-            <p class="__start"></p>
-            <p class="__display"></p>
+    <book-content class="book-content">
+        <div class="book-summary" hidden>
+            <div class="__count">
+                <span class="__length"></span>/<span class="__total"></span>
+            </div>
+            <span class="__display"></span>
         </div>
-        <ul class="books"></ul>
-        <div class="observe"></div>
-    </book-list>
+        <div class="book-list">
+            <ul class="books"></ul>
+            <div class="observe"></div>
+        </div>
+    </book-content>
 </div>
+
+<template data-tp="book">
+    <li class="book">
+        <p class="__title"></p>
+        <img src="" alt="">
+        
+        <p class="__author"></p>
+        <p class="__description"></p>
+        <p class="__price"></p>
+        <p class="__pubdate"></p>
+        <p class="__publisher"></p>
+        <p class="__isbn"></p>
+        <div class="sites">
+            <h4>책 정보 링크</h4>
+            <a href="" class="__link" target="_blank">네이버</a>
+        </div>
+        
+        <!-- <hr> -->
+        <!-- <h4>도서관 조회</h4> -->
+        <div class="library">
+            <button type="button" data-button="search-lib">도서관 소장 | 대출 조회</button>
+            <p class="__hasBook"></p>
+            <p class="__loanAvailable"></p>
+        </div>
+    </li>
+</template>
+
+<script type="module" src="/js/goduck/index.js"></script>
+</body>
+</html>
+
+
+
 <!-- 
 <template data-template="book">
     <li class="book">
@@ -48,31 +84,3 @@
         </div>
     </li>
 </template> -->
-
-<template data-tp="book">
-    <li class="book">
-        <a href="" class="__link" target="_blank">
-            <p class="__title"></p>
-            <img src="" alt="">
-        </a>
-        <p class="__author"></p>
-        <p class="__description"></p>
-        <p class="__price"></p>
-        <p class="__pubdate"></p>
-        <p class="__publisher"></p>
-        <p class="__isbn"></p>
-        <!-- <hr> -->
-        <!-- <h4>도서관 조회</h4> -->
-        <button type="button" data-button="search-lib">도서관 소장 조회</button>
-        <div>
-            <p class="__hasBook"></p>
-            <p class="__loanAvailable"></p>
-        </div>
-    </li>
-</template>
-
-
-
-<script type="module" src="/js/goduck/index.js"></script>
-</body>
-</html>

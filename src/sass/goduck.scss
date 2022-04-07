@@ -1,4 +1,7 @@
 
+button {
+    cursor: pointer;
+}
 html {
     height: 100%;
 }
@@ -22,7 +25,7 @@ body {
     // top: 0;
     // right: 0;
     // left: 0;
-    padding: 1rem 1.5rem;
+    padding: 1rem;
     background-color: #e6eff9;
 
 }
@@ -48,31 +51,79 @@ body {
         border: none;
         background-color: rgba(10, 100, 200, 0.2);
         font-size: 14px;
-        cursor: pointer;
     }
+}
+
+.book-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.book-summary {
+    flex: none;
+
+    display: flex;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+    height: 30px;;
+    padding: 0 1rem;
+    background-color: #e6eff9;
+    &[hidden] {
+        visibility: hidden;
+    }
+
 }
 
 .book-list {
     flex: 1;
     overflow: auto;
-    padding: 1.5rem;
-    &-summary {
-        display: flex;
-        justify-content: space-between;
-    }
-    a {
-        color: #333;
-    }
-
+    
 }
 
 .books {
     list-style: none;
-    padding: 0;
+    margin: 0;
+    padding: 0 1rem;
 }
 .book {
     padding: 1rem 0;
     border-bottom: 1px solid #ccc;
+    .__title {
+        margin-bottom: 10px;;
+    }
+
+    .sites {
+        h4 {
+            margin: 0 0 10px;
+            font-weight: normal;
+        }
+        .__link {
+            // color: #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 12px;;
+            text-decoration: none;
+        }
+    }
+
+    .library {
+        margin-top: 1rem;
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(10, 100, 200, 0.05);
+            background-color: rgba(10, 100, 200, 0.05);
+            font-size: 12px;
+        }
+    }
 }
 
 .observe {

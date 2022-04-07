@@ -1,7 +1,7 @@
 
 const selectors = {
     inputSearch: document.querySelector('input-search'),
-    bookList: document.querySelector('book-list')
+    bookContent: document.querySelector('book-content')
 }
 
 export {

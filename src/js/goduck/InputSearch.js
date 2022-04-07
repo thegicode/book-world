@@ -7,7 +7,6 @@ export default class InputSearch extends HTMLElement {
         super()
         this.form = this.querySelector('form')
         this.input = this.querySelector('input')
-
     }
 
     connectedCallback() {
@@ -20,21 +19,15 @@ export default class InputSearch extends HTMLElement {
 
     onSubmit() {
         event.preventDefault()
-        this.request(this.input.value)
-    }
 
+        const keyword = this.input.value
 
-    request(keyword) {
-        fetch(`/naver?keyword=${encodeURIComponent(keyword)}&display=${10}&start=${1}`, {
-            method: 'GET'
-        })
-        .then(data => data.json())
-        .then(response => {
-            selectors.bookList.data = response
-            selectors.bookList.keyword = keyword 
-        })
-        .catch(e => {
-            console.log(e);
-        });
+        if (keyword !== selectors.bookContent.keyword) {
+            selectors.bookContent.initialize(keyword)
+        }
     }
 }
+
+
+
+

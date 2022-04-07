@@ -3,6 +3,7 @@ export default class BookList extends HTMLElement {
     constructor() {
         super()
         this.length = 0
+        this.summary = this.querySelector('.book-summary')
         this.books = this.querySelector('.books')
     }
 
@@ -10,27 +11,12 @@ export default class BookList extends HTMLElement {
         this.render(v)
     }
 
-    // set keyword(v) {
-      
-    // }
-
     connectedCallback() {
         this.observer = new IntersectionObserver( changes => {
             changes.forEach( change => {
                 if (change.isIntersecting) {
                     this.observer.unobserve(change.target)
-                    // console.log(this.length)
-                    fetch(`/naver?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`, {
-                        method: 'GET'
-                    })
-                    .then(data => data.json())
-                    .then(response => {
-                        this.data = response
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
-                        
+                    this.request()
                 }
             })
         })
@@ -40,23 +26,39 @@ export default class BookList extends HTMLElement {
     disconnectedCallback() {
     }
 
+    request() {
+        fetch(`/naver?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`, {
+            method: 'GET'
+        })
+        .then(data => data.json())
+        .then(response => {
+            this.data = response
+        })
+        .catch(e => {
+            console.log(e);
+        });
+    }
+
     render(data) {
         const { total, start, display, items } = data
-        this.querySelector('.__total').textContent = `total: ${total}`
-        this.querySelector('.__start').textContent = `start: ${start}`
-        this.querySelector('.__display').textContent = `display: ${display}`
 
+        const prevLength = this.length
+
+        this.length += Number(display)
+
+        this.querySelector('.__length').textContent = `${this.length.toLocaleString()}`
+        this.querySelector('.__total').textContent = `${total.toLocaleString()}`
+        this.querySelector('.__display').textContent = `${display}개씩`
+
+        this.summary.hidden = false
 
         const fragment = new DocumentFragment()
         items.forEach( (item, index) => {
-            const el = this.getElement(item, this.length + index)
+            const el = this.getElement(item, prevLength + index)
             fragment.appendChild(el)
 
         })
         this.books.appendChild(fragment)
-
-        this.length += Number(display)
-
         
         const target = this.querySelector('.observe')
         this.observer.observe(target)
@@ -116,34 +118,11 @@ export default class BookList extends HTMLElement {
             })
     }
 
-    /*observer() {
-        console.log('observe')
-        this.observer = new IntersectionObserver( changes => {
-            changes.forEach( change => {
-                if (change.isIntersecting) {
-                    console.log('isIntersecting')
-                    // const isEnd = elements()
-                    this.observer.unobserve(change.target)
-                    // if (!isEnd) {
-                        fetch(`/naver?keyword=${encodeURIComponent(keyword)}&display=${10}&start=${this.length + 1}`, {
-                            method: 'GET'
-                        })
-                        .then(data => data.json())
-                        .then(response => {
-                            selectors.bookList.data = response
-                        })
-                        .catch(e => {
-                            console.log(e);
-                        });
-                        const target = this.querySelector('.observe')
-                        this.observer.observe(target)
-                    // }
-                }
-            })
-        })
+    initialize(keyword) {
+        this.keyword = keyword
+        this.length = 0
+        this.books.innerHTML = ''
+        this.request()
     }
-*/
-
-
 
 }
