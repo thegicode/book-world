@@ -47,10 +47,15 @@ export default class BookList extends HTMLElement {
 
         this.length += Number(display)
 
-        this.querySelector('.__keyword').textContent = `${this.keyword}`
-        this.querySelector('.__length').textContent = `${this.length.toLocaleString()}`
-        this.querySelector('.__total').textContent = `${total.toLocaleString()}`
-        this.querySelector('.__display').textContent = `${display}개씩`
+        const obj = {
+            keyword: `${this.keyword}`,
+            length: `${this.length.toLocaleString()}`,
+            total: `${total.toLocaleString()}`,
+            display: `${display}개씩`
+        }
+        for (const [key, value] of Object.entries(obj)) {
+            this.querySelector(`.__${key}`).textContent = value
+        }
 
         this.summary.hidden = false
 

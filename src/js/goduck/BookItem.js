@@ -25,15 +25,22 @@ export default class BookItem extends HTMLElement {
             pubdate,
             publisher,
             title } = this.data
+
+        const obj = {
+            title: `${title}`,
+            author: `${author}`,
+            description: `${description}`,
+            price: `가격: ${Number(price).toLocaleString()}원`,
+            pubdate: `출판일: ${pubdate}`,
+            publisher: `출판사: ${publisher}`,
+            isbn: `isbn: ${isbn.split(' ').join(', ')}`
+        }
+        for (const [key, value] of Object.entries(obj)) {
+            this.querySelector(`.__${key}`).innerHTML = value
+        }
+
         this.querySelector('.__link').href = link
-        this.querySelector('.__title').innerHTML = `${title}`
         this.querySelector('img').src = image
-        this.querySelector('.__author').innerHTML = `작가: ${author}`
-        this.querySelector('.__description').innerHTML = `${description}`
-        this.querySelector('.__price').innerHTML = `가격: ${Number(price).toLocaleString()}원`
-        this.querySelector('.__pubdate').innerHTML = `출판일: ${pubdate}`
-        this.querySelector('.__publisher').innerHTML = `출판사: ${publisher}`
-        this.querySelector('.__isbn').innerHTML = `isbn: ${isbn.split(' ').join(', ')}`
 
         this.dataset.index = this.index
         this.isbn13 = isbn.split(' ')[0]
