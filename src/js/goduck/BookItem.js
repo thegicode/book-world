@@ -3,11 +3,13 @@ export default class BookItem extends HTMLElement {
     constructor() {
         super()
         this.libraryButton = this.querySelector('[data-button="search-library"]')
+        this.favoriteButton = this.querySelector('[data-button="favorite"')
     }
 
     connectedCallback() {
         this.render()
         this.libraryButton.addEventListener('click', this.onClick.bind(this))
+        this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
     }
 
     disConnectedCallback() {
@@ -44,6 +46,11 @@ export default class BookItem extends HTMLElement {
 
         this.dataset.index = this.index
         this.isbn13 = isbn.split(' ')[0]
+
+        const { favorite } = JSON.parse(this.store)
+        if (favorite.includes(this.isbn13)) {
+            this.favoriteButton.dataset.selected = true
+        }
     }
 
     onClick() {
@@ -64,6 +71,22 @@ export default class BookItem extends HTMLElement {
         .catch(e => {
             console.log(e);
         });
+    }
+
+
+    onFavorite() {
+        // console.log(this.isbn13)
+        let BookWorld = JSON.parse(localStorage.getItem('BookWorld'))
+        if (BookWorld === null) {
+            BookWorld = {
+                favorite: [this.isbn13]
+            }
+        }
+        if (BookWorld.favorite.includes(this.isbn13) !== true) {
+            BookWorld.favorite.push(this.isbn13)
+        } 
+        localStorage.setItem('BookWorld', JSON.stringify(BookWorld))
+        this.favoriteButton.dataset.selected = true
     }
 
 }

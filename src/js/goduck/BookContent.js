@@ -6,6 +6,7 @@ export default class BookList extends HTMLElement {
         this.length = 0
         this.summary = this.querySelector('.book-summary')
         this.books = this.querySelector('.books')
+        this.store = localStorage.getItem('BookWorld')
     }
 
     set data(v) {
@@ -21,6 +22,7 @@ export default class BookList extends HTMLElement {
                 }
             })
         })
+
     }
 
     disconnectedCallback() {
@@ -61,6 +63,10 @@ export default class BookList extends HTMLElement {
 
         this.bookItems(items, prevLength)
 
+        if (total === this.length) {
+            return
+        } 
+
         const target = this.querySelector('.observe')
         this.observer.observe(target)
     }
@@ -71,6 +77,7 @@ export default class BookList extends HTMLElement {
             const el = document.querySelector('[data-template=book-item').content.firstElementChild.cloneNode(true)
             el.data = item
             el.index = prevLength + index
+            el.store = this.store
             fragment.appendChild(el)
         })
         this.books.appendChild(fragment)

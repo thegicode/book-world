@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run server & npm run watch:css",
+    "start": "npm run server & npm run css",
     "server": "node server",
-    "watch:css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
+    "css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
