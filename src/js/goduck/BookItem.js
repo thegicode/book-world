@@ -2,17 +2,19 @@
 export default class BookItem extends HTMLElement {
     constructor() {
         super()
+        this.favoriteButton = this.querySelector('input[name="favorite"]')
         this.libraryButton = this.querySelector('[data-button="search-library"]')
-        this.favoriteButton = this.querySelector('[data-button="favorite"')
     }
 
     connectedCallback() {
         this.render()
+
+        this.favoriteButton.addEventListener('change', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onClick.bind(this))
-        this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
     }
 
     disConnectedCallback() {
+        this.favoriteButton.removeEventListener('change', this.onFavorite.bind(this))
         this.libraryButton.removeEventListener('click', this.onClick.bind(this))
     }
 
@@ -47,13 +49,16 @@ export default class BookItem extends HTMLElement {
         this.dataset.index = this.index
         this.isbn13 = isbn.split(' ')[0]
 
-        const { favorite } = JSON.parse(this.store)
+
+        const { favorite } = this.store
         if (favorite.includes(this.isbn13)) {
-            this.favoriteButton.dataset.selected = true
+            this.favoriteButton.checked = true
         }
     }
 
     onClick() {
+        const hasBookEl = this.querySelector('.__hasBook')
+        const loanAvailableEl = this.querySelector('.__loanAvailable')
         const libCode = '111007'
         fetch(`/library-bookExist?isbn13=${this.isbn13}&libCode=${libCode}`, {
             method: 'GET'
@@ -62,10 +67,10 @@ export default class BookItem extends HTMLElement {
         .then( response => {
             const { hasBook, loanAvailable } = response
             const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
-            this.querySelector('.__hasBook').textContent = `소장: ${_hasBook}`
+            hasBookEl.textContent = `소장: ${_hasBook}`
             if ( hasBook === 'Y' ) {
                 const _loan = loanAvailable === 'Y' ? '가능' : '불가'
-                this.querySelector('.__loanAvailable').textContent = `대출: ${_loan}`
+                loanAvailableEl.textContent = `대출: ${_loan}`
             }
         })
         .catch(e => {
@@ -74,19 +79,17 @@ export default class BookItem extends HTMLElement {
     }
 
 
-    onFavorite() {
-        // console.log(this.isbn13)
-        let BookWorld = JSON.parse(localStorage.getItem('BookWorld'))
-        if (BookWorld === null) {
-            BookWorld = {
-                favorite: [this.isbn13]
-            }
+    onFavorite(event) {
+        const { checked } = event.target
+        const { favorite } = this.store
+        if (checked) {
+            favorite.push(this.isbn13)
+        } else {
+            const index = favorite.indexOf(this.isbn13)
+            favorite.splice(index, 1)
         }
-        if (BookWorld.favorite.includes(this.isbn13) !== true) {
-            BookWorld.favorite.push(this.isbn13)
-        } 
-        localStorage.setItem('BookWorld', JSON.stringify(BookWorld))
-        this.favoriteButton.dataset.selected = true
+        localStorage.setItem('BookWorld', JSON.stringify(this.store))
     }
 
 }
+

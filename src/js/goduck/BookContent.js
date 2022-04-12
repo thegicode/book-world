@@ -1,4 +1,4 @@
-// import { $ } from './selectors.js'
+
 
 export default class BookList extends HTMLElement {
     constructor() {
@@ -6,7 +6,7 @@ export default class BookList extends HTMLElement {
         this.length = 0
         this.summary = this.querySelector('.book-summary')
         this.books = this.querySelector('.books')
-        this.store = localStorage.getItem('BookWorld')
+        this.store = JSON.parse(localStorage.getItem('BookWorld')) || {favorite: []}
     }
 
     set data(v) {

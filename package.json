@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thegicode/vanilaJS-at1.git"
+    "url": "git+https://github.com/thegicode/book-world.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thegicode/vanilaJS-at1/issues"
+    "url": "https://github.com/thegicode/book-world/issues"
   },
-  "homepage": "https://github.com/thegicode/vanilaJS-at1#readme",
+  "homepage": "https://github.com/thegicode/book-world#readme",
   "devDependencies": {
     "axios": "^0.26.1",
     "express": "^4.17.3",
