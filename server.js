@@ -40,6 +40,32 @@ const host = 'http://data4library.kr/api'
 const authKey = `authKey=${libKey}`
 const foramt = 'format=json'
 
+// 정보공개 도서관 조회: 서울 강동구
+// const url = `http://data4library.kr/api/libSrch?authKey=${libKey}&pageNo=1&pageSize=10&format=json`
+app.get('/libSrch', function(req, res) {
+
+    const { page, pageSize } = req.query
+
+    const url = `${host}/libSrch?${authKey}&dtl_region=${11250}&pageNo=${page}&pageSize=${pageSize}&${foramt}`
+
+    axios.get(url)
+        .then( response => {
+            const { pageNo, pageSize, numFound, resultNum, libs } = response.data.response
+            const data = {
+                // request, 
+                pageNo, 
+                pageSize, 
+                numFound, 
+                resultNum, 
+                libs: libs.map( item => item.lib)
+            }
+
+            res.send(data)
+        })
+        .catch(errors => {
+            console.log(error)
+        })
+});
 
 // 지정 도서관, 책 소장 & 대출 가능 여부
 app.get('/library-bookExist', function(req, res) {

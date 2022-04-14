@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>정보공개 도서관 | Book World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/css/library.css">
+</head>
+<body>
+
+<h1>정보공개 도서관 : 서울 강동구</h1>
+
+<app-library>
+    <form>
+    </form>
+</app-library>
+
+<template>
+    <library-item>
+        <ul>
+            <li><span>도서관명: </span><span class="libName"></span></li>
+            <li><span>도서관 코드: </span><span class="libCode"></span></li>
+            <li><span>주소: </span><span class="address"></span></li>
+            <li><span>전화번호: </span><span class="tel"></span></li>
+            <li><span>팩스: </span><span class="fax"></span></li>
+            <li>
+                <span>홈페이지: </span>
+                <a class="homepage" href="" target="_blank"></a>
+            </li>
+            <li><span>휴관일: </span><span class="closed"></span></li>
+            <li><span>운영시간: </span><span class="operatingTime"></span></li>
+            <li><span>단행본수: </span><span class="BookCount"></span></li>
+        </ul>
+        <div class="actions">
+            <label>
+                <input type="radio" name="myLibrary">
+                <span>메인 도서관으로 선텍</span>
+            </label>
+        </div>
+    </library-item>
+</template>
+
+<script type="module" src="/js/library/index.js"></script>
+</body>
+</html>
+
+
