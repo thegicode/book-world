@@ -7,19 +7,18 @@ export default class BookItem extends HTMLElement {
     constructor() {
         super()
         this.favoriteButton = this.querySelector('input[name="favorite"]')
-        this.libraryButton = this.querySelector('[data-button="search-library"]')
     }
 
     connectedCallback() {
         this.render()
 
         this.favoriteButton.addEventListener('change', this.onFavorite.bind(this))
-        this.libraryButton.addEventListener('click', this.onClick.bind(this))
+        // this.libraryButton.addEventListener('click', this.onClick.bind(this))
     }
 
     disConnectedCallback() {
         this.favoriteButton.removeEventListener('change', this.onFavorite.bind(this))
-        this.libraryButton.removeEventListener('click', this.onClick.bind(this))
+        // this.libraryButton.removeEventListener('click', this.onClick.bind(this))
     }
 
     render() {
@@ -60,27 +59,27 @@ export default class BookItem extends HTMLElement {
         }
     }
 
-    onClick() {
-        const hasBookEl = this.querySelector('.__hasBook')
-        const loanAvailableEl = this.querySelector('.__loanAvailable')
-        const libCode = '111007'
-        fetch(`/library-bookExist?isbn13=${this.isbn13}&libCode=${libCode}`, {
-            method: 'GET'
-        })
-        .then( data => data.json())
-        .then( response => {
-            const { hasBook, loanAvailable } = response
-            const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
-            hasBookEl.textContent = `소장: ${_hasBook}`
-            if ( hasBook === 'Y' ) {
-                const _loan = loanAvailable === 'Y' ? '가능' : '불가'
-                loanAvailableEl.textContent = `대출: ${_loan}`
-            }
-        })
-        .catch(e => {
-            console.log(e);
-        });
-    }
+    // onClick() {
+    //     const hasBookEl = this.querySelector('.__hasBook')
+    //     const loanAvailableEl = this.querySelector('.__loanAvailable')
+    //     const libCode = '111007'
+    //     fetch(`/library-bookExist?isbn13=${this.isbn13}&libCode=${libCode}`, {
+    //         method: 'GET'
+    //     })
+    //     .then( data => data.json())
+    //     .then( response => {
+    //         const { hasBook, loanAvailable } = response
+    //         const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
+    //         hasBookEl.textContent = `소장: ${_hasBook}`
+    //         if ( hasBook === 'Y' ) {
+    //             const _loan = loanAvailable === 'Y' ? '가능' : '불가'
+    //             loanAvailableEl.textContent = `대출: ${_loan}`
+    //         }
+    //     })
+    //     .catch(e => {
+    //         console.log(e);
+    //     });
+    // }
 
 
     onFavorite(event) {

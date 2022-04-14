@@ -52,6 +52,7 @@ app.get('/library-bookExist', function(req, res) {
 
     axios.get(url)
         .then( response => {
+            // console.log(response.data.response.result)
             res.send(response.data.response.result)
         })
         .catch(errors => {
