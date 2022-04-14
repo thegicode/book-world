@@ -10,11 +10,14 @@ export default class Favorite extends HTMLElement {
 
     connectedCallback() {
         this.updateCount()
+
+        const fragemnt = new DocumentFragment()
         state.favorite.forEach( (item) => {
             const el = document.querySelector('[data-template=favorite-item]').content.firstElementChild.cloneNode(true)
             el.data = item
-            this.querySelector('.favorite-books').appendChild(el)
+            fragemnt.appendChild(el)
         })
+        this.querySelector('.favorite-books').appendChild(fragemnt)
     }
 
     disConnectedCallback() {
