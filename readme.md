@@ -1,3 +1,4 @@
 # Book World
 
-- [Goduck](./src/html/goduck.html) 
+- [Search Book](./src/html/search-book.html) 
+- [Favorite](./src/html/favorite.html) 
