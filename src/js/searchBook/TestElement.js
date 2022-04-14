@@ -1,5 +1,5 @@
 
-export default class BookList extends HTMLElement {
+export default class TestElement extends HTMLElement {
     constructor() {
         super()
     }
