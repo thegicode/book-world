@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 export default () => {
 
 	const getState = () => {
-      	return JSON.parse(localStorage.getItem('BookWorld')) || INITIAL_STATE
+      		return JSON.parse(localStorage.getItem('BookWorld')) || INITIAL_STATE
 	}
 
 	const state = cloneDeep(getState())
@@ -22,10 +22,9 @@ export default () => {
 	}
 
 	const deleteFavorite = (isbn) => {
-
 		const index = state.favorite.indexOf(isbn)
-        state.favorite.splice(index, 1)
-        setStorage()
+        	state.favorite.splice(index, 1)
+        	setStorage()
 	}
 
 	const setStorage = () => {
