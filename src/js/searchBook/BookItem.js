@@ -1,3 +1,7 @@
+import model from '../model.js'
+
+const models = model()
+const  { state, addFavorite, deleteFavorite } = models
 
 export default class BookItem extends HTMLElement {
     constructor() {
@@ -50,7 +54,7 @@ export default class BookItem extends HTMLElement {
         this.isbn13 = isbn.split(' ')[0]
 
 
-        const { favorite } = this.store
+        const { favorite } = state
         if (favorite.includes(this.isbn13)) {
             this.favoriteButton.checked = true
         }
@@ -81,14 +85,11 @@ export default class BookItem extends HTMLElement {
 
     onFavorite(event) {
         const { checked } = event.target
-        const { favorite } = this.store
         if (checked) {
-            favorite.push(this.isbn13)
+            addFavorite(this.isbn13)
         } else {
-            const index = favorite.indexOf(this.isbn13)
-            favorite.splice(index, 1)
+            deleteFavorite(this.isbn13)
         }
-        localStorage.setItem('BookWorld', JSON.stringify(this.store))
     }
 
 }

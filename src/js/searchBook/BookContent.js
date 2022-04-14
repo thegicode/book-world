@@ -1,12 +1,10 @@
 
-
 export default class BookList extends HTMLElement {
     constructor() {
         super()
         this.length = 0
         this.summary = this.querySelector('.book-summary')
         this.books = this.querySelector('.books')
-        this.store = JSON.parse(localStorage.getItem('BookWorld')) || {favorite: []}
     }
 
     set data(v) {
@@ -77,7 +75,6 @@ export default class BookList extends HTMLElement {
             const el = document.querySelector('[data-template=book-item]').content.firstElementChild.cloneNode(true)
             el.data = item
             el.index = prevLength + index
-            el.store = this.store
             fragment.appendChild(el)
         })
         this.books.appendChild(fragment)
