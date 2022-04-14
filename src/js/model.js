@@ -1,6 +1,6 @@
 
 const cloneDeep = x => {
-  return JSON.parse(JSON.stringify(x))
+  	return JSON.parse(JSON.stringify(x))
 }
 
 const INITIAL_STATE = {
@@ -37,4 +37,4 @@ export default () => {
 		addFavorite,
 		deleteFavorite
 	}
-}
+} 
