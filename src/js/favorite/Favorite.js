@@ -2,7 +2,7 @@
 export default class Favorite extends HTMLElement {
     constructor() {
         super()
-        this.store = JSON.parse(localStorage.getItem('BookWorld'))
+        this.store = JSON.parse(localStorage.getItem('BookWorld')) || {favorite: []}
     }
 
     connectedCallback() {
@@ -37,7 +37,7 @@ export default class Favorite extends HTMLElement {
     elements(data)  {
         const el = document.querySelector('[data-template=favorite-item]').content.firstElementChild.cloneNode(true)
         this.renderItem(el, data)
-        this.querySelector('.book').appendChild(el)
+        this.querySelector('.favorite-books').appendChild(el)
     }
 
     renderItem(el, data) {
@@ -103,7 +103,7 @@ export default class Favorite extends HTMLElement {
         const index = favorite.indexOf(this.isbn13)
         favorite.splice(index, 1)
         localStorage.setItem('BookWorld', JSON.stringify(this.store))
-        event.target.closest('.book-item').remove()
+        event.target.closest('.item').remove()
     }
 
 }

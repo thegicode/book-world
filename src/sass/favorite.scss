@@ -4,11 +4,19 @@
 .favorite {
 	display: block;
 	margin: 2rem;
-	header {
+	&-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
+	&-books {
+		list-style: none;
+		margin-top: 1rem;
+		padding: 0;
+	}
+}
+
+.favorite-header {
 	h1 {
 		margin: 0;
 	}
@@ -16,12 +24,10 @@
 		margin: 0;
 		font-size: 2rem;
 	}
-	.book {
-		list-style: none;
-		margin-top: 1rem;
-		padding: 0;
-	}
-	.book-item {
+}
+
+.favorite-books {
+	.item {
 		margin-bottom: 2rem;
 		padding: 2rem;
 		border-radius: 5px;
