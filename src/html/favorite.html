@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Favorite | Book World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/css/favorite.css">
+</head>
+<body>
+
+
+<app-favorite class="favorite">
+    <header>
+        <h1>즐겨찾기</h1>
+        <p class="count"></p>
+    </header>
+    <div class="book">
+    </div>
+</app-favorite>
+
+<template data-template="favorite-item">
+    <div class="book-item">
+        <div class="row">
+            <img src="" alt="썸네">
+            <div class="col">
+                <p>도서명 : <span class="bookname"></span></p>
+                <p class="authors"></p>
+                <p class="class_nm"></p>
+                <p>주제분류 : <span class="class_no"></span></p>
+                <p>ISBN : <span class="isbn13"></span></p>
+                <p>출판사 : <span class="publisher"></span></p>
+                <p>출판년도 : <span class="publication_year"></span></p>
+                <p>권 : <span class="vol"></span></p>
+                <p>대출권수 : <span class="loanCnt"></span></p>
+            </div>
+        </div>
+        <p class="description"></p>
+         <div class="actions">
+            <button type="button" class="favorite-button">즐겨찾기에서 삭제</button>
+        </div>
+        <!-- <div class="loanHistory">
+            <h3>대출 추이</h3>
+            <ul></ul>
+        </div> -->
+    </div>
+</template>
+
+<template data-template="history-item">
+    <li>
+        <p>대출년월: <span class="month"></span></p>
+        <p>대출건수: <span class="loanCnt"></span></p>
+        <p>순위: <span class="ranking"></span></p>
+    </li>
+</template>
+
+
+<script type="module" src="/js/favorite/index.js"></script>
+</body>
+</html>
+
+

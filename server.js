@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8000;
+const port = 7777;
 const axios = require('axios').default;
 
 app.use(express.static(`${__dirname}/src/`));
@@ -59,7 +59,7 @@ app.get('/library-bookExist', function(req, res) {
         })
 });
 
-// 도서 상세 조회
+// 도서관별 장서/대출 데이터 조회
 app.get('/library-itemSrch', function(req, res) {
     const { libCode, keyword } = req.query
 
@@ -81,9 +81,58 @@ app.get('/library-itemSrch', function(req, res) {
 });
 
 
+// 도서 상세 조회
+app.get('/srchDtlList', function(req, res) {
+    const { isbn13 } = req.query
+
+    const url = `${host}/srchDtlList?${authKey}&isbn13=${isbn13}&loaninfoYN=Y&format=json`
+    // console.log(url)
+
+    axios.get(url)
+        .then( response => {
+            const { detail, loanInfo, request} = response.data.response
+            const data = {
+                detail: detail[0].book,
+                loanInfo,
+                loanInfoYN: request.loaninfoYN
+            }
+            res.send(data)
+        })
+        .catch(errors => {
+            console.log(error)
+        })
+});
 
 
+// 도서별 이용 분석
+app.get('/usageAnalysisList', function(req, res) {
+    const { isbn13 } = req.query
 
+    const url = `${host}/usageAnalysisList?${authKey}&isbn13=${isbn13}&loaninfoYN=Y&format=json`
+
+    axios.get(url)
+        .then( response => {
+            const { 
+                book, 
+                loanHistory,
+                loanGrps,
+                keywords,
+                recBooks,
+                coLoanBooks 
+            } = response.data.response
+
+            res.send({ 
+                book, 
+                loanHistory: loanHistory.map(item => item.loan),
+                loanGrps: loanGrps.map(item => item.loanGrp),
+                keywords: keywords.map(item => item.keyword),
+                recBooks: recBooks.map(item => item.book) ,
+                coLoanBooks: coLoanBooks.map(item => item.book) })
+        })
+        .catch(errors => {
+            console.log(error)
+        })
+});
 
 
 // app.get('/b', function(req, res) {

@@ -1,0 +1,52 @@
+@import './_reset.scss';
+
+
+.favorite {
+	display: block;
+	margin: 2rem;
+	header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	h1 {
+		margin: 0;
+	}
+	.count {
+		margin: 0;
+		font-size: 2rem;
+	}
+	.book {
+		list-style: none;
+		margin-top: 1rem;
+		padding: 0;
+	}
+	.book-item {
+		margin-bottom: 2rem;
+		padding: 2rem;
+		border-radius: 5px;
+		border: 1px solid rgba(0, 100, 200, 0.1);
+		background-color: rgba(0, 100, 200, 0.05);
+		
+		display: flex;
+		flex-direction: column;
+	}
+	.row {
+		display: flex;
+		align-items: flex-start;
+	}
+	.col {
+
+	}
+	p {
+		margin-top: 0;
+	}
+	img {
+		margin-right: 1rem;
+		border-radius: 5px;
+		border: 1px solid #333;
+	}
+	.description {
+		line-height: 1.5;
+	}
+}
