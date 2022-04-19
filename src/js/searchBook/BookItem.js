@@ -46,7 +46,15 @@ export default class BookItem extends HTMLElement {
         }
 
         this.querySelector('.__link').href = link
-        this.querySelector('img').src = image
+
+        const img = this.querySelector('img')
+        img.src = image
+        img.onerror = () => {
+            this.querySelector('.img-wrap').dataset.fail = true
+            console.error('image fail', image)
+            img.remove()
+        }
+
 
         this.dataset.index = this.index
         this.isbn13 = isbn.split(' ')[0]

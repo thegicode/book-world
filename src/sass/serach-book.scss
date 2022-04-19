@@ -102,6 +102,13 @@ body {
         margin-bottom: 10px;
     }
 
+    .img-wrap[data-fail="true"] {
+        border: 1px solid #ddd;
+        background-color: #eee;
+        width: 81px;
+        height: 122px;
+    }
+
     .__description {
         line-height: 1.3;
     }
