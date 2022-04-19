@@ -28,7 +28,7 @@ app.get('/naver', function(req, res) {
         const { total, start, display, items } = response.data
         res.send({total, start, display, items})
     })
-    .catch(errors => {
+    .catch(error => {
         console.log('naver error', error)
     })
 });
@@ -40,14 +40,12 @@ const host = 'http://data4library.kr/api'
 const authKey = `authKey=${libKey}`
 const foramt = 'format=json'
 
-// 정보공개 도서관 조회: 서울 강동구
-// const url = `http://data4library.kr/api/libSrch?authKey=${libKey}&pageNo=1&pageSize=10&format=json`
+// 정보공개 도서관 조회
 app.get('/libSrch', function(req, res) {
 
-    const { page, pageSize } = req.query
+    const { regionCode, page, pageSize } = req.query
 
-    const url = `${host}/libSrch?${authKey}&dtl_region=${11250}&pageNo=${page}&pageSize=${pageSize}&${foramt}`
-
+    const url = `${host}/libSrch?${authKey}&dtl_region=${regionCode}&pageNo=${page}&pageSize=${pageSize}&${foramt}`
     axios.get(url)
         .then( response => {
             const { pageNo, pageSize, numFound, resultNum, libs } = response.data.response
@@ -59,10 +57,9 @@ app.get('/libSrch', function(req, res) {
                 resultNum, 
                 libs: libs.map( item => item.lib)
             }
-
             res.send(data)
         })
-        .catch(errors => {
+        .catch(error => {
             console.log(error)
         })
 });
@@ -81,7 +78,7 @@ app.get('/library-bookExist', function(req, res) {
             // console.log(response.data.response.result)
             res.send(response.data.response.result)
         })
-        .catch(errors => {
+        .catch(error => {
             console.log(error)
         })
 });
@@ -102,7 +99,7 @@ app.get('/library-itemSrch', function(req, res) {
         .then( response => {
             res.send(response.data.response.docs)
         })
-        .catch(errors => {
+        .catch(error => {
             console.log(error)
         })
 });
@@ -125,7 +122,7 @@ app.get('/srchDtlList', function(req, res) {
             }
             res.send(data)
         })
-        .catch(errors => {
+        .catch(error => {
             console.log(error)
         })
 });
@@ -156,7 +153,7 @@ app.get('/usageAnalysisList', function(req, res) {
                 recBooks: recBooks.map(item => item.book) ,
                 coLoanBooks: coLoanBooks.map(item => item.book) })
         })
-        .catch(errors => {
+        .catch(error => {
             console.log(error)
         })
 });
@@ -178,7 +175,7 @@ app.get('/usageAnalysisList', function(req, res) {
 //         const responseTwo = responses[1].data.response
 //         const { libCode } = responseTwo.request
 //         res.send({...responseOne, libCode, ...responseTwo.result})
-//     })).catch(errors => {
+//     })).catch(error => {
 //     })
 // });
 

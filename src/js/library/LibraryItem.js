@@ -1,25 +1,24 @@
 import model from '../model.js'
 
 const models = model()
-const  { setLibrary } = models
+const  { state, addLibrary, deleteLibrary, includesLibrary } = models
 
 export default class LibraryItem extends HTMLElement {
 	constructor() {
 		super()
-		this.radio = this.querySelector('[name=myLibrary]')
+		this.checkbox = this.querySelector('[name=myLibrary]')
 	}
 
 	connectedCallback() {
 		this.render(this.data)
-		this.radio.addEventListener('change', this.onChange.bind(this))
+		this.checkbox.addEventListener('change', this.onChange.bind(this))
 	}
 
 	disConnectedCallback() {
-		this.radio.removeEventListener('change', this.onChange.bind(this))
-
+		this.checkbox.removeEventListener('change', this.onChange.bind(this))
 	}
 
-	render(data) {
+	render() {
 		const {
 			libCode,
 			libName,
@@ -31,7 +30,7 @@ export default class LibraryItem extends HTMLElement {
 			homepage,
 			closed,
 			operatingTime,
-			BookCount } = data
+			BookCount } = this.data
 
 		const obj = {
             libCode: `${libCode}`,
@@ -48,12 +47,19 @@ export default class LibraryItem extends HTMLElement {
             this.querySelector(`.${key}`).textContent = value
         }
         this.querySelector('.homepage').href = homepage
-        this.radio.value = libCode
+
+        const includes = includesLibrary(libCode)
+        this.checkbox.checked = includes
+        this.libCode = libCode
+        this.libName = libName
 	}
 
 	onChange(event) {
-		setLibrary(event.target.value)
-
+		if (event.target.checked) {
+			addLibrary(this.libCode, this.libName)
+			return
+		}
+		deleteLibrary(this.libCode)
 	}
 
 }

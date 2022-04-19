@@ -7,6 +7,15 @@ h1 {
 	margin: 2rem 2rem 0;
 }
 
+library-region {
+	display: block;
+	padding: 1rem 2rem 0;
+	select {
+		width: 100%;
+		padding: 1rem;
+	}
+}
+
 library-item {
 	display: block;
 	padding: 2rem ;
@@ -16,4 +25,10 @@ library-item {
 
 .actions {
 	padding: 0 2rem;
+}
+
+.loading,
+.notFound {
+	margin: 2rem;
+	text-align: center;
 }

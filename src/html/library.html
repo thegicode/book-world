@@ -9,14 +9,23 @@
 </head>
 <body>
 
-<h1>정보공개 도서관 : 서울 강동구</h1>
+<h1>정보공개 도서관</h1>
 
 <app-library>
-    <form>
-    </form>
+
+    <library-region>
+        <h2>지역 선택</h2>
+        <select>
+            <option value="11250" selected>서울 강동구</option>
+            <option value="31180">경기 하남 미사</option>
+        </select>
+    </library-region>
+
+    <form></form>
+
 </app-library>
 
-<template>
+<template id="tp-item">
     <library-item>
         <ul>
             <li><span>도서관명: </span><span class="libName"></span></li>
@@ -34,11 +43,19 @@
         </ul>
         <div class="actions">
             <label>
-                <input type="radio" name="myLibrary">
-                <span>메인 도서관으로 선텍</span>
+                <input type="checkbox" name="myLibrary">
+                <span>메인 도서관으로 선택</span>
             </label>
         </div>
     </library-item>
+</template>
+
+<template id="tp-loading">
+    <div class="loading">불러오는 중입니다.</div>
+</template>
+
+<template id="tp-notFound">
+    <div class="notFound">데이터가 없습니다.</div>
 </template>
 
 <script type="module" src="/js/library/index.js"></script>

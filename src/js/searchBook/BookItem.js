@@ -1,7 +1,7 @@
 import model from '../model.js'
 
 const models = model()
-const  { state, addFavorite, deleteFavorite } = models
+const  { state, addFavorite, deleteFavorite, includesFavorite } = models
 
 export default class BookItem extends HTMLElement {
     constructor() {
@@ -54,7 +54,7 @@ export default class BookItem extends HTMLElement {
 
 
         const { favorite } = state
-        if (favorite.includes(this.isbn13)) {
+        if (includesFavorite(this.isbn13)) {
             this.favoriteButton.checked = true
         }
     }
