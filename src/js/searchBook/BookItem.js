@@ -50,7 +50,7 @@ export default class BookItem extends HTMLElement {
         const img = this.querySelector('img')
         img.src = image
         img.onerror = () => {
-            this.querySelector('.img-wrap').dataset.fail = true
+            this.querySelector('.__thumb').dataset.fail = true
             console.error('image fail', image)
             img.remove()
         }
