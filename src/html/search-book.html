@@ -27,7 +27,9 @@
             <span class="__display"></span>
         </div>
         <div class="book-list">
-            <div class="books"></div>
+            <div class="books">
+                <p class="books-message">책을 검색하세요.</p>
+            </div>
             <div class="observe"></div>
         </div>
     </book-content>
@@ -64,6 +66,13 @@
     </book-item>
 </template>
 
+<template data-template="laoding">
+    <div class="loading">정보를 불러오는 중입니다.</div>
+</template>
+
+<template data-template="notFound">
+    <div class="notFound">정보가 없습니다.</div>
+</template>
 
 <test-element src="./test-element">
 </test-element>

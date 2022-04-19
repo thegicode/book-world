@@ -16,7 +16,7 @@ export default class Library extends HTMLElement {
 	// }
 
 	request(regionCode) {
-        this.loading()
+		this.loading()
 		fetch(`/libSrch?regionCode=${regionCode}&page=${1}&pageSize=${20}`, {
             method: 'GET'
         })

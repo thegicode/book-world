@@ -59,6 +59,11 @@ export default class BookList extends HTMLElement {
 
         this.summary.hidden = false
 
+        if (total === 0) {
+            this.notFound()
+            return
+        }
+
         this.bookItems(items, prevLength)
 
         if (total === this.length) {
@@ -68,6 +73,7 @@ export default class BookList extends HTMLElement {
         const target = this.querySelector('.observe')
         this.observer.observe(target)
     }
+
 
     bookItems(items, prevLength) {
         const fragment = new DocumentFragment()
@@ -83,8 +89,21 @@ export default class BookList extends HTMLElement {
     initialize(keyword) {
         this.keyword = keyword
         this.length = 0
+        this.loading()
         this.books.innerHTML = ''
         this.request()
+    }
+
+    loading() {
+        const el = document.querySelector('[data-template=laoding]').content.firstElementChild.cloneNode(true)
+        this.books.innerHTML = ''
+        this.books.appendChild(el)
+    }
+
+    notFound() {
+        const el = document.querySelector('[data-template=notFound]').content.firstElementChild.cloneNode(true)
+        this.books.innerHTML = ''
+        this.books.appendChild(el)
     }
 
 }

@@ -89,6 +89,9 @@ body {
     list-style: none;
     margin: 0;
     padding: 0 1rem;
+    &-message {
+        text-align: center;
+    }
 }
 .book {
     display: block;
@@ -149,5 +152,9 @@ body {
     // background-color: rgba(10, 100, 200, 0.5);
 }
 
-
+.loading,
+.notFound {
+    margin-top: 2rem;
+    text-align: center;
+}
 
