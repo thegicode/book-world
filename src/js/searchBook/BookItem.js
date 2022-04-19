@@ -1,7 +1,6 @@
-import model from '../model.js'
 
-const models = model()
-const  { state, addFavorite, deleteFavorite, includesFavorite } = models
+import model from '../model.js'
+const  { state, addFavorite, deleteFavorite, includesFavorite } = model
 
 export default class BookItem extends HTMLElement {
     constructor() {

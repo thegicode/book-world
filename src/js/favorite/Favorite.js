@@ -1,7 +1,7 @@
-import model from '../model.js'
 
-const models = model()
-const  { state } = models
+import model from '../model.js'
+const  { state } = model
+
 
 export default class Favorite extends HTMLElement {
     constructor() {

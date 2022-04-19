@@ -1,70 +1,64 @@
 
-// const cloneDeep = x => {
-//   	return JSON.parse(JSON.stringify(x))
-// }
-
 const INITIAL_STATE = {
 	favorite: [],
 	library: {},
 }
 
-
-export default () => {
-
-	const getState = () => {
-		if (localStorage.getItem('BookWorld') === null) {
-			localStorage.setItem('BookWorld', JSON.stringify(INITIAL_STATE))
-		}
-      	return JSON.parse(localStorage.getItem('BookWorld'))
+const getState = () => {
+	if (localStorage.getItem('BookWorld') === null) {
+		localStorage.setItem('BookWorld', JSON.stringify(INITIAL_STATE))
 	}
+  	return JSON.parse(localStorage.getItem('BookWorld'))
+}
 
-	let state = getState()
-	// let state = cloneDeep(getState())
+let state = getState()
 
-	const addFavorite = (isbn) => {
-		state.favorite.push(isbn)
-		setStorage()
+const addFavorite = (isbn) => {
+	state.favorite.push(isbn)
+	setStorage()
+}
+
+const deleteFavorite = (isbn) => {
+	const index = state.favorite.indexOf(isbn)
+	state.favorite.splice(index, 1)
+	setStorage()
+}
+
+const includesFavorite = (isbn) => {
+	if (state.favorite == undefined ) {
+		return
 	}
+	return state.favorite.includes(isbn)
+}
 
-	const deleteFavorite = (isbn) => {
-		const index = state.favorite.indexOf(isbn)
-    	state.favorite.splice(index, 1)
-    	setStorage()
-	}
+const addLibrary = (libCode, libName) => {
+	state.library[libCode] = libName
+    setStorage()
+}
 
-	const includesFavorite = (isbn) => {
-		if (state.favorite == undefined ) {
-			return
-		}
-		return state.favorite.includes(isbn)
-	}
+const deleteLibrary = (libCode) => {
+	delete state.library[libCode]
+    setStorage()
+}
 
-	const addLibrary = (libCode, libName) => {
-		state.library[libCode] = libName
-        setStorage()
-	}
+const includesLibrary = (libCode) => {
+	return state.library.hasOwnProperty(libCode)
+}
 
-	const deleteLibrary = (libCode) => {
-		delete state.library[libCode]
-        setStorage()
-	}
+const setStorage = () => {
+	localStorage.setItem('BookWorld', JSON.stringify(state))
+	console.table(JSON.parse(localStorage.getItem('BookWorld')))
+}
 
-	const includesLibrary = (libCode) => {
-		return state.library.hasOwnProperty(libCode)
-	}
+	
+export default {
+	state,
+	addFavorite,
+	deleteFavorite,
+	includesFavorite,
+	addLibrary,
+	deleteLibrary,
+	includesLibrary
+}
 
-	const setStorage = () => {
-		localStorage.setItem('BookWorld', JSON.stringify(state))
-		console.table(JSON.parse(localStorage.getItem('BookWorld')))
-	}
 
-	return {
-		state,
-		addFavorite,
-		deleteFavorite,
-		includesFavorite,
-		addLibrary,
-		deleteLibrary,
-		includesLibrary
-	}
-} 

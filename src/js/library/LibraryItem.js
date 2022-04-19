@@ -1,7 +1,6 @@
 import model from '../model.js'
+const  { state, addLibrary, deleteLibrary, includesLibrary } = model
 
-const models = model()
-const  { state, addLibrary, deleteLibrary, includesLibrary } = models
 
 export default class LibraryItem extends HTMLElement {
 	constructor() {

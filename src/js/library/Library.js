@@ -1,6 +1,5 @@
 import model from '../model.js'
-const models = model()
-const  { includesLibrary } = models
+const  { includesLibrary } = model
 
 export default class Library extends HTMLElement {
 	constructor() {

@@ -1,8 +1,7 @@
 import { $ } from './selectors.js'
-import model from '../model.js'
 
-const models = model()
-const  { deleteFavorite } = models
+import model from '../model.js'
+const  { deleteFavorite } = model
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
