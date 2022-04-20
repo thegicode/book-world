@@ -1,18 +1,18 @@
 @import './_reset.scss';
 
 button {
-	border: none;
-	background-color: #f4f4f4;
+	border-radius: 7px;
+	border: 1px solid #eee;
+	background-color: transparent;
 	padding: 7px 1rem;
 }
 
 .favorite {
 	display: block;
-	margin: 2rem;
+	margin: 1rem;
 	&-header {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 	}
 	&-books {
 		list-style: none;
@@ -22,43 +22,54 @@ button {
 }
 
 .favorite-header {
-	h1 {
+	h2 {
 		margin: 0;
 	}
 	.count {
-		margin: 0;
+		margin: 0 0 0 10px;
 		font-size: 1.2rem;
 	}
 }
 
-.favorite-books {
-}
+// .favorite-books {
+// }
 
 .favorite-item {
 	display: flex;
 	flex-direction: column;
 	position: relative;
 	padding: 1rem 0;
-	border-bottom: 1px solid rgba(0, 100, 200, 0.1);
-	.info {
+	border-top: 1px solid #ddd;
+	&[data-loading="true"] {
+		.thumb img {
+			opacity: 0;
+		}
+		.info {
+			opacity: 0;
+		}
+		button {
+			color: transparent;
+		}
+	}
+	.details {
 		display: flex;
 		gap: 1rem;
 	}
-	.details {
-		p {
-			margin: 0 0 8px;
-		}
-	}
 	.thumb {
-		width: 120px;
-		min-height: 120px;
-		background-color: #f4f4f4;
-		&[data-load="true"] {
-			background-color: transparent;
+		flex: 0.6;
+		max-width: 150px;
+		&[data-loaded="false"] {
+			background-color: #f4f4f4;
 		}
 		img {
 			width: 100%;
 			height: auto;
+		}
+	}
+	.info {
+		flex: 1;
+		p {
+			margin: 0 0 8px;
 		}
 	}
 	.description {
@@ -68,11 +79,11 @@ button {
 
 .favorite-actions {
 	.favorite-button {
-		position: absolute;
-		top: 1rem; right: 0;
+		width: 100%;
 	}
 	.library-button {
 		width: 100%;
+		margin-top: 10px;
 	}
 }
 .favorite-library {

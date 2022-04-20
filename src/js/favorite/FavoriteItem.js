@@ -7,19 +7,20 @@ export default class FavoriteItem extends HTMLElement {
     constructor() {
         super()
         this.favoriteButton = this.querySelector('.favorite-button')
-        this.hasBookButton = this.querySelector('.library-button')
+        this.libraryButton = this.querySelector('.library-button')
         this.library = this.querySelector('.favorite-library')
     }
 
     connectedCallback() {
+        this.loading()
         this.request(this.data)
         this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
-        this.hasBookButton.addEventListener('click', this.onLibrary.bind(this))
+        this.libraryButton.addEventListener('click', this.onLibrary.bind(this))
     }
 
     disConnectedCallback() {
         this.favoriteButton.removeEventListener('click', this.onFavorite.bind(this))
-        this.hasBookButton.removeEventListener('click', this.onLibrary.bind(this))
+        this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
     }
 
     request(isbn13) {
@@ -73,19 +74,17 @@ export default class FavoriteItem extends HTMLElement {
         for (const [key, value] of Object.entries(obj)) {
             this.querySelector(`.${key}`).textContent = value
         }
-        
-        const thumb = this.querySelector('.thumb')
+
         const img =  this.querySelector('img')
-        img.src = bookImageURL
+        img.src = `${bookImageURL}`
         img.onload = () => {
-            thumb.dataset.load = true
-            img.hidden = false
+            delete this.querySelector('.thumb').dataset.loaded
         }
         img.onerror = () => {
             img.remove()
         }
-        this.querySelector('.details').hidden = false
         this.querySelector('.description').innerHTML = description
+        delete this.dataset.loading
     }
 
     onFavorite(event) {
@@ -107,11 +106,16 @@ export default class FavoriteItem extends HTMLElement {
                 el.querySelector('.hasBook').textContent = hasBook
                 el.querySelector('.loanAvailable').textContent = loanAvailable
                 this.library.appendChild(el)
+                this.libraryButton.remove()
             })
             .catch(e => {
                 console.log(e);
             });
         }
+    }
+
+    loading() {
+        this.dataset.loading = true
     }
 }
 
