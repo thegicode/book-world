@@ -1,13 +1,14 @@
 import { $ } from './selectors.js'
 
 import model from '../model.js'
-const  { deleteFavorite } = model
+const  { state, deleteFavorite } = model
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super()
         this.favoriteButton = this.querySelector('.favorite-button')
         this.hasBookButton = this.querySelector('.hasBook-button')
+        this.library = this.querySelector('.favorite-library')
 
     }
 
@@ -84,25 +85,23 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     onHasBook() {
-        const hasBookEl = this.querySelector('.__hasBook')
-        const loanAvailableEl = this.querySelector('.__loanAvailable')
-        const libCode = '111007'
-        fetch(`/library-bookExist?isbn13=${this.data}&libCode=${libCode}`, {
-            method: 'GET'
-        })
-        .then( data => data.json())
-        .then( response => {
-            const { hasBook, loanAvailable } = response
-            const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
-            hasBookEl.textContent = `소장: ${_hasBook}`
-            if ( hasBook === 'Y' ) {
-                const _loan = loanAvailable === 'Y' ? '가능' : '불가'
-                loanAvailableEl.textContent = `대출: ${_loan}`
-            }
-        })
-        .catch(e => {
-            console.log(e);
-        });
+        for (const [libCode, libName] of Object.entries(state.library)) {
+            fetch(`/library-bookExist?isbn13=${this.data}&libCode=${libCode}`, {
+                method: 'GET'
+            })
+            .then(data => data.json())
+            .then(response => {
+                const { hasBook, loanAvailable} = response
+                const el = document.querySelector('#tp-libraryItem').content.firstElementChild.cloneNode(true)
+                el.querySelector('.name').textContent = libName
+                el.querySelector('.hasBook').textContent = hasBook
+                el.querySelector('.loanAvailable').textContent = loanAvailable
+                this.library.appendChild(el)
+            })
+            .catch(e => {
+                console.log(e);
+            });
+        }
     }
 }
 

@@ -1,5 +1,10 @@
 @import './_reset.scss';
 
+button {
+	border: none;
+	background-color: #f4f4f4;
+	padding: 7px 1rem;
+}
 
 .favorite {
 	display: block;
@@ -22,43 +27,53 @@
 	}
 	.count {
 		margin: 0;
-		font-size: 2rem;
+		font-size: 1.2rem;
 	}
 }
 
 .favorite-books {
-	.item {
-		margin-bottom: 2rem;
-		padding: 2rem;
-		border-radius: 5px;
-		border: 1px solid rgba(0, 100, 200, 0.1);
-		background-color: rgba(0, 100, 200, 0.05);
-		
-		display: flex;
-		flex-direction: column;
-	}
+}
+
+.favorite-item {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	padding: 1rem 0;
+	border-bottom: 1px solid rgba(0, 100, 200, 0.1);
 	.row {
 		display: flex;
 		align-items: flex-start;
+		gap: 1rem;
 	}
 	.col {
-
-	}
-	p {
-		margin-top: 0;
+		p {
+			margin: 0 0 8px;
+		}
 	}
 	img {
-		margin-right: 1rem;
-		border-radius: 5px;
-		border: 1px solid #333;
+		width: 120px;
+		height: auto;
+		// border: 1px solid #999;
 	}
+
 	.description {
 		line-height: 1.5;
 	}
 
-	.library {
-	    margin-top: 1rem;
-	    
+}
+.favorite-actions {
+	.favorite-button {
+		position: absolute;
+		top: 1rem; right: 0;
+	}
+	.hasBook-button {
+		width: 100%;
 	}
 }
+.favorite-library {
+	&:empty {
+		margin: 0;
+	}
+}
+
 

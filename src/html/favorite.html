@@ -9,10 +9,9 @@
 </head>
 <body>
 
-
 <app-favorite class="favorite">
     <header class="favorite-header">
-        <h1>즐겨찾기</h1>
+        <h2>즐겨찾기</h2>
         <p class="count"></p>
     </header>
     <div class="favorite-books">
@@ -20,11 +19,11 @@
 </app-favorite>
 
 <template data-template="favorite-item">
-    <favorite-item class="item">
+    <favorite-item class="favorite-item">
         <div class="row">
             <img src="" alt="썸네">
             <div class="col">
-                <p>도서명 : <span class="bookname"></span></p>
+                <p>도서명 : <strong class="bookname"></strong></p>
                 <p class="authors"></p>
                 <p class="class_nm"></p>
                 <p>주제분류 : <span class="class_no"></span></p>
@@ -37,15 +36,12 @@
         </div>
         <p class="description"></p>
 
-        <div class="actions">
+        <div class="favorite-actions">
             <button type="button" class="favorite-button">즐겨찾기에서 삭제</button>
             <button type="button" class="hasBook-button">도서관 소장 | 대출 조회</button>
         </div>
 
-        <div class="library">
-            <p class="__hasBook"></p>
-            <p class="__loanAvailable"></p>
-        </div>
+        <ul class="favorite-library"></ul>
 
         <!-- <div class="loanHistory">
             <h3>대출 추이</h3>
@@ -59,6 +55,14 @@
         <p>대출년월: <span class="month"></span></p>
         <p>대출건수: <span class="loanCnt"></span></p>
         <p>순위: <span class="ranking"></span></p>
+    </li>
+</template>
+
+<template id="tp-libraryItem">
+    <li class="library-item">
+        <p class="name"></p>
+        <p>소장 여부 : <span class="hasBook"></span></p>
+        <p>대출 가능 여부 : <span class="loanAvailable"></span></p>
     </li>
 </template>
 
