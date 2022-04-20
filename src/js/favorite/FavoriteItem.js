@@ -66,7 +66,7 @@ export default class FavoriteItem extends HTMLElement {
             class_nm: `${class_nm}`,
             class_no: `${class_no}`,
             isbn13: `${isbn13}`,
-            loanCnt: `${loanCnt}`,
+            loanCnt: `${loanCnt.toLocaleString()}`,
             publication_year: `${publication_year}`,
             publisher: `${publisher}`,
             vol: `${vol}`,
