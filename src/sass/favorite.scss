@@ -40,33 +40,38 @@ button {
 	position: relative;
 	padding: 1rem 0;
 	border-bottom: 1px solid rgba(0, 100, 200, 0.1);
-	.row {
+	.info {
 		display: flex;
-		align-items: flex-start;
 		gap: 1rem;
 	}
-	.col {
+	.details {
 		p {
 			margin: 0 0 8px;
 		}
 	}
-	img {
+	.thumb {
 		width: 120px;
-		height: auto;
-		// border: 1px solid #999;
+		min-height: 120px;
+		background-color: #f4f4f4;
+		&[data-load="true"] {
+			background-color: transparent;
+		}
+		img {
+			width: 100%;
+			height: auto;
+		}
 	}
-
 	.description {
 		line-height: 1.5;
 	}
-
 }
+
 .favorite-actions {
 	.favorite-button {
 		position: absolute;
 		top: 1rem; right: 0;
 	}
-	.hasBook-button {
+	.library-button {
 		width: 100%;
 	}
 }

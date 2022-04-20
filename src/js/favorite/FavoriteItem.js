@@ -7,20 +7,19 @@ export default class FavoriteItem extends HTMLElement {
     constructor() {
         super()
         this.favoriteButton = this.querySelector('.favorite-button')
-        this.hasBookButton = this.querySelector('.hasBook-button')
+        this.hasBookButton = this.querySelector('.library-button')
         this.library = this.querySelector('.favorite-library')
-
     }
 
     connectedCallback() {
         this.request(this.data)
         this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
-        this.hasBookButton.addEventListener('click', this.onHasBook.bind(this))
+        this.hasBookButton.addEventListener('click', this.onLibrary.bind(this))
     }
 
     disConnectedCallback() {
         this.favoriteButton.removeEventListener('click', this.onFavorite.bind(this))
-        this.hasBookButton.removeEventListener('click', this.onHasBook.bind(this))
+        this.hasBookButton.removeEventListener('click', this.onLibrary.bind(this))
     }
 
     request(isbn13) {
@@ -74,7 +73,18 @@ export default class FavoriteItem extends HTMLElement {
         for (const [key, value] of Object.entries(obj)) {
             this.querySelector(`.${key}`).textContent = value
         }
-        this.querySelector('img').src = bookImageURL
+        
+        const thumb = this.querySelector('.thumb')
+        const img =  this.querySelector('img')
+        img.src = bookImageURL
+        img.onload = () => {
+            thumb.dataset.load = true
+            img.hidden = false
+        }
+        img.onerror = () => {
+            img.remove()
+        }
+        this.querySelector('.details').hidden = false
         this.querySelector('.description').innerHTML = description
     }
 
@@ -84,7 +94,7 @@ export default class FavoriteItem extends HTMLElement {
         this.remove()
     }
 
-    onHasBook() {
+    onLibrary() {
         for (const [libCode, libName] of Object.entries(state.library)) {
             fetch(`/library-bookExist?isbn13=${this.data}&libCode=${libCode}`, {
                 method: 'GET'

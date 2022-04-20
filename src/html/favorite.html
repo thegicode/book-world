@@ -20,9 +20,9 @@
 
 <template data-template="favorite-item">
     <favorite-item class="favorite-item">
-        <div class="row">
-            <img src="" alt="썸네">
-            <div class="col">
+        <div class="info">
+            <div class="thumb"><img src="" alt="썸네일" hidden></div>
+            <div class="details" hidden>
                 <p>도서명 : <strong class="bookname"></strong></p>
                 <p class="authors"></p>
                 <p class="class_nm"></p>
@@ -38,7 +38,7 @@
 
         <div class="favorite-actions">
             <button type="button" class="favorite-button">즐겨찾기에서 삭제</button>
-            <button type="button" class="hasBook-button">도서관 소장 | 대출 조회</button>
+            <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
         </div>
 
         <ul class="favorite-library"></ul>
