@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run server & npm run css",
-    "server": "node server",
+    "start": "node index & npm run css",
     "css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
