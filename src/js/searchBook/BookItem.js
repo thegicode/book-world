@@ -6,18 +6,21 @@ export default class BookItem extends HTMLElement {
     constructor() {
         super()
         this.favoriteButton = this.querySelector('input[name="favorite"]')
+        this.libraryButton = this.querySelector('.library-button')
+        this.library = this.querySelector('.favorite-library')
+        this.libraryItemTemplate = document.querySelector('#tp-libraryItem')
     }
 
     connectedCallback() {
         this.render()
 
         this.favoriteButton.addEventListener('change', this.onFavorite.bind(this))
-        // this.libraryButton.addEventListener('click', this.onClick.bind(this))
+        this.libraryButton.addEventListener('click', this.onLibrary.bind(this))
     }
 
     disConnectedCallback() {
         this.favoriteButton.removeEventListener('change', this.onFavorite.bind(this))
-        // this.libraryButton.removeEventListener('click', this.onClick.bind(this))
+        this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
     }
 
     render() {
@@ -99,6 +102,41 @@ export default class BookItem extends HTMLElement {
         } else {
             deleteFavorite(this.isbn13)
         }
+    }
+
+    onLibrary() {
+        this.libraryLoading()
+        this.libraryButton.remove()
+        for (const [libCode, libName] of Object.entries(state.library)) {
+            fetch(`/library-bookExist?isbn13=${this.isbn13}&libCode=${libCode}`, {
+                method: 'GET'
+            })
+            .then(data => data.json())
+            .then(response => {
+                const { hasBook, loanAvailable} = response
+                const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
+                const _loanAvailable = loanAvailable === 'Y' ? '가능' : '불가'
+                const el = this.libraryItemTemplate.content.firstElementChild.cloneNode(true)
+                el.querySelector('.name').textContent = libName
+                el.querySelector('.hasBook').textContent = _hasBook
+                el.querySelector('.loanAvailable').textContent = _loanAvailable
+                this.removeLibraryLoading()
+                this.library.appendChild(el)
+            })
+            .catch(e => {
+                console.log(e);
+            });
+        }
+    }
+
+    libraryLoading() {
+        this.library.dataset.loading = true
+    }
+    removeLibraryLoading() {
+        const loading = this.library.querySelector('.loading')
+        if (loading)
+            this.library.querySelector('.loading').remove()
+        this.library.removeAttribute('data-loading')
     }
 
 }

@@ -9,7 +9,7 @@ export default class TestElement extends HTMLElement {
     }
 
     connectedCallback() {
-        fetch(`${this.src}.html`) 
+        fetch(`./html/${this.src}.html`) 
             .then( response => response.text() ) 
             .then( htmlStr => {
                 const parser = new DOMParser()

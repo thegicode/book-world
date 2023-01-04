@@ -9,6 +9,7 @@
 </head>
 <body>
 
+
 <div class="root">
     <header class="header">
         <input-search class="input-search">
@@ -26,6 +27,9 @@
             </div>
             <span class="__display"></span>
         </div>
+
+        <test-element src="test-element"></test-element>
+
         <div class="book-list">
             <div class="books">
                 <p class="books-message">책을 검색하세요.</p>
@@ -59,9 +63,26 @@
             <label>
                 <input type="checkbox" name="favorite">
                 <span>관심책</span>
-            </label>
+            </label> 
+            <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
+            <ul class="favorite-library">
+                <li class="library-item loading">
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                </li>
+            </ul>
         </div>
+        
     </book-item>
+</template>
+
+<template id="tp-libraryItem">
+    <li class="library-item">
+        <p class="name"></p>
+        <p>소장 여부 : <span class="hasBook"></span></p>
+        <p>대출 가능 여부 : <span class="loanAvailable"></span></p>
+    </li>
 </template>
 
 <template data-template="laoding">
@@ -72,8 +93,11 @@
     <div class="notFound">정보가 없습니다.</div>
 </template>
 
-<test-element src="./test-element">
-</test-element>
+
+
+
+
+
 
 
 <script type="module" src="/js/searchBook/index.js"></script>

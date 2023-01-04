@@ -11,6 +11,7 @@ body {
     margin: 0;
 }
 
+
 .root {
     display: flex;
     flex-direction: column;
@@ -143,12 +144,12 @@ body {
     .actions {
         margin-top: 10px;
         button {
-            display: inline-flex;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            
+            border-radius: 7px;
+            border: 1px solid #eee;
             background-color: transparent;
-            font-size: 12px;;
+            padding: 7px 1rem;
+
             &[data-selected="true"] {
                 color: green;
                 svg {
@@ -160,9 +161,38 @@ body {
             fill: #999;
             margin-right: 5px;
         }
+        .library-button {
+            width: 100%;
+            margin-top: 10px;
+            text-align: center;
+        }
+
     }
 
-    
+    .favorite-library {
+        // list-style: none;
+        .loading {
+            display: none;
+        }
+        &:empty {
+            margin: 0;
+        }
+        &[data-loading="true"] {
+            .loading {
+                display: block;
+            }
+            p {
+                &:before {
+                    content: "\00a0";
+                }
+                width: 50%;
+                height: auto;
+                border-radius: 4px;;
+                background-color: #f4f4f4;
+                animation: pulse 1s ease-in-out 0.5s infinite;
+            }
+        }
+    }
 }
 
 .observe {
