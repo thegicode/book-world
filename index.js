@@ -1,9 +1,14 @@
 const express = require('express');
+const fs = require('fs')
+const path = require('path')
+
 const app = express();
 const port = 7777;
 const axios = require('axios').default;
 
+
 app.use(express.static(`${__dirname}/src/`));
+
 
 const { libKey, naverKey } = require("./user.js")
 
@@ -178,6 +183,20 @@ app.get('/usageAnalysisList', function(req, res) {
 //     })).catch(error => {
 //     })
 // });
+
+
+
+// Router
+const routes = ['favorite', 'library', 'search-book']
+routes.forEach((route) => {
+    app.get(`/${route}`, (req, res) => {
+        console.log('routes', routes)
+
+        const htmlURL = `${__dirname}/src/html/${route}.html`
+        console.log('htmlURL', htmlURL)
+        res.send(fs.readFileSync(path.resolve(__dirname, htmlURL), 'utf8'))
+    })
+})
 
 app.listen(port, () => {
     console.log(`Start : http://localhost:${port}`);
