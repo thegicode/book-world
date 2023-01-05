@@ -1,6 +1,7 @@
 import { $ } from './selectors.js'
-
 import model from '../model.js'
+import LibraryBookExist from '../modules/libraryBookExist.js'
+
 const  { state, deleteFavorite } = model
 
 export default class FavoriteItem extends HTMLElement {
@@ -8,8 +9,6 @@ export default class FavoriteItem extends HTMLElement {
         super()
         this.favoriteButton = this.querySelector('.favorite-button')
         this.libraryButton = this.querySelector('.library-button')
-        this.library = this.querySelector('.favorite-library')
-        this.libraryItemTemplate = document.querySelector('#tp-libraryItem')
     }
 
     connectedCallback() {
@@ -95,40 +94,21 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     onLibrary() {
-        this.libraryLoading()
-        this.libraryButton.remove()
-        for (const [libCode, libName] of Object.entries(state.library)) {
-            fetch(`/library-bookExist?isbn13=${this.data}&libCode=${libCode}`, {
-                method: 'GET'
-            })
-            .then(data => data.json())
-            .then(response => {
-                const { hasBook, loanAvailable} = response
-                const el = this.libraryItemTemplate.content.firstElementChild.cloneNode(true)
-                el.querySelector('.name').textContent = libName
-                el.querySelector('.hasBook').textContent = hasBook
-                el.querySelector('.loanAvailable').textContent = loanAvailable
-                this.removeLibraryLoading()
-                this.library.appendChild(el)
-            })
-            .catch(e => {
-                console.log(e);
-            });
-        }
+        const root = this.querySelector('.favorite-library')
+        const template = document.querySelector('#tp-libraryItem')
+        new LibraryBookExist(
+            root, 
+            this.libraryButton, 
+            template, 
+            this.data,
+            state.library
+        )
+
     }
 
     loading() {
         this.dataset.loading = true
     }
-
-    libraryLoading() {
-        this.library.dataset.loading = true
-    }
-    removeLibraryLoading() {
-        const loading = this.library.querySelector('.loading')
-        if (loading)
-            this.library.querySelector('.loading').remove()
-        this.library.removeAttribute('data-loading')
-    }
+    
 }
 

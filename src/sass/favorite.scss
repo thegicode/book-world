@@ -89,7 +89,8 @@ button {
 	}
 }
 .favorite-library {
-	// list-style: none;
+	list-style: none;
+	padding: 0;
 	.loading {
 		display: none;
 	}
@@ -104,12 +105,21 @@ button {
 			&:before {
 				content: "\00a0";
 			}
-			width: 50%;
+			width: 100%;
 			height: auto;
 			border-radius: 4px;;
 			background-color: #f4f4f4;
 			animation: pulse 1s ease-in-out 0.5s infinite;
 		}
+	}
+	.library-item {
+		padding: 10px 1rem;
+		border: solid 1px #ddd;
+		border-radius: 7px;
+		font-size: 14px;
+	}
+	p {
+		margin: 7px 0;
 	}
 }
 

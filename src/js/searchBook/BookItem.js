@@ -1,5 +1,6 @@
 
 import model from '../model.js'
+import LibraryBookExist from '../modules/libraryBookExist.js'
 const  { state, addFavorite, deleteFavorite, includesFavorite } = model
 
 export default class BookItem extends HTMLElement {
@@ -7,8 +8,6 @@ export default class BookItem extends HTMLElement {
         super()
         this.favoriteButton = this.querySelector('input[name="favorite"]')
         this.libraryButton = this.querySelector('.library-button')
-        this.library = this.querySelector('.favorite-library')
-        this.libraryItemTemplate = document.querySelector('#tp-libraryItem')
     }
 
     connectedCallback() {
@@ -72,28 +71,6 @@ export default class BookItem extends HTMLElement {
         }
     }
 
-    // onClick() {
-    //     const hasBookEl = this.querySelector('.__hasBook')
-    //     const loanAvailableEl = this.querySelector('.__loanAvailable')
-    //     const libCode = '111007'
-    //     fetch(`/library-bookExist?isbn13=${this.isbn13}&libCode=${libCode}`, {
-    //         method: 'GET'
-    //     })
-    //     .then( data => data.json())
-    //     .then( response => {
-    //         const { hasBook, loanAvailable } = response
-    //         const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
-    //         hasBookEl.textContent = `소장: ${_hasBook}`
-    //         if ( hasBook === 'Y' ) {
-    //             const _loan = loanAvailable === 'Y' ? '가능' : '불가'
-    //             loanAvailableEl.textContent = `대출: ${_loan}`
-    //         }
-    //     })
-    //     .catch(e => {
-    //         console.log(e);
-    //     });
-    // }
-
 
     onFavorite(event) {
         const { checked } = event.target
@@ -105,38 +82,15 @@ export default class BookItem extends HTMLElement {
     }
 
     onLibrary() {
-        this.libraryLoading()
-        this.libraryButton.remove()
-        for (const [libCode, libName] of Object.entries(state.library)) {
-            fetch(`/library-bookExist?isbn13=${this.isbn13}&libCode=${libCode}`, {
-                method: 'GET'
-            })
-            .then(data => data.json())
-            .then(response => {
-                const { hasBook, loanAvailable} = response
-                const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
-                const _loanAvailable = loanAvailable === 'Y' ? '대출가능' : '대출불가'
-                const el = this.libraryItemTemplate.content.firstElementChild.cloneNode(true)
-                el.querySelector('.name').textContent = libName
-                el.querySelector('.hasBook').textContent = _hasBook
-                el.querySelector('.loanAvailable').textContent = _loanAvailable
-                this.removeLibraryLoading()
-                this.library.appendChild(el)
-            })
-            .catch(e => {
-                console.log(e);
-            });
-        }
-    }
-
-    libraryLoading() {
-        this.library.dataset.loading = true
-    }
-    removeLibraryLoading() {
-        const loading = this.library.querySelector('.loading')
-        if (loading)
-            this.library.querySelector('.loading').remove()
-        this.library.removeAttribute('data-loading')
+        const root = this.querySelector('.favorite-library')
+        const template = document.querySelector('#tp-libraryItem')
+        new LibraryBookExist(
+            root, 
+            this.libraryButton, 
+            template, 
+            this.isbn13,
+            state.library
+        )
     }
 
 }
