@@ -11,7 +11,6 @@
 </head>
 <body>
 
-
 <div class="root">
     <header class="header">
         <input-search class="input-search">
@@ -70,20 +69,20 @@
             <ul class="favorite-library">
                 <li class="library-item loading">
                     <p></p>
-                    <p></p>
-                    <p></p>
                 </li>
             </ul>
         </div>
-        
     </book-item>
 </template>
 
 <template id="tp-libraryItem">
     <li class="library-item">
-        <p class="name"></p>
-        <p>소장 여부 : <span class="hasBook"></span></p>
-        <p>대출 가능 여부 : <span class="loanAvailable"></span></p>
+        <p> 
+            <span class="name"></span>
+            : 
+            <span class="hasBook"></span>, 
+            <span class="loanAvailable"></span>
+        </p>
     </li>
 </template>
 

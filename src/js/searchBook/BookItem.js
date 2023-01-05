@@ -115,7 +115,7 @@ export default class BookItem extends HTMLElement {
             .then(response => {
                 const { hasBook, loanAvailable} = response
                 const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
-                const _loanAvailable = loanAvailable === 'Y' ? '가능' : '불가'
+                const _loanAvailable = loanAvailable === 'Y' ? '대출가능' : '대출불가'
                 const el = this.libraryItemTemplate.content.firstElementChild.cloneNode(true)
                 el.querySelector('.name').textContent = libName
                 el.querySelector('.hasBook').textContent = _hasBook
