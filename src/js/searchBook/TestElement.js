@@ -2,10 +2,12 @@
 export default class TestElement extends HTMLElement {
     constructor() {
         super()
+        console.log(this)
     }
 
     get src() {
-        return this.getAttribute('src')
+        return this.localName
+        // return this.getAttribute('src')
     }
 
     connectedCallback() {
@@ -13,9 +15,9 @@ export default class TestElement extends HTMLElement {
             .then( response => response.text() ) 
             .then( htmlStr => {
                 const parser = new DOMParser()
-                const dom = parser.parseFromString(htmlStr, "text/html")
-                const tp = dom.querySelector('div')
-                this.appendChild(tp)
+                const doc = parser.parseFromString(htmlStr, "text/html")
+                const element = doc.querySelector('.test-element')
+                this.appendChild(element)
             })
     }
 
