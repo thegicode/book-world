@@ -2,6 +2,7 @@
 const INITIAL_STATE = {
 	favorite: [],
 	library: {},
+	template: []
 }
 
 const getState = () => {

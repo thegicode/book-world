@@ -1,7 +1,6 @@
 
 import { $ } from './selectors.js'
 
-
 export default class InputSearch extends HTMLElement {
     constructor() {
         super()

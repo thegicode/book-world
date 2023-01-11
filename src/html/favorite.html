@@ -43,17 +43,29 @@
             <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
         </div>
 
-        <ul class="favorite-library">
-            <li class="library-item loading">
-                <p></p>
-            </li>
-        </ul>
+        <library-book-exist>
+            <ul class="favorite-library">
+                <li class="library-item loading">
+                    <p></p>
+                </li>
+            </ul>
+        </library-book-exist>
 
         <!-- <div class="loanHistory">
             <h3>대출 추이</h3>
             <ul></ul>
         </div> -->
     </favorite-item>
+</template>
+
+<template data-template="library-item">
+    <li class="library-item">
+        <p> 
+            <span class="name"></span> : 
+            <span class="hasBook"></span>, 
+            <span class="loanAvailable"></span>
+        </p>
+    </li>
 </template>
 
 <!-- <template data-template="history-item">
@@ -63,17 +75,6 @@
         <p>순위: <span class="ranking"></span></p>
     </li>
 </template> -->
-
-<template id="tp-libraryItem">
-    <li class="library-item">
-        <p> 
-            <span class="name"></span>
-            : 
-            <span class="hasBook"></span>, 
-            <span class="loanAvailable"></span>
-        </p>
-    </li>
-</template>
 
 
 <script type="module" src="../js/favorite/index.js"></script>

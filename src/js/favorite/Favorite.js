@@ -1,4 +1,3 @@
-
 import model from '../model.js'
 const  { state } = model
 
@@ -19,6 +18,7 @@ export default class Favorite extends HTMLElement {
             fragemnt.appendChild(el)
         })
         this.books.appendChild(fragemnt)
+
     }
 
     disConnectedCallback() {

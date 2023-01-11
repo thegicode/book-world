@@ -1,6 +1,6 @@
 import { $ } from './selectors.js'
 import model from '../model.js'
-import LibraryBookExist from '../modules/libraryBookExist.js'
+// import newCustomEvent from '../modules/NewCustomEvent.js'
 
 const  { state, deleteFavorite } = model
 
@@ -9,6 +9,8 @@ export default class FavoriteItem extends HTMLElement {
         super()
         this.favoriteButton = this.querySelector('.favorite-button')
         this.libraryButton = this.querySelector('.library-button')
+        this.libraryBookExist = this.querySelector('library-book-exist')
+
     }
 
     connectedCallback() {
@@ -16,6 +18,7 @@ export default class FavoriteItem extends HTMLElement {
         this.request(this.data)
         this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onLibrary.bind(this))
+
     }
 
     disConnectedCallback() {
@@ -94,16 +97,8 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     onLibrary() {
-        const root = this.querySelector('.favorite-library')
-        const template = document.querySelector('#tp-libraryItem')
-        new LibraryBookExist(
-            root, 
-            this.libraryButton, 
-            template, 
-            this.data,
-            state.library
-        )
-
+        this.libraryBookExist
+            .onLibraryBookExist(this.libraryButton, this.data, state.library)
     }
 
     loading() {

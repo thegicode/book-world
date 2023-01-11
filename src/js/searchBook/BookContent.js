@@ -74,7 +74,6 @@ export default class BookList extends HTMLElement {
         this.observer.observe(target)
     }
 
-
     bookItems(items, prevLength) {
         const fragment = new DocumentFragment()
         items.forEach( (item, index) => {
@@ -105,5 +104,5 @@ export default class BookList extends HTMLElement {
         this.books.innerHTML = ''
         this.books.appendChild(el)
     }
-
+  
 }

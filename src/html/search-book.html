@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/serach-book.css">
     <link rel="shortcut icon" href="/asset/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/asset/favicon.ico" type="image/x-icon">
+    <script type="module" src="/js/searchBook/index.js" async></script>
 </head>
 <body>
 
@@ -29,9 +30,8 @@
             <span class="__display"></span>
         </div>
 
-        <test-element></test-element>
+        <!-- <test-element></test-element> -->
         <!-- <test-element src="test-element"></test-element> -->
-
 
         <div class="book-list">
             <div class="books">
@@ -68,26 +68,26 @@
                 <span>관심책</span>
             </label> 
             <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
-            <ul class="favorite-library">
-                <li class="library-item loading">
-                    <p></p>
-                </li>
-            </ul>
+            <library-book-exist>
+                <ul class="favorite-library">
+                    <li class="library-item loading">
+                        <p></p>
+                    </li>
+                </ul>
+            </library-book-exist>
         </div>
     </book-item>
 </template>
 
-<template id="tp-libraryItem">
+<template data-template="library-item">
     <li class="library-item">
         <p> 
-            <span class="name"></span>
-            : 
+            <span class="name"></span> : 
             <span class="hasBook"></span>, 
             <span class="loanAvailable"></span>
         </p>
     </li>
 </template>
-
 <template data-template="laoding">
     <div class="loading">정보를 불러오는 중입니다.</div>
 </template>
@@ -98,12 +98,6 @@
 
 
 
-
-
-
-
-
-<script type="module" src="/js/searchBook/index.js"></script>
 </body>
 </html>
 
