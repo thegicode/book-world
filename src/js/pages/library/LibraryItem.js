@@ -1,4 +1,4 @@
-import model from '../modules/model.js'
+import model from '../../modules/model.js'
 const  { state, addLibrary, deleteLibrary, includesLibrary } = model
 
 

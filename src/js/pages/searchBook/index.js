@@ -2,7 +2,7 @@
 import InputSearch from './InputSearch.js'
 import BookContent from './BookContent.js'
 import BookItem from './BookItem.js'
-import LibraryBookExist from '../components/LibraryBookExist.js'
+import LibraryBookExist from '../../components/LibraryBookExist.js'
 import TestElement from './TestElement.js'
 
 customElements.define('input-search', InputSearch)
