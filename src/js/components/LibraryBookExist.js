@@ -13,10 +13,10 @@ export default class LibraryBookExist extends HTMLElement {
     }
 
     onLibraryBookExist(button, isbn13, library) {
-        const size = Object.keys(library).length
-        this.loading(size)
+        const data = Object.entries(library)
+        this.loading(data.length)
         button.remove()
-        Object.entries(library).map(([libCode, libName], index) => {
+        data.map(([libCode, libName], index) => {
             fetch(`/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, {
                 method:'GET'
             })
