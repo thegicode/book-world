@@ -1,5 +1,5 @@
 import { $ } from './selectors.js'
-import model from '../model.js'
+import model from '../modules/model.js'
 // import newCustomEvent from '../modules/NewCustomEvent.js'
 
 const  { state, deleteFavorite } = model

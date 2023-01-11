@@ -1,4 +1,4 @@
-import model from '../model.js'
+import model from '../modules/model.js'
 const  { state } = model
 
 export default class Favorite extends HTMLElement {

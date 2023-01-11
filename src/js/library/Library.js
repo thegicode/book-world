@@ -1,4 +1,4 @@
-import model from '../model.js'
+import model from '../modules/model.js'
 const  { includesLibrary } = model
 
 export default class Library extends HTMLElement {
