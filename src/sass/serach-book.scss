@@ -168,43 +168,10 @@ body {
         }
 
     }
-
-    .favorite-library {
-        list-style: none;
-        padding: 0;
-        .loading {
-            display: none;
-        }
-        &:empty {
-            margin: 0;
-        }
-        &[data-loading="true"] {
-            .loading {
-                display: block;
-            }
-            p {
-                &:before {
-                    content: "\00a0";
-                }
-                width: 100%;
-                height: auto;
-                border-radius: 4px;;
-                background-color: #f4f4f4;
-                animation: pulse 1s ease-in-out 0.5s infinite;
-            }
-        }
-        .library-item {
-            padding: 10px 1rem;
-            border: solid 1px #ddd;
-            border-radius: 7px;
-            font-size: 14px;
-        }
-        p {
-            margin: 7px 0;
-        }
-    }
-    
 }
+
+@import './_favorite-item.scss';
+ 
 
 .observe {
     height: 10px;
@@ -215,4 +182,3 @@ body {
     margin-top: 2rem;
     text-align: center;
 }
-

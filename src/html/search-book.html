@@ -70,9 +70,6 @@
             <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
             <library-book-exist>
                 <ul class="favorite-library">
-                    <li class="library-item loading">
-                        <p></p>
-                    </li>
                 </ul>
             </library-book-exist>
         </div>
@@ -80,10 +77,10 @@
 </template>
 
 <template data-template="library-item">
-    <li class="library-item">
+    <li class="library-item" data-loading="true">
         <p> 
-            <span class="name"></span> : 
-            <span class="hasBook"></span>, 
+            <span class="name"></span>
+            <span class="hasBook"></span>
             <span class="loanAvailable"></span>
         </p>
     </li>
@@ -95,8 +92,6 @@
 <template data-template="notFound">
     <div class="notFound">정보가 없습니다.</div>
 </template>
-
-
 
 </body>
 </html>

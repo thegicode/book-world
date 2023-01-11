@@ -1,0 +1,31 @@
+.favorite-library {
+	list-style: none;
+	padding: 10px 0;
+	border-radius: 7px;
+	.loading {
+		display: none;
+	}
+	&:empty {
+		margin: 0;
+	}
+	.library-item {
+		padding: 5px;
+		border-bottom: 1px dashed #ddd;
+		font-size: 14px;
+        &[data-loading="true"] {
+            p {
+                &:before {
+                    content: "\00a0";
+                }
+                width: 100%;
+                height: auto;
+                border-radius: 4px;;
+                background-color: #f4f4f4;
+                animation: pulse 1s ease-in-out 0.5s infinite;
+            }
+        }
+	}
+	p {
+		margin: 7px 0;
+	}
+}

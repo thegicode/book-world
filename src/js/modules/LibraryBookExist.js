@@ -13,40 +13,46 @@ export default class LibraryBookExist extends HTMLElement {
     }
 
     onLibraryBookExist(button, isbn13, library) {
-        const template = document.querySelector('[data-template=library-item]')
-        this.loading()
+        const size = Object.keys(library).length
+        this.loading(size)
         button.remove()
-        for (const [libCode, libName] of Object.entries(library)) {
+        Object.entries(library).map(([libCode, libName], index) => {
             fetch(`/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, {
-                method: 'GET'
+                method:'GET'
             })
             .then(data => data.json())
             .then(response => {
+                const el = this.root.querySelectorAll('.library-item')[index]
                 const { hasBook, loanAvailable} = response
-                const _hasBook = hasBook === 'Y' ? '소장' : '미소장'
-                const _loanAvailable = loanAvailable === 'Y' ? '대출가능' : '대출불가'
-                const el = template.content.firstElementChild.cloneNode(true)
-                el.querySelector('.name').textContent = libName
+                const _hasBook = hasBook === 'Y' ? '소장, ' : '미소장'
+                let _loanAvailable = ''
+                if (hasBook === 'Y') {
+                    _loanAvailable = loanAvailable === 'Y' ? '대출가능' : '대출불가'
+                }
+                el.querySelector('.name').textContent = `${libName} : `
                 el.querySelector('.hasBook').textContent = _hasBook
                 el.querySelector('.loanAvailable').textContent = _loanAvailable
-                this.removeLoading()
-                this.root.appendChild(el)
+                this.removeLoading(el)
             })
             .catch(e => {
                 console.log(e);
             });
+        })
+    }
+
+    loading(size) {
+        const tp = document.querySelector('[data-template=library-item]')
+                    .content
+                    .firstElementChild
+        while(size > 0) {
+            const el = tp.cloneNode(true)
+            this.root.appendChild(el)
+            size--
         }
     }
 
-    loading() {
-        this.root.dataset.loading = true
-    }
-
-    removeLoading() {
-        const loading = this.root.querySelector('.loading')
-        if (loading)
-            this.root.querySelector('.loading').remove()
-        this.root.removeAttribute('data-loading')
+    removeLoading(el) {
+        delete el.dataset.loading
     }
 
 }

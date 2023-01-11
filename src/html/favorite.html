@@ -45,9 +45,6 @@
 
         <library-book-exist>
             <ul class="favorite-library">
-                <li class="library-item loading">
-                    <p></p>
-                </li>
             </ul>
         </library-book-exist>
 
@@ -59,10 +56,10 @@
 </template>
 
 <template data-template="library-item">
-    <li class="library-item">
+    <li class="library-item" data-loading="true">
         <p> 
-            <span class="name"></span> : 
-            <span class="hasBook"></span>, 
+            <span class="name"></span>
+            <span class="hasBook"></span>
             <span class="loanAvailable"></span>
         </p>
     </li>
