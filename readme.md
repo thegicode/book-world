@@ -15,9 +15,9 @@
 
 
 ## TODO
-- ~~LibraryBookExist : html, css 이중 작업 해결할 것 - 포기~~
-- ~~관심 도서관 여러 개 설정~~
-- 
+- ~~LibraryBookExist : html, css 이중 작업 해결할 것 - 포기 [23.01.11]~~ 
+- ~~관심 도서관 여러 개 설정 [23.01.12]~~
+- 도서관 키워드로 검색
 - LibraryBookExist Custom Element, Web componet 이전 버전과 비교
 - 목차 api 확인
 
