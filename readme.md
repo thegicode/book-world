@@ -15,10 +15,12 @@
 
 
 ## TODO
-- ~~LibraryBookExist : html, css 이중 작업 해결할 것 - 포기 [23.01.11]~~ 
-- ~~관심 도서관 여러 개 설정 [23.01.12]~~
+- [23.01.11] LibraryBookExist : html, css 이중 작업 해결할 것 - 포기 
+- [23.01.12] 관심 도서관 여러 개 설정
+- [23.01.12] 책 설명 설명 접기/펴기 적용(책 검색, 즐겨찾기)
 - 도서관 키워드로 검색
 - LibraryBookExist Custom Element, Web componet 이전 버전과 비교
 - 목차 api 확인
+- 버튼 디자인 통일
 
 
