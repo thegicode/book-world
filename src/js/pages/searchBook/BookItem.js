@@ -30,7 +30,7 @@ export default class BookItem extends HTMLElement {
             image,
             isbn,
             link,
-            price,
+            // price,
             pubdate,
             publisher,
             title } = this.data
@@ -44,13 +44,13 @@ export default class BookItem extends HTMLElement {
             title: `${title}`,
             author: `${author}`,
             description: `${description}`,
-            price: `${Number(price).toLocaleString()}원`,
+            // price: `${Number(price).toLocaleString()}원`,
             publisher: `${publisher}`,
             pubdate: `${_date}`,
             isbn: `isbn : ${isbn.split(' ').join(', ')}`
         }
         for (const [key, value] of Object.entries(obj)) {
-            this.querySelector(`.__${key}`).innerHTML = value
+            this.querySelector(`.${key}`).innerHTML = value
         }
 
         this.querySelector('.__link').href = link
@@ -58,7 +58,7 @@ export default class BookItem extends HTMLElement {
         const img = this.querySelector('img')
         img.src = image
         img.onerror = () => {
-            this.querySelector('.__thumb').dataset.fail = true
+            this.querySelector('.thumb').dataset.fail = true
             console.error('image fail', image)
             img.remove()
         }
@@ -70,6 +70,7 @@ export default class BookItem extends HTMLElement {
         if (includesFavorite(this.isbn13)) {
             this.favoriteButton.checked = true
         }
+        
     }
 
     onFavorite(event) {
@@ -86,6 +87,7 @@ export default class BookItem extends HTMLElement {
             .onLibraryBookExist(this.libraryButton, this.isbn13, state.library)
 
     }
+    
 
 }
 

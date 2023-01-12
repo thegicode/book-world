@@ -86,7 +86,9 @@ export default class FavoriteItem extends HTMLElement {
         img.onerror = () => {
             img.remove()
         }
-        this.querySelector('.description').innerHTML = description
+
+        this.querySelector('book-description').data = description
+
         delete this.dataset.loading
     }
 

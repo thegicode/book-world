@@ -16,7 +16,7 @@ export default class InputSearch extends HTMLElement {
         this.form.removeEventListener('submit', this.onSubmit.bind(this))
     }
 
-    onSubmit() {
+    onSubmit(event) {
         event.preventDefault()
 
         const keyword = this.input.value

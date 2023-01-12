@@ -103,12 +103,15 @@ body {
     .details {
         display: flex;
         gap : 1rem;
+        p {
+            margin: 7px 0;
+        }
     }
-    .__title {
+    .title {
         margin: 5px 0 10px;
     }
 
-    .__thumb {
+    .thumb {
         width: 120px;
         &[data-fail="true"] {
             border: 1px solid #ddd;
@@ -117,12 +120,8 @@ body {
 
         img {
             width: 100%; height: auto;
+            border: 1px solid #ddd;
         }
-    }
-
-
-    .__description {
-        line-height: 1.7;
     }
 
     .sites {
@@ -169,7 +168,7 @@ body {
 
     }
 }
-
+@import './_book-description.scss';
 @import './_favorite-item.scss';
  
 

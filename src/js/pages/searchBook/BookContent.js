@@ -7,10 +7,6 @@ export default class BookList extends HTMLElement {
         this.books = this.querySelector('.books')
     }
 
-    set data(v) {
-        this.render(v)
-    }
-
     connectedCallback() {
         this.observer = new IntersectionObserver( changes => {
             changes.forEach( change => {
@@ -33,7 +29,7 @@ export default class BookList extends HTMLElement {
         })
         .then(data => data.json())
         .then(response => {
-            this.data = response
+            this.render(response)
         })
         .catch(e => {
             console.log(e);
@@ -104,5 +100,6 @@ export default class BookList extends HTMLElement {
         this.books.innerHTML = ''
         this.books.appendChild(el)
     }
+
   
 }

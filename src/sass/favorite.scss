@@ -74,9 +74,7 @@ button {
 			margin: 0 0 8px;
 		}
 	}
-	.description {
-		line-height: 1.5;
-	}
+	
 }
 
 .favorite-actions {
@@ -88,4 +86,5 @@ button {
 		margin-top: 10px;
 	}
 }
+@import './_book-description.scss';
 @import './_favorite-item.scss';
