@@ -23,5 +23,8 @@
 - LibraryBookExist Custom Element, Web componet 이전 버전과 비교
 - 목차 api 확인
 - 버튼 디자인 통일
+- observer component
+- 도서 추천 키워드
+- Thumb image 통일?
 
 

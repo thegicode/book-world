@@ -112,14 +112,16 @@ body {
     }
 
     .thumb {
-        width: 120px;
+        flex: none;
+        // width: 120px;
         &[data-fail="true"] {
             border: 1px solid #ddd;
             background-color: #eee;
         }
 
         img {
-            width: 100%; height: auto;
+            box-sizing: border-box;
+            width: 120px; height: auto;
             border: 1px solid #ddd;
         }
     }

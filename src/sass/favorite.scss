@@ -58,14 +58,16 @@ button {
 		gap: 1rem;
 	}
 	.thumb {
-		flex: 0.6;
-		max-width: 150px;
+		flex: none;
+		// max-width: 150px;
 		&[data-loaded="false"] {
 			background-color: #f4f4f4;
 		}
 		img {
-			width: 100%;
+            box-sizing: border-box;
+			width: 120px;
 			height: auto;
+			border: 1px solid #ddd;
 		}
 	}
 	.info {
