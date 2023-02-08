@@ -187,7 +187,7 @@ app.get('/usageAnalysisList', function(req, res) {
 
 
 // Router
-const routes = ['favorite', 'library', 'search-book']
+const routes = ['favorite', 'library', 'search']
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
         console.log('routes', routes)
