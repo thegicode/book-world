@@ -1,17 +1,6 @@
 @import './_reset.scss';
 
 
-html {
-    height: 100%;
-}
-
-body {
-    overflow: hidden;
-    height: 100%;
-    margin: 0;
-}
-
-
 .root {
     display: flex;
     flex-direction: column;
@@ -19,6 +8,9 @@ body {
     height: 100%;
 
 }
+
+@import './_gnb.scss';
+
 .header {
     flex: none;
     // position: fixed;
@@ -26,7 +18,7 @@ body {
     // right: 0;
     // left: 0;
     padding: 1rem 1rem 10px;
-    background-color: #e6eff9;
+    background-color: #f1fff4;
 
 }
 .input-search {
@@ -38,10 +30,19 @@ body {
         flex: 1;
         padding: 10px 1rem;
         border-radius: 5px;
-        border: 1px solid #8a99a7;
+        border: 1px solid #cde1d1;
         background-color: transparent;
         font-size: 14px;
-        
+        color: #4a754a;
+        &::placeholder {
+            color: #80a381;
+        }
+        &:focus {
+            outline: none;
+            border-color: #50ad50;
+            color: #107214;
+            background-color: #f8f8b1c9;
+        }
     }
     button {
         flex: none;
@@ -49,8 +50,9 @@ body {
         padding: 0 20px;
         border-radius: 5px;
         border: none;
-        background-color: rgba(10, 100, 200, 0.2);
+        background-color: rgb(194 230 203);
         font-size: 14px;
+        color: #799180;
     }
 }
 

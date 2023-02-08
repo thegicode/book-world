@@ -1,0 +1,16 @@
+.gnb {
+    display: flex;
+    justify-content: space-evenly;
+    background-color: #37824a;
+    &-item {
+        padding: 12px 0;
+        text-decoration: none;
+        color: #fff;
+        font-size: 14px;
+        &:hover,
+        &[aria-selected="true"] {
+            text-decoration: underline;
+            color: rgb(255, 255, 177);
+        }
+    }
+}

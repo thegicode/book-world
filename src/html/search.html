@@ -7,16 +7,23 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="shortcut icon" href="/asset/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/asset/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/css/serach-book.css">
+    <link rel="stylesheet" href="/css/serach.css">
     <script type="module" src="/js/pages/searchBook/index.js" async></script>
 </head>
 <body>
 
 <div class="root">
+
+    <nav class="gnb">
+        <a class="gnb-item" href="./search" aria-selected="true">책 검색</a>
+        <a class="gnb-item" href="./favorite">즐겨찾기</a>
+        <a class="gnb-item" href="./library">도서관 조회</a>
+    </nav>
+
     <header class="header">
         <input-search class="input-search">
             <form>
-                <input type="search" value="토지10 마로니에북스" title="책 키워드" placeholder="검색어를 입력하세요" required>
+                <input type="search" value="" title="책 키워드" placeholder="검색어를 입력하세요" required>
                 <button type="submit">찾기</button>
             </form>
         </input-search>
