@@ -18,30 +18,30 @@
         <a class="gnb-item" href="./favorite" aria-selected="true">즐겨찾기</a>
         <a class="gnb-item" href="./library">도서관 조회</a>
     </nav>
-
-    <header class="favorite-header">
-        <!-- <h2>즐겨찾기</h2> -->
-        <p class="count"></p>권
-    </header>
+   
     <div class="favorite-books">
+        <header class="favorite-header">
+            <!-- <h2>즐겨찾기</h2> -->
+            <p class="count"></p>
+        </header>
     </div>
 </app-favorite>
 
 <template id="tp-favorite-item">
     <favorite-item class="favorite-item">
+        <h4 class="bookname"></h4>
         <div class="details">
             <div class="thumb" data-loaded="false"><img src="" alt="썸네일"></div>
-            <div class="info">
-                <p>도서명 : <strong class="bookname"></strong></p>
-                <p class="authors"></p>
-                <p class="class_nm"></p>
-                <p>주제분류 : <span class="class_no"></span></p>
-                <p>ISBN : <span class="isbn13"></span></p>
-                <p>출판사 : <span class="publisher"></span></p>
-                <p>출판년도 : <span class="publication_year"></span></p>
-                <p>권 : <span class="vol"></span></p>
-                <p>대출권수 : <span class="loanCnt"></span></p>
-            </div>
+            <ul class="info">
+                <li class="authors"></>
+                <li class="class_nm"></>
+                <li>주제분류 : <span class="class_no"></span></li>
+                <li>ISBN : <span class="isbn13"></span></li>
+                <li>출판사 : <span class="publisher"></span></li>
+                <li>출판년도 : <span class="publication_year"></span></li>
+                <li>대출권수 : <span class="loanCnt"></span></li>
+                <li>권 : <span class="vol"></span></li>
+            </ul>
         </div>
         <book-description>
             <p class="description" data-ellipsis="true"></p>

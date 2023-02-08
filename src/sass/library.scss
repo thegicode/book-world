@@ -1,11 +1,23 @@
+@import './_reset.scss';
 
-body {
-	margin: 0;
-}
 
 h2 {
 	margin: 0;
 	padding: 1rem 1rem 0;
+}
+
+.root {
+	display: flex;
+    flex-direction: column;
+	height: 100%;
+}
+
+app-library {
+	overflow: auto;
+	color: #4f4f4f;
+	a {
+		color: #4f4f4f;
+	}
 }
 
 @import './_gnb.scss';
@@ -13,22 +25,59 @@ h2 {
 
 library-region {
 	display: block;
-	padding: 1rem 1rem 0;
+	padding: 0 1rem;
+	
 	select {
 		width: 100%;
-		padding: 1rem;
+		margin: 10px 0 0;
+		padding: 10px;
+		border-radius: 5px;
+		appearance: none;
 	}
 }
 
 library-item {
 	display: block;
 	margin: 1rem ;
+	padding-bottom: 1rem;
 	border-bottom: 1px solid #ddd;
 	line-height: 2;
+	.libName {
+		margin: 0;
+		margin-bottom: 10px;
+		color: #34934a;
+		font-size: 20px;
+		text-align: center;
+	}
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-size: 14px;
+	}
+	li {
+		&:before {
+			content: '⋅';
+			display: inline-block;
+			padding-right: 5px;
+			
+		}
+	}
+
 }
 
 .actions {
-	padding: 0 1rem 1rem;
+    margin-top: 10px;
+	border-radius: 5px;
+	background: #f5f5f5;
+	font-size: 14px;
+	label {
+		display: flex;
+		padding: 5px 10px;
+	}
+	input[name="myLibrary"] {
+		margin-right: 7px;
+	}
 }
 
 .loading,

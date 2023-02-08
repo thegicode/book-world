@@ -63,6 +63,10 @@ export default class FavoriteItem extends HTMLElement {
             vol
         } = book
 
+        // const names = bookname.split(' =')
+        // const name = names[0]
+        // const subName = names[1]
+
         const obj = {
             bookname: `${bookname}`,
             authors: `${authors}`,

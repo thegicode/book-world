@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>정보공개 도서관 | Book World</title>
+    <title>도서관 조회 | Book World</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <link rel="shortcut icon" href="/asset/favicon.ico" type="image/x-icon">
@@ -12,47 +12,45 @@
 </head>
 <body>
 
-
-<app-library>
+<div class="root">
     <nav class="gnb">
         <a class="gnb-item" href="./search">책 검색</a>
         <a class="gnb-item" href="./favorite">즐겨찾기</a>
         <a class="gnb-item" href="./library" aria-selected="true">도서관 조회</a>
     </nav>
-
-    <!-- <h2>도서관 조회</h2> -->
-
-    <library-region>
-        <h3>지역 선택</h3>
-        <select>
-            <option value="11250" selected>서울 강동구</option>
-            <option value="31180">경기 하남 미사</option>
-        </select>
-    </library-region>
-
-    <form></form>
-
-</app-library>
+    <app-library>
+        <!-- <h2>도서관 조회</h2> -->
+        <library-region>
+            <!-- <h3>지역 선택</h3> -->
+            <select>
+                <option value="11250" selected>서울 강동구</option>
+                <option value="31180">경기 하남 미사</option>
+            </select>
+        </library-region>
+    
+        <form></form>
+    
+    </app-library>
+</div>
 <template id="tp-item">
     <library-item>
+        <h4 class="libName"></h4>
         <ul>
-            <li><span>도서관명: </span><span class="libName"></span></li>
             <li><span>도서관 코드: </span><span class="libCode"></span></li>
-            <li><span>주소: </span><span class="address"></span></li>
-            <li><span>전화번호: </span><span class="tel"></span></li>
-            <li><span>팩스: </span><span class="fax"></span></li>
-            <li>
-                <span>홈페이지: </span>
+            <li><span>주소 : </span><span class="address"></span></li>
+            <li><span>전화번호 : </span><span class="tel"></span></li>
+            <li><span>팩스 : </span><span class="fax"></span></li>
+            <li><span>홈페이지 : </span>
                 <a class="homepage" href="" target="_blank"></a>
             </li>
-            <li><span>휴관일: </span><span class="closed"></span></li>
-            <li><span>운영시간: </span><span class="operatingTime"></span></li>
-            <li><span>단행본수: </span><span class="BookCount"></span></li>
+            <li><span>휴관일 : </span><span class="closed"></span></li>
+            <li><span>운영시간 : </span><span class="operatingTime"></span></li>
+            <li><span>단행본수 : </span><span class="BookCount"></span></li>
         </ul>
         <div class="actions">
             <label>
                 <input type="checkbox" name="myLibrary">
-                <span>메인 도서관으로 선택</span>
+                <span>관심 도서관</span>
             </label>
         </div>
     </library-item>

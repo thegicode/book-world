@@ -80,7 +80,7 @@ app.get('/library-bookExist', function(req, res) {
 
     axios.get(url)
         .then( response => {
-            // console.log(response.data.response.result)
+            console.log(response.data.response.result)
             res.send(response.data.response.result)
         })
         .catch(error => {
@@ -190,10 +190,9 @@ app.get('/usageAnalysisList', function(req, res) {
 const routes = ['favorite', 'library', 'search']
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
-        console.log('routes', routes)
+        console.log(route)
 
         const htmlURL = `${__dirname}/src/html/${route}.html`
-        console.log('htmlURL', htmlURL)
         res.send(fs.readFileSync(path.resolve(__dirname, htmlURL), 'utf8'))
     })
 })
