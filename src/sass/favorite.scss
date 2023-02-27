@@ -5,9 +5,9 @@
 button {
 	border-radius: 7px;
 	border: none;
-	background-color: #f8f8f8;
-	padding: 7px 1rem;
-	color: #333;
+	// background-color: #f8f8f8;
+	// padding: 7px 1rem;
+	// color: #333;
 	&:disabled {
 		opacity: 0.5;
 	}
@@ -40,7 +40,7 @@ button {
 	}
 	.count {
 		margin: 0 0 10px;
-		font-size: 1.2rem;
+		font-size: 1rem;
 	}
 }
 
@@ -93,7 +93,7 @@ button {
             box-sizing: border-box;
 			width: 120px;
 			height: auto;
-			border: 1px solid #ddd;
+			border: 1px solid #eaeaea;
 		}
 	}
 	.info {
@@ -101,8 +101,9 @@ button {
 		list-style: none;
 		margin: 0;
 		padding: 0;
+		color: #333;
 		li {
-			padding-bottom: 5px;
+			padding-bottom: 7px;
 			&:before {
 				content : "⋅";
 				display: inline-block;
@@ -114,8 +115,19 @@ button {
 }
 
 .favorite-actions {
-	.favorite-button {
+	button {
 		width: 100%;
+		// display: inline-block;
+		padding: 7px 10px;
+		border-radius: 5px;
+		border: 1px solid #eff2e5;
+		background-color: transparent;
+		font-size: 12px;
+		text-decoration: none;
+		color: #37824a;
+		&:hover {
+			background-color: #fcfff2;
+		}
 	}
 	.library-button {
 		width: 100%;

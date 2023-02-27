@@ -15,7 +15,6 @@ export default class LibraryBookExist extends HTMLElement {
     onLibraryBookExist(button, isbn13, library) {
         const data = Object.entries(library)
         this.loading(data.length)
-        // button.remove()
         button.disabled = true
         data.map(([libCode, libName], index) => {
             fetch(`/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, {
@@ -30,7 +29,7 @@ export default class LibraryBookExist extends HTMLElement {
                 if (hasBook === 'Y') {
                     _loanAvailable = loanAvailable === 'Y' ? '대출가능' : '대출불가'
                 }
-                el.querySelector('.name').textContent = `${libName} : `
+                el.querySelector('.name').textContent = `☼ ${libName} : `
                 el.querySelector('.hasBook').textContent = _hasBook
                 el.querySelector('.loanAvailable').textContent = _loanAvailable
                 this.removeLoading(el)

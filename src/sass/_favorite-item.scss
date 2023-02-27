@@ -7,23 +7,30 @@
 		display: none;
 	}
 	.library-item {
-		padding: 5px;
-		border-bottom: 1px dashed #ddd;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 1rem;
+		// border-bottom: 1px dashed #ddd;
 		font-size: 14px;
+
+		.library-info {
+			margin: 0;
+		}
+
         &[data-loading="true"] {
-            p {
+            .library-info {
                 &:before {
                     content: "\00a0";
                 }
                 width: 100%;
                 height: auto;
-                border-radius: 4px;;
-                background-color: #f4f4f4;
+                border-radius: 4px;
+				background-color: #f3f9eb;
                 animation: pulse 1s ease-in-out 0.5s infinite;
             }
+
         }
 	}
-	p {
-		margin: 7px 0;
-	}
+	
 }
