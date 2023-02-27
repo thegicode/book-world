@@ -25,14 +25,25 @@ app-library {
 
 library-region {
 	display: block;
-	padding: 0 1rem;
-	
+	// padding: 0 1rem;
+	padding: 10px 1rem;
+    background-color: #f1fff4;
 	select {
 		width: 100%;
-		margin: 10px 0 0;
-		padding: 10px;
-		border-radius: 5px;
+		padding: 10px 1rem;
 		appearance: none;
+		
+		border-radius: 5px;
+		border: 1px solid #cde1d1;
+		background-color: transparent;
+		font-size: 14px;
+		color: #4a754a;
+		&:focus {
+			outline: none;
+			border-color: #50ad50;
+			color: #107214;
+			background-color: #f8f8b1c9;
+		}
 	}
 }
 

@@ -84,9 +84,6 @@ export default class FavoriteItem extends HTMLElement {
 
         const img =  this.querySelector('img')
         img.src = `${bookImageURL}`
-        img.onload = () => {
-            delete this.querySelector('.thumb').dataset.loaded
-        }
         img.onerror = () => {
             img.remove()
         }
