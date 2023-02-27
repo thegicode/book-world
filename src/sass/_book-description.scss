@@ -1,8 +1,11 @@
 
 book-description {
+    display: flex;
+    flex-direction: column;
     .description {
-        line-height: 1.7;    
+        margin: 5px 0;
         font-size: 14px;
+        line-height: 1.5;    
         &[data-ellipsis="true"] {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -12,8 +15,10 @@ book-description {
         }
     }
     .more-description-button {
-        display: block;
-        width: 100%;
+        // display: block;
+        // width: 100%;
+        width: auto;
+        margin-left: auto;
         margin-bottom: 10px;
         padding: 5px 10px;
         border-radius: 5px;
