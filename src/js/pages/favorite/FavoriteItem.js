@@ -10,7 +10,7 @@ export default class FavoriteItem extends HTMLElement {
         this.favoriteButton = this.querySelector('.favorite-button')
         this.libraryButton = this.querySelector('.library-button')
         this.libraryBookExist = this.querySelector('library-book-exist')
-
+        this.link = this.querySelector('a')
     }
 
     connectedCallback() {
@@ -18,11 +18,13 @@ export default class FavoriteItem extends HTMLElement {
         this.request(this.data)
         this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onLibrary.bind(this))
+        this.link.addEventListener('click', this.onClick.bind(this))
     }
 
     disConnectedCallback() {
         this.favoriteButton.removeEventListener('click', this.onFavorite.bind(this))
         this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
+        this.link.removeEventListener('click', this.onClick.bind(this))
     }
 
     request(isbn13) {
@@ -57,12 +59,14 @@ export default class FavoriteItem extends HTMLElement {
             class_nm,
             // class_no,
             description,
-            // isbn13,
+            isbn13,
             loanCnt,
             publication_year,
             publisher,
             // vol
         } = book
+
+        this.linkData = data
 
         // const names = bookname.split(' =')
         // const name = names[0]
@@ -73,7 +77,7 @@ export default class FavoriteItem extends HTMLElement {
             authors: `${authors}`,
             class_nm: `${class_nm}`,
             // class_no: `${class_no}`,
-            // isbn13: `${isbn13}`,
+            isbn13: `${isbn13}`,
             loanCnt: `${loanCnt.toLocaleString()}`,
             publication_year: `${publication_year}`,
             publisher: `${publisher}`,
@@ -94,7 +98,7 @@ export default class FavoriteItem extends HTMLElement {
         delete this.dataset.loading
     }
 
-    onFavorite(event) {
+    onFavorite() {
         deleteFavorite(this.data)
         $.favorite.updateCount()
         this.remove()
@@ -109,5 +113,9 @@ export default class FavoriteItem extends HTMLElement {
         this.dataset.loading = true
     }
     
+    onClick(event) {
+        event.preventDefault()
+        location.href = `book?isbn=${this.data}`
+    }
 }
 

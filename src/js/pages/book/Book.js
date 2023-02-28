@@ -1,0 +1,89 @@
+// import model from '../../modules/model.js'
+// const  { state } = model
+
+export default class Book extends HTMLElement {
+    constructor() {
+        super()
+    }
+
+    connectedCallback() {
+        const isbn = this.searchParam('isbn')
+        this.request(isbn)
+    }
+
+    disConnectedCallback() {
+    }
+
+    request(isbn) {
+        fetch(`/usageAnalysisList?isbn13=${isbn}`, {
+            method: 'GET'
+        })
+        .then(data => data.json())
+        .then(response => {
+            this.render(response)
+        })
+        .catch(e => {
+            console.log(e);
+        })
+    }
+
+    searchParam(key) {
+        return new URLSearchParams(location.search).get(key);
+    }
+
+    render(data) {
+        const {
+            book,
+            coLoanBooks,
+            keywords,
+            loanGrps,
+            loanHistory,
+            recBooks
+        } = data
+
+        const  {
+            bookname,
+            authors,
+            bookImageURL,
+            class_nm,
+            class_no,
+            description,
+            isbn13,
+            loanCnt,
+            publication_year,
+            publisher
+        } = book
+
+        const bookNames_1 = bookname.split(/[=]|[/]|[:]/)
+        const bookNames_2 = bookNames_1.map( (item, index) => {
+            return `<p>${item}</p>`
+        }).join('')
+
+        const keywords_2 = keywords.map( item => {
+            return `<span>${item.word}</span>`
+        }).join('')
+
+        const recBooksString = recBooks.map( item => {
+            return `<p>${item.bookname}</p>`
+        }).join('')
+
+        this.querySelector('.bookname').innerHTML = bookNames_2
+        this.querySelector('.authors').textContent = authors
+        const img = this.querySelector('img')
+        img.src = bookImageURL
+        img.setAttribute('alt', bookname)
+        this.querySelector('.class_nm').textContent = class_nm
+        this.querySelector('.class_no').textContent = class_no
+        this.querySelector('.description').textContent = description
+        this.querySelector('.isbn13').textContent = isbn13
+        this.querySelector('.loanCnt').textContent = loanCnt.toLocaleString()
+        this.querySelector('.publication_year').textContent = publication_year
+        this.querySelector('.publisher').textContent = publisher
+        this.querySelector('.keyword').innerHTML = keywords_2
+        this.querySelector('.recBooks').innerHTML = recBooksString
+
+        this.querySelector('.loading').remove()
+    }
+
+}
+
