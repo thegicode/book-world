@@ -13,10 +13,22 @@ button {
 	}
 }
 
+.root {
+	display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+nav-gnb {
+	flex: none;
+}
+
 .favorite {
+	flex: 1;
+    overflow: auto;
+
     display: flex;
     flex-direction: column;
-	height: 100%;
 	font-size: 14px;
 	color: #4f4f4f;
 	&-header {
@@ -47,7 +59,7 @@ button {
 // .favorite-books {
 // }
 
-.favorite-item {
+favorite-item {
 	display: flex;
 	flex-direction: column;
 	position: relative;
