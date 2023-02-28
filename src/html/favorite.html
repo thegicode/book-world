@@ -29,19 +29,19 @@
 
 <template id="tp-favorite-item">
     <favorite-item class="favorite-item">
-        <h4 class="bookname"></h4>
-        <div class="details">
-            <div class="thumb"><img src="" alt="썸네일"></div>
-            <ul class="info">
-                <li class="authors"></>
-                <li class="class_nm"></>
-                <li>주제분류 : <span class="class_no"></span></li>
-                <li>ISBN : <span class="isbn13"></span></li>
-                <li>출판사 : <span class="publisher"></span></li>
-                <li>출판년도 : <span class="publication_year"></span></li>
-                <li>대출권수 : <span class="loanCnt"></span></li>
-                <li>권 : <span class="vol"></span></li>
-            </ul>
+        <div class="book-summary">
+            <div class="book-image"><img src="" alt="썸네일"></div>
+            <div class="book-info">
+                <h4 class="bookname"></h4>
+                <p class="authors"></p>
+                <p class="class_nm"></p>
+                <!-- <li>주제분류 : <span class="class_no"></span></li> -->
+                <!-- <li>ISBN : <span class="isbn13"></span></li> -->
+                <p>출판사 : <span class="publisher"></span></p>
+                <p>출판년도 : <span class="publication_year"></span></p>
+                <p>대출권수 : <span class="loanCnt"></span></p>
+                <!-- <li>권 : <span class="vol"></span></li> -->
+            </div>
         </div>
         <book-description>
             <p class="description" data-ellipsis="true"></p>

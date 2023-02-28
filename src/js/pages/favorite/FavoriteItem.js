@@ -18,7 +18,6 @@ export default class FavoriteItem extends HTMLElement {
         this.request(this.data)
         this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onLibrary.bind(this))
-
     }
 
     disConnectedCallback() {
@@ -49,18 +48,20 @@ export default class FavoriteItem extends HTMLElement {
             coLoanBooks
         } = data
 
+        // console.log(loanGrps)
+
         const {
             authors,
             bookImageURL,
             bookname,
             class_nm,
-            class_no,
+            // class_no,
             description,
-            isbn13,
+            // isbn13,
             loanCnt,
             publication_year,
             publisher,
-            vol
+            // vol
         } = book
 
         // const names = bookname.split(' =')
@@ -71,12 +72,12 @@ export default class FavoriteItem extends HTMLElement {
             bookname: `${bookname}`,
             authors: `${authors}`,
             class_nm: `${class_nm}`,
-            class_no: `${class_no}`,
-            isbn13: `${isbn13}`,
+            // class_no: `${class_no}`,
+            // isbn13: `${isbn13}`,
             loanCnt: `${loanCnt.toLocaleString()}`,
             publication_year: `${publication_year}`,
             publisher: `${publisher}`,
-            vol: `${vol}`,
+            // vol: `${vol}`,
         }
         for (const [key, value] of Object.entries(obj)) {
             this.querySelector(`.${key}`).textContent = value

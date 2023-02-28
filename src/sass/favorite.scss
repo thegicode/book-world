@@ -70,19 +70,13 @@ button {
 			background-color: #fffff5;
 		}
 	}
-	.bookname {
-		margin: 0 0 10px;
-		font-size: 20px;
-		color: #34934a;
-		padding: 10px 0;
-		border-radius: 5px;
-		// line-height: 1.5;
-	}
-	.details {
+
+
+	.book-summary {
 		display: flex;
 		gap: 1rem;
 	}
-	.thumb {
+	.book-image {
 		flex: none;
 		box-sizing: border-box;
 		min-width: 120px;
@@ -96,19 +90,24 @@ button {
 			border: 1px solid #eaeaea;
 		}
 	}
-	.info {
+	.book-info {
 		flex: 1;
-		list-style: none;
-		margin: 0;
-		padding: 0;
 		color: #333;
-		li {
-			padding-bottom: 7px;
+		p {
+			margin: 0;
+			padding: 0 0 7px;
+			font-size: 14px;
 			&:before {
 				content : "⋅";
-				display: inline-block;
+				display: inline-4block;
 				padding-right: 5px;
 			}
+		}
+		.bookname {
+			margin: 5px 0 12px;
+			border-radius: 5px;
+			font-size: 1rem;
+			color: #34934a;
 		}
 	}
 	
@@ -131,7 +130,7 @@ button {
 	}
 	.library-button {
 		width: 100%;
-		margin-top: 10px;
+		margin-top: 5px;
 	}
 }
 @import './_book-description.scss';

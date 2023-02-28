@@ -22,9 +22,11 @@
 - 도서관 키워드로 검색
 - LibraryBookExist Custom Element, Web componet 이전 버전과 비교
 - 목차 api 확인
-- 버튼 디자인 통일
+- 버튼 디자인 통일, 모듈화
 - observer component
 - 도서 추천 키워드
 - Thumb image 통일?
+- 도서 상세 모듈화
+- 타입스크립트 적용
 
 
