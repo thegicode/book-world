@@ -7,6 +7,7 @@ export default class LibraryBookExist extends HTMLElement {
     }
 
     connectedCallback() {
+        this.itemTemplate = this.template()
     }
 
     disconnectedCallback() {
@@ -22,7 +23,7 @@ export default class LibraryBookExist extends HTMLElement {
             })
             .then(data => data.json())
             .then(response => {
-                const el = this.root.querySelectorAll('.library-item')[index]
+                const el = this.querySelectorAll('.library-item')[index]
                 const { hasBook, loanAvailable} = response
                 const _hasBook = hasBook === 'Y' ? '소장, ' : '미소장'
                 let _loanAvailable = ''
@@ -41,20 +42,24 @@ export default class LibraryBookExist extends HTMLElement {
     }
 
     loading(size) {
-        const tp = document.querySelector('[data-template=library-item]')
-                    .content
-                    .firstElementChild
+        let tp = ''
         while(size > 0) {
-            const el = tp.cloneNode(true)
-            this.root.appendChild(el)
+            tp += this.itemTemplate
             size--
         }
+        this.root.innerHTML = tp
     }
 
     removeLoading(el) {
         delete el.dataset.loading
     }
 
+    template() {
+        return `<li class="library-item" data-loading="true">
+            <span class="name"></span>
+            <span class="hasBook"></span>
+            <span class="loanAvailable"></span>
+        </li>`
+    }
     
-
 }
