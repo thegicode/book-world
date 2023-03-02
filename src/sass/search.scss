@@ -1,4 +1,7 @@
 @import './_reset.scss';
+@import './_gnb.scss';
+@import './_book-description.scss';
+@import './_library-book-exist.scss';
 
 
 .root {
@@ -9,7 +12,6 @@
 
 }
 
-@import './_gnb.scss';
 
 .header {
     flex: none;
@@ -181,8 +183,6 @@
 
     }
 }
-@import './_book-description.scss';
-@import './_favorite-item.scss';
  
 
 .observe {

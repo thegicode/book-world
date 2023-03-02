@@ -1,17 +1,23 @@
-// import model from '../../modules/model.js'
-// const  { state } = model
+import model from '../../modules/model.js'
+const  { state } = model
 
 export default class Book extends HTMLElement {
     constructor() {
         super()
+        this.libraryBookExist = this.querySelector('library-book-exist')
+        this.libraryButton = this.querySelector('.library-button')
     }
 
     connectedCallback() {
         const isbn = this.searchParam('isbn')
         this.request(isbn)
+        this.libraryButton.addEventListener('click', this.onLibrary.bind(this, isbn))
+
     }
 
     disConnectedCallback() {
+        this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
+
     }
 
     request(isbn) {
@@ -85,5 +91,9 @@ export default class Book extends HTMLElement {
         this.querySelector('.loading').remove()
     }
 
+    onLibrary(isbn) {
+        this.libraryBookExist
+            .onLibraryBookExist(this.libraryButton, isbn, state.library)
+    }
 }
 

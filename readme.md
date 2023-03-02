@@ -28,5 +28,6 @@
 - Thumb image 통일?
 - 도서 상세 모듈화
 - 타입스크립트 적용
-
+- LibraryBookExist 마크업, css 통일
+- 책 검색 목록 클릭 - 상세 연결
 

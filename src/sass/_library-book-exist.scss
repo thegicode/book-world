@@ -1,0 +1,29 @@
+library-book-exist {
+    .library-list {
+        list-style: none;
+        margin: 1rem 0 0;
+        padding: 0;
+        border-radius: 7px;
+    }
+    .library-item {
+        display: flex;
+        margin: 5px 0;
+        font-size: 14px;
+
+        span {
+            margin-right: 5px;
+        }
+
+        &[data-loading="true"] {
+            &:before {
+                content: "\00a0";
+            }
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            background-color: #f3f9eb;
+            animation: pulse 1s ease-in-out 0.5s infinite;
+        }
+    }
+
+}

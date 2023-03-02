@@ -1,6 +1,8 @@
 @import './_reset.scss';
 @import './_keyframes.scss';
-
+@import './_gnb.scss';
+@import './_book-description.scss';
+@import './_library-book-exist.scss';
 
 button {
 	border-radius: 7px;
@@ -44,7 +46,6 @@ nav-gnb {
 	}
 }
 
-@import './_gnb.scss';
 
 .favorite-header {
 	h2 {
@@ -123,7 +124,6 @@ favorite-item {
 			color: #34934a;
 		}
 	}
-	
 }
 
 .favorite-actions {
@@ -146,5 +146,7 @@ favorite-item {
 		margin-top: 5px;
 	}
 }
-@import './_book-description.scss';
-@import './_favorite-item.scss';
+
+library-book-exist {
+	margin: 0 1rem 1rem;
+}

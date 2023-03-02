@@ -3,7 +3,7 @@
 export default class LibraryBookExist extends HTMLElement {
     constructor() {
         super()
-        this.root = this.querySelector('.favorite-library')
+        this.root = this.querySelector('.library-list')
     }
 
     connectedCallback() {
@@ -54,5 +54,7 @@ export default class LibraryBookExist extends HTMLElement {
     removeLoading(el) {
         delete el.dataset.loading
     }
+
+    
 
 }

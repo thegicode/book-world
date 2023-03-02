@@ -1,5 +1,6 @@
 @import './_reset.scss';
 @import './_gnb.scss';
+@import './_library-book-exist.scss';
 
 
 .root {
@@ -33,7 +34,7 @@ app-book {
     h4 {
         display: block;
         margin: 30px 0 0;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #e7e7e7;
         font-size: 1rem;
     }
 
@@ -46,12 +47,31 @@ app-book {
         }
     }
 
+    .authors {
+    }
+
     .book-image {
         text-align: center;
         .thumb {
             border: 1px solid #e8e8e8;
         }
 
+    }
+
+    .cols {
+        display: flex;
+        flex-wrap: wrap;
+        .col {
+            box-sizing: border-box;
+            width: 50%;
+            &:nth-child(even) {
+                padding-left: 10px;;
+            }
+        }
+    }
+
+    .actions {
+        margin-top: 2rem;
     }
 
 
@@ -61,16 +81,34 @@ app-book {
         span {
             // display: inline-block;
             margin: 2px;
-            padding: 2px 10px;
+            padding: 2px 7px;
             border-radius: 5px;
             border: 1px solid #ddd;
             background-color: #f8f8f8;
+            font-size: 12px;
         }
     }
 
     .recBooks {
         p {
             margin: 0 0 5px;
+        }
+    }
+
+    .library-button {
+        width: 100%;
+        padding: 7px 10px;
+        border-radius: 5px;
+        border: 1px solid #eff2e5;
+        background-color: transparent;
+        font-size: 12px;
+        text-decoration: none;
+        color: #37824a;
+        &:hover {
+            background-color: #fcfff2;
+        }
+        &:disabled {
+            opacity: 0.5;
         }
     }
 
