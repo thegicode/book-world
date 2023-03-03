@@ -1,5 +1,5 @@
 
-export default class BookList extends HTMLElement {
+export default class BookContent extends HTMLElement {
     constructor() {
         super()
         this.length = 0
@@ -8,6 +8,9 @@ export default class BookList extends HTMLElement {
     }
 
     connectedCallback() {
+
+        this.setKeyword()
+        
         this.observer = new IntersectionObserver( changes => {
             changes.forEach( change => {
                 if (change.isIntersecting) {
@@ -16,12 +19,42 @@ export default class BookList extends HTMLElement {
                 }
             })
         })
+    
+        window.addEventListener('popstate', this.onPopState.bind(this))
 
     }
 
     disconnectedCallback() {
         this.observer = null
+        window.removeEventListener('popstate', this.onPopState.bind(this))
+
     }
+
+    setKeyword() {
+        const params = new URLSearchParams(location.search)
+        const keyword = params.get('keyword')
+        this.initialize(keyword)
+    }
+
+    onPopState() {
+        this.setKeyword()
+    }
+
+    initialize(keyword) {
+        this.keyword = keyword
+        if (this.keyword) {
+            console.log('request', this.keyword)
+            this.length = 0
+            this.loading()
+            this.books.innerHTML = ''
+            this.request()
+        } else {
+            
+            console.log(this.keyword)
+
+        }
+    }
+
 
     request() {
         fetch(`/naver?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`, {
@@ -81,14 +114,6 @@ export default class BookList extends HTMLElement {
         this.books.appendChild(fragment)
     }
 
-    initialize(keyword) {
-        this.keyword = keyword
-        this.length = 0
-        this.loading()
-        this.books.innerHTML = ''
-        this.request()
-    }
-
     loading() {
         const el = document.querySelector('[data-template=laoding]').content.firstElementChild.cloneNode(true)
         this.books.innerHTML = ''
@@ -100,6 +125,5 @@ export default class BookList extends HTMLElement {
         this.books.innerHTML = ''
         this.books.appendChild(el)
     }
-
   
 }

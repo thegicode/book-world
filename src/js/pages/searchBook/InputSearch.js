@@ -18,14 +18,19 @@ export default class InputSearch extends HTMLElement {
 
     onSubmit(event) {
         event.preventDefault()
-
+        
         const keyword = this.input.value
         this.input.value = ''
+
+        const url = new URL(window.location.href)
+        url.searchParams.set('keyword', keyword)
+        window.history.pushState({}, "", url)
 
         if (keyword !== $.bookContent.keyword) {
             $.bookContent.initialize(keyword)
         }
     }
+  
 }
 
 

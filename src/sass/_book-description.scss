@@ -6,6 +6,9 @@ book-description {
         margin: 5px 0;
         font-size: 14px;
         line-height: 1.5;    
+        &:empty {
+            margin: 0;
+        }
         &[data-ellipsis="true"] {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -15,8 +18,6 @@ book-description {
         }
     }
     .more-description-button {
-        // display: block;
-        // width: 100%;
         width: auto;
         margin-left: auto;
         margin-bottom: 10px;
