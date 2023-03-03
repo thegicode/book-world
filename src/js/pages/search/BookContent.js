@@ -1,16 +1,14 @@
+// import { $ } from './selectors.js'
 
 export default class BookContent extends HTMLElement {
     constructor() {
         super()
-        this.length = 0
         this.summary = this.querySelector('.book-summary')
         this.books = this.querySelector('.books')
     }
 
     connectedCallback() {
 
-        this.setKeyword()
-        
         this.observer = new IntersectionObserver( changes => {
             changes.forEach( change => {
                 if (change.isIntersecting) {
@@ -19,42 +17,28 @@ export default class BookContent extends HTMLElement {
                 }
             })
         })
-    
-        window.addEventListener('popstate', this.onPopState.bind(this))
 
     }
 
     disconnectedCallback() {
         this.observer = null
-        window.removeEventListener('popstate', this.onPopState.bind(this))
 
-    }
-
-    setKeyword() {
-        const params = new URLSearchParams(location.search)
-        const keyword = params.get('keyword')
-        this.initialize(keyword)
-    }
-
-    onPopState() {
-        this.setKeyword()
     }
 
     initialize(keyword) {
         this.keyword = keyword
         if (this.keyword) {
-            console.log('request', this.keyword)
             this.length = 0
             this.loading()
             this.books.innerHTML = ''
             this.request()
         } else {
-            
-            console.log(this.keyword)
-
+            this.keyword = ''
+            this.length = 0
+            this.summary.hidden = true
+            this.ready()
         }
     }
-
 
     request() {
         fetch(`/naver?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`, {
@@ -112,6 +96,13 @@ export default class BookContent extends HTMLElement {
             fragment.appendChild(el)
         })
         this.books.appendChild(fragment)
+    }
+
+    ready() {
+
+        const el = document.querySelector('[data-template=message]').content.firstElementChild.cloneNode(true)
+        this.books.innerHTML = ''
+        this.books.appendChild(el)
     }
 
     loading() {

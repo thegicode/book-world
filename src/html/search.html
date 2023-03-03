@@ -16,29 +16,29 @@
 
     <nav-gnb></nav-gnb>
 
-    <header class="header">
-        <input-search class="input-search">
-            <form>
-                <input type="search" value="" title="책 키워드" placeholder="검색어를 입력하세요" required>
-                <button type="submit">찾기</button>
-            </form>
-        </input-search>
-    </header>
-    <book-content class="book-content">
-        <div class="book-summary" hidden>
-            <span class="__display"></span>
-            <strong class="__keyword"></strong>
-            <div class="__count">
-                <span class="__length"></span>/<span class="__total"></span>
+    <app-search>
+        <header class="header">
+            <input-search class="input-search">
+                <form>
+                    <input type="search" value="" title="책 키워드" placeholder="검색어를 입력하세요" required>
+                    <button type="submit">찾기</button>
+                </form>
+            </input-search>
+        </header>
+        <book-content class="book-content">
+            <div class="book-summary" hidden>
+                <span class="__display"></span>
+                <strong class="__keyword"></strong>
+                <div class="__count">
+                    <span class="__length"></span>/<span class="__total"></span>
+                </div>
             </div>
-        </div>
-        <div class="book-list">
-            <div class="books">
-                <p class="books-message">책을 검색하세요.</p>
+            <div class="book-list">
+                <div class="books"></div>
+                <div class="observe"></div>
             </div>
-            <div class="observe"></div>
-        </div>
-    </book-content>
+        </book-content>
+    </app-search>
     
 </div>
 
@@ -76,6 +76,10 @@
             </library-book-exist>
         </div>
     </book-item>
+</template>
+
+<template data-template="message">
+    <div class="message">책을 검색하세요.</div>
 </template>
 
 <template data-template="laoding">

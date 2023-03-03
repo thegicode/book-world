@@ -12,6 +12,12 @@
 
 }
 
+app-search {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 
 .header {
     flex: none;
@@ -101,14 +107,14 @@
     list-style: none;
     margin: 0;
     padding: 0 1rem;
-    &-message {
-        text-align: center;
-    }
+    text-align: center;
+
 }
 .book {
     display: block;
     padding: 1rem 0;
     border-bottom: 1px solid #ccc;
+    text-align: left;
     // font-size: 14px;
 
     .details {

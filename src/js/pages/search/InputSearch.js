@@ -19,7 +19,7 @@ export default class InputSearch extends HTMLElement {
     onSubmit(event) {
         event.preventDefault()
         
-        const keyword = this.input.value
+        const keyword = this.input.value 
         this.input.value = ''
 
         const url = new URL(window.location.href)
