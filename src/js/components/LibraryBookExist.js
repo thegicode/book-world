@@ -16,7 +16,9 @@ export default class LibraryBookExist extends HTMLElement {
     onLibraryBookExist(button, isbn13, library) {
         const data = Object.entries(library)
         this.loading(data.length)
-        button.disabled = true
+        if (button) {
+            button.disabled = true
+        }
         data.map(([libCode, libName], index) => {
             fetch(`/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, {
                 method:'GET'

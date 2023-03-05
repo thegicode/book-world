@@ -5,19 +5,18 @@ export default class Book extends HTMLElement {
     constructor() {
         super()
         this.libraryBookExist = this.querySelector('library-book-exist')
-        this.libraryButton = this.querySelector('.library-button')
+        // this.libraryButton = this.querySelector('.library-button')
     }
 
     connectedCallback() {
         const isbn = this.searchParam('isbn')
         this.request(isbn)
-        this.libraryButton.addEventListener('click', this.onLibrary.bind(this, isbn))
+        // this.libraryButton.addEventListener('click', this.onLibrary.bind(this, isbn))
 
     }
 
     disConnectedCallback() {
-        this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
-
+        // this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
     }
 
     request(isbn) {
@@ -60,6 +59,10 @@ export default class Book extends HTMLElement {
             publisher
         } = book
 
+        // console.log(coLoanBooks)
+        // console.log(loanGrps)
+        // console.log(loanHistory)
+
         const bookNames_1 = bookname.split(/[=]|[/]|[:]/)
         const bookNames_2 = bookNames_1.map( (item, index) => {
             return `<p>${item}</p>`
@@ -69,9 +72,12 @@ export default class Book extends HTMLElement {
             return `<span>${item.word}</span>`
         }).join('')
 
-        const recBooksString = recBooks.map( item => {
-            return `<p>${item.bookname}</p>`
+        const recBooksString = recBooks.map( recBook => {
+            const {bookname, isbn13} = recBook
+            return `<a href=book?isbn=${isbn13}>${bookname}</a>`
         }).join('')
+
+        this.libraryBookExist.onLibraryBookExist(null, isbn13, state.library)
 
         this.querySelector('.bookname').innerHTML = bookNames_2
         this.querySelector('.authors').textContent = authors
@@ -89,6 +95,7 @@ export default class Book extends HTMLElement {
         this.querySelector('.recBooks').innerHTML = recBooksString
 
         this.querySelector('.loading').remove()
+
     }
 
     onLibrary(isbn) {

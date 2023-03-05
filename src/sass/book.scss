@@ -90,8 +90,14 @@ app-book {
     }
 
     .recBooks {
-        p {
-            margin: 0 0 5px;
+        a {
+            display: block;
+            margin: 10px 0;
+            text-decoration: none;
+            color: #333;
+            &:hover {
+                text-decoration: underline;
+            }
         }
     }
 

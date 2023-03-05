@@ -25,7 +25,7 @@
 
         <div class="cols">
             <div class="col">
-                <h4>class_nm</h4>
+                <h4>분류</h4>
                 <p class="class_nm"></p>
             </div>
             <div class="col">
@@ -37,38 +37,34 @@
                 <p class="isbn13"></p>
             </div>
             <div class="col">
-                <h4>loanCnt</h4>
+                <h4>대출횟수</h4>
                 <p class="loanCnt"></p>
             </div>
             <div class="col">
-                <h4>publication_year</h4>
+                <h4>발행년도</h4>
                 <p class="publication_year"></p>
             </div>
             <div class="col">
-                <h4>publisher</h4>
+                <h4>출판사</h4>
                 <p class="publisher"></p>
             </div>
         </div>
 
+        <h4>관심 도서관 소장, 대출 가능 조회</h4>
+        <library-book-exist>
+            <ul class="library-list">
+            </ul>
+        </library-book-exist>
 
-        <h4>description</h4>
+        <h4>설명</h4>
         <p class="description"></p>
-        
-        <div class="actions">
-            <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
-            <library-book-exist>
-                <ul class="library-list">
-                </ul>
-            </library-book-exist>
-        </div>
 
         <h4>키워드</h4>
         <p class="keyword"></p>
 
-
         <h4>관련 책</h4>
-        <p class="recBooks"></p>
-
+        <div class="recBooks"></div>
+        
         <div class="loading"></div>
     </app-book>
 
