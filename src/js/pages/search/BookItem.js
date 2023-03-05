@@ -9,6 +9,7 @@ export default class BookItem extends HTMLElement {
         this.favoriteButton = this.querySelector('input[name="favorite"]')
         this.libraryButton = this.querySelector('.library-button')
         this.libraryBookExist = this.querySelector('library-book-exist')
+        this.link = this.querySelector('.book-info')
     }
 
     connectedCallback() {
@@ -16,11 +17,13 @@ export default class BookItem extends HTMLElement {
 
         this.favoriteButton.addEventListener('change', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onClickLibraryButton.bind(this))
+        this.link.addEventListener('click', this.onClickLink.bind(this))
     }
 
     disConnectedCallback() {
         this.favoriteButton.removeEventListener('change', this.onFavorite.bind(this))
         this.libraryButton.removeEventListener('click', this.onClickLibraryButton.bind(this))
+        this.link.removeEventListener('click', this.onClickLink.bind(this))
     }
 
     render() {
@@ -88,6 +91,10 @@ export default class BookItem extends HTMLElement {
 
     }
     
+    onClickLink(event) {
+        event.preventDefault()
+        location.href = `book?isbn=${this.isbn13}`
+    }
 
 }
 

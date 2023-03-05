@@ -9,10 +9,15 @@
     flex-direction: column;
     // position: relative;
     height: 100%;
+}
 
+nav-gnb {
+    flex: none;
 }
 
 app-search {
+    flex: 1;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -66,7 +71,7 @@ app-search {
 
 .book-content {
     flex: 1;
-    overflow: hidden;
+    overflow: auto;
     position: relative;
 
     display: flex;
@@ -117,11 +122,15 @@ app-search {
     text-align: left;
     // font-size: 14px;
 
-    .details {
+    .book-info {
         display: flex;
         gap : 1rem;
         font-size: 14px;
         color: #333;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
         p {
             margin: 7px 0;
         }
