@@ -10,8 +10,19 @@ export default class Book extends HTMLElement {
     }
 
     connectedCallback() {
+
         const isbn = this.searchParam('isbn')
-        this.request(isbn)
+        this.request_usageAnalysisList(isbn)
+
+        // TODO 
+        const region = {
+            '11': ['11250'],
+            '31': ['31180']
+        }
+        for( const [key, value] of Object.entries(region)) {
+            this.request_libSrchByBook(isbn, key, value)
+        }
+
         this.favoriteButton.addEventListener('change', (event) => {
             this.onFavorite(isbn, event)
         })
@@ -20,8 +31,9 @@ export default class Book extends HTMLElement {
     disconnectedCallback() {
         this.favoriteButton.removeEventListener('change', this.onFavorite)
     }
-    
-    async request(isbn) {
+
+    // 도서별 이용 분석
+    async request_usageAnalysisList(isbn) {
         try {
             const response = await fetch(`/usageAnalysisList?isbn13=${isbn}`, { method: 'GET' })
             const data = await response.json()
@@ -31,8 +43,48 @@ export default class Book extends HTMLElement {
         }
     }
 
+    // 도서 소장 도서관 조회
+    async request_libSrchByBook(isbn, region, dtl_region) {
+        try {
+            const response = await fetch(`/libSrchByBook?isbn=${isbn}&region=${region}&dtl_region=${dtl_region}`, { method: 'GET' })
+            const data = await response.json()
+            this.renderLibSrchByBook(data, isbn, dtl_region)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    // 대출 가능 조회
+    async loanAvailable(isbn13, libCode, el) {
+        try {
+            const response = await fetch(`/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, { method: 'GET' })
+            const { loanAvailable } = await response.json()
+            el.querySelector('.loanAvailable').textContent = loanAvailable === 'Y' ? '대출 가능': '대출 불가'
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     searchParam(key) {
         return new URLSearchParams(location.search).get(key);
+    }
+
+    renderLibSrchByBook({ libs }, isbn, region) {
+        const cpnt = document.querySelector('.library-search-by-book')
+        const listEl = document.createElement('ul')
+        const fragment = new DocumentFragment()
+        const items = libs.map(({ homepage, libCode, libName }) => {
+            const el = document.querySelector('#tp-librarySearchByBookItem').content.firstElementChild.cloneNode(true)
+            const linkEl = el.querySelector('a')
+            el.dataset.code = libCode
+            linkEl.textContent = libName
+            linkEl.href = homepage
+            this.loanAvailable(isbn, libCode, el.querySelector('p'))
+            return el
+        })
+        fragment.append(...items)
+        listEl.appendChild(fragment)
+        cpnt.appendChild(listEl)
     }
 
     render(data) {
@@ -52,14 +104,12 @@ export default class Book extends HTMLElement {
             .map(item => `<span>${item.word}</span>`)
             .join('')
         const recBooksString = recBooks
-            .map(({ bookname, isbn13 }) => `<a href=book?isbn=${isbn13}>${bookname}</a>`)
+            .map(({ bookname, isbn13 }) => `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`)
             .join('')
 
         if (includesFavorite(isbn13)) {
             this.favoriteButton.checked = true
         }
-
-        this.libraryBookExist.onLibraryBookExist(null, isbn13, state.library)
 
         this.querySelector('.bookname').innerHTML = bookNames
         this.querySelector('.authors').textContent = authors

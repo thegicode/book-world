@@ -164,6 +164,34 @@ app.get('/usageAnalysisList', function(req, res) {
 });
 
 
+// 도서 소장 도서관 조회
+app.get('/libSrchByBook', function(req, res) {
+    const { isbn, region, dtl_region } = req.query
+    const url = `${host}/libSrchByBook?${authKey}&isbn=${isbn}&region=${region}&dtl_region=${dtl_region}&format=json`
+    axios.get(url)
+        .then( response => {
+            const { 
+                pageNo, 
+                pageSize,
+                numFound,
+                resultNum,
+                libs
+            } = response.data.response
+            res.send({ 
+                pageNo, 
+                pageSize,
+                numFound,
+                resultNum,
+                libs: libs.map(item => item.lib)
+            })
+        })
+        .catch(error => {
+            console.log(error)
+        })
+
+})
+
+
 // app.get('/b', function(req, res) {
 //     const { isbn13, libCode } = req.query
 //     const isbn = `isbn13=${isbn13}`

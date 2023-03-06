@@ -74,6 +74,29 @@ app-book {
         margin-top: 2rem;
     }
 
+    .library-search-by-book {
+        ul {
+            padding: 0;
+        }
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+        a {
+            color: #333;
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+        p {
+            margin: 0;
+        }
+    }
+
 
     .keyword {
         display: flex;
@@ -90,9 +113,12 @@ app-book {
     }
 
     .recBooks {
+        padding: 0;
+        li {
+            margin: 3px 0 0 1rem;
+        }
         a {
             display: block;
-            margin: 10px 0;
             text-decoration: none;
             color: #333;
             &:hover {
