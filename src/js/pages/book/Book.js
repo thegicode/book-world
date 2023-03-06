@@ -12,7 +12,7 @@ export default class Book extends HTMLElement {
     connectedCallback() {
 
         const isbn = this.searchParam('isbn')
-        this.request_usageAnalysisList(isbn)
+        this.fetchUsageAnalysisList(isbn)
 
         // TODO 
         const region = {
@@ -20,7 +20,7 @@ export default class Book extends HTMLElement {
             '31': ['31180']
         }
         for( const [key, value] of Object.entries(region)) {
-            this.request_libSrchByBook(isbn, key, value)
+            this.fetchLibrarySearchByBook(isbn, key, value)
         }
 
         this.favoriteButton.addEventListener('change', (event) => {
@@ -33,7 +33,7 @@ export default class Book extends HTMLElement {
     }
 
     // Analysis of usage by book
-    async request_usageAnalysisList(isbn) {
+    async fetchUsageAnalysisList(isbn) {
         try {
             const response = await fetch(
                 `/usageAnalysisList?isbn13=${isbn}`, 
@@ -47,14 +47,14 @@ export default class Book extends HTMLElement {
     }
 
     // Search library holdings of books
-    async request_libSrchByBook(isbn, region, dtl_region) {
+    async fetchLibrarySearchByBook(isbn, region, dtl_region) {
         try {
             const response = await fetch(
                 `/libSrchByBook?isbn=${isbn}&region=${region}&dtl_region=${dtl_region}`, 
                 { method: 'GET' }
             )
             const data = await response.json()
-            this.renderLibSrchByBook(data, isbn, dtl_region)
+            this.renderLibSrchByBook(data, isbn)
         } catch (error) {
             console.log(error)
         }
@@ -96,25 +96,31 @@ export default class Book extends HTMLElement {
         return new URLSearchParams(location.search).get(key);
     }
 
-    renderLibSrchByBook({ libs }, isbn, region) {
+    renderLibSrchByBook({ libs }, isbn) {
         const component = document.querySelector('.library-search-by-book')
+        if (!component) return
+
         const listElement = document.createElement('ul')
         const fragment = new DocumentFragment()
 
-        if (!Array.isArray) {
-            return
-        }
+        if (!Array.isArray) return
 
-        const listItems = libs.map(({ homepage, libCode, libName }) => {
-            const listItem = document.querySelector('#tp-librarySearchByBookItem').content.firstElementChild.cloneNode(true)
-            const linkElement = listItem.querySelector('a')
-            listItem.dataset.code = libCode
-            linkElement.textContent = libName
-            linkElement.href = homepage
-            this.loanAvailable(isbn, libCode, listItem.querySelector('p'))
-            return listItem
+        libs.forEach(({ homepage, libCode, libName }) => {
+            const template = document.querySelector('#tp-librarySearchByBookItem')
+            if (!template) return
+
+            const cloned = template.content.firstElementChild.cloneNode(true)
+            const link = cloned.querySelector('a')
+            if (!link) return
+
+            cloned.dataset.code = libCode
+            link.textContent = libName
+            link.href = homepage
+            this.loanAvailable(isbn, libCode, cloned.querySelector('p'))
+            
+            fragment.appendChild(cloned)
         })
-        fragment.append(...listItems)
+
         listElement.appendChild(fragment)
         component.appendChild(listElement)
     }
