@@ -135,7 +135,7 @@ export default class Book extends HTMLElement {
         } = data // coLoanBooks, loanGrps,loanHistory,
 
         const bookNames = bookname
-            .split(/[=]|[/]|[:]/)
+            .split(/[=\/:]/)
             .map(item => `<p>${item}</p>`)
             .join('')
         const keywordsString = keywords
@@ -145,10 +145,7 @@ export default class Book extends HTMLElement {
             .map(({ bookname, isbn13 }) => `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`)
             .join('')
 
-        if (includesFavorite(isbn13)) {
-            this.favoriteButton.checked = true
-        }
-
+        this.favoriteButton.checked = includesFavorite(isbn13)
         this.querySelector('.bookname').innerHTML = bookNames
         this.querySelector('.authors').textContent = authors
         const imageElement = this.querySelector('img')
@@ -171,8 +168,7 @@ export default class Book extends HTMLElement {
     }
 
     onFavorite(isbn, event) {
-        const { checked } = event.target
-        if (checked) {
+        if (event.target.checked) {
             addFavorite(isbn)
         } else {
             deleteFavorite(isbn)
