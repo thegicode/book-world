@@ -32,10 +32,13 @@ export default class Book extends HTMLElement {
         this.favoriteButton.removeEventListener('change', this.onFavorite)
     }
 
-    // 도서별 이용 분석
+    // Analysis of usage by book
     async request_usageAnalysisList(isbn) {
         try {
-            const response = await fetch(`/usageAnalysisList?isbn13=${isbn}`, { method: 'GET' })
+            const response = await fetch(
+                `/usageAnalysisList?isbn13=${isbn}`, 
+                { method: 'GET' }
+            )
             const data = await response.json()
             this.render(data)
         } catch (error) {
@@ -43,10 +46,13 @@ export default class Book extends HTMLElement {
         }
     }
 
-    // 도서 소장 도서관 조회
+    // Search library holdings of books
     async request_libSrchByBook(isbn, region, dtl_region) {
         try {
-            const response = await fetch(`/libSrchByBook?isbn=${isbn}&region=${region}&dtl_region=${dtl_region}`, { method: 'GET' })
+            const response = await fetch(
+                `/libSrchByBook?isbn=${isbn}&region=${region}&dtl_region=${dtl_region}`, 
+                { method: 'GET' }
+            )
             const data = await response.json()
             this.renderLibSrchByBook(data, isbn, dtl_region)
         } catch (error) {
@@ -54,37 +60,63 @@ export default class Book extends HTMLElement {
         }
     }
     
-    // 대출 가능 조회
-    async loanAvailable(isbn13, libCode, el) {
+    // Check Loan Availability
+    async fetchLoadnAvailabilty(isbn13, libCode) {
         try {
             const response = await fetch(`/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, { method: 'GET' })
-            const { loanAvailable } = await response.json()
-            el.querySelector('.loanAvailable').textContent = loanAvailable === 'Y' ? '대출 가능': '대출 불가'
+            const data = await response.json()
+            return data.loanAvailable === 'Y'
         } catch (error) {
-            console.log(error)
+            console.error(error)
+            return false
         }
     }
+    updateLoanAvailability(el, isAvailable) {
+        el.querySelector('.loanAvailable').textContent = isAvailable ? '대출 가능' : '대출 불가'
+    }
+    async loanAvailable(isbn13, libCode, el) {
+        const isAvailable = await this.fetchLoadnAvailabilty(isbn13, libCode)
+        this.updateLoanAvailability(el, isAvailable)
+    }
+
+    // async loanAvailable(isbn13, libCode, el) {
+    //     try {
+    //         const response = await fetch(
+    //             `/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, 
+    //             { method: 'GET' }
+    //         )
+    //         const { loanAvailable } = await response.json()
+    //         el.querySelector('.loanAvailable').textContent = loanAvailable === 'Y' ? '대출 가능': '대출 불가'
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
     searchParam(key) {
         return new URLSearchParams(location.search).get(key);
     }
 
     renderLibSrchByBook({ libs }, isbn, region) {
-        const cpnt = document.querySelector('.library-search-by-book')
-        const listEl = document.createElement('ul')
+        const component = document.querySelector('.library-search-by-book')
+        const listElement = document.createElement('ul')
         const fragment = new DocumentFragment()
-        const items = libs.map(({ homepage, libCode, libName }) => {
-            const el = document.querySelector('#tp-librarySearchByBookItem').content.firstElementChild.cloneNode(true)
-            const linkEl = el.querySelector('a')
-            el.dataset.code = libCode
-            linkEl.textContent = libName
-            linkEl.href = homepage
-            this.loanAvailable(isbn, libCode, el.querySelector('p'))
-            return el
+
+        if (!Array.isArray) {
+            return
+        }
+
+        const listItems = libs.map(({ homepage, libCode, libName }) => {
+            const listItem = document.querySelector('#tp-librarySearchByBookItem').content.firstElementChild.cloneNode(true)
+            const linkElement = listItem.querySelector('a')
+            listItem.dataset.code = libCode
+            linkElement.textContent = libName
+            linkElement.href = homepage
+            this.loanAvailable(isbn, libCode, listItem.querySelector('p'))
+            return listItem
         })
-        fragment.append(...items)
-        listEl.appendChild(fragment)
-        cpnt.appendChild(listEl)
+        fragment.append(...listItems)
+        listElement.appendChild(fragment)
+        component.appendChild(listElement)
     }
 
     render(data) {
