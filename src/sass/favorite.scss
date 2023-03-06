@@ -87,11 +87,11 @@ favorite-item {
 	.book-summary {
 		display: flex;
 		gap: 1rem;
-		padding: 1rem;
+		padding: 1rem 1rem 7px;
 		text-decoration: none;
 	}
 	book-description {
-		margin: 0 1rem;
+		margin: 0 1rem 1rem;
 	}
 	.book-image {
 		flex: none;
