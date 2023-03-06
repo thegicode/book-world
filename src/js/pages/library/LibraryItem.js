@@ -1,5 +1,4 @@
-import model from '../../modules/model.js'
-const  { state, addLibrary, deleteLibrary, includesLibrary } = model
+import { state, addLibrary, deleteLibrary, includesLibrary } from '../../modules/model.js'
 
 
 export default class LibraryItem extends HTMLElement {
@@ -13,7 +12,7 @@ export default class LibraryItem extends HTMLElement {
 		this.checkbox.addEventListener('change', this.onChange.bind(this))
 	}
 
-	disConnectedCallback() {
+	disconnectedCallback() {
 		this.checkbox.removeEventListener('change', this.onChange.bind(this))
 	}
 

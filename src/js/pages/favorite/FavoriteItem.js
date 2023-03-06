@@ -1,8 +1,6 @@
 import { $ } from './selectors.js'
-import model from '../../modules/model.js'
+import { state, deleteFavorite } from '../../modules/model.js'
 // import newCustomEvent from '../modules/NewCustomEvent.js'
-
-const  { state, deleteFavorite } = model
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
@@ -21,7 +19,7 @@ export default class FavoriteItem extends HTMLElement {
         this.link.addEventListener('click', this.onClick.bind(this))
     }
 
-    disConnectedCallback() {
+    disconnectedCallback() {
         this.favoriteButton.removeEventListener('click', this.onFavorite.bind(this))
         this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
         this.link.removeEventListener('click', this.onClick.bind(this))

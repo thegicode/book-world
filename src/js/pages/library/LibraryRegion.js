@@ -11,7 +11,7 @@ export default class LibraryRegion extends HTMLElement {
 		this.select.addEventListener('change', this.onChange.bind(this))
 	}
 
-	disConnectedCallback() {
+	disconnectedCallback() {
 		this.select.removeEventListener('change', this.onChange.bind(this))
 	}
 

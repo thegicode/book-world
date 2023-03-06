@@ -1,5 +1,4 @@
-import model from '../../modules/model.js'
-const  { state } = model
+import { state } from '../../modules/model.js'
 
 export default class Favorite extends HTMLElement {
     constructor() {
@@ -21,7 +20,7 @@ export default class Favorite extends HTMLElement {
 
     }
 
-    disConnectedCallback() {
+    disconnectedCallback() {
         // this.favoriteButton.removeEventListener('click', this.onFavorite.bind(this))
     }
 

@@ -1,14 +1,22 @@
 
-const INITIAL_STATE = {
+const initialState = {
 	favorite: [],
 	library: {}
 }
 
+const storageName = 'BookWorld'
+
 const getState = () => {
-	if (localStorage.getItem('BookWorld') === null) {
-		localStorage.setItem('BookWorld', JSON.stringify(INITIAL_STATE))
+	try {
+		const storedState = localStorage.getItem(storageName)
+		if (!storedState) {
+			localStorage.setItem(storageName, JSON.stringify(initialState))
+		}
+		return JSON.parse(storedState || JSON.stringify(initialState))
+	} catch (error) {
+		console.error(error)
+		return initialState
 	}
-  	return JSON.parse(localStorage.getItem('BookWorld'))
 }
 
 let state = getState()
@@ -25,8 +33,8 @@ const deleteFavorite = (isbn) => {
 }
 
 const includesFavorite = (isbn) => {
-	if (state.favorite == undefined ) {
-		return
+	if (!state.favorite) {
+		return false
 	}
 	return state.favorite.includes(isbn)
 }
@@ -46,12 +54,15 @@ const includesLibrary = (libCode) => {
 }
 
 const setStorage = () => {
-	localStorage.setItem('BookWorld', JSON.stringify(state))
-	console.table(JSON.parse(localStorage.getItem('BookWorld')))
+	try {
+		localStorage.setItem(storageName, JSON.stringify(state))
+		console.log(JSON.parse(localStorage.getItem(storageName)))
+	} catch (error) {
+		console.errer(error)
+	}
 }
-
 	
-export default {
+export {
 	state,
 	addFavorite,
 	deleteFavorite,

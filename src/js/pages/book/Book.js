@@ -1,35 +1,34 @@
-import model from '../../modules/model.js'
-const  { state } = model
+
+import { state, addFavorite, deleteFavorite, includesFavorite } from '../../modules/model.js'
 
 export default class Book extends HTMLElement {
     constructor() {
         super()
         this.libraryBookExist = this.querySelector('library-book-exist')
-        // this.libraryButton = this.querySelector('.library-button')
+        this.favoriteButton = this.querySelector('input[name="favorite"]')
+        this.onFavorite = this.onFavorite.bind(this)
     }
 
     connectedCallback() {
         const isbn = this.searchParam('isbn')
         this.request(isbn)
-        // this.libraryButton.addEventListener('click', this.onLibrary.bind(this, isbn))
-
+        this.favoriteButton.addEventListener('change', (event) => {
+            this.onFavorite(isbn, event)
+        })
     }
 
-    disConnectedCallback() {
-        // this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
+    disconnectedCallback() {
+        this.favoriteButton.removeEventListener('change', this.onFavorite)
     }
-
-    request(isbn) {
-        fetch(`/usageAnalysisList?isbn13=${isbn}`, {
-            method: 'GET'
-        })
-        .then(data => data.json())
-        .then(response => {
-            this.render(response)
-        })
-        .catch(e => {
-            console.log(e);
-        })
+    
+    async request(isbn) {
+        try {
+            const response = await fetch(`/usageAnalysisList?isbn13=${isbn}`, { method: 'GET' })
+            const data = await response.json()
+            this.render(data)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     searchParam(key) {
@@ -38,52 +37,35 @@ export default class Book extends HTMLElement {
 
     render(data) {
         const {
-            book,
-            coLoanBooks,
+            book: {
+                bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher
+            },
             keywords,
-            loanGrps,
-            loanHistory,
             recBooks
-        } = data
+        } = data // coLoanBooks, loanGrps,loanHistory,
 
-        const  {
-            bookname,
-            authors,
-            bookImageURL,
-            class_nm,
-            class_no,
-            description,
-            isbn13,
-            loanCnt,
-            publication_year,
-            publisher
-        } = book
+        const bookNames = bookname
+            .split(/[=]|[/]|[:]/)
+            .map(item => `<p>${item}</p>`)
+            .join('')
+        const keywordsString = keywords
+            .map(item => `<span>${item.word}</span>`)
+            .join('')
+        const recBooksString = recBooks
+            .map(({ bookname, isbn13 }) => `<a href=book?isbn=${isbn13}>${bookname}</a>`)
+            .join('')
 
-        // console.log(coLoanBooks)
-        // console.log(loanGrps)
-        // console.log(loanHistory)
-
-        const bookNames_1 = bookname.split(/[=]|[/]|[:]/)
-        const bookNames_2 = bookNames_1.map( (item, index) => {
-            return `<p>${item}</p>`
-        }).join('')
-
-        const keywords_2 = keywords.map( item => {
-            return `<span>${item.word}</span>`
-        }).join('')
-
-        const recBooksString = recBooks.map( recBook => {
-            const {bookname, isbn13} = recBook
-            return `<a href=book?isbn=${isbn13}>${bookname}</a>`
-        }).join('')
+        if (includesFavorite(isbn13)) {
+            this.favoriteButton.checked = true
+        }
 
         this.libraryBookExist.onLibraryBookExist(null, isbn13, state.library)
 
-        this.querySelector('.bookname').innerHTML = bookNames_2
+        this.querySelector('.bookname').innerHTML = bookNames
         this.querySelector('.authors').textContent = authors
-        const img = this.querySelector('img')
-        img.src = bookImageURL
-        img.setAttribute('alt', bookname)
+        const imageElement = this.querySelector('img')
+        imageElement.src = bookImageURL
+        imageElement.alt = bookname
         this.querySelector('.class_nm').textContent = class_nm
         this.querySelector('.class_no').textContent = class_no
         this.querySelector('.description').textContent = description
@@ -91,16 +73,22 @@ export default class Book extends HTMLElement {
         this.querySelector('.loanCnt').textContent = loanCnt.toLocaleString()
         this.querySelector('.publication_year').textContent = publication_year
         this.querySelector('.publisher').textContent = publisher
-        this.querySelector('.keyword').innerHTML = keywords_2
+        this.querySelector('.keyword').innerHTML = keywordsString
         this.querySelector('.recBooks').innerHTML = recBooksString
 
-        this.querySelector('.loading').remove()
-
+        const loadingElement = this.querySelector('.loading')
+        if (loadingElement) {
+            loadingElement.remove()
+        }
     }
 
-    onLibrary(isbn) {
-        this.libraryBookExist
-            .onLibraryBookExist(this.libraryButton, isbn, state.library)
+    onFavorite(isbn, event) {
+        const { checked } = event.target
+        if (checked) {
+            addFavorite(isbn)
+        } else {
+            deleteFavorite(isbn)
+        }
     }
 }
 

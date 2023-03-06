@@ -1,7 +1,5 @@
 
-import model from '../../modules/model.js'
-
-const  { state, addFavorite, deleteFavorite, includesFavorite } = model
+import { state, addFavorite, deleteFavorite, includesFavorite } from '../../modules/model.js'
 
 export default class BookItem extends HTMLElement {
     constructor() {
@@ -20,7 +18,7 @@ export default class BookItem extends HTMLElement {
         this.link.addEventListener('click', this.onClickLink.bind(this))
     }
 
-    disConnectedCallback() {
+    disconnectedCallback() {
         this.favoriteButton.removeEventListener('change', this.onFavorite.bind(this))
         this.libraryButton.removeEventListener('click', this.onClickLibraryButton.bind(this))
         this.link.removeEventListener('click', this.onClickLink.bind(this))
@@ -69,7 +67,7 @@ export default class BookItem extends HTMLElement {
         this.dataset.index = this.index
         this.isbn13 = isbn.split(' ')[0]
 
-        const { favorite } = state
+        // const { favorite } = state
         if (includesFavorite(this.isbn13)) {
             this.favoriteButton.checked = true
         }

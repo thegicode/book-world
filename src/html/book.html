@@ -23,6 +23,19 @@
             <img src="" alt="" class="thumb">
         </div>
 
+        <div class="actions">
+            <label>
+                <input type="checkbox" name="favorite">
+                <span>관심책</span>
+            </label> 
+        </div>
+
+        <h4>관심 도서관 소장, 대출 가능 조회</h4>
+        <library-book-exist>
+            <ul class="library-list">
+            </ul>
+        </library-book-exist>
+
         <div class="cols">
             <div class="col">
                 <h4>분류</h4>
@@ -50,11 +63,6 @@
             </div>
         </div>
 
-        <h4>관심 도서관 소장, 대출 가능 조회</h4>
-        <library-book-exist>
-            <ul class="library-list">
-            </ul>
-        </library-book-exist>
 
         <h4>설명</h4>
         <p class="description"></p>
@@ -64,7 +72,7 @@
 
         <h4>관련 책</h4>
         <div class="recBooks"></div>
-        
+
         <div class="loading"></div>
     </app-book>
 
