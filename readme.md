@@ -33,7 +33,4 @@
 - Improve index.js : axios to fetch
 
 ## 도서관 공개 API 
-국립중앙도서관 OpenAPI : https://www.nl.go.kr/NL/contents/NLFC/OpenAPI/main.jsp
-도서관IT개발자 포럼 : https://www.libapi.com/
-국회도서관 OpenAPI : https://www.nanet.go.kr/portalContents.do?menuNo=300797
-서울시 도서관 정보 OpenAPI : http://data.seoul.go.kr/dataList/OA-15522/S/1/datasetView.do
+https://solomon.data4library.kr/

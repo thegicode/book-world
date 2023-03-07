@@ -85,14 +85,16 @@ app.get('/book-exist', async (req, res) => {
         libCode,
         format: formatType
     })
-    const url = `${host}/bookExist?${queryParams}`
+    const url = `${host}/bookExist?${authKey}&${queryParams}`
     try {
-        const response = await fetch(url, { headers: { Authorization: authToken }})
+        const response = await fetch(url)
         if (!response.ok) {
             throw new Error(`Failed to check book exist data: ${response.statusText}`)
         }
         const data = await response.json()
         const result = data.response?.result ?? false
+        // console.log(result)
+
         res.send(result)
     } catch (error) {
         console.error(error)
