@@ -70,7 +70,7 @@ export default class Book extends HTMLElement {
     // Check Loan Availability
     async fetchLoadnAvailabilty(isbn13, libCode) {
         try {
-            const response = await fetch(`/library-bookExist?isbn13=${isbn13}&libCode=${libCode}`, { method: 'GET' })
+            const response = await fetch(`/book-exist?isbn13=${isbn13}&libCode=${libCode}`, { method: 'GET' })
             const data = await response.json()
             return data.loanAvailable === 'Y'
         } catch (error) {

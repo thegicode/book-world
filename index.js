@@ -41,49 +41,66 @@ app.get('/naver', function(req, res) {
 /** 도서관 정보나루 */
 const host = 'http://data4library.kr/api'
 const authKey = `authKey=${libKey}`
+const authToken = `Bearer ${libKey}`
 const foramt = 'format=json'
+const formatType = 'json'
+
+// console.log('libKey', libKey)
 
 // 정보공개 도서관 조회
-app.get('/libSrch', function(req, res) {
-
+app.get('/library-search', async (req, res) => {
     const { regionCode, page, pageSize } = req.query
-
-    const url = `${host}/libSrch?${authKey}&dtl_region=${regionCode}&pageNo=${page}&pageSize=${pageSize}&${foramt}`
-    axios.get(url)
-        .then( response => {
-            const { pageNo, pageSize, numFound, resultNum, libs } = response.data.response
-            const data = {
-                // request, 
-                pageNo, 
-                pageSize, 
-                numFound, 
-                resultNum, 
-                libs: libs.map( item => item.lib)
-            }
-            res.send(data)
-        })
-        .catch(error => {
-            console.error(error)
-        })
-});
+    const queryParams = new URLSearchParams({
+        dtl_region: regionCode,
+        pageNo: page,
+        pageSize,
+        format: formatType
+    })
+    const url = `${host}/libSrch?${authKey}&${queryParams}`
+    try {
+        const response = await fetch(url)
+        if (!response.ok) {
+            throw new Error(`Failed to get library search data: ${response.statusText}`)
+        }
+        const data = await response.json()
+        const { pageNo, pageSize, numFound, resultNum, libs } = data.response
+        const formattedData = {
+            pageNo, 
+            pageSize, 
+            numFound, 
+            resultNum, 
+            libs: libs.map(item => item.lib)
+        }
+        res.send(formattedData)
+    } catch (error) {
+        console.error(error)
+        res.status(500).send('Failed to get library search data')
+    }
+})
 
 // 지정 도서관, 책 소장 & 대출 가능 여부
-app.get('/library-bookExist', function(req, res) {
+app.get('/book-exist', async (req, res) => {
     const { isbn13, libCode } = req.query
+    const queryParams = new URLSearchParams({
+        isbn13,
+        libCode,
+        format: formatType
+    })
+    const url = `${host}/bookExist?${queryParams}`
+    try {
+        const response = await fetch(url, { headers: { Authorization: authToken }})
+        if (!response.ok) {
+            throw new Error(`Failed to check book exist data: ${response.statusText}`)
+        }
+        const data = await response.json()
+        const result = data.response?.result ?? false
+        res.send(result)
+    } catch (error) {
+        console.error(error)
+        res.status(500).send('Failed to check book exist data')
+    }
+})
 
-    const isbn = `isbn13=${isbn13}`
-    const lib = `libCode=${libCode}`
-
-    const url = `${host}/bookExist?${authKey}&${isbn}&${lib}&${foramt}`
-
-    axios.get(url)
-        .then( response => {
-            res.send(response.data.response.result)
-        })
-        .catch(error => {
-            console.error(error)
-        })
-});
 
 // 도서관별 장서/대출 데이터 조회
 app.get('/library-itemSrch', function(req, res) {
@@ -131,34 +148,48 @@ app.get('/srchDtlList', function(req, res) {
 
 
 // 도서별 이용 분석
-app.get('/usageAnalysisList', function(req, res) {
+app.get('/usageAnalysisList', async (req, res) => {
     const { isbn13 } = req.query
+    const params = new URLSearchParams({
+        isbn13, 
+        loaninfoYN: 'Y',
+        format: 'json'
+    })
+    const url = `${host}/usageAnalysisList?${authKey}&${params}`
+    try {
+        const response = await fetch(url)
+        if (!response.ok) {
+            throw new Error(`Failed to get usage analysis list data: ${response.statusText} `)
+        }
+        const data = await response.json()
+        const { 
+            book, 
+            loanHistory,
+            loanGrps,
+            keywords,
+            recBooks,
+            coLoanBooks 
+        } = data.response
 
-    const url = `${host}/usageAnalysisList?${authKey}&isbn13=${isbn13}&loaninfoYN=Y&format=json`
+        const loanHistoryItems = loanHistory.map(item => item.loan)
+        const loanGrpsItems = loanGrps.map(item => item.loanGrp)
+        const keywordsItems = keywords.map(item => item.keyword)
+        const recBooksItems = recBooks.map(item => item.book)
+        const coLoanBooksItems = coLoanBooks.map(item => item.book)
 
-    axios.get(url)
-        .then( response => {
-            const { 
-                book, 
-                loanHistory,
-                loanGrps,
-                keywords,
-                recBooks,
-                coLoanBooks 
-            } = response.data.response
-
-            res.send({ 
-                book, 
-                loanHistory: loanHistory.map(item => item.loan),
-                loanGrps: loanGrps.map(item => item.loanGrp),
-                keywords: keywords.map(item => item.keyword),
-                recBooks: recBooks.map(item => item.book) ,
-                coLoanBooks: coLoanBooks.map(item => item.book) })
+        res.send({
+            book, 
+            loanHistory: loanHistoryItems,
+            loanGrps: loanGrpsItems,
+            keywords: keywordsItems,
+            recBooks: recBooksItems,
+            coLoanBooks: coLoanBooksItems
         })
-        .catch(error => {
-            console.error(error)
-        })
-});
+    } catch (error) {
+        console.error(error)
+        res.status(500).send('Failed to get usage analysis list data')
+    }
+})
 
 
 // 도서 소장 도서관 조회
@@ -200,7 +231,10 @@ app.get('/libSrchByBook', async (req, res) => {
         format: 'json'
     })
     const url = `${host}/libSRchByBook?${authKey}&${params}`
-    const response = await fetch()
+    const response = await fetch(url, {method : 'GET'})
+    if (!response.ok) {
+        throw new Error('Failed to get')
+    }
 })
 
 // app.get('/b', function(req, res) {
