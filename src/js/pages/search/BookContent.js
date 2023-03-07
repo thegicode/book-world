@@ -41,7 +41,7 @@ export default class BookContent extends HTMLElement {
     }
 
     request() {
-        fetch(`/naver?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`, {
+        fetch(`/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`, {
             method: 'GET'
         })
         .then(data => data.json())

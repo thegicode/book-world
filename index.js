@@ -13,28 +13,31 @@ const { libKey, naverKey } = require("./user.js")
 /** NAVER */
 
 // 키워드 검색
-app.get('/naver', function(req, res) {
+app.get('/search-naver-book', async (req, res) => {
     const { keyword, display, start } = req.query
-    axios.get(`https://openapi.naver.com/v1/search/book.json`, {
-        params: {
-            query: keyword, 
-            display, 
-            start
-        },
-        headers: {
-            "X-Naver-Client-Id": naverKey.clientID,
-            "X-Naver-Client-Secret": naverKey.clientSecret
+    const queryParams = new URLSearchParams({
+        query: keyword,
+        display, 
+        start
+    })
+    const headers = {
+        "X-Naver-Client-Id": naverKey.clientID,
+        "X-Naver-Client-Secret": naverKey.clientSecret
+    }
+    const url = `https://openapi.naver.com/v1/search/book.json?${queryParams}`
+    try {
+        const response = await fetch(url, { headers })
+        if (!response.ok) {
+            throw new Error(`Failed to get books from Naver: ${response.statusText}`)
         }
-    })
-    .then( response => {
-        const { total, start, display, items } = response.data
-        res.send({total, start, display, items})
-    })
-    .catch(error => {
-        console.error('Failed to get books from Naver:', error)
+        const data = await response.json()
+        const { total, start, display, items } = data
+        res.send({ total, start, display, items })
+    } catch (error) {
+        console.error(error)
         res.status(500).send('Failed to get books from Naver')
-    })
-});
+    }
+})
 
 
 /** 도서관 정보나루 */
