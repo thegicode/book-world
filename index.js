@@ -148,7 +148,7 @@ app.get('/srchDtlList', function(req, res) {
 
 
 // 도서별 이용 분석
-app.get('/usageAnalysisList', async (req, res) => {
+app.get('/usage-analysis-list', async (req, res) => {
     const { isbn13 } = req.query
     const params = new URLSearchParams({
         isbn13, 

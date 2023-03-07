@@ -36,7 +36,7 @@ export default class Book extends HTMLElement {
     async fetchUsageAnalysisList(isbn) {
         try {
             const response = await fetch(
-                `/usageAnalysisList?isbn13=${isbn}`, 
+                `/usage-analysis-list?isbn13=${isbn}`, 
                 { method: 'GET' }
             )
             const data = await response.json()

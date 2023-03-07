@@ -26,7 +26,7 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     request(isbn13) {
-        fetch(`/usageAnalysisList?isbn13=${isbn13}`, {
+        fetch(`/usage-analysis-list?isbn13=${isbn13}`, {
             method: 'GET'
         })
         .then(data => data.json())
