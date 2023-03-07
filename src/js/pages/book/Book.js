@@ -49,14 +49,21 @@ export default class Book extends HTMLElement {
     // Search library holdings of books
     async fetchLibrarySearchByBook(isbn, region, dtl_region) {
         try {
-            const response = await fetch(
-                `/libSrchByBook?isbn=${isbn}&region=${region}&dtl_region=${dtl_region}`, 
-                { method: 'GET' }
-            )
+            const url = new URL('/libSrchByBook', window.location.href)
+            url.searchParams.set('isbn', isbn)
+            url.searchParams.set('region', region)
+            url.searchParams.set('dtl_region', dtl_region)
+
+            const response = await fetch(url.toString(), {method: 'GET'})
+            if (!response.ok) {
+                throw new Error(`Failed to fetch library data: ${response.statusText}`)
+            }
+
             const data = await response.json()
             this.renderLibSrchByBook(data, isbn)
         } catch (error) {
-            console.log(error)
+            console.error(error)
+            throw error
         }
     }
     

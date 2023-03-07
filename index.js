@@ -6,9 +6,7 @@ const app = express();
 const port = 7777;
 const axios = require('axios').default;
 
-
 app.use(express.static(`${__dirname}/src/`));
-
 
 const { libKey, naverKey } = require("./user.js")
 
@@ -29,12 +27,12 @@ app.get('/naver', function(req, res) {
         }
     })
     .then( response => {
-        // console.log(response.data)
         const { total, start, display, items } = response.data
         res.send({total, start, display, items})
     })
     .catch(error => {
-        console.log('naver error', error)
+        console.error('Failed to get books from Naver:', error)
+        res.status(500).send('Failed to get books from Naver')
     })
 });
 
@@ -65,7 +63,7 @@ app.get('/libSrch', function(req, res) {
             res.send(data)
         })
         .catch(error => {
-            console.log(error)
+            console.error(error)
         })
 });
 
@@ -80,11 +78,10 @@ app.get('/library-bookExist', function(req, res) {
 
     axios.get(url)
         .then( response => {
-            console.log(response.data.response.result)
             res.send(response.data.response.result)
         })
         .catch(error => {
-            console.log(error)
+            console.error(error)
         })
 });
 
@@ -105,7 +102,7 @@ app.get('/library-itemSrch', function(req, res) {
             res.send(response.data.response.docs)
         })
         .catch(error => {
-            console.log(error)
+            console.error(error)
         })
 });
 
@@ -128,7 +125,7 @@ app.get('/srchDtlList', function(req, res) {
             res.send(data)
         })
         .catch(error => {
-            console.log(error)
+            console.error(error)
         })
 });
 
@@ -159,37 +156,42 @@ app.get('/usageAnalysisList', function(req, res) {
                 coLoanBooks: coLoanBooks.map(item => item.book) })
         })
         .catch(error => {
-            console.log(error)
+            console.error(error)
         })
 });
 
 
 // 도서 소장 도서관 조회
-app.get('/libSrchByBook', function(req, res) {
+app.get('/libSrchByBook', async (req, res)=> {
     const { isbn, region, dtl_region } = req.query
-    const url = `${host}/libSrchByBook?${authKey}&isbn=${isbn}&region=${region}&dtl_region=${dtl_region}&format=json`
-    axios.get(url)
-        .then( response => {
-            const { 
-                pageNo, 
-                pageSize,
-                numFound,
-                resultNum,
-                libs
-            } = response.data.response
-            res.send({ 
-                pageNo, 
-                pageSize,
-                numFound,
-                resultNum,
-                libs: libs.map(item => item.lib)
-            })
+    const params = new URLSearchParams({
+        isbn, 
+        region, 
+        dtl_region,
+        format: 'json'
+    })
+    const url = `${host}/libSrchByBook?${authKey}&${params}`
+    try {
+        const response = await fetch(url, { method : 'GET' })
+        if (!response.ok) {
+            throw new Error(`Failed to get library data: ${response.statusText}`)
+        }
+        const data = await response.json()
+        const { pageNo, pageSize, numFound, resultNum, libs } = data.response
+        res.send({
+            pageNo, 
+            pageSize, 
+            numFound, 
+            resultNum, 
+            libs: libs.map(item => item.lib)
         })
-        .catch(error => {
-            console.log(error)
-        })
-
+    } catch (error) {
+        console.error(error)
+        res.status(500).send('Failed to get library data')
+    }
 })
+
+
 
 
 // app.get('/b', function(req, res) {
@@ -213,15 +215,20 @@ app.get('/libSrchByBook', function(req, res) {
 // });
 
 
-
 // Router
 const routes = ['favorite', 'library', 'search', 'book']
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
-        console.log(route)
+        console.log('route:', `/${route}`)
 
-        const htmlURL = `${__dirname}/src/html/${route}.html`
-        res.send(fs.readFileSync(path.resolve(__dirname, htmlURL), 'utf8'))
+        const htmlPath = path.resolve(__dirname, `src/html/${route}.html`)
+        fs.readFile(htmlPath, 'utf8', (err, data) => {
+            if (err) {
+                console.error(err)
+                return res.status(500).send('Failed to load HTML file')
+            }
+            res.send(data)
+        })
     })
 })
 
