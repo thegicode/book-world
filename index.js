@@ -191,8 +191,17 @@ app.get('/libSrchByBook', async (req, res)=> {
     }
 })
 
-
-
+app.get('/libSrchByBook', async (req, res) => {
+    const { isbn, resion, dtl_region }= req.query
+    const params = new URLSearchParams({
+        isbn, 
+        region,
+        dtl_region,
+        format: 'json'
+    })
+    const url = `${host}/libSRchByBook?${authKey}&${params}`
+    const response = await fetch()
+})
 
 // app.get('/b', function(req, res) {
 //     const { isbn13, libCode } = req.query
