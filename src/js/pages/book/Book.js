@@ -49,7 +49,7 @@ export default class Book extends HTMLElement {
     // Search library holdings of books
     async fetchLibrarySearchByBook(isbn, region, dtl_region) {
         try {
-            const url = new URL('/libSrchByBook', window.location.href)
+            const url = new URL('/library-search-by-book', window.location.href)
             url.searchParams.set('isbn', isbn)
             url.searchParams.set('region', region)
             url.searchParams.set('dtl_region', dtl_region)

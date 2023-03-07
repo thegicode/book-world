@@ -37,15 +37,11 @@ app.get('/naver', function(req, res) {
 });
 
 
-
 /** 도서관 정보나루 */
 const host = 'http://data4library.kr/api'
 const authKey = `authKey=${libKey}`
 const authToken = `Bearer ${libKey}`
-const foramt = 'format=json'
 const formatType = 'json'
-
-// console.log('libKey', libKey)
 
 // 정보공개 도서관 조회
 app.get('/library-search', async (req, res) => {
@@ -101,59 +97,13 @@ app.get('/book-exist', async (req, res) => {
     }
 })
 
-
-// 도서관별 장서/대출 데이터 조회
-app.get('/library-itemSrch', function(req, res) {
-    const { libCode, keyword } = req.query
-
-    // console.log(keyword, libCode)
-    
-    const lib = `libCode=${libCode}`
-    const keywordStr = `keyword=${encodeURIComponent(keyword)}`
-
-    const url = `${host}/srchBooks?${authKey}&keyword=%EC%97%AD%EC%82%AC&pageNo=1&pageSize=10&format=json`
-    // console.log(url)
-
-    axios.get(url)
-        .then( response => {
-            res.send(response.data.response.docs)
-        })
-        .catch(error => {
-            console.error(error)
-        })
-});
-
-
-// 도서 상세 조회
-app.get('/srchDtlList', function(req, res) {
-    const { isbn13 } = req.query
-
-    const url = `${host}/srchDtlList?${authKey}&isbn13=${isbn13}&loaninfoYN=Y&format=json`
-    // console.log(url)
-
-    axios.get(url)
-        .then( response => {
-            const { detail, loanInfo, request} = response.data.response
-            const data = {
-                detail: detail[0].book,
-                loanInfo,
-                loanInfoYN: request.loaninfoYN
-            }
-            res.send(data)
-        })
-        .catch(error => {
-            console.error(error)
-        })
-});
-
-
 // 도서별 이용 분석
 app.get('/usage-analysis-list', async (req, res) => {
     const { isbn13 } = req.query
     const params = new URLSearchParams({
         isbn13, 
         loaninfoYN: 'Y',
-        format: 'json'
+        format: formatType
     })
     const url = `${host}/usageAnalysisList?${authKey}&${params}`
     try {
@@ -193,13 +143,13 @@ app.get('/usage-analysis-list', async (req, res) => {
 
 
 // 도서 소장 도서관 조회
-app.get('/libSrchByBook', async (req, res)=> {
+app.get('/library-search-by-book', async (req, res)=> {
     const { isbn, region, dtl_region } = req.query
     const params = new URLSearchParams({
         isbn, 
         region, 
         dtl_region,
-        format: 'json'
+        format: formatType
     })
     const url = `${host}/libSrchByBook?${authKey}&${params}`
     try {
@@ -221,41 +171,6 @@ app.get('/libSrchByBook', async (req, res)=> {
         res.status(500).send('Failed to get library data')
     }
 })
-
-app.get('/libSrchByBook', async (req, res) => {
-    const { isbn, resion, dtl_region }= req.query
-    const params = new URLSearchParams({
-        isbn, 
-        region,
-        dtl_region,
-        format: 'json'
-    })
-    const url = `${host}/libSRchByBook?${authKey}&${params}`
-    const response = await fetch(url, {method : 'GET'})
-    if (!response.ok) {
-        throw new Error('Failed to get')
-    }
-})
-
-// app.get('/b', function(req, res) {
-//     const { isbn13, libCode } = req.query
-//     const isbn = `isbn13=${isbn13}`
-//     const lib = `libCode=${libCode}`
-
-//     const url1 = `${host}/srchDtlList?${authKey}&${isbn}&&${foramt}`
-//     const url2 = `${host}/bookExist?${authKey}&${isbn}&${lib}&${foramt}`
-
-//     const requestOne = axios.get(url1)
-//     const requestTwo = axios.get(url2)
-
-//     axios.all([requestOne, requestTwo]).then(axios.spread((...responses) => {
-//         const responseOne = responses[0].data.response.detail[0].book
-//         const responseTwo = responses[1].data.response
-//         const { libCode } = responseTwo.request
-//         res.send({...responseOne, libCode, ...responseTwo.result})
-//     })).catch(error => {
-//     })
-// });
 
 
 // Router
@@ -281,3 +196,68 @@ app.listen(port, () => {
 
 
 // 111007 고덕도서관
+
+
+// 도서관별 장서/대출 데이터 조회
+// app.get('/library-itemSrch', function(req, res) {
+//     const { libCode, keyword } = req.query
+
+//     // console.log(keyword, libCode)
+    
+//     const lib = `libCode=${libCode}`
+//     const keywordStr = `keyword=${encodeURIComponent(keyword)}`
+
+//     const url = `${host}/srchBooks?${authKey}&keyword=%EC%97%AD%EC%82%AC&pageNo=1&pageSize=10&format=json`
+//     // console.log(url)
+
+//     axios.get(url)
+//         .then( response => {
+//             res.send(response.data.response.docs)
+//         })
+//         .catch(error => {
+//             console.error(error)
+//         })
+// });
+
+
+// 도서 상세 조회
+// app.get('/srchDtlList', function(req, res) {
+//     const { isbn13 } = req.query
+
+//     const url = `${host}/srchDtlList?${authKey}&isbn13=${isbn13}&loaninfoYN=Y&format=json`
+//     // console.log(url)
+
+//     axios.get(url)
+//         .then( response => {
+//             const { detail, loanInfo, request} = response.data.response
+//             const data = {
+//                 detail: detail[0].book,
+//                 loanInfo,
+//                 loanInfoYN: request.loaninfoYN
+//             }
+//             res.send(data)
+//         })
+//         .catch(error => {
+//             console.error(error)
+//         })
+// });
+
+// app.get('/b', function(req, res) {
+//     const { isbn13, libCode } = req.query
+//     const isbn = `isbn13=${isbn13}`
+//     const lib = `libCode=${libCode}`
+
+//     const url1 = `${host}/srchDtlList?${authKey}&${isbn}&&${foramt}`
+//     const url2 = `${host}/bookExist?${authKey}&${isbn}&${lib}&${foramt}`
+
+//     const requestOne = axios.get(url1)
+//     const requestTwo = axios.get(url2)
+
+//     axios.all([requestOne, requestTwo]).then(axios.spread((...responses) => {
+//         const responseOne = responses[0].data.response.detail[0].book
+//         const responseTwo = responses[1].data.response
+//         const { libCode } = responseTwo.request
+//         res.send({...responseOne, libCode, ...responseTwo.result})
+//     })).catch(error => {
+//     })
+// });
