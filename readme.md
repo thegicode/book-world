@@ -31,6 +31,9 @@
 - 전자도서관 책 소장/대출 조회 추가
 - 지역 설정 추가
 - Improve index.js : axios to fetch
+- template 파일 별도, fetch로 받아올 것
+- 폴더 구조 개선
+- build
 
 ## 도서관 공개 API 
 https://solomon.data4library.kr/

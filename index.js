@@ -4,7 +4,7 @@ const path = require('path')
 
 const app = express();
 const port = 7777;
-const axios = require('axios').default;
+// const axios = require('axios').default;
 
 app.use(express.static(`${__dirname}/src/`));
 
