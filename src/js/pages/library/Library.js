@@ -7,68 +7,67 @@ export default class Library extends HTMLElement {
 	}
 
 	set regionCode(v) {
-		// this._regionCode = v
 		this.request(v)
 	}
-	// get regionCode() {
-	// 	return this._regionCode
-	// }
 
-	request(regionCode) {
-		this.loading()
-		fetch(`/library-search?regionCode=${regionCode}&page=${1}&pageSize=${20}`, {
-            method: 'GET'
-        })
-        .then(data => data.json())
-        .then(response => {
-        	this.render(response)
-        })
-        .catch(e => {
-            console.log(e)
-        });
+	async request(regionCode) {
+		this.showMessage('loading')
+		try {
+			const url = `/library-search?regionCode=${regionCode}&page=${1}&pageSize=${20}`
+			const response = await fetch(url)
+			if (!response.ok) {
+				throw new Error('Fail to get library search data.')
+			}
+			const data = await response.json()
+			this.render(data)
+		} catch(error) {
+			console.error(error)
+		}
 	}
 
 	render(data) {
-		if (data.libs.length === 0) {
-            this.notFound()
+		const { pageNo, pageSize, numFound, resultNum, libs } = data
+
+		if (libs.length === 0) {
+            this.showMessage('notFound')
             return
 		}
 
-		const { pageNo, pageSize, numFound, resultNum, libs } = data
-        const fragemnt = new DocumentFragment()
+        const fragment = this.renderBookList(libs)
 
-		libs.forEach( item => {
-            const el = document.querySelector('#tp-item').content.firstElementChild.cloneNode(true)
-            el.data = item
-            if (hasLibrary(item.libCode)) {
-            	el.dataset.has = true
+		this.form.innerHTML = ''
+        this.form.appendChild(fragment)
+	}
 
-            	const target = fragemnt.querySelector('[data-has=true]')
-            	if (target) {
-            		target.after(el)
-            		return
-            	} 
-            	fragemnt.insertBefore(el, fragemnt.firstElementChild)
+	renderBookList(libs) {
+		const fragment = new DocumentFragment()
+		const template = document.querySelector('#tp-item').content.firstElementChild
+		
+		const favorites = []
+		const others = []
 
-            	return
-            } 
-            fragemnt.appendChild(el)
+		libs.forEach( libData => {
+            const element = template.cloneNode(true)
+            element.data = libData
+			
+			if (hasLibrary(libData.libCode)) {
+				element.dataset.has = true
+				favorites.push(element)
+			} else {
+				others.push(element)
+			}
 		})
-		this.form.innerHTML = ''
-        this.form.appendChild(fragemnt)
+
+		favorites.forEach( el => fragment.appendChild(el))
+		others.forEach( el => fragment.appendChild(el))
+		return fragment
 	}
 
-	notFound() {
-		const notfoundEl = document.querySelector('#tp-notFound').content.firstElementChild.cloneNode(true)
+	showMessage(type) {
+		const tpl = document.querySelector(`#tp-${type}`)
+		const el = tpl.content.firstElementChild.cloneNode(true)
 		this.form.innerHTML = ''
-        this.form.appendChild(notfoundEl)
-	}
-
-
-	loading() {
-		const loadingEl = document.querySelector('#tp-loading').content.firstElementChild.cloneNode(true)
-		this.form.innerHTML = ''
-        this.form.appendChild(loadingEl)
+        this.form.appendChild(el)
 	}
 
 }
