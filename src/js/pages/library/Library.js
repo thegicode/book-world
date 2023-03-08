@@ -33,28 +33,28 @@ export default class Library extends HTMLElement {
             return
 		}
 
-        const fragment = this.renderBookList(libs)
+        const fragment = this.createLibraryList(libs)
 
 		this.form.innerHTML = ''
         this.form.appendChild(fragment)
 	}
 
-	renderBookList(libs) {
-
-		const favorites =libs.filter(lib => hasLibrary(lib.libCode))
-		const others =libs.filter(lib => !hasLibrary(lib.libCode))
+	createLibraryList(libs) {
+		const favorites = libs.filter(lib => hasLibrary(lib.libCode))
+		const others = libs.filter(lib => !(hasLibrary(lib.libCode)))
 
 		const fragment = new DocumentFragment()
 		const template = document.querySelector('#tp-item').content.firstElementChild
 
-		for (const libData of [...favorites, ...others]){
+		const arr = [...favorites, ...others]
+		arr.forEach( item => {
 			const element = template.cloneNode(true)
-			element.data = libData
-			if (hasLibrary(libData.libCode)) {
+			element.data = item
+			if (hasLibrary(item.libCode)) {
 				element.dataset.has = true
 			}
 			fragment.appendChild(element)
-		}
+		})
 		
 		return fragment
 	}
