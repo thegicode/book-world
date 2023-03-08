@@ -1,11 +1,11 @@
 
-import NavGnb from '../../components/NavGnb.js'
+
+import { NavGnb, BookDescription, LibraryBookExist } from '/js/components/index.js'
+
 import AppSearch from './AppSearch.js'
 import InputSearch from './InputSearch.js'
 import BookContent from './BookContent.js'
 import BookItem from './BookItem.js'
-import BookDescription from '../../components/BookDescription.js'
-import LibraryBookExist from '../../components/LibraryBookExist.js'
 import TestElement from './TestElement.js'
 
 customElements.define('nav-gnb', NavGnb)

@@ -92,7 +92,7 @@ app.get('/book-exist', async (req, res) => {
             throw new Error(`Failed to check book exist data: ${response.statusText}`)
         }
         const data = await response.json()
-        const result = data.response?.result ?? false
+        const result = data.response?.result
         // console.log(result)
 
         res.send(result)
