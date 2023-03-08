@@ -1,4 +1,4 @@
-import { state, addLibrary, deleteLibrary, includesLibrary } from '../../modules/model.js'
+import { state, addLibrary, removeLibrary, hasLibrary } from '../../modules/model.js'
 
 
 export default class LibraryItem extends HTMLElement {
@@ -46,7 +46,7 @@ export default class LibraryItem extends HTMLElement {
         }
         this.querySelector('.homepage').href = homepage
 
-        const includes = includesLibrary(libCode)
+        const includes = hasLibrary(libCode)
         this.checkbox.checked = includes
         this.libCode = libCode
         this.libName = libName
@@ -57,7 +57,7 @@ export default class LibraryItem extends HTMLElement {
 			addLibrary(this.libCode, this.libName)
 			return
 		}
-		deleteLibrary(this.libCode)
+		removeLibrary(this.libCode)
 	}
 
 }

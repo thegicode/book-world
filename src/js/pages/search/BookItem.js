@@ -1,5 +1,5 @@
 
-import { state, addFavorite, deleteFavorite, includesFavorite } from '../../modules/model.js'
+import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
 
 export default class BookItem extends HTMLElement {
     constructor() {
@@ -68,7 +68,7 @@ export default class BookItem extends HTMLElement {
         this.isbn13 = isbn.split(' ')[0]
 
         // const { favorite } = state
-        if (includesFavorite(this.isbn13)) {
+        if (isFavoriteBook(this.isbn13)) {
             this.favoriteButton.checked = true
         }
         
@@ -77,15 +77,15 @@ export default class BookItem extends HTMLElement {
     onFavorite(event) {
         const { checked } = event.target
         if (checked) {
-            addFavorite(this.isbn13)
+            addFavoriteBook(this.isbn13)
         } else {
-            deleteFavorite(this.isbn13)
+            removeFavoriteBook(this.isbn13)
         }
     }
 
     onClickLibraryButton() {
         this.libraryBookExist
-            .onLibraryBookExist(this.libraryButton, this.isbn13, state.library)
+            .onLibraryBookExist(this.libraryButton, this.isbn13, state.libraries)
 
     }
     

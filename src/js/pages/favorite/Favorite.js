@@ -11,7 +11,7 @@ export default class Favorite extends HTMLElement {
         this.updateCount()
 
         const fragemnt = new DocumentFragment()
-        state.favorite.forEach( item => {
+        state.favoriteBooks.forEach( item => {
             const el = this.itemTemplate.content.firstElementChild.cloneNode(true)
             el.data = item
             fragemnt.appendChild(el)
@@ -26,7 +26,7 @@ export default class Favorite extends HTMLElement {
 
     updateCount() {
         this.querySelector('.count')
-            .textContent = `${state.favorite.length}권`
+            .textContent = `${state.favoriteBooks.length}권`
     }
 
     // renderLoanHistory(el, data) {

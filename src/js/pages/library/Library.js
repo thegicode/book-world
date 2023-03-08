@@ -1,4 +1,4 @@
-import { includesLibrary } from '../../modules/model.js'
+import { hasLibrary } from '../../modules/model.js'
 
 export default class Library extends HTMLElement {
 	constructor() {
@@ -40,7 +40,7 @@ export default class Library extends HTMLElement {
 		libs.forEach( item => {
             const el = document.querySelector('#tp-item').content.firstElementChild.cloneNode(true)
             el.data = item
-            if (includesLibrary(item.libCode)) {
+            if (hasLibrary(item.libCode)) {
             	el.dataset.has = true
 
             	const target = fragemnt.querySelector('[data-has=true]')

@@ -1,75 +1,80 @@
+const cloneDeep = (obj) => {
+	return JSON.parse(JSON.stringify(obj))
+}
 
 const initialState = {
-	favorite: [],
-	library: {}
+	favoriteBooks: [],
+	libraries: {}
 }
 
-const storageName = 'BookWorld'
+const storageKey = 'BookWorld'
 
-const getState = () => {
+const saveState = (newState) => {
 	try {
-		const storedState = localStorage.getItem(storageName)
-		if (!storedState) {
-			localStorage.setItem(storageName, JSON.stringify(initialState))
-		}
-		return JSON.parse(storedState || JSON.stringify(initialState))
+		localStorage.setItem(storageKey, JSON.stringify(newState))
 	} catch (error) {
 		console.error(error)
-		return initialState
 	}
 }
 
-let state = getState()
-
-const addFavorite = (isbn) => {
-	state.favorite.push(isbn)
-	setStorage()
+const loadState = () => {
+	try {
+		const storedState = localStorage.getItem(storageKey)
+		if (storedState == null) {	// storedState === null || storedState === undefined 둘 다 해당
+			saveState(initialState)
+			return initialState
+		}
+		return cloneDeep(JSON.parse(storedState))
+	} catch (error) {
+		console.error(error)
+		throw new Error('Failed to get state from localStrage.')
+	}
 }
 
-const deleteFavorite = (isbn) => {
-	const index = state.favorite.indexOf(isbn)
-	state.favorite.splice(index, 1)
-	setStorage()
+let state = loadState()
+
+const addFavoriteBook = (isbn) => {
+	const newState = cloneDeep(state)
+	newState.favoriteBooks.push(isbn)
+	saveState(newState)
 }
 
-const includesFavorite = (isbn) => {
-	if (!state.favorite) {
+const removeFavoriteBook = (isbn) => {
+	const newState = cloneDeep(state)
+	newState.favoriteBooks = newState.favoriteBooks.filter(item => item !== isbn)
+	saveState(newState)
+}
+
+const isFavoriteBook = (isbn) => {
+	// state.favoriteBooks가 undefined인 경우 고려
+	if (!Array.isArray(state.favoriteBooks)) {
 		return false
 	}
-	return state.favorite.includes(isbn)
+	return state.favoriteBooks.includes(isbn)
 }
 
-const addLibrary = (libCode, libName) => {
-	state.library[libCode] = libName
-    setStorage()
+const addLibrary = (code, name) => {
+	const newState = cloneDeep(state)
+	newState.libraries[code] = name
+	saveState(newState)
 }
 
-const deleteLibrary = (libCode) => {
-	delete state.library[libCode]
-    setStorage()
+const removeLibrary = (code) => {
+	const newState = cloneDeep(state)
+	delete newState.libraries[code]
+	saveState(newState)
 }
 
-const includesLibrary = (libCode) => {
-	return state.library.hasOwnProperty(libCode)
+const hasLibrary = (code) => {
+	return state.libraries.hasOwnProperty(code)
 }
 
-const setStorage = () => {
-	try {
-		localStorage.setItem(storageName, JSON.stringify(state))
-		console.log(JSON.parse(localStorage.getItem(storageName)))
-	} catch (error) {
-		console.errer(error)
-	}
-}
-	
 export {
 	state,
-	addFavorite,
-	deleteFavorite,
-	includesFavorite,
+	addFavoriteBook,
+	removeFavoriteBook,
+	isFavoriteBook,
 	addLibrary,
-	deleteLibrary,
-	includesLibrary
+	removeLibrary,
+	hasLibrary
 }
-
-

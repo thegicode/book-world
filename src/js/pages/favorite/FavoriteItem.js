@@ -1,5 +1,5 @@
 import { $ } from './selectors.js'
-import { state, deleteFavorite } from '../../modules/model.js'
+import { state, removeFavoriteBook } from '../../modules/model.js'
 // import newCustomEvent from '../modules/NewCustomEvent.js'
 
 export default class FavoriteItem extends HTMLElement {
@@ -97,14 +97,14 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     onFavorite() {
-        deleteFavorite(this.data)
+        removeFavoriteBook(this.data)
         $.favorite.updateCount()
         this.remove()
     }
 
     onLibrary() {
         this.libraryBookExist
-            .onLibraryBookExist(this.libraryButton, this.data, state.library)
+            .onLibraryBookExist(this.libraryButton, this.data, state.libraries)
     }
 
     loading() {

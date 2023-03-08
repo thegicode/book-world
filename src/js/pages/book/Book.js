@@ -1,5 +1,5 @@
 
-import { state, addFavorite, deleteFavorite, includesFavorite } from '../../modules/model.js'
+import {  addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
 
 export default class Book extends HTMLElement {
     constructor() {
@@ -152,7 +152,7 @@ export default class Book extends HTMLElement {
             .map(({ bookname, isbn13 }) => `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`)
             .join('')
 
-        this.favoriteButton.checked = includesFavorite(isbn13)
+        this.favoriteButton.checked = isFavoriteBook(isbn13)
         this.querySelector('.bookname').innerHTML = bookNames
         this.querySelector('.authors').textContent = authors
         const imageElement = this.querySelector('img')
@@ -176,9 +176,9 @@ export default class Book extends HTMLElement {
 
     onFavorite(isbn, event) {
         if (event.target.checked) {
-            addFavorite(isbn)
+            addFavoriteBook(isbn)
         } else {
-            deleteFavorite(isbn)
+            removeFavoriteBook(isbn)
         }
     }
 }
