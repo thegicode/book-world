@@ -18,13 +18,9 @@ export default class InputSearch extends HTMLElement {
 
     onSubmit(event) {
         event.preventDefault()
-
         
         const keyword = this.input.value 
         if (!keyword) return
-
-        console.log('onSubmit', keyword)
-
 
         this.input.value = ''
 

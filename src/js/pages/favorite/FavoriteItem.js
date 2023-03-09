@@ -1,4 +1,3 @@
-import { $ } from './selectors.js'
 import { state, removeFavoriteBook } from '../../modules/model.js'
 
 export default class FavoriteItem extends HTMLElement {
@@ -84,7 +83,7 @@ export default class FavoriteItem extends HTMLElement {
 
     onFavorite() {
         removeFavoriteBook(this.data)
-        $.favorite.updateCount()
+        document.querySelector('app-favorite').count = state.favoriteBooks.length
         this.remove()
     }
 

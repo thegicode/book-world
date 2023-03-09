@@ -35,8 +35,7 @@ export default class BookContent extends HTMLElement {
             this.pages.hidden = true
             this.showMessage('message')
         }
-        console.log('initialize keyword: ', keyword, this.length)
-
+        // console.log('initialize keyword: ', keyword, this.length)
     }
 
     async request() {

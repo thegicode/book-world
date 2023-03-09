@@ -69,7 +69,7 @@ const hasLibrary = (code) => {
 
 export {
 	state,
-	loadState,
+	// loadState,
 	addFavoriteBook,
 	removeFavoriteBook,
 	isFavoriteBook,
