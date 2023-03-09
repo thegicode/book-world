@@ -26,10 +26,6 @@ export default class Favorite extends HTMLElement {
 
     }
 
-    changeFavoriteBooks({ detail }) {
-        this.count = detail.count
-    }
-
     connectedCallback() {
         // 속성 변경을 감지하기 위해 MutationObserver를 사용합니다.
         this.observer = new MutationObserver(this.updateCount)
@@ -68,6 +64,10 @@ export default class Favorite extends HTMLElement {
         // newValue: 새로운 속성 값
         console.log(`attributeChangedCallback : ${name}`, oldValue, newValue);
         this.updateCount(newValue)
+    }
+
+    changeFavoriteBooks({ detail }) {
+        this.count = detail.count
     }
 
     // renderLoanHistory(el, data) {
