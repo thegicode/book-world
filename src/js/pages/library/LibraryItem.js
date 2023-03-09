@@ -21,7 +21,7 @@ export default class LibraryItem extends HTMLElement {
 	disconnectedCallback() {
 		this.#checkbox.onclick = null
 	}
-
+	
 	render() {
 		const { data } = this
 		const keys = Object.keys(data)
@@ -38,6 +38,7 @@ export default class LibraryItem extends HTMLElement {
 		const { libCode, libName } = data
 		this.#libCode = libCode
 		this.#libName = libName
+
 		this.#checkbox.checked = hasLibrary(libCode)
 	}
 
