@@ -29,6 +29,7 @@
 - template 파일 별도, fetch로 받아올 것
 - 폴더 구조 개선
 - build 추가
+- Observer 오류 수정
 
 ## 도서관 공개 API 
 https://solomon.data4library.kr/
