@@ -94,24 +94,6 @@ export default class BookContent extends HTMLElement {
         this.books.appendChild(fragment)
     }
 
-    ready() {
-        const el = document.querySelector('#tp-message').content.firstElementChild.cloneNode(true)
-        this.books.innerHTML = ''
-        this.books.appendChild(el)
-    }
-
-    loading() {
-        const el = document.querySelector('#tp-laoding').content.firstElementChild.cloneNode(true)
-        this.books.innerHTML = ''
-        this.books.appendChild(el)
-    }
-
-    notFound() {
-        const el = document.querySelector('#tp-notFound').content.firstElementChild.cloneNode(true)
-        this.books.innerHTML = ''
-        this.books.appendChild(el)
-    }
-
     showMessage(type) {
         const el = document.querySelector(`#tp-${type}`).content.firstElementChild.cloneNode(true)
         this.books.innerHTML = ''
