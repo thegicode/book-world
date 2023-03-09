@@ -10,6 +10,8 @@ const initialState = {
 const storageKey = 'BookWorld'
 
 const saveState = (newState) => {
+	console.log([...newState.favoriteBooks])
+	console.log([...Object.values(newState.libraries)])
 	try {
 		localStorage.setItem(storageKey, JSON.stringify(newState))
 	} catch (error) {
