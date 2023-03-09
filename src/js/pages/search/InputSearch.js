@@ -13,22 +13,31 @@ export default class InputSearch extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.form.removeEventListener('submit', this.onSubmit.bind(this))
+        this.form.removeEventListener('submit', this.onSubmit)
     }
 
     onSubmit(event) {
         event.preventDefault()
+
         
         const keyword = this.input.value 
+        if (!keyword) return
+
+        console.log('onSubmit', keyword)
+
+
         this.input.value = ''
 
         const url = new URL(window.location.href)
         url.searchParams.set('keyword', keyword)
         window.history.pushState({}, "", url)
 
-        if (keyword !== $.bookContent.keyword) {
-            $.bookContent.initialize(keyword)
-        }
+        $.bookContent.initialize(keyword)
+        // if (keyword !== $.bookContent.keyword) {
+        //     $.bookContent.initialize(keyword)
+        // }
+
+        this.input.focus()
     }
   
 }

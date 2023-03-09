@@ -1,6 +1,5 @@
 import { $ } from './selectors.js'
 import { state, removeFavoriteBook } from '../../modules/model.js'
-// import newCustomEvent from '../modules/NewCustomEvent.js'
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
@@ -20,9 +19,9 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.favoriteButton.removeEventListener('click', this.onFavorite.bind(this))
-        this.libraryButton.removeEventListener('click', this.onLibrary.bind(this))
-        this.link.removeEventListener('click', this.onClick.bind(this))
+        this.favoriteButton.removeEventListener('click', this.onFavorite)
+        this.libraryButton.removeEventListener('click', this.onLibrary)
+        this.link.removeEventListener('click', this.onClick)
     }
 
     request(isbn13) {
@@ -48,8 +47,6 @@ export default class FavoriteItem extends HTMLElement {
             coLoanBooks
         } = data
 
-        // console.log(loanGrps)
-
         const {
             authors,
             bookImageURL,
@@ -66,29 +63,18 @@ export default class FavoriteItem extends HTMLElement {
 
         this.linkData = data
 
-        // const names = bookname.split(' =')
-        // const name = names[0]
-        // const subName = names[1]
+        this.querySelector('.bookname').textContent = bookname
+        this.querySelector('.authors').textContent = authors
+        this.querySelector('.class_nm').textContent = class_nm
+        this.querySelector('.isbn13').textContent = isbn13
+        this.querySelector('.loanCnt').textContent = loanCnt.toLocaleString()
+        this.querySelector('.publication_year').textContent = publication_year
+        this.querySelector('.publisher').textContent = publisher
 
-        const obj = {
-            bookname: `${bookname}`,
-            authors: `${authors}`,
-            class_nm: `${class_nm}`,
-            // class_no: `${class_no}`,
-            isbn13: `${isbn13}`,
-            loanCnt: `${loanCnt.toLocaleString()}`,
-            publication_year: `${publication_year}`,
-            publisher: `${publisher}`,
-            // vol: `${vol}`,
-        }
-        for (const [key, value] of Object.entries(obj)) {
-            this.querySelector(`.${key}`).textContent = value
-        }
-
-        const img =  this.querySelector('img')
-        img.src = `${bookImageURL}`
-        img.onerror = () => {
-            img.remove()
+        const thumbnail =  this.querySelector('img')
+        thumbnail.src = bookImageURL
+        thumbnail.onerror = () => {
+            thumbnail.remove()
         }
 
         this.querySelector('book-description').data = description

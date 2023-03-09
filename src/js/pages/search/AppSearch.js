@@ -11,7 +11,7 @@ export default class AppSearch extends HTMLElement {
     }
 
     disconnectedCallback() {
-        window.removeEventListener('popstate', this.onPopState.bind(this))
+        window.removeEventListener('popstate', this.onPopState)
     }
 
     onPopState() {

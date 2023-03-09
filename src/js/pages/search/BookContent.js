@@ -23,7 +23,6 @@ export default class BookContent extends HTMLElement {
     }
 
     initialize(keyword) {
-        // console.log('initialize keyword: ', keyword)
         this.keyword = keyword
         if (this.keyword) {
             this.length = 0
@@ -36,6 +35,8 @@ export default class BookContent extends HTMLElement {
             this.pages.hidden = true
             this.showMessage('message')
         }
+        console.log('initialize keyword: ', keyword, this.length)
+
     }
 
     async request() {

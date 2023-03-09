@@ -9,7 +9,10 @@ export default class Favorite extends HTMLElement {
 
     connectedCallback() {
         this.updateCount()
+        this.render()
+    }
 
+    render() {
         const fragemnt = new DocumentFragment()
         state.favoriteBooks.forEach( item => {
             const el = this.itemTemplate.content.firstElementChild.cloneNode(true)
@@ -17,16 +20,10 @@ export default class Favorite extends HTMLElement {
             fragemnt.appendChild(el)
         })
         this.books.appendChild(fragemnt)
-
-    }
-
-    disconnectedCallback() {
-        // this.favoriteButton.removeEventListener('click', this.onFavorite.bind(this))
     }
 
     updateCount() {
-        this.querySelector('.count')
-            .textContent = `${state.favoriteBooks.length}권`
+        this.querySelector('.count').textContent = `${state.favoriteBooks.length}권`
     }
 
     // renderLoanHistory(el, data) {
