@@ -1,4 +1,5 @@
 import { state, removeFavoriteBook } from '../../modules/model.js'
+import newCustomEvent from "../../modules/newCustomEvent.js"
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
@@ -83,8 +84,11 @@ export default class FavoriteItem extends HTMLElement {
 
     onFavorite() {
         removeFavoriteBook(this.data)
-        document.querySelector('app-favorite').count = state.favoriteBooks.length
+        newCustomEvent.dispatch('changeFavoriteBooks', { count: state.favoriteBooks.length })
+        // document.querySelector('app-favorite').count = state.favoriteBooks.length
         this.remove()
+
+
     }
 
     onLibrary() {
