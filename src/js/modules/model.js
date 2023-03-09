@@ -15,7 +15,6 @@ const saveState = (newState) => {
 	} catch (error) {
 		console.error(error)
 	}
-	
 	console.log([...newState.favoriteBooks])
 	console.log([...Object.values(newState.libraries)])
 }
@@ -23,7 +22,7 @@ const saveState = (newState) => {
 const loadState = () => {
 	try {
 		const storedState = localStorage.getItem(storageKey)
-		if (storedState == null) {	// storedState === null || storedState === undefined 둘 다 해당
+		if (storedState == null) {	
 			saveState(initialState)
 			return initialState
 		}
@@ -34,38 +33,34 @@ const loadState = () => {
 	}
 }
 
-let state = loadState()
+const state = loadState()
+
 
 const addFavoriteBook = (isbn) => {
-	const newState = cloneDeep(state)
-	newState.favoriteBooks.push(isbn)
-	saveState(newState)
+	state.favoriteBooks.push(isbn)
+	saveState(state)
 }
 
 const removeFavoriteBook = (isbn) => {
-	const newState = cloneDeep(state)
-	newState.favoriteBooks = newState.favoriteBooks.filter(item => item !== isbn)
-	saveState(newState)
+	const index = state.favoriteBooks.indexOf(isbn)
+	if (index !== -1) {
+		state.favoriteBooks.splice(index, 1)
+		saveState(state)
+	}
 }
 
 const isFavoriteBook = (isbn) => {
-	// state.favoriteBooks가 undefined인 경우 고려
-	if (!Array.isArray(state.favoriteBooks)) {
-		return false
-	}
 	return state.favoriteBooks.includes(isbn)
 }
 
 const addLibrary = (code, name) => {
-	const newState = cloneDeep(state)
-	newState.libraries[code] = name
-	saveState(newState)
+	state.libraries[code] = name
+	saveState(state)
 }
 
 const removeLibrary = (code) => {
-	const newState = cloneDeep(state)
-	delete newState.libraries[code]
-	saveState(newState)
+	delete state.libraries[code]
+	saveState(state)
 }
 
 const hasLibrary = (code) => {
@@ -74,6 +69,7 @@ const hasLibrary = (code) => {
 
 export {
 	state,
+	loadState,
 	addFavoriteBook,
 	removeFavoriteBook,
 	isFavoriteBook,
