@@ -41,19 +41,17 @@ export default class BookItem extends HTMLElement {
             // price,
             pubdate,
             publisher,
-            title } = this.data
+            title 
+        } = this.data
 
-        const yyyy = pubdate.substring(0,4)
-        const mm = pubdate.substring(pubdate.length - 2, pubdate.length - 4)
-        const dd = pubdate.substring(pubdate.length - 2)
-        const formattedPubdate = `${yyyy}.${mm}.${dd}`
+        const formattedPubdate = `${pubdate.substring(0,4)}.${pubdate.substring(4,6)}.${pubdate.substring(6)}`
 
-        this.querySelector('.title').innerHTML = title;
-        this.querySelector('.author').innerHTML = author;
-        this.querySelector('.description').innerHTML = description;
-        this.querySelector('.publisher').innerHTML = publisher;
-        this.querySelector('.pubdate').innerHTML = formattedPubdate;
-        this.querySelector('.isbn').innerHTML = `isbn : ${isbn.split(' ').join(', ')}`;
+        this.querySelector('.title').textContent = title;
+        this.querySelector('.author').textContent = author;
+        this.querySelector('.description').textContent = description;
+        this.querySelector('.publisher').textContent = publisher;
+        this.querySelector('.pubdate').textContent = formattedPubdate;
+        this.querySelector('.isbn').textContent = `isbn : ${isbn.split(' ').join(', ')}`;
         this.querySelector('.__link').href = link
 
         const img = this.querySelector('img')
@@ -70,7 +68,6 @@ export default class BookItem extends HTMLElement {
         if (isFavoriteBook(this.isbn13)) {
             this.favoriteButton.checked = true
         }
-        
     }
 
     onFavorite(event) {
