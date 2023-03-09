@@ -8,21 +8,18 @@ export default class BookContent extends HTMLElement {
     }
 
     connectedCallback() {
-
         this.observer = new IntersectionObserver( changes => {
             changes.forEach( change => {
                 if (change.isIntersecting) {
                     this.observer.unobserve(change.target)
                     this.request()
-                }
+                }   
             })
         })
-
     }
 
     disconnectedCallback() {
-        this.observer = null
-
+        this.observer?.disconnect()
     }
 
     initialize(keyword) {
@@ -40,17 +37,16 @@ export default class BookContent extends HTMLElement {
         }
     }
 
-    request() {
-        fetch(`/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`, {
-            method: 'GET'
-        })
-        .then(data => data.json())
-        .then(response => {
-            this.render(response)
-        })
-        .catch(e => {
-            console.log(e);
-        });
+    async request() {
+        const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`
+        try {
+            const response = await fetch(url)
+            const data = await response.json()
+            this.render(data)
+        } catch(error) {
+            console.error(error)
+            throw new Error('Fail to get naver book.')
+        }
     }
 
     render(data) {
@@ -99,7 +95,6 @@ export default class BookContent extends HTMLElement {
     }
 
     ready() {
-
         const el = document.querySelector('[data-template=message]').content.firstElementChild.cloneNode(true)
         this.books.innerHTML = ''
         this.books.appendChild(el)
