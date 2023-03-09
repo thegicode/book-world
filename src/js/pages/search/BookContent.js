@@ -1,21 +1,19 @@
 // import { $ } from './selectors.js'
 
+import Observer from "../../modules/Observer.js"
+
 export default class BookContent extends HTMLElement {
     constructor() {
         super()
         this.summary = this.querySelector('.book-summary')
         this.books = this.querySelector('.books')
+        this.request = this.request.bind(this)
     }
 
     connectedCallback() {
-        this.observer = new IntersectionObserver( changes => {
-            changes.forEach( change => {
-                if (change.isIntersecting) {
-                    this.observer.unobserve(change.target)
-                    this.request()
-                }   
-            })
-        })
+        const target = this.querySelector('.observe')
+        const callback = this.request
+        this.observer = new Observer(target, callback)
     }
 
     disconnectedCallback() {
@@ -79,8 +77,10 @@ export default class BookContent extends HTMLElement {
             return
         } 
 
-        const target = this.querySelector('.observe')
-        this.observer.observe(target)
+        this.observer.observe()
+        // const target = this.querySelector('.observe')
+        // this.observer.observe(target)
+        this.observer.observe()
     }
 
     bookItems(items, prevLength) {
@@ -100,6 +100,14 @@ export default class BookContent extends HTMLElement {
         this.books.appendChild(el)
     }
 
-
-  
 }
+
+
+        // this.observer = new IntersectionObserver( changes => {
+        //     changes.forEach( change => {
+        //         if (change.isIntersecting) {
+        //             this.observer.unobserve(change.target)
+        //             this.request()
+        //         }   
+        //     })
+        // })
