@@ -16,7 +16,7 @@ export default class BookItem extends HTMLElement {
         this.favoriteButton = this.querySelector('input[name="favorite"]')
         this.libraryButton = this.querySelector('.library-button')
         this.libraryBookExist = this.querySelector('library-book-exist')
-        this.link = this.querySelector('.book-info')
+        this.link = this.querySelector('.book-summary')
 
         this.render()
 
@@ -32,27 +32,18 @@ export default class BookItem extends HTMLElement {
     }
 
     render() {
-        const { author,
+        const { 
+            author,
             description,
-            discount,
             image,
             isbn,
             link,
-            // price,
             pubdate,
             publisher,
-            title 
+            title,
+            // discount,
+            // price,
         } = this.data
-
-        const formattedPubdate = `${pubdate.substring(0,4)}.${pubdate.substring(4,6)}.${pubdate.substring(6)}`
-
-        this.querySelector('.title').textContent = title;
-        this.querySelector('.author').textContent = author;
-        this.querySelector('.description').textContent = description;
-        this.querySelector('.publisher').textContent = publisher;
-        this.querySelector('.pubdate').textContent = formattedPubdate;
-        this.querySelector('.isbn').textContent = `isbn : ${isbn.split(' ').join(', ')}`;
-        this.querySelector('.__link').href = link
 
         const img = this.querySelector('img')
         img.src = image
@@ -61,6 +52,15 @@ export default class BookItem extends HTMLElement {
             console.error('image fail', image)
             img.remove()
         }
+
+        const formattedPubdate = `${pubdate.substring(0,4)}.${pubdate.substring(4,6)}.${pubdate.substring(6)}`
+        this.querySelector('.title').textContent = title
+        this.querySelector('.publisher').textContent = publisher
+        this.querySelector('.author').textContent = author
+        this.querySelector('.pubdate').textContent = formattedPubdate
+        this.querySelector('.isbn').textContent = `isbn : ${isbn.split(' ').join(', ')}`
+        this.querySelector('.description').textContent = description
+        this.querySelector('.__link').href = link
 
         this.dataset.index = this.index
         this.isbn13 = isbn.split(' ')[0]
