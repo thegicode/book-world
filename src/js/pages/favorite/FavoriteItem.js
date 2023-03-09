@@ -84,7 +84,7 @@ export default class FavoriteItem extends HTMLElement {
 
     onFavorite() {
         removeFavoriteBook(this.data)
-        newCustomEvent.dispatch('changeFavoriteBooks', { count: state.favoriteBooks.length })
+        newCustomEvent.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
         // document.querySelector('app-favorite').count = state.favoriteBooks.length
         this.remove()
 

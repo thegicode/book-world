@@ -1,4 +1,4 @@
-import { state } from '../../modules/model.js'
+import { getState } from '../../modules/model.js'
 import newCustomEvent from "../../modules/newCustomEvent.js"
 
 export default class Favorite extends HTMLElement {
@@ -14,75 +14,74 @@ export default class Favorite extends HTMLElement {
         return this.getAttribute('count')
     }
 
+    get favoriteBooks() {
+        return getState().favoriteBooks
+    }
+
     constructor() {
         super()
 
-        this.books = this.querySelector('.favorite-books')
-        this.itemTemplate = document.querySelector('#tp-favorite-item')
-
+        this.booksEl = this.querySelector('.favorite-books')
+        this.countEl = this.querySelector('.count')
+        
         this.updateCount = this.updateCount.bind(this)
 
-        newCustomEvent.add('changeFavoriteBooks', this.changeFavoriteBooks.bind(this))
+        newCustomEvent.add('favorite-books-changed', this.favoriteBooksChanged.bind(this))
 
     }
 
     connectedCallback() {
         // 속성 변경을 감지하기 위해 MutationObserver를 사용합니다.
-        this.observer = new MutationObserver(this.updateCount)
+        // this.observer = new MutationObserver(this.updateCount)
+        this.observer = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                if (mutation.attributeName === 'count') {
+                    this.updateCount()
+                } else if (mutation.type ==='childList') {
+                    // console.log(mutation.type)
+                    // this.render()
+                }
+            }
+        })
+        this.observer.observe(this, { attributes: true, childList: true, subtree: true })
 
         this.updateCount()
         this.render()
     }
 
     disconnectedCallback() {
-        // CustomElement가 DOM에서 제거될 때 MutationObserver도 제거합니다.
         this.observer.disconnect();
     }
 
-    render() {
-        // this.setAttribute('count', state.favoriteBooks.length)
-        
-        const fragemnt = new DocumentFragment()
-        state.favoriteBooks.forEach( item => {
-            const el = this.itemTemplate.content.firstElementChild.cloneNode(true)
-            el.data = item
-            fragemnt.appendChild(el)
-        })
-        this.books.appendChild(fragemnt)
-    }
-
-    updateCount() {
-        const count = this.count | state.favoriteBooks.length
-        this.querySelector('.count').textContent = `${count}권`
-        // this.querySelector('.count').textContent = `${state.favoriteBooks.length}권`
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        // observedAttributes 배열에 정의된 속성 중 하나가 변경되면 이 메소드가 호출됩니다.
-        // name: 변경된 속성 이름
-        // oldValue: 이전 속성 값
-        // newValue: 새로운 속성 값
-        console.log(`attributeChangedCallback : ${name}`, oldValue, newValue);
-        this.updateCount(newValue)
-    }
-
-    changeFavoriteBooks({ detail }) {
+    favoriteBooksChanged({ detail }) {
         this.count = detail.count
     }
 
-    // renderLoanHistory(el, data) {
-    //     const fragemnt = new DocumentFragment()
-    //     data.forEach( item => {
-    //         const elLoan = document.querySelector('[data-template=history-item]').content.firstElementChild.cloneNode(true)
-    //         const { month, loanCnt, ranking } = item
-    //         elLoan.querySelector('.month').textContent = month
-    //         elLoan.querySelector('.loanCnt').textContent = loanCnt
-    //         elLoan.querySelector('.ranking').textContent = ranking
-    //         fragemnt.appendChild(elLoan)
-    //     })
-    //     el.querySelector('.loanHistory ul').appendChild(fragemnt)
+    updateCount() {
+        const count = this.count || this.favoriteBooks.length
+        this.countEl.textContent = `${count}권`
+    }
 
-    // }
+    render() {
+        const fragment = new DocumentFragment()
+        const template = document.querySelector('#tp-favorite-item').content.firstElementChild
+        
+        if (template) {
+            this.favoriteBooks.forEach( item => {
+                const el = template.cloneNode(true)
+                el.data = item
+                fragment.appendChild(el)
+            })
+        }
+        
+        this.booksEl.appendChild(fragment)
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'count') {
+            this.updateCount()
+        }
+    }
 
 }
 

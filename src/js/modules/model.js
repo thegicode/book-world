@@ -9,7 +9,7 @@ const initialState = {
 
 const storageKey = 'BookWorld'
 
-const saveState = (newState) => {
+const setState = (newState) => {
 	try {
 		localStorage.setItem(storageKey, JSON.stringify(newState))
 	} catch (error) {
@@ -19,11 +19,11 @@ const saveState = (newState) => {
 	console.log([...Object.values(newState.libraries)])
 }
 
-const loadState = () => {
+const getState = () => {
 	try {
 		const storedState = localStorage.getItem(storageKey)
 		if (storedState == null) {	
-			saveState(initialState)
+			setState(initialState)
 			return initialState
 		}
 		return cloneDeep(JSON.parse(storedState))
@@ -33,19 +33,19 @@ const loadState = () => {
 	}
 }
 
-const state = loadState()
+const state = getState()
 
 
 const addFavoriteBook = (isbn) => {
 	state.favoriteBooks.push(isbn)
-	saveState(state)
+	setState(state)
 }
 
 const removeFavoriteBook = (isbn) => {
 	const index = state.favoriteBooks.indexOf(isbn)
 	if (index !== -1) {
 		state.favoriteBooks.splice(index, 1)
-		saveState(state)
+		setState(state)
 	}
 }
 
@@ -55,12 +55,12 @@ const isFavoriteBook = (isbn) => {
 
 const addLibrary = (code, name) => {
 	state.libraries[code] = name
-	saveState(state)
+	setState(state)
 }
 
 const removeLibrary = (code) => {
 	delete state.libraries[code]
-	saveState(state)
+	setState(state)
 }
 
 const hasLibrary = (code) => {
@@ -69,7 +69,7 @@ const hasLibrary = (code) => {
 
 export {
 	state,
-	// loadState,
+	getState,
 	addFavoriteBook,
 	removeFavoriteBook,
 	isFavoriteBook,
