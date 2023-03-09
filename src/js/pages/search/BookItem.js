@@ -45,13 +45,13 @@ export default class BookItem extends HTMLElement {
             // price,
         } = this.data
 
-        const img = this.querySelector('img')
-        img.src = image
-        img.onerror = () => {
+        const thumbnail = this.querySelector('img')
+        thumbnail.src = image
+        thumbnail.addEventListener('error', () => {
             this.querySelector('.thumb').dataset.fail = true
-            console.error('image fail', image)
-            img.remove()
-        }
+            console.error('image fail', thumbnail.src)
+            thumbnail.remove()
+        })
 
         const formattedPubdate = `${pubdate.substring(0,4)}.${pubdate.substring(4,6)}.${pubdate.substring(6)}`
         this.querySelector('.title').textContent = title
