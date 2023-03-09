@@ -3,7 +3,6 @@
 @import './_book-description.scss';
 @import './_library-book-exist.scss';
 
-
 .root {
     display: flex;
     flex-direction: column;
@@ -22,7 +21,6 @@ app-search {
     flex-direction: column;
     height: 100%;
 }
-
 
 .header {
     flex: none;
@@ -198,7 +196,6 @@ app-search {
 
     }
 }
- 
 
 .observe {
     height: 10px;

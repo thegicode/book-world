@@ -26,14 +26,14 @@ export default class BookContent extends HTMLElement {
         this.keyword = keyword
         if (this.keyword) {
             this.length = 0
-            this.loading()
+            this.showMessage('loading')
             this.books.innerHTML = ''
             this.request()
         } else {
             this.keyword = ''
             this.length = 0
             this.summary.hidden = true
-            this.ready()
+            this.showMessage('message')
         }
     }
 
@@ -69,7 +69,7 @@ export default class BookContent extends HTMLElement {
         this.summary.hidden = false
 
         if (total === 0) {
-            this.notFound()
+            this.showMessage('notFound')
             return
         }
 
@@ -95,21 +95,29 @@ export default class BookContent extends HTMLElement {
     }
 
     ready() {
-        const el = document.querySelector('[data-template=message]').content.firstElementChild.cloneNode(true)
+        const el = document.querySelector('#tp-message').content.firstElementChild.cloneNode(true)
         this.books.innerHTML = ''
         this.books.appendChild(el)
     }
 
     loading() {
-        const el = document.querySelector('[data-template=laoding]').content.firstElementChild.cloneNode(true)
+        const el = document.querySelector('#tp-laoding').content.firstElementChild.cloneNode(true)
         this.books.innerHTML = ''
         this.books.appendChild(el)
     }
 
     notFound() {
-        const el = document.querySelector('[data-template=notFound]').content.firstElementChild.cloneNode(true)
+        const el = document.querySelector('#tp-notFound').content.firstElementChild.cloneNode(true)
         this.books.innerHTML = ''
         this.books.appendChild(el)
     }
+
+    showMessage(type) {
+        const el = document.querySelector(`#tp-${type}`).content.firstElementChild.cloneNode(true)
+        this.books.innerHTML = ''
+        this.books.appendChild(el)
+    }
+
+
   
 }
