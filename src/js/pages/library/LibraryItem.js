@@ -1,62 +1,50 @@
 import { addLibrary, removeLibrary, hasLibrary } from '../../modules/model.js'
 
 export default class LibraryItem extends HTMLElement {
+
+	#checkbox = null
+	#libCode = ''
+	#libName = ''
+
 	constructor() {
 		super()
-		this.checkbox = this.querySelector('[name=myLibrary]')
+		this.#checkbox = this.querySelector('[name=myLibrary]') || null
+		this.#libCode = ''
+		this.#libName = ''
 	}
 
 	connectedCallback() {
 		this.render(this.data)
-		this.checkbox.addEventListener('change', (event) => this.onChange(event))
+		this.#checkbox.onclick = event => this.onChange(event)
 	}
 
 	disconnectedCallback() {
-		this.checkbox.removeEventListener('change', (event) => this.onChange(event))
+		this.#checkbox.onclick = null
 	}
 
 	render() {
-		const {
-			libCode,
-			libName,
-			address,
-			tel,
-			fax,
-			// latitude,
-			// longitude,
-			homepage,
-			closed,
-			operatingTime,
-			BookCount 
-		} = this.data
+		const { data } = this
+		const keys = Object.keys(data)
 
-		const obj = {
-            libCode: `${libCode}`,
-            libName: `${libName}`,
-            address: `${address}`,
-            tel: `${tel}`,
-            fax: `${fax}`,
-            homepage: `${homepage}`,
-            closed: `${closed}`,
-            operatingTime: `${operatingTime}`,
-            BookCount: `${Number(BookCount).toLocaleString()}`,
-        }
-        for (const [key, value] of Object.entries(obj)) {
-            this.querySelector(`.${key}`).textContent = value
-        }
-        this.querySelector('.homepage').href = homepage
+		keys.forEach( key => {
+			const element = this.querySelector(`.${key}`)
+			if (element) {
+				element.innerHTML = `${data[key]}`
+			}
+		})
 
-        this.checkbox.checked = hasLibrary(libCode)
-        this.libCode = libCode
-        this.libName = libName
+		this.querySelector('.homepage').href = data.homepage
+
+		const { libCode, libName } = data
+		this.#libCode = libCode
+		this.#libName = libName
+		this.#checkbox.checked = hasLibrary(libCode)
 	}
 
 	onChange(event) {
-		if (event.target.checked) {
-			addLibrary(this.libCode, this.libName)
-			return
-		}
-		removeLibrary(this.libCode)
+		(event.target.checked) 
+			? addLibrary(this.#libCode, this.#libName)
+			: removeLibrary(this.#libCode)
 	}
 
 }
