@@ -1,5 +1,4 @@
-import { state, addLibrary, removeLibrary, hasLibrary } from '../../modules/model.js'
-
+import { addLibrary, removeLibrary, hasLibrary } from '../../modules/model.js'
 
 export default class LibraryItem extends HTMLElement {
 	constructor() {
@@ -9,11 +8,11 @@ export default class LibraryItem extends HTMLElement {
 
 	connectedCallback() {
 		this.render(this.data)
-		this.checkbox.addEventListener('change', this.onChange.bind(this))
+		this.checkbox.addEventListener('change', (event) => this.onChange(event))
 	}
 
 	disconnectedCallback() {
-		this.checkbox.removeEventListener('change', this.onChange.bind(this))
+		this.checkbox.removeEventListener('change', (event) => this.onChange(event))
 	}
 
 	render() {
@@ -28,7 +27,8 @@ export default class LibraryItem extends HTMLElement {
 			homepage,
 			closed,
 			operatingTime,
-			BookCount } = this.data
+			BookCount 
+		} = this.data
 
 		const obj = {
             libCode: `${libCode}`,
@@ -46,8 +46,7 @@ export default class LibraryItem extends HTMLElement {
         }
         this.querySelector('.homepage').href = homepage
 
-        const includes = hasLibrary(libCode)
-        this.checkbox.checked = includes
+        this.checkbox.checked = hasLibrary(libCode)
         this.libCode = libCode
         this.libName = libName
 	}
