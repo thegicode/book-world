@@ -5,7 +5,7 @@ import Observer from "../../modules/Observer.js"
 export default class BookContent extends HTMLElement {
     constructor() {
         super()
-        this.summary = this.querySelector('.book-summary')
+        this.pages = this.querySelector('.book-pages')
         this.books = this.querySelector('.books')
         this.request = this.request.bind(this)
     }
@@ -30,7 +30,7 @@ export default class BookContent extends HTMLElement {
         } else {
             this.keyword = ''
             this.length = 0
-            this.summary.hidden = true
+            this.pages.hidden = true
             this.showMessage('message')
         }
     }
@@ -64,7 +64,7 @@ export default class BookContent extends HTMLElement {
             this.querySelector(`.__${key}`).textContent = value
         }
 
-        this.summary.hidden = false
+        this.pages.hidden = false
 
         if (total === 0) {
             this.showMessage('notFound')
