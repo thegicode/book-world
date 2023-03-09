@@ -2,15 +2,22 @@
 import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
 
 export default class BookItem extends HTMLElement {
+
+    favoriteButton
+    libraryButton
+    libraryBookExist
+    link
+
     constructor() {
         super()
+    }
+
+    connectedCallback() {
         this.favoriteButton = this.querySelector('input[name="favorite"]')
         this.libraryButton = this.querySelector('.library-button')
         this.libraryBookExist = this.querySelector('library-book-exist')
         this.link = this.querySelector('.book-info')
-    }
 
-    connectedCallback() {
         this.render()
 
         this.favoriteButton.addEventListener('change', this.onFavorite.bind(this))
@@ -19,9 +26,9 @@ export default class BookItem extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.favoriteButton.removeEventListener('change', this.onFavorite.bind(this))
-        this.libraryButton.removeEventListener('click', this.onClickLibraryButton.bind(this))
-        this.link.removeEventListener('click', this.onClickLink.bind(this))
+        this.favoriteButton.removeEventListener('change', this.onFavorite)
+        this.libraryButton.removeEventListener('click', this.onClickLibraryButton)
+        this.link.removeEventListener('click', this.onClickLink)
     }
 
     render() {
@@ -37,23 +44,16 @@ export default class BookItem extends HTMLElement {
             title } = this.data
 
         const yyyy = pubdate.substring(0,4)
-        const dd = pubdate.substring(pubdate.length - 2, pubdate.length)
-        const mm = (pubdate.length === 7) ? `0${pubdate.substring(4, 5)}` : pubdate.substring(4, 6)
-        const _date = `${yyyy}.${mm}.${dd}`
+        const mm = pubdate.substring(pubdate.length - 2, pubdate.length - 4)
+        const dd = pubdate.substring(pubdate.length - 2)
+        const formattedPubdate = `${yyyy}.${mm}.${dd}`
 
-        const obj = {
-            title: `${title}`,
-            author: `${author}`,
-            description: `${description}`,
-            // price: `${Number(price).toLocaleString()}원`,
-            publisher: `${publisher}`,
-            pubdate: `${_date}`,
-            isbn: `isbn : ${isbn.split(' ').join(', ')}`
-        }
-        for (const [key, value] of Object.entries(obj)) {
-            this.querySelector(`.${key}`).innerHTML = value
-        }
-
+        this.querySelector('.title').innerHTML = title;
+        this.querySelector('.author').innerHTML = author;
+        this.querySelector('.description').innerHTML = description;
+        this.querySelector('.publisher').innerHTML = publisher;
+        this.querySelector('.pubdate').innerHTML = formattedPubdate;
+        this.querySelector('.isbn').innerHTML = `isbn : ${isbn.split(' ').join(', ')}`;
         this.querySelector('.__link').href = link
 
         const img = this.querySelector('img')
@@ -67,7 +67,6 @@ export default class BookItem extends HTMLElement {
         this.dataset.index = this.index
         this.isbn13 = isbn.split(' ')[0]
 
-        // const { favorite } = state
         if (isFavoriteBook(this.isbn13)) {
             this.favoriteButton.checked = true
         }
@@ -96,3 +95,21 @@ export default class BookItem extends HTMLElement {
 
 }
 
+
+
+
+ // const mm = (pubdate.length === 7) ? `0${pubdate.substring(4, 5)}` : pubdate.substring(4, 6)
+        // const dd = pubdate.substring(pubdate.length - 2, pubdate.length)
+
+        // const obj = {
+        //     title: `${title}`,
+        //     author: `${author}`,
+        //     description: `${description}`,
+        //     // price: `${Number(price).toLocaleString()}원`,
+        //     publisher: `${publisher}`,
+        //     pubdate: `${formattedPubdate}`,
+        //     isbn: `isbn : ${isbn.split(' ').join(', ')}`
+        // }
+        // for (const [key, value] of Object.entries(obj)) {
+        //     this.querySelector(`.${key}`).innerHTML = value
+        // }
