@@ -40,6 +40,7 @@ export default class BookContent extends HTMLElement {
 
     async request() {
         // console.log('BookContent request')
+        if (!this.keyword) return
         const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`
         try {
             const response = await fetch(url)

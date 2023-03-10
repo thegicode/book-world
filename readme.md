@@ -14,9 +14,7 @@
 - 네이버 책 
 
 ## Finish
-- [23.01.11] LibraryBookExist : html, css 이중 작업 해결할 것 - 포기 
-- [23.01.12] 관심 도서관 여러 개 설정
-- [23.01.12] 책 설명 설명 접기/펴기 적용(책 검색, 즐겨찾기)
+
 
 ## TODO
 - 버튼 디자인 통일, 모듈화
@@ -29,7 +27,8 @@
 - template 파일 별도, fetch로 받아올 것
 - 폴더 구조 개선
 - build 추가
-- Observer 오류 수정
+- Intersection Observer 오류 수정, 클래스 이름 변경
 
-## 도서관 공개 API 
-https://solomon.data4library.kr/
+
+## 참조 
+- 도서관 공개 API : https://solomon.data4library.kr/

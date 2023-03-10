@@ -24,17 +24,32 @@ export default class FavoriteItem extends HTMLElement {
         this.link.removeEventListener('click', this.onClick)
     }
 
-    request(isbn13) {
-        fetch(`/usage-analysis-list?isbn13=${isbn13}`, {
-            method: 'GET'
-        })
-        .then(data => data.json())
-        .then(response => {
-            this.render(response)
-        })
-        .catch(e => {
-            console.log(e);
-        });
+    async request(isbn) {
+        console.log(isbn)
+        const url = `/usage-analysis-list?isbn13=${isbn}`
+        try {
+            const response = await fetch(url)
+            if (!response.ok) {
+                throw new Error('Fail to get usage analysis list data.')
+            }
+            const data = await response.json()
+            this.render(data)
+        } catch(error) {
+            this.errorRender()
+            console.error(error)
+            throw new Error('Fail to get usage analysis list data.')
+        }
+        
+        // fetch(`/usage-analysis-list?isbn13=${isbn13}`, {
+        //     method: 'GET'
+        // })
+        // .then(data => data.json())
+        // .then(response => {
+        //     this.render(response)
+        // })
+        // .catch(e => {
+        //     console.log(e);
+        // });
     }
 
     render(data) {
@@ -79,7 +94,15 @@ export default class FavoriteItem extends HTMLElement {
 
         this.querySelector('book-description').data = description
 
-        delete this.dataset.loading
+        this.removeLoading()
+    }
+
+    errorRender() {
+        this.removeLoading()
+        this.dataset.fail = true
+        // this.innerHTML = ''
+        // const el = document.querySelector('#tp-message').content.firstElementChild.cloneNode(true)
+        // this.appendChild(el)
     }
 
     onFavorite() {
@@ -87,8 +110,6 @@ export default class FavoriteItem extends HTMLElement {
         newCustomEvent.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
         // document.querySelector('app-favorite').count = state.favoriteBooks.length
         this.remove()
-
-
     }
 
     onLibrary() {
@@ -98,6 +119,9 @@ export default class FavoriteItem extends HTMLElement {
 
     loading() {
         this.dataset.loading = true
+    }
+    removeLoading() {
+        delete this.dataset.loading
     }
     
     onClick(event) {

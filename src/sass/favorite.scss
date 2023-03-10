@@ -82,7 +82,17 @@ favorite-item {
 			background-color: #fffff5;
 		}
 	}
-
+	&[data-fail="true"] {
+		.book-image {
+			background-color: rgba(0, 0, 0, 0.05);
+			img {
+				display: none;
+			}
+		}
+		.book-info {
+			opacity: 0;
+		}
+	}
 
 	.book-summary {
 		display: flex;
@@ -97,9 +107,6 @@ favorite-item {
 		flex: none;
 		box-sizing: border-box;
 		min-width: 120px;
-		&[data-loaded="false"] {
-			// background-color: #f4f4f4;
-		}
 		img {
             box-sizing: border-box;
 			width: 120px;
@@ -153,3 +160,4 @@ favorite-item {
 library-book-exist {
 	margin: 0 1rem 1rem;
 }
+
