@@ -65,11 +65,10 @@ export default class Favorite extends HTMLElement {
     render() {
         const fragment = new DocumentFragment()
         const template = document.querySelector('#tp-favorite-item').content.firstElementChild
-        
         if (template) {
             this.favoriteBooks.forEach( item => {
                 const el = template.cloneNode(true)
-                el.data = item
+                el.dataset.isbn = item
                 fragment.appendChild(el)
             })
         }

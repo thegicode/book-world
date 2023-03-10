@@ -4,15 +4,15 @@ import newCustomEvent from "../../modules/newCustomEvent.js"
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super()
-        this.favoriteButton = this.querySelector('.favorite-button')
-        this.libraryButton = this.querySelector('.library-button')
-        this.libraryBookExist = this.querySelector('library-book-exist')
+        this.favoriteButton = this.querySelector(':scope .favorite-button')
+        this.libraryButton = this.querySelector(':scope .library-button')
+        this.libraryBookExist = this.querySelector(':scope library-book-exist')
         this.link = this.querySelector('a')
     }
 
     connectedCallback() {
         this.loading()
-        this.request(this.data)
+        this.request(this.dataset.isbn)
         this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onLibrary.bind(this))
         this.link.addEventListener('click', this.onClick.bind(this))
@@ -25,7 +25,6 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     async request(isbn) {
-        console.log(isbn)
         const url = `/usage-analysis-list?isbn13=${isbn}`
         try {
             const response = await fetch(url)
@@ -35,21 +34,10 @@ export default class FavoriteItem extends HTMLElement {
             const data = await response.json()
             this.render(data)
         } catch(error) {
-            this.errorRender()
             console.error(error)
             throw new Error('Fail to get usage analysis list data.')
+            this.errorRender()
         }
-        
-        // fetch(`/usage-analysis-list?isbn13=${isbn13}`, {
-        //     method: 'GET'
-        // })
-        // .then(data => data.json())
-        // .then(response => {
-        //     this.render(response)
-        // })
-        // .catch(e => {
-        //     console.log(e);
-        // });
     }
 
     render(data) {
@@ -78,21 +66,21 @@ export default class FavoriteItem extends HTMLElement {
 
         this.linkData = data
 
-        this.querySelector('.bookname').textContent = bookname
-        this.querySelector('.authors').textContent = authors
-        this.querySelector('.class_nm').textContent = class_nm
-        this.querySelector('.isbn13').textContent = isbn13
-        this.querySelector('.loanCnt').textContent = loanCnt.toLocaleString()
-        this.querySelector('.publication_year').textContent = publication_year
-        this.querySelector('.publisher').textContent = publisher
+        this.querySelector(':scope .bookname').textContent = bookname
+        this.querySelector(':scope .authors').textContent = authors
+        this.querySelector(':scope .class_nm').textContent = class_nm
+        this.querySelector(':scope .isbn13').textContent = isbn13
+        this.querySelector(':scope .loanCnt').textContent = loanCnt.toLocaleString()
+        this.querySelector(':scope .publication_year').textContent = publication_year
+        this.querySelector(':scope .publisher').textContent = publisher
 
         const thumbnail =  this.querySelector('img')
-        thumbnail.src = bookImageURL
+        thumbnail.src = `${bookImageURL}`
         thumbnail.onerror = () => {
             thumbnail.remove()
         }
 
-        this.querySelector('book-description').data = description
+        this.querySelector(':scope book-description').data = description
 
         this.removeLoading()
     }
@@ -100,21 +88,17 @@ export default class FavoriteItem extends HTMLElement {
     errorRender() {
         this.removeLoading()
         this.dataset.fail = true
-        // this.innerHTML = ''
-        // const el = document.querySelector('#tp-message').content.firstElementChild.cloneNode(true)
-        // this.appendChild(el)
     }
 
     onFavorite() {
-        removeFavoriteBook(this.data)
+        removeFavoriteBook(this.dataset.isbn)
         newCustomEvent.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
-        // document.querySelector('app-favorite').count = state.favoriteBooks.length
         this.remove()
     }
 
     onLibrary() {
         this.libraryBookExist
-            .onLibraryBookExist(this.libraryButton, this.data, state.libraries)
+            .onLibraryBookExist(this.libraryButton, this.dataset.isbn, state.libraries)
     }
 
     loading() {
@@ -126,7 +110,7 @@ export default class FavoriteItem extends HTMLElement {
     
     onClick(event) {
         event.preventDefault()
-        location.href = `book?isbn=${this.data}`
+        location.href = `book?isbn=${this.dataset.isbn}`
     }
 }
 
