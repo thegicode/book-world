@@ -14,11 +14,22 @@
 
 <div class="root">
     <nav-gnb></nav-gnb>
-
     <app-library>
-
         <library-region>
-            <select>
+            <div class="setRegion">
+                <h4>관심 지역 설정</h4>
+                <label>
+                    <input type="checkbox" name="region" value="11">
+                    <span>서울</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="region" value="39">
+                    <span>제주</span>
+                </label>
+            </div>
+
+            <hr>
+            <select class="setDetailRegion">
                 <option value="11250" selected>서울 강동구</option>
                 <option value="31180">경기 하남 미사</option>
             </select>

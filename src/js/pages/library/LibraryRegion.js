@@ -1,14 +1,20 @@
 import { $ } from './selectors.js'
+import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 
 export default class LibraryRegion extends HTMLElement {
 	constructor() {
 		super()
 		this.select = this.querySelector('select')
-		$.appLibrary.regionCode = this.select.value
+		// $.appLibrary.regionCode = this.select.value
 	}
+
+	// set detailRegion(value) {
+	// 	this.dataset.detailRegion = value
+	// }
 
 	connectedCallback() {
 		this.select.addEventListener('change', this.onChange.bind(this))
+		this.onChange()
 	}
 
 	disconnectedCallback() {
@@ -17,7 +23,10 @@ export default class LibraryRegion extends HTMLElement {
 
 	onChange() {
 		const { value, selectedIndex } = this.select
-		$.appLibrary.regionCode = value
+		// $.appLibrary.regionCode = value
+        CustomEventEmitter.dispatch('set-detail-region', { detailRegionCode: value })
+		// this.detailRegion = value
+
 	}
 
 }

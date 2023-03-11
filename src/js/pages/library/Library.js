@@ -1,13 +1,55 @@
 import { hasLibrary } from '../../modules/model.js'
+import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 
 export default class Library extends HTMLElement {
+
+	$observer
+
+	static get observedAttributes() {
+		return ['data-detail-region']
+	}
+
+	// set regionCode(value) {
+	// 	this.request(value)
+	// }
+
+	set detailRegionCode(value) {
+		this.setAttribute('data-detail-region', value)
+	}
+	get detailRegionCode() {
+		return this.dataset.detailRegion
+	}
+	
 	constructor() {
 		super()
 		this.form = this.querySelector('form')
+		this.setDetailRegion = this.setDetailRegion.bind(this)
+        CustomEventEmitter.add('set-detail-region', ({ detail }) => {
+			this.detailRegionCode = detail.detailRegionCode
+		})
 	}
 
-	set regionCode(v) {
-		this.request(v)
+	connectedCallback() {
+		this.$observer = new MutationObserver( mutations => {
+			for (const mutation of mutations) {
+				if (mutation.attributeName === 'data-detail-region') {
+					this.setDetailRegion()
+				} 
+			}
+		})
+		this.$observer.observe(this, { 
+			attributes: true,
+			childList: false,
+			subtree: false
+		})
+	}
+
+	disconnectedCallback() {
+		this.$observer.disconnect()
+	}
+
+	setDetailRegion() {
+		this.request(this.detailRegionCode)
 	}
 
 	async request(regionCode) {
@@ -65,5 +107,12 @@ export default class Library extends HTMLElement {
 		this.form.innerHTML = ''
         this.form.appendChild(el)
 	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'data-detail-region') {
+			const value = this.detailRegionCode
+            this.setDetailRegion(value)
+        }
+    }
 
 }

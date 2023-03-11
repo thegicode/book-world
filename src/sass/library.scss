@@ -22,13 +22,17 @@ app-library {
 
 @import './_gnb.scss';
 
-
 library-region {
 	display: block;
 	// padding: 0 1rem;
 	padding: 10px 1rem;
     background-color: #f1fff4;
-	select {
+	.setRegion {
+		h4 {
+			margin: 10px 0;
+		}
+	}
+	.setDetailRegion {
 		width: 100%;
 		padding: 10px 1rem;
 		appearance: none;

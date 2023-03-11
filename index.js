@@ -202,7 +202,6 @@ app.listen(port, () => {
 
 // 111007 고덕도서관
 
-
 // 도서관별 장서/대출 데이터 조회
 // app.get('/library-itemSrch', function(req, res) {
 //     const { libCode, keyword } = req.query
