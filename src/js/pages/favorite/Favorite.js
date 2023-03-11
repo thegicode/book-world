@@ -7,6 +7,10 @@ export default class Favorite extends HTMLElement {
         return ['count']
     }
 
+    $booksEl
+    $countEl
+    $observer
+
     set count(value) {
         this.setAttribute('count', value)
     }
@@ -21,19 +25,17 @@ export default class Favorite extends HTMLElement {
     constructor() {
         super()
 
-        this.booksEl = this.querySelector('.favorite-books')
-        this.countEl = this.querySelector('.count')
+        this.$booksEl = this.querySelector('.favorite-books')
+        this.$countEl = this.querySelector('.count')
         
         this.updateCount = this.updateCount.bind(this)
-
         newCustomEvent.add('favorite-books-changed', this.favoriteBooksChanged.bind(this))
-
     }
 
     connectedCallback() {
         // 속성 변경을 감지하기 위해 MutationObserver를 사용합니다.
-        // this.observer = new MutationObserver(this.updateCount)
-        this.observer = new MutationObserver(mutations => {
+        // this.$observer = new MutationObserver(this.updateCount)
+        this.$observer = new MutationObserver(mutations => {
             for (const mutation of mutations) {
                 if (mutation.attributeName === 'count') {
                     this.updateCount()
@@ -43,14 +45,14 @@ export default class Favorite extends HTMLElement {
                 }
             }
         })
-        this.observer.observe(this, { attributes: true, childList: true, subtree: true })
+        this.$observer.observe(this, { attributes: true, childList: true, subtree: true })
 
         this.updateCount()
         this.render()
     }
 
     disconnectedCallback() {
-        this.observer.disconnect();
+        this.$observer.disconnect();
     }
 
     favoriteBooksChanged({ detail }) {
@@ -59,7 +61,7 @@ export default class Favorite extends HTMLElement {
 
     updateCount() {
         const count = this.count || this.favoriteBooks.length
-        this.countEl.textContent = `${count}권`
+        this.$countEl.textContent = `${count}권`
     }
 
     render() {
@@ -73,7 +75,7 @@ export default class Favorite extends HTMLElement {
             })
         }
         
-        this.booksEl.appendChild(fragment)
+        this.$booksEl.appendChild(fragment)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
