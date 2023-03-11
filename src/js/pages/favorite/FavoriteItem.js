@@ -88,6 +88,9 @@ export default class FavoriteItem extends HTMLElement {
     errorRender() {
         this.removeLoading()
         this.dataset.fail = true
+        this.querySelector('h4')
+            .textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`
+        
     }
 
     onFavorite() {
