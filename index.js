@@ -48,9 +48,9 @@ const formatType = 'json'
 
 // 정보공개 도서관 조회
 app.get('/library-search', async (req, res) => {
-    const { regionCode, page, pageSize } = req.query
+    const { dtl_region, page, pageSize } = req.query
     const queryParams = new URLSearchParams({
-        dtl_region: regionCode,
+        dtl_region,
         pageNo: page,
         pageSize,
         format: formatType

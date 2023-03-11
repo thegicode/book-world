@@ -9,20 +9,21 @@ export default class Library extends HTMLElement {
 	}
 
 	connectedCallback() {
-		CustomEventEmitter.add('set-detail-region', ({ detail }) => {
-			this.request(detail.detailRegionCode)
-		})
+		CustomEventEmitter.add('set-detail-region', this.handleSetDetailRegion.bind(this))
 	}
 
 	disconnectedCallback() {
-		this.$observer.disconnect()
+		CustomEventEmitter.remove('set-detail-region', this.handleSetDetailRegion)
 	}
 
-
-	async request(regionCode) {
+	handleSetDetailRegion({ detail }) {
 		this.showMessage('loading')
+		this.fetchLibrarySearch(detail.detailRegionCode)
+	}
+
+	async fetchLibrarySearch(detailRegionCode) {
 		try {
-			const url = `/library-search?regionCode=${regionCode}&page=${1}&pageSize=${20}`
+			const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`
 			const response = await fetch(url)
 			if (!response.ok) {
 				throw new Error('Fail to get library search data.')
@@ -42,30 +43,21 @@ export default class Library extends HTMLElement {
             return
 		}
 
-        const fragment = this.createLibraryList(libs)
+		const template = document.querySelector('#tp-item').content.firstElementChild
+		const fragment = libs.reduce((fragment, lib) => {
+			const element = template.cloneNode(true)
+			element.data = lib
+			if(hasLibrary(lib.libCode)) {
+				element.dataset.has = true
+				fragment.insertBefore(element, fragment.firstChild)
+			} else {
+				fragment.appendChild(element)
+			}
+			return fragment
+		}, new DocumentFragment())
 
 		this.form.innerHTML = ''
-        this.form.appendChild(fragment)
-	}
-
-	createLibraryList(libs) {
-		const favorites = libs.filter(lib => hasLibrary(lib.libCode))
-		const others = libs.filter(lib => !(hasLibrary(lib.libCode)))
-
-		const fragment = new DocumentFragment()
-		const template = document.querySelector('#tp-item').content.firstElementChild
-
-		const arr = [...favorites, ...others]
-		arr.forEach( item => {
-			const element = template.cloneNode(true)
-			element.data = item
-			if (hasLibrary(item.libCode)) {
-				element.dataset.has = true
-			}
-			fragment.appendChild(element)
-		})
-		
-		return fragment
+		this.form.appendChild(fragment)
 	}
 
 	showMessage(type) {
