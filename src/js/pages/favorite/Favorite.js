@@ -1,5 +1,5 @@
 import { getState } from '../../modules/model.js'
-import newCustomEvent from "../../modules/newCustomEvent.js"
+import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 
 export default class Favorite extends HTMLElement {
     
@@ -29,7 +29,7 @@ export default class Favorite extends HTMLElement {
         this.$countEl = this.querySelector('.count')
         
         this.updateCount = this.updateCount.bind(this)
-        newCustomEvent.add('favorite-books-changed', this.favoriteBooksChanged.bind(this))
+        CustomEventEmitter.add('favorite-books-changed', this.favoriteBooksChanged.bind(this))
     }
 
     connectedCallback() {

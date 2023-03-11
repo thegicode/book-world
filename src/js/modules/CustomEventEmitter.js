@@ -1,4 +1,4 @@
-class NewCustomEvent {
+class CustomEventEmitter {
     constructor() {
         this._bus = document.createElement('div')
     }
@@ -16,4 +16,4 @@ class NewCustomEvent {
     }
 }
 
-export default new NewCustomEvent()
+export default new CustomEventEmitter()

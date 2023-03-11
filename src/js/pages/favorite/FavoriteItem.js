@@ -1,5 +1,5 @@
 import { state, removeFavoriteBook } from '../../modules/model.js'
-import newCustomEvent from "../../modules/newCustomEvent.js"
+import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
@@ -34,9 +34,9 @@ export default class FavoriteItem extends HTMLElement {
             const data = await response.json()
             this.render(data)
         } catch(error) {
+            this.errorRender()
             console.error(error)
             throw new Error('Fail to get usage analysis list data.')
-            this.errorRender()
         }
     }
 
@@ -92,7 +92,7 @@ export default class FavoriteItem extends HTMLElement {
 
     onFavorite() {
         removeFavoriteBook(this.dataset.isbn)
-        newCustomEvent.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
+        CustomEventEmitter.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
         this.remove()
     }
 
