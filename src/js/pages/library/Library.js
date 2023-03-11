@@ -3,7 +3,6 @@ import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 
 export default class Library extends HTMLElement {
 
-	
 	constructor() {
 		super()
 		this.form = this.querySelector('form')
