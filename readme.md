@@ -18,12 +18,10 @@
 
 ## TODO
 - 버튼 디자인 통일, 모듈화
-- observer component
 - Thumb image 통일?
 - 도서 상세 모듈화
 - 타입스크립트 적용
 - 전자도서관 책 소장/대출 조회 추가
-- 지역 설정 추가
 - template 파일 별도, fetch로 받아올 것
 - 폴더 구조 개선
 - build 추가
