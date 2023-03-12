@@ -42,7 +42,7 @@ export default class LibraryRegion extends HTMLElement {
 			element.querySelector('span').textContent = key
 			fragment.appendChild(element)
 		}
-		this.querySelector('.setRegion').appendChild(fragment)
+		this.querySelector('.region').appendChild(fragment)
 		this.changeRegion()
 	}
 
@@ -62,7 +62,7 @@ export default class LibraryRegion extends HTMLElement {
 	renderDetailRegion(key, value) { // 서울, 11
 		const detailRegionObject = this.regionObject['detailRegion'][value]
 		for(const key in detailRegionObject) {
-			// console.log(key, detailRegionObject[key])
+			console.log(key, detailRegionObject[key])
 		}
 	}
 
