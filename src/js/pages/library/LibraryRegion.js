@@ -3,7 +3,7 @@ import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 export default class LibraryRegion extends HTMLElement {
 	constructor() {
 		super()
-		this.selectElement = this.querySelector('select')
+		this.selectElement = this.querySelector('.detailRegion')
 		this.regionObject = {}
 	}
 
@@ -33,16 +33,21 @@ export default class LibraryRegion extends HTMLElement {
 	}
 
 	renderRegion() {
-		const template = document.querySelector('#tp-region').content.firstElementChild
-		const fragment = new DocumentFragment()
-		const regionObj = this.regionObject['region']
-		for(let key in regionObj) {
-			const element = template.cloneNode(true)
-			element.querySelector('input').value = regionObj[key]
+		const regionTemplate = document.querySelector('#tp-region').content.firstElementChild
+		const regionContainer = this.querySelector('.region')
+
+		const regionObject = this.regionObject['region']
+		for (const [ key, value ] of Object.entries(regionObject)) {
+			const element = regionTemplate.cloneNode(true)
+			element.querySelector('input').value = value
 			element.querySelector('span').textContent = key
-			fragment.appendChild(element)
+			regionContainer.appendChild(element)
 		}
-		this.querySelector('.region').appendChild(fragment)
+
+		const firstInput = regionContainer.querySelector('input')
+		firstInput.checked = true
+		this.renderDetailRegion(firstInput.value)
+
 		this.changeRegion()
 	}
 
@@ -52,26 +57,29 @@ export default class LibraryRegion extends HTMLElement {
 			const selectedRadio = event.target
 			const value = selectedRadio.value
 			const key = selectedRadio.nextElementSibling.textContent
-			this.renderDetailRegion(key, value)
+			this.renderDetailRegion(value)
 		}
 		regionRadios.forEach( radio => {
 			radio.addEventListener('change', handleChange)
 		})
 	}
 
-	renderDetailRegion(key, value) { // 서울, 11
+	renderDetailRegion(value) { // 서울, 11
+		this.selectElement.innerHTML = ''
 		const detailRegionObject = this.regionObject['detailRegion'][value]
 		for(const key in detailRegionObject) {
-			console.log(key, detailRegionObject[key])
+			const optionEl = document.createElement('option')
+			optionEl.textContent = key
+			optionEl.value = detailRegionObject[key]
+			this.selectElement.appendChild(optionEl)
 		}
+		const firstValue = this.selectElement.querySelector('option').value
+		CustomEventEmitter.dispatch('set-detail-region', { detailRegionCode: firstValue })
 	}
 
 	onChangeDetail() {
 		const { value, selectedIndex } = this.selectElement
         CustomEventEmitter.dispatch('set-detail-region', { detailRegionCode: value })
-
 	}
-
-	
 
 }
