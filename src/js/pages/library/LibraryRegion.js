@@ -10,7 +10,6 @@ export default class LibraryRegion extends HTMLElement {
 	connectedCallback() {
 		this.fetchRegion()
 		this.selectElement.addEventListener('change', this.onChangeDetail.bind(this))
-		this.onChangeDetail()
 	}
 
 	disconnectedCallback() {
@@ -29,7 +28,6 @@ export default class LibraryRegion extends HTMLElement {
 		} catch(error) {
 			console.error(error)
 		}
-		
 	}
 
 	renderRegion() {
@@ -53,28 +51,28 @@ export default class LibraryRegion extends HTMLElement {
 
 	changeRegion() {
 		const regionRadios = this.querySelectorAll('[name=region]')
-		const handleChange = (event) => {
-			const selectedRadio = event.target
-			const value = selectedRadio.value
-			const key = selectedRadio.nextElementSibling.textContent
-			this.renderDetailRegion(value)
+		for (const radio of regionRadios) {
+			radio.addEventListener('change', () => {
+				if (radio.checked) {
+					const value = radio.value
+					this.renderDetailRegion(value)
+				}
+			})
 		}
-		regionRadios.forEach( radio => {
-			radio.addEventListener('change', handleChange)
-		})
 	}
 
 	renderDetailRegion(value) { // 서울, 11
 		this.selectElement.innerHTML = ''
-		const detailRegionObject = this.regionObject['detailRegion'][value]
-		for(const key in detailRegionObject) {
+		const detailRegionObject = this.regionObject.detailRegion[value]
+		for (const [key, value] of Object.entries(detailRegionObject)) {
 			const optionEl = document.createElement('option')
 			optionEl.textContent = key
-			optionEl.value = detailRegionObject[key]
+			optionEl.value = value
 			this.selectElement.appendChild(optionEl)
 		}
-		const firstValue = this.selectElement.querySelector('option').value
-		CustomEventEmitter.dispatch('set-detail-region', { detailRegionCode: firstValue })
+		const firstInput = this.selectElement.querySelector('option')
+		firstInput.selected = true
+		this.onChangeDetail()
 	}
 
 	onChangeDetail() {
