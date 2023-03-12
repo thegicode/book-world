@@ -43,32 +43,26 @@ export default class LibraryRegion extends HTMLElement {
 			fragment.appendChild(element)
 		}
 		this.querySelector('.setRegion').appendChild(fragment)
-		this.checkRegion()
+		this.changeRegion()
 	}
 
-	checkRegion() {
-		let regionList = []
-		const checkboxElements = this.querySelectorAll('[name=region]')
-		checkboxElements.forEach( checkbox => {
-			checkbox.addEventListener('change', (event) => {
-				const { checked, value } = checkbox
-				if (checked) {
-					regionList.push(value)
-					const key = checkbox.nextElementSibling.textContent
-					this.renderDetailRegion(key, value)
-				} else {
-					const index = regionList.indexOf(value)
-					regionList.splice(index, 1)
-				}
-				// console.log('checkRegion', regionList)
-			})
+	changeRegion() {
+		const regionRadios = this.querySelectorAll('[name=region]')
+		const handleChange = (event) => {
+			const selectedRadio = event.target
+			const value = selectedRadio.value
+			const key = selectedRadio.nextElementSibling.textContent
+			this.renderDetailRegion(key, value)
+		}
+		regionRadios.forEach( radio => {
+			radio.addEventListener('change', handleChange)
 		})
 	}
 
-	renderDetailRegion(key, value) {
+	renderDetailRegion(key, value) { // 서울, 11
 		const detailRegionObject = this.regionObject['detailRegion'][value]
 		for(const key in detailRegionObject) {
-			console.log(key, detailRegionObject[key])
+			// console.log(key, detailRegionObject[key])
 		}
 	}
 
