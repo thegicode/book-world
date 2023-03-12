@@ -13,9 +13,6 @@
 - 도서관 정보나루 : https://www.data4library.kr
 - 네이버 책 
 
-## Finish
-
-
 ## TODO
 - 버튼 디자인 통일, 모듈화
 - Thumb image 통일?
@@ -26,6 +23,8 @@
 - 폴더 구조 개선
 - build 추가
 - Intersection Observer 오류 수정, 클래스 이름 변경
+
+## Finish
 
 
 ## 참조 
