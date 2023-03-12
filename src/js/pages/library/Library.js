@@ -9,16 +9,11 @@ export default class Library extends HTMLElement {
 	}
 
 	connectedCallback() {
-		CustomEventEmitter.add('set-detail-region', this.handleSetDetailRegion.bind(this))
+		CustomEventEmitter.add('set-detail-region', this.handleDetailRegion.bind(this))
 	}
 
 	disconnectedCallback() {
-		CustomEventEmitter.remove('set-detail-region', this.handleSetDetailRegion)
-	}
-
-	handleSetDetailRegion({ detail }) {
-		this.showMessage('loading')
-		this.fetchLibrarySearch(detail.detailRegionCode)
+		CustomEventEmitter.remove('set-detail-region', this.handleDetailRegion)
 	}
 
 	async fetchLibrarySearch(detailRegionCode) {
@@ -65,6 +60,11 @@ export default class Library extends HTMLElement {
 		const el = tpl.content.firstElementChild.cloneNode(true)
 		this.form.innerHTML = ''
         this.form.appendChild(el)
+	}
+
+	handleDetailRegion({ detail }) {
+		this.showMessage('loading')
+		this.fetchLibrarySearch(detail.detailRegionCode)
 	}
 
 }
