@@ -74,6 +74,11 @@ const addRegion = (regionName) => {
 	setState(state)
 }
 
+const removeRegion = (regionName) => {
+	delete state.regions[regionName]
+	setState(state)
+}
+
 const addDetailRegion = (regionName, detailName, detailCode) => {
 	state.regions[regionName][detailName] = detailCode
 	setState(state)
@@ -96,6 +101,7 @@ export {
 	removeLibrary,
 	hasLibrary,
 	addRegion,
+	removeRegion,
 	addDetailRegion,
 	removeDetailRegion
 }

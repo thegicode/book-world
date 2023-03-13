@@ -40,26 +40,36 @@ set-storage {
     }
 }
 
-.set-region {
-}
-
-.regions {
-    padding: 10px 0;
-    label {
-        margin-right: 10px;
-    }
-}
-.detailRegions {
-    display: flex;
-    flex-wrap: wrap;
-    label {
-        width: 50%;
-        margin-bottom: 5px;
+set-region {
+    .regions {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        label {
+            width: 50%;
+        }
     }
 }
 
 favorite-regions {
     p {
         margin: 10px;
+    }
+}
+
+set-detail-region {
+    .regions {
+        padding: 10px 0;
+        label {
+            margin-right: 10px;
+        }
+    }
+    .detailRegions {
+        display: flex;
+        flex-wrap: wrap;
+        label {
+            width: 50%;
+            margin-bottom: 5px;
+        }
     }
 }

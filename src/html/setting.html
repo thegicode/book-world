@@ -33,16 +33,21 @@
             </div>
         </set-storage>
 
+        <set-region class="section">
+            <h2 class="title">관심 지역 설정</h2>
+            <div class="regions"></div>
+        </set-region>
+
         <favorite-regions class="section">
             <h2 class="title">설정된 관심 지역</h2>
             <div class="favorites"></div>
         </favorite-regions>
 
-        <set-region class="section">
+        <set-detail-region class="section">
             <h2 class="title">세부 관심 지역 설정</h2>
             <div class="regions"></div>
             <div class="detailRegions"></div>
-        </set-region>
+        </set-detail-region>
 
     </app-setting>
    
@@ -50,7 +55,14 @@
 
 <template id="tp-region">
     <label>
-        <input type="radio" name="region" value="">
+        <input type="checkbox" name="region" value="">
+        <span></span>
+    </label>
+</template>
+
+<template id="tp-favorite-region">
+    <label>
+        <input type="radio" name="favorite-region" value="">
         <span></span>
     </label>
 </template>

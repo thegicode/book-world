@@ -9,11 +9,11 @@ export default class FavoriteRegions extends HTMLElement {
 
     connectedCallback() {
         this.render()
-        CustomEventEmitter.add('set-favorite-regions', this.render.bind(this))
+        CustomEventEmitter.add('set-detail-regions', this.render.bind(this))
     }
 
     disconnectedCallback() {
-        CustomEventEmitter.remove('set-favorite-regions', this.render)
+        CustomEventEmitter.remove('set-detail-regions', this.render)
     }
 
     render(){
