@@ -4,7 +4,8 @@ const cloneDeep = (obj) => {
 
 const initialState = {
 	favoriteBooks: [],
-	libraries: {}
+	libraries: {},
+	regions: {}
 }
 
 const storageKey = 'BookWorld'
@@ -15,8 +16,9 @@ const setState = (newState) => {
 	} catch (error) {
 		console.error(error)
 	}
-	console.log([...newState.favoriteBooks])
-	console.log([...Object.values(newState.libraries)])
+	// console.log(newState)
+	// console.log([...newState.favoriteBooks])
+	// console.log([...Object.values(newState.libraries)])
 }
 
 const getState = () => {
@@ -67,13 +69,33 @@ const hasLibrary = (code) => {
 	return state.libraries.hasOwnProperty(code)
 }
 
+const addRegion = (regionName) => {
+	state.regions[regionName] = {}
+	setState(state)
+}
+
+const addDetailRegion = (regionName, detailName, detailCode) => {
+	state.regions[regionName][detailName] = detailCode
+	setState(state)
+}
+
+const removeDetailRegion = (regionName, detailName) => {
+	delete state.regions[regionName][detailName]
+	setState(state)
+}
+
+
 export {
 	state,
+	setState,
 	getState,
 	addFavoriteBook,
 	removeFavoriteBook,
 	isFavoriteBook,
 	addLibrary,
 	removeLibrary,
-	hasLibrary
+	hasLibrary,
+	addRegion,
+	addDetailRegion,
+	removeDetailRegion
 }
