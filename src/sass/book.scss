@@ -84,6 +84,9 @@ app-book {
             justify-content: space-between;
             padding: 5px 0;
             border-bottom: 1px dashed #ddd;
+            &[data-available=true] {
+                background-color: rgba(184, 207, 143, 0.1);
+            }
         }
         a {
             color: #333;
@@ -95,6 +98,8 @@ app-book {
         p {
             margin: 0;
         }
+        
+            
     }
 
 

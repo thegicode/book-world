@@ -1,5 +1,5 @@
 
-import {  addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
+import {  getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
 
 export default class Book extends HTMLElement {
     constructor() {
@@ -13,14 +13,14 @@ export default class Book extends HTMLElement {
 
         const isbn = this.searchParam('isbn')
         this.fetchUsageAnalysisList(isbn)
-
-        // TODO 
-        const region = {
-            '11': ['11250'],
-            '31': ['31180']
-        }
-        for( const [key, value] of Object.entries(region)) {
-            this.fetchLibrarySearchByBook(isbn, key, value)
+ 
+        const favoriteLibraries = getState().regions
+        for (const item in favoriteLibraries) {
+            const detailCodes = Object.values(favoriteLibraries[item])
+            const regionCode = detailCodes[0].slice(0, 2)
+            detailCodes.forEach( detailCode => {
+                this.fetchLibrarySearchByBook(isbn, regionCode, detailCode)
+            })
         }
 
         this.favoriteButton.addEventListener('change', (event) => {
@@ -79,7 +79,11 @@ export default class Book extends HTMLElement {
         }
     }
     updateLoanAvailability(el, isAvailable) {
-        el.querySelector('.loanAvailable').textContent = isAvailable ? '대출 가능' : '대출 불가'
+        const element = el.querySelector('.loanAvailable')
+        element.textContent = isAvailable ? '대출 가능' : '대출 불가'
+        if (isAvailable) {
+            el.parentElement.dataset.available = true
+        }
     }
     async loanAvailable(isbn13, libCode, el) {
         const isAvailable = await this.fetchLoadnAvailabilty(isbn13, libCode)
