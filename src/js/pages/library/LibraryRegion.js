@@ -1,14 +1,15 @@
 import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
+import { getState } from '../../modules/model.js'
 
 export default class LibraryRegion extends HTMLElement {
 	constructor() {
 		super()
-		this.selectElement = this.querySelector('.detailRegion')
+		this.selectElement = this.querySelector('select')
 		this.regionObject = {}
 	}
 
 	connectedCallback() {
-		this.fetchRegion()
+		this.renderRegion()
 		this.selectElement.addEventListener('change', this.onChangeDetail.bind(this))
 	}
 
@@ -16,36 +17,27 @@ export default class LibraryRegion extends HTMLElement {
 		this.selectElement.removeEventListener('change', this.onChange)
 	}
 
-	async fetchRegion() {
-		const url = '../../../json/region.json'
-		try {
-			const response = await fetch(url)
-			if (!response.ok) {
-				throw new Error('Fail to get detail region data.')
-			}
-			this.regionObject = await response.json()
-			this.renderRegion()
-		} catch(error) {
-			console.error(error)
-		}
-	}
-
 	renderRegion() {
-		const regionTemplate = document.querySelector('#tp-region').content.firstElementChild
-		const regionContainer = this.querySelector('.region')
+		const template = document.querySelector('#tp-region').content.firstElementChild
+		const container = this.querySelector('.region')
+		const favoriteRegions = getState().regions
 
-		const regionObject = this.regionObject['region']
-		for (const [ key, value ] of Object.entries(regionObject)) {
-			const element = regionTemplate.cloneNode(true)
-			element.querySelector('input').value = value
-			element.querySelector('span').textContent = key
-			regionContainer.appendChild(element)
+		const fragment = new DocumentFragment()
+		for (const regionName of Object.keys(favoriteRegions)) {
+			const size = Object.keys(favoriteRegions[regionName]).length
+			if (size > 0) {
+				const element = template.cloneNode(true)
+				element.querySelector('input').value = regionName
+				element.querySelector('span').textContent = regionName
+				fragment.appendChild(element)
+			}
 		}
+		container.appendChild(fragment)
 
-		const firstInput = regionContainer.querySelector('input')
+		const firstInput = container.querySelector('input')
 		firstInput.checked = true
-		this.renderDetailRegion(firstInput.value)
 
+		this.renderDetailRegion(firstInput.value)
 		this.changeRegion()
 	}
 
@@ -61,9 +53,9 @@ export default class LibraryRegion extends HTMLElement {
 		}
 	}
 
-	renderDetailRegion(value) { // 서울, 11
+	renderDetailRegion(regionName) {
 		this.selectElement.innerHTML = ''
-		const detailRegionObject = this.regionObject.detailRegion[value]
+		const detailRegionObject = getState().regions[regionName]
 		for (const [key, value] of Object.entries(detailRegionObject)) {
 			const optionEl = document.createElement('option')
 			optionEl.textContent = key
