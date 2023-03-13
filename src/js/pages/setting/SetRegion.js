@@ -6,7 +6,7 @@ export default class SetRegion extends HTMLElement {
     constructor() {
         super()
         this.detailRegionsElement = this.querySelector('.detailRegions')
-        this.regionRegion = {}
+        this.regionObject = {}
     }
 
     connectedCallback() {
