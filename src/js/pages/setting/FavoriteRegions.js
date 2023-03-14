@@ -5,6 +5,7 @@ import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 export default class FavoriteRegions extends HTMLElement {
     constructor() {
         super()
+        this.container = this.querySelector('.favorites')
     }
 
     connectedCallback() {
@@ -17,29 +18,27 @@ export default class FavoriteRegions extends HTMLElement {
     }
 
     render(){
-        const container = this.querySelector('.favorites')
-        container.innerHTML = ''
-        let fragment = new DocumentFragment()
+        this.container.innerHTML = ''
         const { regions } = getState()
         for (const regionName in regions) {
             const detaioRegions = Object.keys(regions[regionName])
             if (detaioRegions.length > 0) {
                 const titleElement = document.createElement('h3')
                 titleElement.textContent = regionName
-                fragment.appendChild(titleElement)
-                fragment = this.renderDetail(detaioRegions, fragment)
+                this.container.appendChild(titleElement)
+                this.renderDetail(detaioRegions)
             }
         }
-        container.appendChild(fragment)
     }
 
-    renderDetail(detaioRegions, fragment) {
+    renderDetail(detaioRegions) {
+        const fragment = new DocumentFragment()
         detaioRegions.forEach( name => {
             const element = document.createElement('p')
             element.textContent = name
             fragment.appendChild(element)
         })
-        return fragment
+        this.container.appendChild(fragment)
     }
     
 }

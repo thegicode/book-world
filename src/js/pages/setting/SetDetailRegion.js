@@ -6,7 +6,7 @@ export default class SetDetailRegion extends HTMLElement {
     constructor() {
         super()
         this.detailRegionsElement = this.querySelector('.detailRegions')
-        this.regionObject = {}
+        this.regionData = null
     }
 
     connectedCallback() {
@@ -20,9 +20,11 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     setRegionData({ detail }) {
-        this.regionObject = detail.regionData
+        this.regionData = detail.regionData
         this.renderRegion()
     }
+
+
  
     renderRegion() {
         const favoriteRegions = Object.keys(getState().regions)
@@ -44,20 +46,8 @@ export default class SetDetailRegion extends HTMLElement {
 		this.changeRegion()
     }
 
-    changeRegion() {
-		const regionRadios = this.querySelectorAll('[name=favorite-region]')
-		for (const radio of regionRadios) {
-			radio.addEventListener('change', () => {
-				if (radio.checked) {
-					const value = radio.value
-                    const label = radio.nextElementSibling.textContent
-					this.renderDetailRegion(label)
-				}
-			})
-		}
-	}
-
     renderDetailRegion(regionName) { 
+        if (!this.regionData) return
         const regionObj = getState().regions[regionName]
         const regionCodes = regionObj? Object.values(regionObj) : []
 
@@ -65,7 +55,7 @@ export default class SetDetailRegion extends HTMLElement {
 		this.detailRegionsElement.innerHTML = ''
         const fragment = new DocumentFragment()
 
-		const detailRegionObject = this.regionObject.detailRegion[regionName]
+		const detailRegionObject = this.regionData.detailRegion[regionName]
         if (!detailRegionObject) return
 		for (const [key, value] of Object.entries(detailRegionObject)) {
             const element = template.cloneNode(true)
@@ -82,6 +72,19 @@ export default class SetDetailRegion extends HTMLElement {
 		this.detailRegionsElement.appendChild(fragment)
         this.detailRegionsElement.region = regionName
 		this.onChangeDetail()
+	}
+
+    changeRegion() {
+		const regionRadios = this.querySelectorAll('[name=favorite-region]')
+		for (const radio of regionRadios) {
+			radio.addEventListener('change', () => {
+				if (radio.checked) {
+					const value = radio.value
+                    const label = radio.nextElementSibling.textContent
+					this.renderDetailRegion(label)
+				}
+			})
+		}
 	}
 
     onChangeDetail() {

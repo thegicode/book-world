@@ -8,15 +8,14 @@ export default class SetRegion extends HTMLElement {
         super()
         this.customFetch = new CustomFetch()
         
-        this.regionData = {}
+        this.regionData = null
     }
 
     connectedCallback() {
         this.fetchRegion()
     }
 
-    disconnectedCallback() {
-    }
+    disconnectedCallback() {}
   
     async fetchRegion() {
 		const url = '../../json/region.json'
@@ -31,6 +30,10 @@ export default class SetRegion extends HTMLElement {
 	}
 
     render() {
+        if (!this.regionData) {
+            throw new Error('regionData is null.')
+        }
+        
         const template = document.querySelector('#tp-region').content.firstElementChild
 		const container = this.querySelector('.regions')
 

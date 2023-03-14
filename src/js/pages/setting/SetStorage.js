@@ -16,8 +16,8 @@ export default class SetStorage extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.storageButton.addEventListener('click', this.setLocalStorageToBase)
-        this.resetButton.addEventListener('click', this.resetStorage)
+        this.storageButton.removeEventListener('click', this.setLocalStorageToBase)
+        this.resetButton.removeEventListener('click', this.resetStorage)
     }
 
     async setLocalStorageToBase() {
