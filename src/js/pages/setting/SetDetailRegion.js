@@ -1,37 +1,29 @@
 
 import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model.js'
 import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
-import CustomFetch from "../../modules/CustomFetch.js"
 
 export default class SetDetailRegion extends HTMLElement {
     constructor() {
         super()
         this.detailRegionsElement = this.querySelector('.detailRegions')
         this.regionObject = {}
-        this.customFetch = new CustomFetch()
     }
 
     connectedCallback() {
-        this.fetchRegion()
+        CustomEventEmitter.add('fetch-region-data', this.setRegionData.bind(this))
         CustomEventEmitter.add('set-favorite-regions', this.renderRegion.bind(this))
-
     }
 
     disconnectedCallback() {
+        CustomEventEmitter.remove('fetch-region-data', this.setRegionData)
         CustomEventEmitter.remove('set-favorite-regions', this.renderRegion)
     }
 
-    async fetchRegion() {
-		const url = '../../json/region.json'
-		try {
-			this.regionObject = await this.customFetch.fetch(url)
-			this.renderRegion()
-		} catch(error) {
-			console.error(error)
-            throw new Error('Fail to get region data.')
-		}
-	}
-
+    setRegionData({ detail }) {
+        this.regionObject = detail.regionData
+        this.renderRegion()
+    }
+ 
     renderRegion() {
         const favoriteRegions = Object.keys(getState().regions)
         const fragment = new DocumentFragment()

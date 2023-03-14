@@ -13,7 +13,8 @@ export default class SetRegion extends HTMLElement {
         this.fetchRegion()
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+    }
   
     async fetchRegion() {
 		const url = '../../json/region.json'
@@ -24,6 +25,7 @@ export default class SetRegion extends HTMLElement {
 			}
 			this.regionData = await response.json()
 			this.render()
+            CustomEventEmitter.dispatch('fetch-region-data', { regionData: this.regionData })
 		} catch(error) {
 			console.error(error)
 		}
