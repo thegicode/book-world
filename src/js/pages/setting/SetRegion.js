@@ -1,10 +1,12 @@
 
 import { getState, addRegion, removeRegion } from '../../modules/model.js'
 import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
+import CustomFetch from "../../modules/CustomFetch.js"
 
 export default class SetRegion extends HTMLElement {
     constructor() {
         super()
+        this.customFetch = new CustomFetch()
         
         this.regionData = {}
     }
@@ -19,15 +21,12 @@ export default class SetRegion extends HTMLElement {
     async fetchRegion() {
 		const url = '../../json/region.json'
 		try {
-			const response = await fetch(url)
-			if (!response.ok) {
-				throw new Error('Fail to get detail region data.')
-			}
-			this.regionData = await response.json()
+			this.regionData = await this.customFetch.fetch(url)
 			this.render()
             CustomEventEmitter.dispatch('fetch-region-data', { regionData: this.regionData })
 		} catch(error) {
 			console.error(error)
+            throw new Error('Fail to get region data.')
 		}
 	}
 
