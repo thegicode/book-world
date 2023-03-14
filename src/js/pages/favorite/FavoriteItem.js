@@ -1,5 +1,8 @@
 import { state, removeFavoriteBook } from '../../modules/model.js'
 import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
+import CustomFetch from "../../modules/CustomFetch.js"
+
+const customFetch = new CustomFetch
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
@@ -12,7 +15,7 @@ export default class FavoriteItem extends HTMLElement {
 
     connectedCallback() {
         this.loading()
-        this.request(this.dataset.isbn)
+        this.fetchData(this.dataset.isbn)
         this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onLibrary.bind(this))
         this.link.addEventListener('click', this.onClick.bind(this))
@@ -24,19 +27,13 @@ export default class FavoriteItem extends HTMLElement {
         this.link.removeEventListener('click', this.onClick)
     }
 
-    async request(isbn) {
+    async fetchData(isbn) {
         const url = `/usage-analysis-list?isbn13=${isbn}`
         try {
-            const response = await fetch(url)
-            if (!response.ok) {
-                throw new Error('Fail to get usage analysis list data.')
-            }
-            const data = await response.json()
+            const data = await customFetch.fetch(url)
             this.render(data)
         } catch(error) {
-            this.errorRender()
-            console.error(error)
-            throw new Error('Fail to get usage analysis list data.')
+            console.error(`Fail to get usage analysis list: ${error}`)
         }
     }
 
