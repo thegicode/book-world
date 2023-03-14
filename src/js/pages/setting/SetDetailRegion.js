@@ -1,12 +1,14 @@
 
 import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model.js'
 import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
+import CustomFetch from "../../modules/CustomFetch.js"
 
 export default class SetDetailRegion extends HTMLElement {
     constructor() {
         super()
         this.detailRegionsElement = this.querySelector('.detailRegions')
         this.regionObject = {}
+        this.customFetch = new CustomFetch()
     }
 
     connectedCallback() {
@@ -22,14 +24,11 @@ export default class SetDetailRegion extends HTMLElement {
     async fetchRegion() {
 		const url = '../../json/region.json'
 		try {
-			const response = await fetch(url)
-			if (!response.ok) {
-				throw new Error('Fail to get detail region data.')
-			}
-			this.regionObject = await response.json()
+			this.regionObject = await this.customFetch.fetch(url)
 			this.renderRegion()
 		} catch(error) {
 			console.error(error)
+            throw new Error('Fail to get region data.')
 		}
 	}
 

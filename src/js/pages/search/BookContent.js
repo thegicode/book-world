@@ -1,20 +1,18 @@
-// import { $ } from './selectors.js'
-
 import Observer from "../../modules/Observer.js"
+import CustomFetch from "../../modules/CustomFetch.js"
 
 export default class BookContent extends HTMLElement {
     constructor() {
-        // console.log('BookContent constructor')
         super()
         this.pages = this.querySelector('.book-pages')
         this.books = this.querySelector('.books')
-        this.request = this.request.bind(this)
+        this.fetchSearchNaverBook = this.fetchSearchNaverBook.bind(this)
+        this.customFetch = new CustomFetch()
     }
 
     connectedCallback() {
-        // console.log('BookContent connectedCallback')
         const target = this.querySelector('.observe')
-        const callback = this.request
+        const callback = this.fetchSearchNaverBook
         this.observer = new Observer(target, callback)
     }
 
@@ -28,26 +26,20 @@ export default class BookContent extends HTMLElement {
             this.length = 0
             this.showMessage('loading')
             this.books.innerHTML = ''
-            this.request()
+            this.fetchSearchNaverBook()
         } else {
             this.keyword = ''
             this.length = 0
             this.pages.hidden = true
             this.showMessage('message')
         }
-        // console.log('initialize keyword: ', keyword, this.length)
     }
 
-    async request() {
-        // console.log('BookContent request')
+    async fetchSearchNaverBook() {
         if (!this.keyword) return
         const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`
         try {
-            const response = await fetch(url)
-            if (!response.ok) {
-                throw new Error('Fail to get naver book.')
-            }
-            const data = await response.json()
+            const data = await this.customFetch.fetch(url)
             this.render(data)
         } catch(error) {
             console.error(error)
@@ -56,15 +48,11 @@ export default class BookContent extends HTMLElement {
     }
 
     render(data) {
-        // console.log('BookContent render')
         const { total, start, display, items } = data
 
         const prevLength = this.length
 
         this.length += Number(display)
-
-        // console.log('BookContent this.length : ', this.length)
-        // console.log('BookContent total : ', total)
 
         const obj = {
             keyword: `${this.keyword}`,
@@ -90,8 +78,6 @@ export default class BookContent extends HTMLElement {
         } 
 
         this.observer.observe()
-        // const target = this.querySelector('.observe')
-        // this.observer.observe(target)
     }
 
     bookItems(items, prevLength) {
@@ -118,7 +104,7 @@ export default class BookContent extends HTMLElement {
         //     changes.forEach( change => {
         //         if (change.isIntersecting) {
         //             this.observer.unobserve(change.target)
-        //             this.request()
+        //             this.fetchSearchNaverBook()
         //         }   
         //     })
         // })

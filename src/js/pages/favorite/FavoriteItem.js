@@ -2,8 +2,6 @@ import { state, removeFavoriteBook } from '../../modules/model.js'
 import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 import CustomFetch from "../../modules/CustomFetch.js"
 
-const customFetch = new CustomFetch
-
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super()
@@ -11,6 +9,7 @@ export default class FavoriteItem extends HTMLElement {
         this.libraryButton = this.querySelector(':scope .library-button')
         this.libraryBookExist = this.querySelector(':scope library-book-exist')
         this.link = this.querySelector('a')
+        this.customFetch = new CustomFetch()
     }
 
     connectedCallback() {
@@ -30,10 +29,11 @@ export default class FavoriteItem extends HTMLElement {
     async fetchData(isbn) {
         const url = `/usage-analysis-list?isbn13=${isbn}`
         try {
-            const data = await customFetch.fetch(url)
+            const data = await this.customFetch.fetch(url)
             this.render(data)
         } catch(error) {
-            console.error(`Fail to get usage analysis list: ${error}`)
+            console.error(error)
+            throw new Error(`Fail to get usage analysis list.`)
         }
     }
 

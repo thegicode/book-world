@@ -1,11 +1,13 @@
 import { hasLibrary } from '../../modules/model.js'
 import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
+import CustomFetch from "../../modules/CustomFetch.js"
 
 export default class Library extends HTMLElement {
 
 	constructor() {
 		super()
 		this.form = this.querySelector('form')
+		this.customFetch = new CustomFetch()
 	}
 
 	connectedCallback() {
@@ -19,14 +21,11 @@ export default class Library extends HTMLElement {
 	async fetchLibrarySearch(detailRegionCode) {
 		try {
 			const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`
-			const response = await fetch(url)
-			if (!response.ok) {
-				throw new Error('Fail to get library search data.')
-			}
-			const data = await response.json()
+			const data = await this.customFetch.fetch(url)
 			this.render(data)
 		} catch(error) {
 			console.error(error)
+            throw new Error('Fail to get library search data.')
 		}
 	}
 
