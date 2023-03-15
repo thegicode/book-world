@@ -30,23 +30,8 @@
             </label> 
         </div>
 
-        <!-- <h4>관심 도서관 소장 조회</h4>
-        <library-book-exist>
-            <ul class="library-list">
-            </ul>
-        </library-book-exist> -->
-
         <h4>도서 소장 도서관 조회</h4>
-        <div class="library-search-by-book">
-        </div>
-        <template id="tp-librarySearchByBookItem">
-            <li>
-                <a href="" target="_blank"></a>
-                <p>
-                    <span class="loanAvailable"></span>
-                </p>
-            </li>
-        </template>
+        <div class="library-search-by-book"></div>
 
         <div class="cols">
             <div class="col">
@@ -82,12 +67,22 @@
         <p class="keyword"></p>
 
         <h4>추천 도서</h4>
+        
         <ul class="recBooks"></ul>
 
         <div class="loading"></div>
     </app-book>
 
 </div>
+
+<template id="tp-librarySearchByBookItem">
+    <li>
+        <a href="" target="_blank"></a>
+        <p>
+            <span class="loanAvailable"></span>
+        </p>
+    </li>
+</template>
 
 
 </body>
