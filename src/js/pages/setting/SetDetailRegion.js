@@ -25,10 +25,10 @@ export default class SetDetailRegion extends HTMLElement {
         this.renderRegion()
     }
 
-
- 
     renderRegion() {
         const favoriteRegions = Object.keys(getState().regions)
+        if (favoriteRegions.length < 1) return
+        
         const fragment = new DocumentFragment()
         const template = document.querySelector('#tp-favorite-region').content.firstElementChild
 		const container = this.querySelector('.regions')

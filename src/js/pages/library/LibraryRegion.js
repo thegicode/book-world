@@ -17,9 +17,11 @@ export default class LibraryRegion extends HTMLElement {
 	}
 
 	renderRegion() {
+		const favoriteRegions = getState().regions
+		if (Object.values(favoriteRegions).length < 1) return
+
 		const template = document.querySelector('#tp-region').content.firstElementChild
 		const container = this.querySelector('.region')
-		const favoriteRegions = getState().regions
 
 		const fragment = new DocumentFragment()
 		for (const regionName of Object.keys(favoriteRegions)) {
