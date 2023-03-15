@@ -1,5 +1,9 @@
 
-import { NavGnb, BookDescription, LibraryBookExist } from '/js/components/index.js'
+import { BookDescription, 
+    CheckboxFavoriteBook, 
+    LibraryBookExist, 
+    NavGnb 
+} from '/js/components/index.js'
 
 import Favorite from './Favorite.js'
 import FavoriteItem from './FavoriteItem.js'
@@ -9,4 +13,6 @@ customElements.define('app-favorite', Favorite)
 customElements.define('favorite-item', FavoriteItem)
 customElements.define('book-description', BookDescription)
 customElements.define('library-book-exist', LibraryBookExist)
+customElements.define('checkbox-favorite-book', CheckboxFavoriteBook)
+
 

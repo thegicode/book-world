@@ -27,7 +27,7 @@ export default class NavGnb extends HTMLElement {
         this.innerHTML =  `
             <nav class="gnb">
                 <a class="gnb-item" href="./search">책 검색</a>
-                <a class="gnb-item" href="./favorite">즐겨찾기 (<span class="size">${this.favoriteBooksSize}</span>)</a>
+                <a class="gnb-item" href="./favorite">나의 책 (<span class="size">${this.favoriteBooksSize}</span>)</a>
                 <a class="gnb-item" href="./library">도서관 조회</a>
                 <a class="gnb-item" href="./setting">설정</a>
             </nav>`

@@ -4,7 +4,6 @@ import { state, addFavoriteBook, removeFavoriteBook } from '../../modules/model.
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super()
-        this.favoriteButton = this.querySelector(':scope .favorite-button')
         this.libraryButton = this.querySelector(':scope .library-button')
         this.libraryBookExist = this.querySelector(':scope library-book-exist')
         this.link = this.querySelector('a')
@@ -13,13 +12,11 @@ export default class FavoriteItem extends HTMLElement {
     connectedCallback() {
         this.loading()
         this.fetchData(this.dataset.isbn)
-        this.favoriteButton.addEventListener('click', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onLibrary.bind(this))
         this.link.addEventListener('click', this.onClick.bind(this))
     }
 
     disconnectedCallback() {
-        this.favoriteButton.removeEventListener('click', this.onFavorite)
         this.libraryButton.removeEventListener('click', this.onLibrary)
         this.link.removeEventListener('click', this.onClick)
     }
@@ -30,6 +27,7 @@ export default class FavoriteItem extends HTMLElement {
             const data = await CustomFetch.fetch(url)
             this.render(data)
         } catch(error) {
+            this.errorRender()
             console.error(error)
             throw new Error(`Fail to get usage analysis list.`)
         }
@@ -86,22 +84,6 @@ export default class FavoriteItem extends HTMLElement {
         this.querySelector('h4')
             .textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`
         
-    }
-
-    onFavorite() {
-        const button = this.favoriteButton
-        const isFavorite = button.dataset.favorite === 'true'
-        const isbn = this.dataset.isbn
-        if (isFavorite) { 
-            removeFavoriteBook(isbn)
-            button.dataset.favorite = false
-            button.textContent = '즐겨찾기 추가'
-        } else {
-            addFavoriteBook(isbn)
-            button.dataset.favorite = true
-            button.textContent = '즐겨찾기 삭제'
-        }
-        CustomEventEmitter.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
     }
 
     onLibrary() {

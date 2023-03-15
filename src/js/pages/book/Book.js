@@ -2,24 +2,19 @@
 import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
 import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
 
-
 export default class Book extends HTMLElement {
     constructor() {
         super()
-        this.$favoriteButton = this.querySelector('input[name="favorite"]')
         this.$loadingElement = this.querySelector('.loading')
-        this._onFavorite = this._onFavorite.bind(this)
     }
 
     connectedCallback() {
         const isbn = new URLSearchParams(location.search).get('isbn')
+        this.dataset.isbn = isbn
         this._fetchUsageAnalysisList(isbn)
-
-        this.$favoriteButton.addEventListener('change', (event) => this._onFavorite(isbn, event))
     }
 
     disconnectedCallback() {
-        this.$favoriteButton.removeEventListener('change', this._onFavorite)
     }
 
     async _fetchUsageAnalysisList(isbn) {
@@ -53,7 +48,6 @@ export default class Book extends HTMLElement {
             .map(({ bookname, isbn13 }) => `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`)
             .join('')
 
-        this.$favoriteButton.checked = isFavoriteBook(isbn13)
         this.querySelector('.bookname').innerHTML = bookNames
         this.querySelector('.authors').textContent = authors
         const imageElement = this.querySelector('img')
@@ -70,15 +64,6 @@ export default class Book extends HTMLElement {
         this.querySelector('.recBooks').innerHTML = recBooksString
 
         this.$loadingElement.remove()
-    }
-
-    _onFavorite(isbn, event) {
-        if (event.target.checked) {
-            addFavoriteBook(isbn)
-        } else {
-            removeFavoriteBook(isbn)
-        }
-        CustomEventEmitter.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
     }
 
     _renderError() {

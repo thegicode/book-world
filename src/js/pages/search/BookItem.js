@@ -3,7 +3,6 @@ import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../.
 
 export default class BookItem extends HTMLElement {
 
-    favoriteButton
     libraryButton
     libraryBookExist
     link
@@ -13,20 +12,17 @@ export default class BookItem extends HTMLElement {
     }
 
     connectedCallback() {
-        this.favoriteButton = this.querySelector('input[name="favorite"]')
         this.libraryButton = this.querySelector('.library-button')
         this.libraryBookExist = this.querySelector('library-book-exist')
         this.link = this.querySelector('.book-summary')
 
         this.render()
 
-        this.favoriteButton.addEventListener('change', this.onFavorite.bind(this))
         this.libraryButton.addEventListener('click', this.onClickLibraryButton.bind(this))
         this.link.addEventListener('click', this.onClickLink.bind(this))
     }
 
     disconnectedCallback() {
-        this.favoriteButton.removeEventListener('change', this.onFavorite)
         this.libraryButton.removeEventListener('click', this.onClickLibraryButton)
         this.link.removeEventListener('click', this.onClickLink)
     }
@@ -63,32 +59,20 @@ export default class BookItem extends HTMLElement {
         this.querySelector('.__link').href = link
 
         this.dataset.index = this.index
-        this.isbn13 = isbn.split(' ')[0]
+        // this.isbn = isbn.split(' ')[0]
+        this.dataset.isbn = isbn
 
-        if (isFavoriteBook(this.isbn13)) {
-            this.favoriteButton.checked = true
-        }
-    }
-
-    onFavorite(event) {
-        const { checked } = event.target
-        if (checked) {
-            addFavoriteBook(this.isbn13)
-        } else {
-            removeFavoriteBook(this.isbn13)
-        }
-        CustomEventEmitter.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
     }
 
     onClickLibraryButton() {
         this.libraryBookExist
-            .onLibraryBookExist(this.libraryButton, this.isbn13, state.libraries)
+            .onLibraryBookExist(this.libraryButton, this.dataset.isbn, state.libraries)
 
     }
     
     onClickLink(event) {
         event.preventDefault()
-        location.href = `book?isbn=${this.isbn13}`
+        location.href = `book?isbn=${this.dataset.isbn}`
     }
 
 }

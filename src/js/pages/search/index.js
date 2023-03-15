@@ -1,6 +1,6 @@
 
 
-import { NavGnb, BookDescription, LibraryBookExist } from '/js/components/index.js'
+import { NavGnb, BookDescription, CheckboxFavoriteBook, LibraryBookExist } from '/js/components/index.js'
 
 import AppSearch from './AppSearch.js'
 import InputSearch from './InputSearch.js'
@@ -15,4 +15,5 @@ customElements.define('input-search', InputSearch)
 customElements.define('book-item', BookItem)
 customElements.define('book-description', BookDescription)
 customElements.define('library-book-exist', LibraryBookExist)
+customElements.define('checkbox-favorite-book', CheckboxFavoriteBook)
 customElements.define('test-element', TestElement)
