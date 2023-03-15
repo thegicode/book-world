@@ -1,7 +1,8 @@
 
 // import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model.js'
 // import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
-import { getState, addRegion, addDetailRegion, removeDetailRegion, CustomEventEmitter } from '../../modules/index.js'
+import { CustomEventEmitter } from '../../utils/index.js'
+import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model.js'
 
 export default class SetDetailRegion extends HTMLElement {
     constructor() {

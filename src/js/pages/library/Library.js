@@ -1,4 +1,5 @@
-import { hasLibrary, CustomEventEmitter, CustomFetch } from '../../modules/index.js'
+import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
+import { hasLibrary } from '../../modules/model.js'
 
 export default class Library extends HTMLElement {
 

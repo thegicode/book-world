@@ -1,6 +1,7 @@
 
 
-import { getState, CustomFetch } from '../../modules/index.js'
+import { CustomFetch } from '../../utils/index.js'
+import { getState } from '../../modules/model.js'
 
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {

@@ -1,7 +1,7 @@
-import Observer from "/js/modules/Observer.js"
-import CustomFetch from "/js/modules/CustomFetch.js"
-import CustomEventEmitter from '/js/modules/CustomEventEmitter.js'
-// import { Observer, CustomFetch, CustomEventEmitter } from '../../js/modules/index.js'
+import Observer from "/js/utils/Observer.js"
+import CustomFetch from "/js/utils/CustomFetch.js"
+import CustomEventEmitter from '/js/utils/CustomEventEmitter.js'
+// import { Observer, CustomFetch, CustomEventEmitter } from '../../js/utils/index.js'
 
 export default class BookList extends HTMLElement {
     constructor() {

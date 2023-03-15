@@ -1,4 +1,5 @@
-import { state, removeFavoriteBook, CustomEventEmitter, CustomFetch } from '../../modules/index.js'
+import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
+import { state, removeFavoriteBook } from '../../modules/model.js'
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {

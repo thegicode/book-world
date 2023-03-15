@@ -1,7 +1,8 @@
 
 // import { setState } from '../../modules/model.js'
 // import CustomFetch from "../../modules/CustomFetch.js"
-import { setState, CustomFetch } from '../../modules/index.js'
+import { CustomFetch } from '../../utils/index.js'
+import { getState, addRegion, removeRegion } from '../../modules/model.js'
 
 export default class SetStorage extends HTMLElement {
     constructor() {

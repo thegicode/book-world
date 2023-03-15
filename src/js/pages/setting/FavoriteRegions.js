@@ -1,7 +1,8 @@
 
 // import { getState } from '../../modules/model.js'
 // import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
-import { getState, CustomEventEmitter } from '../../modules/index.js'
+import { CustomEventEmitter } from '../../utils/index.js'
+import { getState } from '../../modules/model.js'
 
 export default class FavoriteRegions extends HTMLElement {
     constructor() {

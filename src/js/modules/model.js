@@ -89,7 +89,6 @@ const removeDetailRegion = (regionName, detailName) => {
 	setState(state)
 }
 
-
 export {
 	state,
 	setState,

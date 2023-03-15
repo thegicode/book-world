@@ -2,7 +2,8 @@
 // import { getState, addRegion, removeRegion } from '../../modules/model.js'
 // import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 // import CustomFetch from "../../modules/CustomFetch.js"
-import { getState, addRegion, removeRegion, CustomEventEmitter, CustomFetch } from '../../modules/index.js'
+import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
+import { getState, addRegion, removeRegion } from '../../modules/model.js'
 
 export default class SetRegion extends HTMLElement {
     constructor() {
