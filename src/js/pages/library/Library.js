@@ -5,7 +5,6 @@ export default class Library extends HTMLElement {
 	constructor() {
 		super()
 		this.form = this.querySelector('form')
-		this.customFetch = new CustomFetch()
 	}
 
 	connectedCallback() {
@@ -19,7 +18,7 @@ export default class Library extends HTMLElement {
 	async fetchLibrarySearch(detailRegionCode) {
 		try {
 			const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`
-			const data = await this.customFetch.fetch(url)
+			const data = await CustomFetch.fetch(url)
 			this.render(data)
 		} catch(error) {
 			console.error(error)

@@ -7,7 +7,6 @@ export default class FavoriteItem extends HTMLElement {
         this.libraryButton = this.querySelector(':scope .library-button')
         this.libraryBookExist = this.querySelector(':scope library-book-exist')
         this.link = this.querySelector('a')
-        this.customFetch = new CustomFetch()
     }
 
     connectedCallback() {
@@ -27,7 +26,7 @@ export default class FavoriteItem extends HTMLElement {
     async fetchData(isbn) {
         const url = `/usage-analysis-list?isbn13=${isbn}`
         try {
-            const data = await this.customFetch.fetch(url)
+            const data = await CustomFetch.fetch(url)
             this.render(data)
         } catch(error) {
             console.error(error)

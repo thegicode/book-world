@@ -2,7 +2,6 @@ export default class Observer {
     constructor(target, callback) {
         this.target = target
         this.observer = new IntersectionObserver(this.handleIntersection.bind(this, callback))
-        // this.observe()
     }
 
     observe() {

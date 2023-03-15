@@ -20,7 +20,7 @@ class CustomFetch {
         try {
             const response = await fetch(url, finalOptions)
             if (!response.ok) {
-                throw new Error(`Http error! status: ${response.status}`)
+                throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`)
             } 
             const data = await response.json()
             return data
@@ -31,7 +31,7 @@ class CustomFetch {
     }
 }
 
-export default CustomFetch
+export default new CustomFetch()
 
 // async function customFetch(url, options) {
 //     const baseOptions =  {

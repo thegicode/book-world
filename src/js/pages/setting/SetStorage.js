@@ -8,7 +8,6 @@ export default class SetStorage extends HTMLElement {
         super()
         this.storageButton = this.querySelector('.localStorage button')
         this.resetButton = this.querySelector('.resetStorage button')
-        this.customFetch = new CustomFetch()
     }
 
     connectedCallback() {
@@ -24,7 +23,7 @@ export default class SetStorage extends HTMLElement {
     async setLocalStorageToBase() {
         const url = `../../json/storage-sample.json`
         try {
-            const data = await this.customFetch.fetch(url)
+            const data = await CustomFetch.fetch(url)
             setState(data)
             console.log('Saved local stronage by base data!')
         } catch(error) {

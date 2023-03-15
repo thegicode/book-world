@@ -1,5 +1,5 @@
 
-import { NavGnb, LibraryBookExist } from '/js/components/index.js'
+import { NavGnb } from '/js/components/index.js'
 
 import Book from './Book.js'
 import LibrarySearchByBook from './LibrarySearchByBook.js'

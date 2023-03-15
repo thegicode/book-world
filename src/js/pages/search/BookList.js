@@ -8,7 +8,6 @@ export default class BookList extends HTMLElement {
         super()
         this._initializeProperties()
         this._bindMethods()
-        this.customFetch = new CustomFetch()
     }
 
     _initializeProperties() {
@@ -66,7 +65,7 @@ export default class BookList extends HTMLElement {
 
         const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`
         try {
-            const data = await this.customFetch.fetch(url)
+            const data = await CustomFetch.fetch(url)
             this._render(data)
         } catch(error) {
             console.error(error)

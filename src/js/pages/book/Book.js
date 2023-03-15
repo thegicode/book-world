@@ -5,8 +5,8 @@ export default class Book extends HTMLElement {
     constructor() {
         super()
         this.$favoriteButton = this.querySelector('input[name="favorite"]')
+        this.$loadingElement = this.querySelector('.loading')
         this._onFavorite = this._onFavorite.bind(this)
-        this.customFetch = new CustomFetch()
     }
 
     connectedCallback() {
@@ -22,9 +22,10 @@ export default class Book extends HTMLElement {
 
     async _fetchUsageAnalysisList(isbn) {
         try {
-            const data = await this.customFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`)
+            const data = await CustomFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`)
             this._render(data)
         } catch (error) {
+            this._renderError()
             console.log(error)
             throw new Error(`Fail to get usage analysis list.`)
         }
@@ -66,10 +67,7 @@ export default class Book extends HTMLElement {
         this.querySelector('.keyword').innerHTML = keywordsString
         this.querySelector('.recBooks').innerHTML = recBooksString
 
-        const loadingElement = this.querySelector('.loading')
-        if (loadingElement) {
-            loadingElement.remove()
-        }
+        this.$loadingElement.remove()
     }
 
     _onFavorite(isbn, event) {
@@ -78,6 +76,10 @@ export default class Book extends HTMLElement {
         } else {
             removeFavoriteBook(isbn)
         }
+    }
+
+    _renderError() {
+        this.$loadingElement.textContent = '정보를 가져올 수 없습니다.'
     }
 }
 

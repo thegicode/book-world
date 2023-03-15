@@ -5,7 +5,6 @@ import { getState, CustomFetch } from '../../modules/index.js'
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
         super()
-        this.customFetch = new CustomFetch()
     }
 
     connectedCallback() {
@@ -33,7 +32,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         const url = `/library-search-by-book?${searchParams}`
     
         try {
-            const data = await this.customFetch.fetch(url)
+            const data = await CustomFetch.fetch(url)
             this.render(data, isbn)
         } catch (error) {
             console.error(error)
@@ -88,7 +87,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         const url = `/book-exist?${searchParams}`
         
         try {
-            const data = await this.customFetch.fetch(url)
+            const data = await CustomFetch.fetch(url)
             return data.loanAvailable === 'Y'
         } catch (error) {
             console.error(error)

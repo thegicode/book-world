@@ -7,8 +7,6 @@ import { getState, addRegion, removeRegion, CustomEventEmitter, CustomFetch } fr
 export default class SetRegion extends HTMLElement {
     constructor() {
         super()
-        this.customFetch = new CustomFetch()
-        
         this.regionData = null
     }
 
@@ -21,7 +19,7 @@ export default class SetRegion extends HTMLElement {
     async fetchRegion() {
 		const url = '../../json/region.json'
 		try {
-			this.regionData = await this.customFetch.fetch(url)
+			this.regionData = await CustomFetch.fetch(url)
 			this.render()
             CustomEventEmitter.dispatch('fetch-region-data', { regionData: this.regionData })
 		} catch(error) {
