@@ -1,6 +1,6 @@
 
-import { CustomFetch } from '../../utils/index.js'
-import { addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
+import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
+import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
 
 
 export default class Book extends HTMLElement {
@@ -78,6 +78,7 @@ export default class Book extends HTMLElement {
         } else {
             removeFavoriteBook(isbn)
         }
+        CustomEventEmitter.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
     }
 
     _renderError() {

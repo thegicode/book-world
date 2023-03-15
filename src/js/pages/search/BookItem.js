@@ -1,4 +1,4 @@
-
+import { CustomEventEmitter } from '../../utils/index.js'
 import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
 
 export default class BookItem extends HTMLElement {
@@ -77,6 +77,7 @@ export default class BookItem extends HTMLElement {
         } else {
             removeFavoriteBook(this.isbn13)
         }
+        CustomEventEmitter.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
     }
 
     onClickLibraryButton() {
