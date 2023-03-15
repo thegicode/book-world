@@ -78,7 +78,7 @@ export default class BookList extends HTMLElement {
         const prevLength = this.length
 
         this.length += Number(display)
-        this._updateContenInfo({ total, display })
+        this._updatePagingInfo({ total, display })
 
         this.pagingInfo.hidden = false
 
@@ -94,7 +94,7 @@ export default class BookList extends HTMLElement {
         } 
     }
 
-    _updateContenInfo({ total, display }) {
+    _updatePagingInfo({ total, display }) {
         const obj = {
             keyword: `${this.keyword}`,
             length: `${this.length.toLocaleString()}`,
@@ -102,7 +102,7 @@ export default class BookList extends HTMLElement {
             display: `${display}개씩`
         }
         for (const [key, value] of Object.entries(obj)) {
-            this.querySelector(`.__${key}`).textContent = value
+            this.pagingInfo.querySelector(`.__${key}`).textContent = value
         }
     }
 
