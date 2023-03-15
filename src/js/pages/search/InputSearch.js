@@ -1,5 +1,5 @@
 
-import { $ } from './selectors.js'
+import customEventEmitter from '../../modules/CustomEventEmitter.js'
 
 export default class InputSearch extends HTMLElement {
     constructor() {
@@ -20,6 +20,7 @@ export default class InputSearch extends HTMLElement {
         event.preventDefault()
         
         const keyword = this.input.value 
+        
         if (!keyword) return
 
         this.input.value = ''
@@ -28,10 +29,7 @@ export default class InputSearch extends HTMLElement {
         url.searchParams.set('keyword', keyword)
         window.history.pushState({}, "", url)
 
-        $.bookContent.initialize(keyword)
-        // if (keyword !== $.bookContent.keyword) {
-        //     $.bookContent.initialize(keyword)
-        // }
+        customEventEmitter.dispatch('search-page-init', { keyword })
 
         this.input.focus()
     }

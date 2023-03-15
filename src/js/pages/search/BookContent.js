@@ -1,5 +1,6 @@
 import Observer from "../../modules/Observer.js"
 import CustomFetch from "../../modules/CustomFetch.js"
+import customEventEmitter from '../../modules/CustomEventEmitter.js'
 
 export default class BookContent extends HTMLElement {
     constructor() {
@@ -14,22 +15,23 @@ export default class BookContent extends HTMLElement {
         const target = this.querySelector('.observe')
         const callback = this.fetchSearchNaverBook
         this.observer = new Observer(target, callback)
+        customEventEmitter.add('search-page-init', this.onSearchPageInit.bind(this))
     }
 
     disconnectedCallback() {
         this.observer?.disconnect()
+        customEventEmitter.add('search-page-init', this.onSearchPageInit)
     }
 
-    initialize(keyword) {
-        this.keyword = keyword
-        if (this.keyword) {
-            this.length = 0
+    onSearchPageInit({ detail }) {
+        console.log(detail.keyword)
+        this.keyword = detail.keyword
+        this.length = 0
+        if (this.keyword) { // onSubmit으로 들어온 경우와 브라우저 
             this.showMessage('loading')
             this.books.innerHTML = ''
             this.fetchSearchNaverBook()
-        } else {
-            this.keyword = ''
-            this.length = 0
+        } else { // keyword 없을 때 기본 화면 노출, 브라우저
             this.pages.hidden = true
             this.showMessage('message')
         }
