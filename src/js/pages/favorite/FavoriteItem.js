@@ -1,5 +1,5 @@
 import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
-import { state, removeFavoriteBook } from '../../modules/model.js'
+import { state, addFavoriteBook, removeFavoriteBook } from '../../modules/model.js'
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
@@ -89,9 +89,19 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     onFavorite() {
-        removeFavoriteBook(this.dataset.isbn)
+        const button = this.favoriteButton
+        const isFavorite = button.dataset.favorite === 'true'
+        const isbn = this.dataset.isbn
+        if (isFavorite) { 
+            removeFavoriteBook(isbn)
+            button.dataset.favorite = false
+            button.textContent = '즐겨찾기 추가'
+        } else {
+            addFavoriteBook(isbn)
+            button.dataset.favorite = true
+            button.textContent = '즐겨찾기 삭제'
+        }
         CustomEventEmitter.dispatch('favorite-books-changed', { count: state.favoriteBooks.length })
-        this.remove()
     }
 
     onLibrary() {

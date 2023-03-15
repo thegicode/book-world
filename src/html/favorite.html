@@ -16,7 +16,6 @@
     <nav-gnb></nav-gnb>
 
     <app-favorite class="favorite">
-    
         <div class="favorite-books">
             <header class="favorite-header">
                 <!-- <h2>즐겨찾기</h2> -->
@@ -25,7 +24,6 @@
         </div>
     </app-favorite>
 </div>
-
 
 <template id="tp-favorite-item">
     <favorite-item>
@@ -49,7 +47,7 @@
         </book-description>
 
         <div class="favorite-actions">
-            <button type="button" class="favorite-button">즐겨찾기에서 삭제</button>
+            <button type="button" class="favorite-button" data-favorite="true">즐겨찾기에서 삭제</button>
             <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
         </div>
 
