@@ -25,7 +25,6 @@
 - Intersection Observer 오류 수정, 클래스 이름 변경
 - 인증키 외부로 변경
 - 설정 : 지역 삭제 시 즐겨찾기 도서관 삭제 -> 보류
-- GNB에 즐겨찾기 count 추가
 
 ## Finish
 
