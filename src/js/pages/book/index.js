@@ -2,10 +2,9 @@
 import { NavGnb, LibraryBookExist } from '/js/components/index.js'
 
 import Book from './Book.js'
-// import LibrarySearchBook from './LibrarySearchBook.js'
+import LibrarySearchByBook from './LibrarySearchByBook.js'
 
 customElements.define('nav-gnb', NavGnb)
 customElements.define('app-book', Book)
-// customElements.define('library-search-book', LibrarySearchBook)
-
+customElements.define('library-search-by-book', LibrarySearchByBook)
 

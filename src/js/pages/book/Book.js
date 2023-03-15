@@ -1,6 +1,5 @@
 
 import { addFavoriteBook, removeFavoriteBook, isFavoriteBook, CustomFetch } from '../../modules/index.js'
-import librarySearchBook from "./librarySearchBook.js"
 
 export default class Book extends HTMLElement {
     constructor() {
@@ -13,7 +12,6 @@ export default class Book extends HTMLElement {
     connectedCallback() {
         const isbn = new URLSearchParams(location.search).get('isbn')
         this._fetchUsageAnalysisList(isbn)
-        librarySearchBook(isbn)
 
         this.$favoriteButton.addEventListener('change', (event) => this._onFavorite(isbn, event))
     }
