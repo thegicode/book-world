@@ -1,4 +1,4 @@
-import customEventEmitter from '../../modules/CustomEventEmitter.js'
+import { CustomEventEmitter } from '../../modules/index.js'
 
 export default class AppSearch extends HTMLElement {
     constructor() {
@@ -21,7 +21,7 @@ export default class AppSearch extends HTMLElement {
     setKeyword() {
         const params = new URLSearchParams(location.search)
         const keyword = params.get('keyword')
-        customEventEmitter.dispatch('search-page-init', { keyword })
+        CustomEventEmitter.dispatch('search-page-init', { keyword })
     }
     
 }

@@ -1,5 +1,6 @@
 
-import customEventEmitter from '../../modules/CustomEventEmitter.js'
+// import customEventEmitter from '../../modules/CustomEventEmitter.js'
+import { CustomEventEmitter } from '../../modules/index.js'
 
 export default class InputSearch extends HTMLElement {
     constructor() {
@@ -29,7 +30,7 @@ export default class InputSearch extends HTMLElement {
         url.searchParams.set('keyword', keyword)
         window.history.pushState({}, "", url)
 
-        customEventEmitter.dispatch('search-page-init', { keyword })
+        CustomEventEmitter.dispatch('search-page-init', { keyword })
 
         this.input.focus()
     }

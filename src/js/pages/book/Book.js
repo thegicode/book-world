@@ -1,6 +1,5 @@
 
-import { addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
-import CustomFetch from "../../modules/CustomFetch.js"
+import { addFavoriteBook, removeFavoriteBook, isFavoriteBook, CustomFetch } from '../../modules/index.js'
 import librarySearchBook from "./librarySearchBook.js"
 
 export default class Book extends HTMLElement {

@@ -1,6 +1,7 @@
 import Observer from "/js/modules/Observer.js"
 import CustomFetch from "/js/modules/CustomFetch.js"
-import customEventEmitter from '/js/modules/CustomEventEmitter.js'
+import CustomEventEmitter from '/js/modules/CustomEventEmitter.js'
+// import { Observer, CustomFetch, CustomEventEmitter } from '../../js/modules/index.js'
 
 export default class BookList extends HTMLElement {
     constructor() {
@@ -21,12 +22,12 @@ export default class BookList extends HTMLElement {
 
     connectedCallback() {
         this._setupObserver()
-        customEventEmitter.add('search-page-init', this.onSearchPageInit.bind(this))
+        CustomEventEmitter.add('search-page-init', this.onSearchPageInit.bind(this))
     }
 
     disconnectedCallback() {
         this.observer?.disconnect()
-        customEventEmitter.remove('search-page-init', this.onSearchPageInit)
+        CustomEventEmitter.remove('search-page-init', this.onSearchPageInit)
     }
 
     _setupObserver() {

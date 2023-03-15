@@ -1,5 +1,5 @@
 
-import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
+import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/index.js'
 
 export default class BookItem extends HTMLElement {
 

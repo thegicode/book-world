@@ -1,5 +1,4 @@
-import { getState } from '../../modules/model.js'
-import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
+import { CustomEventEmitter, getState } from '../../modules/index.js'
 
 export default class Favorite extends HTMLElement {
     

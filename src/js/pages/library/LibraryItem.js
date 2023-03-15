@@ -1,4 +1,4 @@
-import { addLibrary, removeLibrary, hasLibrary } from '../../modules/model.js'
+import { addLibrary, removeLibrary, hasLibrary } from '../../modules/index.js'
 
 export default class LibraryItem extends HTMLElement {
 

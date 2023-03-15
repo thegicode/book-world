@@ -1,5 +1,4 @@
-import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
-import { getState } from '../../modules/model.js'
+import { getState, CustomEventEmitter } from '../../modules/index.js'
 
 export default class LibraryRegion extends HTMLElement {
 	constructor() {
