@@ -42,11 +42,11 @@ export default class SetDetailRegion extends HTMLElement {
 		const firstInput = container.querySelector('input')
 		firstInput.checked = true
         const label = firstInput.nextElementSibling.textContent
-		this.renderDetailRegion(label)
+		this.renderDetailRegions(label)
 		this.changeRegion()
     }
 
-    renderDetailRegion(regionName) { 
+    renderDetailRegions(regionName) { 
         if (!this.regionData) return
         const regionObj = getState().regions[regionName]
         const regionCodes = regionObj? Object.values(regionObj) : []
@@ -81,7 +81,7 @@ export default class SetDetailRegion extends HTMLElement {
 				if (radio.checked) {
 					const value = radio.value
                     const label = radio.nextElementSibling.textContent
-					this.renderDetailRegion(label)
+					this.renderDetailRegions(label)
 				}
 			})
 		}
