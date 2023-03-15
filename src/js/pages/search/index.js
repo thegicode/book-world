@@ -4,12 +4,12 @@ import { NavGnb, BookDescription, LibraryBookExist } from '/js/components/index.
 
 import AppSearch from './AppSearch.js'
 import InputSearch from './InputSearch.js'
-import BookContent from './BookContent.js'
+import BookList from './BookList.js'
 import BookItem from './BookItem.js'
 import TestElement from './TestElement.js'
 
 customElements.define('nav-gnb', NavGnb)
-customElements.define('book-content', BookContent)
+customElements.define('book-list', BookList)
 customElements.define('app-search', AppSearch)
 customElements.define('input-search', InputSearch)
 customElements.define('book-item', BookItem)

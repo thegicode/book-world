@@ -1,61 +1,100 @@
-import Observer from "../../modules/Observer.js"
-import CustomFetch from "../../modules/CustomFetch.js"
-import customEventEmitter from '../../modules/CustomEventEmitter.js'
+import Observer from "/js/modules/Observer.js"
+import CustomFetch from "/js/modules/CustomFetch.js"
+import customEventEmitter from '/js/modules/CustomEventEmitter.js'
 
-export default class BookContent extends HTMLElement {
+export default class BookList extends HTMLElement {
     constructor() {
         super()
-        this.pages = this.querySelector('.book-pages')
-        this.books = this.querySelector('.books')
-        this.fetchSearchNaverBook = this.fetchSearchNaverBook.bind(this)
+        this._initializeProperties()
+        this._bindMethods()
         this.customFetch = new CustomFetch()
     }
 
+    _initializeProperties() {
+        this.pagingInfo = this.querySelector('.paging-info')
+        this.books = this.querySelector('.books')
+    }
+
+    _bindMethods() {
+        this.fetchSearchNaverBook = this.fetchSearchNaverBook.bind(this)
+    }
+
     connectedCallback() {
-        const target = this.querySelector('.observe')
-        const callback = this.fetchSearchNaverBook
-        this.observer = new Observer(target, callback)
+        this._setupObserver()
         customEventEmitter.add('search-page-init', this.onSearchPageInit.bind(this))
     }
 
     disconnectedCallback() {
         this.observer?.disconnect()
-        customEventEmitter.add('search-page-init', this.onSearchPageInit)
+        customEventEmitter.remove('search-page-init', this.onSearchPageInit)
+    }
+
+    _setupObserver() {
+        const target = this.querySelector('.observe')
+        const callback = this.fetchSearchNaverBook
+        this.observer = new Observer(target, callback)
     }
 
     onSearchPageInit({ detail }) {
         console.log(detail.keyword)
         this.keyword = detail.keyword
         this.length = 0
+
         if (this.keyword) { // onSubmit으로 들어온 경우와 브라우저 
-            this.showMessage('loading')
-            this.books.innerHTML = ''
-            this.fetchSearchNaverBook()
-        } else { // keyword 없을 때 기본 화면 노출, 브라우저
-            this.pages.hidden = true
-            this.showMessage('message')
-        }
+            this._handleKeywordPresent()
+            return
+        } 
+
+        // keyword 없을 때 기본 화면 노출, 브라우저
+        this._handleKeywordAbsent()
+    }
+
+    _handleKeywordPresent() {
+        this.showMessage('loading')
+        this.books.innerHTML = ''
+        this.fetchSearchNaverBook()
+    }
+
+    _handleKeywordAbsent() {
+        this.pagingInfo.hidden = true
+        this.showMessage('message')
     }
 
     async fetchSearchNaverBook() {
         if (!this.keyword) return
+
         const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`
         try {
             const data = await this.customFetch.fetch(url)
-            this.render(data)
+            this._render(data)
         } catch(error) {
             console.error(error)
             throw new Error('Fail to get naver book.')
         }
     }
 
-    render(data) {
+    _render(data) {
         const { total, start, display, items } = data
-
         const prevLength = this.length
 
         this.length += Number(display)
+        this._updateContenInfo({ total, display })
 
+        this.pagingInfo.hidden = false
+
+        if (total === 0) {
+            this.showMessage('notFound')
+            return
+        }
+
+        this._appendBookItems(items, prevLength)
+
+        if (total !== this.length) {
+            this.observer.observe()
+        } 
+    }
+
+    _updateContenInfo({ total, display }) {
         const obj = {
             keyword: `${this.keyword}`,
             length: `${this.length.toLocaleString()}`,
@@ -65,31 +104,18 @@ export default class BookContent extends HTMLElement {
         for (const [key, value] of Object.entries(obj)) {
             this.querySelector(`.__${key}`).textContent = value
         }
-
-        this.pages.hidden = false
-
-        if (total === 0) {
-            this.showMessage('notFound')
-            return
-        }
-
-        this.bookItems(items, prevLength)
-
-        if (total === this.length) {
-            return
-        } 
-
-        this.observer.observe()
     }
 
-    bookItems(items, prevLength) {
+    _appendBookItems(items, prevLength) {
         const fragment = new DocumentFragment()
+
         items.forEach( (item, index) => {
             const el = document.querySelector('[data-template=book-item]').content.firstElementChild.cloneNode(true)
             el.data = item
             el.index = prevLength + index
             fragment.appendChild(el)
         })
+
         this.books.appendChild(fragment)
     }
 

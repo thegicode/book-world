@@ -67,7 +67,7 @@ app-search {
     }
 }
 
-.book-content {
+.book-list {
     flex: 1;
     overflow: auto;
     position: relative;
@@ -76,7 +76,7 @@ app-search {
     flex-direction: column;
 }
 
-.book-pages {
+.paging-info {
     flex: none;
 
     display: flex;
