@@ -25,13 +25,15 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
 
     async fetchLibrarySearchByBook(isbn, region, dtl_region) {
-        const url = new URL('/library-search-by-book', window.location.href)
-        url.searchParams.set('isbn', isbn)
-        url.searchParams.set('region', region)
-        url.searchParams.set('dtl_region', dtl_region)
+        const searchParams = new URLSearchParams({
+            isbn,
+            region,
+            dtl_region
+        })
+        const url = `/library-search-by-book?${searchParams}`
     
         try {
-            const data = await this.customFetch.fetch(url.toString())
+            const data = await this.customFetch.fetch(url)
             this.render(data, isbn)
         } catch (error) {
             console.error(error)
@@ -79,14 +81,14 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
 
     async fetchLoadnAvailabilty(isbn13, libCode) {
-        const params = {
+        const searchParams = new URLSearchParams({
             isbn13,
             libCode
-        }
-        const urlParams = new URLSearchParams(params)
+        })
+        const url = `/book-exist?${searchParams}`
         
         try {
-            const data = await this.customFetch.fetch(`/book-exist?${urlParams}`)
+            const data = await this.customFetch.fetch(url)
             return data.loanAvailable === 'Y'
         } catch (error) {
             console.error(error)
