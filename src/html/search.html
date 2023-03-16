@@ -44,19 +44,22 @@
 
 <template data-template="book-item">
     <book-item class="book">
-        <a class="book-summary" href="">
-            <div class="thumb">
-                <img src="" alt="">
-            </div>
-            <div class="book-info">
-                <h3 class="title"></h3>
-                <p class="author"></p>
-                <!-- <p class="__price"></p> -->
-                <p class="publisher"></p>
-                <p class="pubdate"></p>
-                <p class="isbn"></p>
-            </div>
-        </a>
+        <div class="book-summary-wrap">
+            <a class="book-summary" href="">
+                <div class="thumb">
+                    <img src="" alt="">
+                </div>
+                <div class="book-info">
+                    <h3 class="title"></h3>
+                    <p class="author"></p>
+                    <!-- <p class="__price"></p> -->
+                    <p class="publisher"></p>
+                    <p class="pubdate"></p>
+                    <p class="isbn"></p>
+                </div>
+            </a>
+            <checkbox-favorite-book></checkbox-favorite-book>
+        </div>
         <book-description>
             <p class="description" data-ellipsis="true"></p>
             <button type="button" class="more-description-button" aria-hidden="true">설명 더보기</button>
@@ -65,7 +68,7 @@
             <a href="" class="__link" target="_blank">네이버 바로가기</a>
         </div>
         <div class="actions">
-            <checkbox-favorite-book></checkbox-favorite-book>
+            
             <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
             <library-book-exist>
                 <ul class="library-list">

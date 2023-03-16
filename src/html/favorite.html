@@ -27,27 +27,30 @@
 
 <template id="tp-favorite-item">
     <favorite-item>
-        <a class="book-summary" href="">
-            <div class="book-image"><img src="" alt="썸네일"></div>
-            <div class="book-info">
-                <h4 class="bookname"></h4>
-                <p class="authors"></p>
-                <p class="class_nm"></p>
-                <!-- <li>주제분류 : <span class="class_no"></span></li> -->
-                <p>ISBN : <span class="isbn13"></span></p>
-                <p>출판사 : <span class="publisher"></span></p>
-                <p>출판년도 : <span class="publication_year"></span></p>
-                <p>대출권수 : <span class="loanCnt"></span></p>
-                <!-- <li>권 : <span class="vol"></span></li> -->
-            </div>
-        </a>
+        <div class="book-summary" href="">
+            <a href="">
+                <div class="book-image"><img src="" alt="썸네일"></div>
+                <div class="book-info">
+                    <h4 class="bookname"></h4>
+                    <p class="authors"></p>
+                    <p class="class_nm"></p>
+                    <!-- <li>주제분류 : <span class="class_no"></span></li> -->
+                    <p>ISBN : <span class="isbn13"></span></p>
+                    <p>출판사 : <span class="publisher"></span></p>
+                    <p>출판년도 : <span class="publication_year"></span></p>
+                    <p>대출권수 : <span class="loanCnt"></span></p>
+                    <!-- <li>권 : <span class="vol"></span></li> -->
+                </div>
+            </a>
+            <checkbox-favorite-book></checkbox-favorite-book>
+        </div>
         <book-description>
             <p class="description" data-ellipsis="true"></p>
             <button type="button" class="more-description-button" aria-hidden="true">설명 더보기</button>
         </book-description>
 
         <div class="favorite-actions">
-            <checkbox-favorite-book></checkbox-favorite-book>
+            <!-- <checkbox-favorite-book></checkbox-favorite-book> -->
             <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
         </div>
 

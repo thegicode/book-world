@@ -3,6 +3,7 @@
 @import './_gnb.scss';
 @import './_book-description.scss';
 @import './_library-book-exist.scss';
+@import './checkbox-favorite-book.scss';
 
 button {
 	border-radius: 7px;
@@ -98,10 +99,14 @@ favorite-item {
 	}
 
 	.book-summary {
-		display: flex;
-		gap: 1rem;
+		position: relative;
 		padding: 1rem 1rem 7px;
-		text-decoration: none;
+		a {
+			display: flex;
+			gap: 1rem;
+			text-decoration: none;
+
+		}
 	}
 	book-description {
 		margin: 0 1rem 1rem;
@@ -137,6 +142,12 @@ favorite-item {
 			color: #34934a;
 		}
 	}
+}
+
+checkbox-favorite-book {
+	position: absolute;
+	bottom: 1rem;
+	right: 1rem;
 }
 
 .favorite-actions {
