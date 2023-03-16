@@ -4,8 +4,8 @@ import { state, addFavoriteBook, removeFavoriteBook } from '../../modules/model.
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super()
-        this.libraryButton = this.querySelector(':scope .library-button')
-        this.libraryBookExist = this.querySelector(':scope library-book-exist')
+        this.libraryButton = this.querySelector('.library-button')
+        this.libraryBookExist = this.querySelector('library-book-exist')
         this.link = this.querySelector('a')
     }
 
@@ -59,21 +59,19 @@ export default class FavoriteItem extends HTMLElement {
 
         this.linkData = data
 
-        this.querySelector(':scope .bookname').textContent = bookname
-        this.querySelector(':scope .authors').textContent = authors
-        this.querySelector(':scope .class_nm').textContent = class_nm
-        this.querySelector(':scope .isbn13').textContent = isbn13
-        this.querySelector(':scope .loanCnt').textContent = loanCnt.toLocaleString()
-        this.querySelector(':scope .publication_year').textContent = publication_year
-        this.querySelector(':scope .publisher').textContent = publisher
+        this.querySelector('.bookname').textContent = bookname
+        this.querySelector('.authors').textContent = authors
+        this.querySelector('.class_nm').textContent = class_nm
+        this.querySelector('.isbn13').textContent = isbn13
+        this.querySelector('.loanCnt').textContent = loanCnt.toLocaleString()
+        this.querySelector('.publication_year').textContent = publication_year
+        this.querySelector('.publisher').textContent = publisher
+        this.querySelector('book-description').data = description
 
-        const thumbnail =  this.querySelector('img')
-        thumbnail.src = `${bookImageURL}`
-        thumbnail.onerror = () => {
-            thumbnail.remove()
+        this.querySelector('book-image').data = {
+            bookImageURL,
+            bookname
         }
-
-        this.querySelector(':scope book-description').data = description
 
         this.removeLoading()
     }

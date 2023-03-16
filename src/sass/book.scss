@@ -2,7 +2,7 @@
 @import './_gnb.scss';
 @import './_library-book-exist.scss';
 @import './checkbox-favorite-book.scss';
-
+@import './book-image.scss';
 
 .root {
     display: flex;
@@ -26,7 +26,6 @@ app-book {
     // line-height: 1.7;
     color: #333;
     
-
     h3 {
         margin: 0 0 10px;
         font-size: 1.2rem;
@@ -51,14 +50,18 @@ app-book {
     .authors {
     }
 
-    .book-image {
-        text-align: center;
+    book-image {
+        &[data-fail=true] {
+            .book-image {
+                width: 200px;
+                height: 200px;
+                
+            }
+        }
         .thumb {
             min-width: 200px;
             max-width: 300px;
-            border: 1px solid #e8e8e8;
         }
-
     }
 
     .cols {

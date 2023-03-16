@@ -47,12 +47,8 @@ export default class Book extends HTMLElement {
         const recBooksString = recBooks
             .map(({ bookname, isbn13 }) => `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`)
             .join('')
-
         this.querySelector('.bookname').innerHTML = bookNames
         this.querySelector('.authors').textContent = authors
-        const imageElement = this.querySelector('img')
-        imageElement.src = bookImageURL
-        imageElement.alt = bookname
         this.querySelector('.class_nm').textContent = class_nm
         this.querySelector('.class_no').textContent = class_no
         this.querySelector('.description').textContent = description
@@ -62,9 +58,15 @@ export default class Book extends HTMLElement {
         this.querySelector('.publisher').textContent = publisher
         this.querySelector('.keyword').innerHTML = keywordsString
         this.querySelector('.recBooks').innerHTML = recBooksString
+        
+        this.querySelector('book-image').data = {
+            bookImageURL,
+            bookname
+        }
 
         this.$loadingElement.remove()
     }
+
 
     _renderError() {
         this.$loadingElement.textContent = '정보를 가져올 수 없습니다.'

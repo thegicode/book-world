@@ -15,8 +15,9 @@ export default class LibrarySearchByBook extends HTMLElement {
 
     async fetchList(isbn) {
         const favoriteLibraries = getState().regions
-        for (const item in favoriteLibraries) {
-            const detailCodes = Object.values(favoriteLibraries[item])
+        for (const regionName in favoriteLibraries) {
+            const detailCodes = Object.values(favoriteLibraries[regionName])
+            if (detailCodes.length === 0)  return
             const regionCode = detailCodes[0].slice(0, 2)
             detailCodes.forEach( detailCode => {
                 this.fetchLibrarySearchByBook(isbn, regionCode, detailCode)

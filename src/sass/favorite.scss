@@ -4,6 +4,7 @@
 @import './_book-description.scss';
 @import './_library-book-exist.scss';
 @import './checkbox-favorite-book.scss';
+@import './book-image.scss';
 
 button {
 	border-radius: 7px;
@@ -111,17 +112,19 @@ favorite-item {
 	book-description {
 		margin: 0 1rem 1rem;
 	}
-	.book-image {
-		flex: none;
-		box-sizing: border-box;
-		min-width: 120px;
-		img {
-            box-sizing: border-box;
-			width: 120px;
-			height: auto;
-			border: 1px solid #eaeaea;
-		}
-	}
+
+	book-image {
+        &[data-fail=true] {
+            .book-image {
+                width: 120px;
+                height: 180px;
+            }
+        }
+        .thumb {
+            width: 120px;
+        }
+    }
+
 	.book-info {
 		flex: 1;
 		color: #333;

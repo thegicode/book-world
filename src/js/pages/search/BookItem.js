@@ -41,14 +41,6 @@ export default class BookItem extends HTMLElement {
             // price,
         } = this.data
 
-        const thumbnail = this.querySelector('img')
-        thumbnail.src = image
-        thumbnail.addEventListener('error', () => {
-            this.querySelector('.thumb').dataset.fail = true
-            console.error('image fail', thumbnail.src)
-            thumbnail.remove()
-        })
-
         const formattedPubdate = `${pubdate.substring(0,4)}.${pubdate.substring(4,6)}.${pubdate.substring(6)}`
         this.querySelector('.title').textContent = title
         this.querySelector('.publisher').textContent = publisher
@@ -57,6 +49,11 @@ export default class BookItem extends HTMLElement {
         this.querySelector('.isbn').textContent = `isbn : ${isbn.split(' ').join(', ')}`
         this.querySelector('.description').textContent = description
         this.querySelector('.__link').href = link
+
+        this.querySelector('book-image').data = {
+            bookImageURL: image,
+            bookname: title
+        }
 
         this.dataset.index = this.index
         // this.isbn = isbn.split(' ')[0]
