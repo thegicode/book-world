@@ -47,6 +47,11 @@ export default class Favorite extends HTMLElement {
         // this.$observer.observe(this, { attributes: true, childList: true, subtree: true })
 
         // this.updateCount()
+
+        if (this.favoriteBooks.length === 0) {
+            this.renderMessage()
+            return
+        }
         this.render()
     }
 
@@ -76,6 +81,12 @@ export default class Favorite extends HTMLElement {
         }
         
         this.$booksEl.appendChild(fragment)
+    }
+
+    renderMessage() {
+        const element = document.querySelector('#tp-message').content.firstElementChild.cloneNode(true)
+        element.textContent = '관심책을 등록해주세요.'
+        this.$booksEl.appendChild(element)
     }
 
     // attributeChangedCallback(name, oldValue, newValue) {

@@ -25,7 +25,7 @@
 - Intersection Observer 오류 수정, 클래스 이름 변경
 - 인증키 외부로 변경
 - 설정 : 지역 삭제 시 즐겨찾기 도서관 삭제 -> 보류
-- search -> book, check favorite -> history back -> not check
+- 브라우저 이전화면 버튼으로 진입시 관신책 설정이 바뀌어 있지 않다.
 
 ## Finish
 

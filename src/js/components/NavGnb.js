@@ -4,11 +4,10 @@ import { getState } from '/js/modules/model.js'
 export default class NavGnb extends HTMLElement {
     constructor() {
         super()
-        this.favoriteBooksSize = 0
     }
 
     connectedCallback() {
-        this.setFavoriteBooksSize()
+        this.favoriteBooksSize = this.getFavoriteBooksSize()
         this.render()
         this.setSelectedMenu()
         CustomEventEmitter.add('favorite-books-changed', this.favoriteBooksChanged.bind(this))
@@ -19,8 +18,8 @@ export default class NavGnb extends HTMLElement {
         CustomEventEmitter.remove('favorite-books-changed', this.favoriteBooksChanged)
     }
 
-    setFavoriteBooksSize() {
-        this.favoriteBooksSize = getState().favoriteBooks.length
+    getFavoriteBooksSize() {
+        return getState().favoriteBooks.length
     }
 
     render() {
@@ -34,15 +33,15 @@ export default class NavGnb extends HTMLElement {
     }
     
     setSelectedMenu() {
-        const paths = ['/search', '/favorite', '/library', '/setting']
-        const idx = paths.indexOf(document.location.pathname)
+        const PATHS = ['/search', '/favorite', '/library', '/setting']
+        const idx = PATHS.indexOf(document.location.pathname)
         if (idx >= 0 )
             this.querySelectorAll('a')[idx].ariaSelected = true
     }
 
     favoriteBooksChanged({ detail }) {
-        this.favoriteBooksSize = detail.count
-        this.querySelector('.size').textContent = this.favoriteBooksSize
+        const { size } = detail
+        this.querySelector('.size').textContent = size | this.getFavoriteBooksSize()
     }
 
 }

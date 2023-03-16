@@ -34,8 +34,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         } else {
             removeFavoriteBook(ISBN)
         }
-        const favoriteBookCount = state.favoriteBooks.length
-        CustomEventEmitter.dispatch('favorite-books-changed', { count: favoriteBookCount })
+        CustomEventEmitter.dispatch('favorite-books-changed')
     }
 
 }

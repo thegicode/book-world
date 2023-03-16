@@ -1,8 +1,6 @@
 
-// import { setState } from '../../modules/model.js'
-// import CustomFetch from "../../modules/CustomFetch.js"
-import { CustomFetch } from '../../utils/index.js'
-import { setState } from '../../modules/model.js'
+import { CustomFetch, CustomEventEmitter } from '../../utils/index.js'
+import { getState, setState } from '../../modules/model.js'
 
 export default class SetStorage extends HTMLElement {
     constructor() {
@@ -27,6 +25,7 @@ export default class SetStorage extends HTMLElement {
             const data = await CustomFetch.fetch(url)
             setState(data)
             console.log('Saved local stronage by base data!')
+            CustomEventEmitter.dispatch('favorite-books-changed')
         } catch(error) {
             console.error(error)
             throw new Error('Fail to get storage sample data.')
@@ -35,5 +34,7 @@ export default class SetStorage extends HTMLElement {
 
     resetStorage() {
         localStorage.removeItem('BookWorld')
+        CustomEventEmitter.dispatch('favorite-books-changed', { size : 0 })
+
     }
 }

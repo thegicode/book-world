@@ -6,7 +6,7 @@ export default class AppSearch extends HTMLElement {
     }
 
     connectedCallback() {
-        this.setKeyword()
+        this.renderBookList()
         window.addEventListener('popstate', this.onPopState.bind(this))
     }
 
@@ -15,10 +15,10 @@ export default class AppSearch extends HTMLElement {
     }
 
     onPopState() {
-        this.setKeyword()
+        this.renderBookList()
     }
 
-    setKeyword() {
+    renderBookList() {
         const params = new URLSearchParams(location.search)
         const keyword = params.get('keyword')
         CustomEventEmitter.dispatch('search-page-init', { keyword })
