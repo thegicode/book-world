@@ -18,10 +18,11 @@ checkbox-favorite-book {
         border-radius: 15px;
         border: 1px solid #ddd;
         font-size: 14px;
+        color: #666;
         cursor: pointer;
     }
     input:checked + span {
-        border-color: #ddd;
+        border-color: #8c8c8c;
         background-color: #9172c9;
         color: #f0ffd2;
     }
