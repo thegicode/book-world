@@ -28,6 +28,7 @@
 
 ## Finish
 - 23.03.17 : 책 이미지 단일 컴포넌트로 통일
+- 23.03.17 : ESLint 추가
 
 ## 참조 
 - 도서관 공개 API : https://solomon.data4library.kr/
