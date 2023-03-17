@@ -3,6 +3,7 @@
 @import './_book-description.scss';
 @import './_library-book-exist.scss';
 @import './checkbox-favorite-book.scss';
+@import './book-image.scss';
 
 .root {
     display: flex;
@@ -145,27 +146,11 @@ app-search {
         margin: 5px 0 10px;
     }
 
-    // .thumb {
-    //     box-sizing: border-box;
-    //     flex: none;
-    //     width: 120px;
-    //     &[data-fail="true"] {
-    //         border: 1px solid #ebebeb;
-    //         background-color: #efefef;
-    //     }
-    //     img {
-    //         box-sizing: border-box;
-    //         width: 100%; 
-    //         height: auto;
-    //         border: 1px solid #ddd;
-    //     }
-    // }
-
     book-image {
         &[data-fail=true] {
             .book-image {
                 width: 120px;
-                height: 180px;
+                height: 130px;
             }
         }
         .thumb {

@@ -5,7 +5,11 @@ export default class BookImage extends HTMLElement {
     }
 
     set data(data) {
+        if (!this.querySelector('img')) {
+            this.render()
+        }
         this.onSetThumb(data)
+        this.handleError()
     }
 
     connectedCallback() {
@@ -20,16 +24,25 @@ export default class BookImage extends HTMLElement {
             imageSrc = bookImageURL
             imageAlt = bookname
         }
+
         this.innerHTML = `
             <div class="book-image">
                 <img class="thumb" src="${imageSrc}" alt="${imageAlt}"></img>
             </div>`
+        
+        if (this.data) {
+            this.handleError()
+        }
     }
 
     onSetThumb({ bookImageURL, bookname }) {
         const imgElement = this.querySelector('img')
         imgElement.src = `${bookImageURL}`
         imgElement.alt = bookname
+    }
+
+    handleError() {
+        const imgElement = this.querySelector('img')
         imgElement.onerror = () => {
             this.dataset.fail = true
             imgElement.remove()

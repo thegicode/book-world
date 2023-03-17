@@ -1,7 +1,6 @@
 
 import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
 import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
-
 export default class Book extends HTMLElement {
     constructor() {
         super()
