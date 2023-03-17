@@ -28,7 +28,9 @@ export default class Library extends HTMLElement {
 	}
 
 	render(data) {
-		const { pageNo, pageSize, numFound, resultNum, libs } = data
+		const { 
+			// pageNo, pageSize, numFound, resultNum, 
+			libs } = data
 
 		if (libs.length === 0) {
             this.showMessage('notFound')

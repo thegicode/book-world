@@ -1,6 +1,5 @@
 
-import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
-import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
+import { CustomFetch } from '../../utils/index.js'
 export default class Book extends HTMLElement {
     constructor() {
         super()
@@ -37,7 +36,7 @@ export default class Book extends HTMLElement {
         } = data // coLoanBooks, loanGrps,loanHistory,
 
         const bookNames = bookname
-            .split(/[=\/:]/)
+            .split(/[=/:]/)
             .map(item => `<p>${item}</p>`)
             .join('')
         const keywordsString = keywords

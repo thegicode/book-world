@@ -70,7 +70,7 @@ export default class LibraryRegion extends HTMLElement {
 	}
 
 	onChangeDetail() {
-		const { value, selectedIndex } = this.selectElement
+		const { value } = this.selectElement
         CustomEventEmitter.dispatch('set-detail-region', { detailRegionCode: value })
 	}
 

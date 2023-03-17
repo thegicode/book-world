@@ -1,5 +1,4 @@
-import { CustomEventEmitter } from '../../utils/index.js'
-import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../../modules/model.js'
+import { state } from '../../modules/model.js'
 
 export default class BookItem extends HTMLElement {
 

@@ -1,5 +1,5 @@
 import { CustomEventEmitter } from '/js/utils/index.js'
-import { state, addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '/js/modules/model.js'
+import { addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '/js/modules/model.js'
 
 export default class CheckboxFavoriteBook extends HTMLElement {
     constructor() {

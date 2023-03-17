@@ -1,5 +1,5 @@
-import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
-import { state, addFavoriteBook, removeFavoriteBook } from '../../modules/model.js'
+import { CustomFetch } from '../../utils/index.js'
+import { state } from '../../modules/model.js'
 
 export default class FavoriteItem extends HTMLElement {
     constructor() {
@@ -36,11 +36,11 @@ export default class FavoriteItem extends HTMLElement {
     render(data) {
         const { 
             book, 
-            loanHistory,
-            loanGrps,
-            keywords,
-            recBooks,
-            coLoanBooks
+            // loanHistory,
+            // loanGrps,
+            // keywords,
+            // recBooks,
+            // coLoanBooks
         } = data
 
         const {

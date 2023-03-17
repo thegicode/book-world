@@ -81,7 +81,6 @@ export default class SetDetailRegion extends HTMLElement {
 		for (const radio of regionRadios) {
 			radio.addEventListener('change', () => {
 				if (radio.checked) {
-					const value = radio.value
                     const label = radio.nextElementSibling.textContent
 					this.renderDetailRegions(label)
 				}

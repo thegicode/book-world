@@ -74,7 +74,7 @@ export default class BookList extends HTMLElement {
     }
 
     _render(data) {
-        const { total, start, display, items } = data
+        const { total, display, items } = data
         const prevLength = this.length
 
         this.length += Number(display)

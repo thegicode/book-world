@@ -66,7 +66,7 @@ const removeLibrary = (code) => {
 }
 
 const hasLibrary = (code) => {
-	return state.libraries.hasOwnProperty(code)
+	return code in state.libraries
 }
 
 const addRegion = (regionName) => {

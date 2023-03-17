@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const express = require('express');
 const fs = require('fs')
 const path = require('path')
@@ -43,7 +44,7 @@ app.get('/search-naver-book', async (req, res) => {
 /** 도서관 정보나루 */
 const host = 'http://data4library.kr/api'
 const authKey = `authKey=${libKey}`
-const authToken = `Bearer ${libKey}`
+// const authToken = `Bearer ${libKey}`
 const formatType = 'json'
 
 // 정보공개 도서관 조회

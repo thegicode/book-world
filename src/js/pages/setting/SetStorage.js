@@ -1,6 +1,6 @@
 
 import { CustomFetch, CustomEventEmitter } from '../../utils/index.js'
-import { getState, setState } from '../../modules/model.js'
+import { setState } from '../../modules/model.js'
 
 export default class SetStorage extends HTMLElement {
     constructor() {

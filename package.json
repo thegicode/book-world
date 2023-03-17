@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/thegicode/book-world#readme",
   "devDependencies": {
-    "axios": "^0.26.1",
+    "eslint": "^8.36.0",
+    "eslint-config-airbnb": "^19.0.4",
     "express": "^4.17.3",
     "sass": "^1.49.9"
   }
