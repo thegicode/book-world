@@ -2,19 +2,16 @@
 export default class BookDescription extends HTMLElement {
     constructor() {
         super()
-        this.el = this.querySelector('.description')
-        this.button = this.querySelector('.more-description-button')
+        this.el = null
+        this.button = null
     }
 
-    // Favorite에서는 set으로 시작
     set data(value) {
         this.render(value)
     }
 
     connectedCallback() {
-        this.render()
-
-        this.button.addEventListener('click', this.onClickButton.bind(this))
+        this.render(this.data)
     }
 
     disconnectedCallback() {
@@ -22,24 +19,24 @@ export default class BookDescription extends HTMLElement {
     }
 
     render(value) {
-        // Search Book은 value를 부모에서 그린다. 
-        // Search Book, Favorite 둘 다 isEllipsisActive은 필요하다
-        // 그래서 render로 통해서 실행되게 했다.
+        const template = `
+            <p class="description" data-ellipsis="true">${value}</p>
+            <button type="button" class="more-description-button">설명 더보기</button>`
+        this.innerHTML = template
 
-        // Favorite
-        if(value) {
-            this.el.innerHTML = value
-        }
-        
-        // Search Book, Favorite
-        if(this.isEllipsisActive(this.el)) {
-            this.button.ariaHidden = false
-        }
+        this.el = this.querySelector('.description')
+        this.button = this.querySelector('.more-description-button')
+
+        this.button.addEventListener('click', this.onClickButton.bind(this))
+
+        // if(this.isEllipsisActive(this.el)) {
+        //     this.button.ariaHidden = false
+        // }
     }
 
-    isEllipsisActive(el) {
-        return (el.offsetHeight < el.scrollHeight);
-    }
+    // isEllipsisActive(el) {
+    //     return (el.offsetHeight < el.scrollHeight);
+    // }
 
     onClickButton() {
         switch(this.el.dataset.ellipsis) {

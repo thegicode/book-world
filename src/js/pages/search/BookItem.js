@@ -47,7 +47,7 @@ export default class BookItem extends HTMLElement {
         this.querySelector('.author').textContent = author
         this.querySelector('.pubdate').textContent = formattedPubdate
         this.querySelector('.isbn').textContent = `isbn : ${isbn.split(' ').join(', ')}`
-        this.querySelector('.description').textContent = description
+        this.querySelector('book-description').data = description
         this.querySelector('.__link').href = link
 
         this.querySelector('book-image').data = {

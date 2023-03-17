@@ -67,7 +67,6 @@ export default class FavoriteItem extends HTMLElement {
         this.querySelector('.publication_year').textContent = publication_year
         this.querySelector('.publisher').textContent = publisher
         this.querySelector('book-description').data = description
-
         this.querySelector('book-image').data = {
             bookImageURL,
             bookname
