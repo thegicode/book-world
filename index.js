@@ -7,7 +7,7 @@ const app = express();
 const port = 7777;
 // const axios = require('axios').default;
 
-app.use(express.static(`${__dirname}/src/`));
+app.use(express.static(`${__dirname}/dist/`));
 
 const { libKey, naverKey } = require("./user.js")
 
@@ -185,7 +185,7 @@ routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
         console.log('route:', `/${route}`)
 
-        const htmlPath = path.resolve(__dirname, `src/html/${route}.html`)
+        const htmlPath = path.resolve(__dirname, `dist/html/${route}.html`)
         fs.readFile(htmlPath, 'utf8', (err, data) => {
             if (err) {
                 console.error(err)

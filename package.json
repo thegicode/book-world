@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index & npm run css",
     "css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
+    "tsc": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +23,10 @@
     "eslint": "^8.36.0",
     "eslint-config-airbnb": "^19.0.4",
     "express": "^4.17.3",
-    "sass": "^1.49.9"
+    "sass": "^1.49.9",
+    "typescript": "^5.0.2",
+    "eslint-plugin-typescript": "^0.14.0"
+  },
+  "dependencies": {
   }
 }

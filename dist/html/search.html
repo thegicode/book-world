@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Search | Book World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="shortcut icon" href="/asset/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/asset/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/search.css">
+    <script type="module" src="/js/pages/search/index.js" async></script>
+</head>
+<body>
+
+<div class="root">
+
+    <nav-gnb></nav-gnb>
+
+    <app-search>
+        <header class="header">
+            <input-search class="input-search">
+                <form>
+                    <input type="search" value="" title="책 키워드" placeholder="검색어를 입력하세요" required>
+                    <button type="submit">찾기</button>
+                </form>
+            </input-search>
+        </header>
+        <book-list class="book-list">
+            <div class="paging-info" hidden>
+                <span class="__display"></span>
+                <strong class="__keyword"></strong>
+                <div class="__count">
+                    <span class="__length"></span>/<span class="__total"></span>
+                </div>
+            </div>
+            <div class="book-list">
+                <div class="books"></div>
+                <div class="observe"></div>
+            </div>
+        </book-list>
+    </app-search>
+    
+</div>
+
+<template data-template="book-item">
+    <book-item class="book">
+        <div class="book-summary-wrap">
+            <a class="book-summary" href="">
+                <book-image></book-image>
+                <div class="book-info">
+                    <h3 class="title"></h3>
+                    <p class="author"></p>
+                    <!-- <p class="__price"></p> -->
+                    <p class="publisher"></p>
+                    <p class="pubdate"></p>
+                    <p class="isbn"></p>
+                </div>
+            </a>
+            <checkbox-favorite-book></checkbox-favorite-book>
+        </div>
+        <book-description></book-description>
+        <div class="sites">
+            <a href="" class="__link" target="_blank">네이버 바로가기</a>
+        </div>
+        <div class="actions">
+            
+            <button type="button" class="library-button">도서관 소장 | 대출 조회</button>
+            <library-book-exist>
+                <ul class="library-list">
+                </ul>
+            </library-book-exist>
+        </div>
+    </book-item>
+</template>
+
+<template id="tp-message">
+    <div class="message">책을 검색하세요.</div>
+</template>
+
+<template id="tp-loading">
+    <div class="loading">정보를 불러오는 중입니다.</div>
+</template>
+
+<template id="tp-notFound">
+    <div class="notFound">정보가 없습니다.</div>
+</template>
+
+</body>
+</html>
+
+

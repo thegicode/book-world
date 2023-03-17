@@ -1,0 +1,14 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "target": "es6",
+        "lib": ["es2017", "dom"],
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "outDir": "./dist/js/",
+        "sourceMap": true
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "**/*.test.ts"]
+}
