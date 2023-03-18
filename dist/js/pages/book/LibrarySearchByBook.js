@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,10 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_js_1 = require("../../utils/index.js");
-const model_js_1 = require("../../modules/model.js");
-class LibrarySearchByBook extends HTMLElement {
+import { CustomFetch } from '../../utils/index.js';
+import { getState } from '../../modules/model.js';
+export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
         super();
     }
@@ -21,7 +19,7 @@ class LibrarySearchByBook extends HTMLElement {
     }
     fetchList(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
-            const favoriteLibraries = (0, model_js_1.getState)().regions;
+            const favoriteLibraries = getState().regions;
             for (const regionName in favoriteLibraries) {
                 const detailCodes = Object.values(favoriteLibraries[regionName]);
                 if (detailCodes.length === 0)
@@ -42,7 +40,7 @@ class LibrarySearchByBook extends HTMLElement {
             });
             const url = `/library-search-by-book?${searchParams}`;
             try {
-                const data = yield index_js_1.CustomFetch.fetch(url);
+                const data = yield CustomFetch.fetch(url);
                 this.render(data, isbn);
             }
             catch (error) {
@@ -96,7 +94,7 @@ class LibrarySearchByBook extends HTMLElement {
             });
             const url = `/book-exist?${searchParams}`;
             try {
-                const data = yield index_js_1.CustomFetch.fetch(url, {
+                const data = yield CustomFetch.fetch(url, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -109,5 +107,4 @@ class LibrarySearchByBook extends HTMLElement {
         });
     }
 }
-exports.default = LibrarySearchByBook;
 //# sourceMappingURL=LibrarySearchByBook.js.map

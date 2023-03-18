@@ -1,9 +1,9 @@
-import { NavGnb } from '/js/components/index.js'
-import AppSetting from './AppSetting.js'
-import SetRegion from './SetRegion.js'
-import SetDetailRegion from './SetDetailRegion.js'
-import FavoriteRegions from './FavoriteRegions.js'
-import SetStorage from './SetStorage.js'
+import { NavGnb } from '../../components/index'
+import AppSetting from './AppSetting'
+import SetRegion from './SetRegion'
+import SetDetailRegion from './SetDetailRegion'
+import FavoriteRegions from './FavoriteRegions'
+import SetStorage from './SetStorage'
 
 customElements.define('nav-gnb', NavGnb)
 customElements.define('app-setting', AppSetting)

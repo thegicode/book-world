@@ -1,9 +1,23 @@
-import Observer from "/js/utils/Observer.js"
-import CustomFetch from "/js/utils/CustomFetch.js"
-import CustomEventEmitter from '/js/utils/CustomEventEmitter.js'
-// import { Observer, CustomFetch, CustomEventEmitter } from '../../js/utils/index.js'
+// import Observer from "/js/utils/Observer"
+// import CustomFetch from "/js/utils/CustomFetch"
+// import CustomEventEmitter from '/js/utils/CustomEventEmitter'
+import BookItem from "./BookItem";
+import { Observer, CustomFetch, CustomEventEmitter } from '../../utils/index'
+
+interface Data {
+    total: number;
+    display: number;
+    items: any[];
+}
 
 export default class BookList extends HTMLElement {
+    
+    pagingInfo!: HTMLElement
+    books!: HTMLElement
+    observer?: Observer;
+    keyword?: string;
+    length!: number;
+
     constructor() {
         super()
         this._initializeProperties()
@@ -11,8 +25,8 @@ export default class BookList extends HTMLElement {
     }
 
     _initializeProperties() {
-        this.pagingInfo = this.querySelector('.paging-info')
-        this.books = this.querySelector('.books')
+        this.pagingInfo = this.querySelector('.paging-info') as HTMLElement
+        this.books = this.querySelector('.books') as HTMLElement
     }
 
     _bindMethods() {
@@ -30,14 +44,14 @@ export default class BookList extends HTMLElement {
     }
 
     _setupObserver() {
-        const target = this.querySelector('.observe')
+        const target = this.querySelector('.observe') as HTMLElement
         const callback = this.fetchSearchNaverBook
         this.observer = new Observer(target, callback)
     }
 
-    onSearchPageInit({ detail }) {
-        console.log(detail.keyword)
-        this.keyword = detail.keyword
+    onSearchPageInit(event: Event) {
+        const customEvent = event as CustomEvent<{ keyword: string }>
+        this.keyword = customEvent.detail.keyword
         this.length = 0
 
         if (this.keyword) { // onSubmit으로 들어온 경우와 브라우저 
@@ -73,7 +87,7 @@ export default class BookList extends HTMLElement {
         }
     }
 
-    _render(data) {
+    _render(data: Data) {
         const { total, display, items } = data
         const prevLength = this.length
 
@@ -90,11 +104,11 @@ export default class BookList extends HTMLElement {
         this._appendBookItems(items, prevLength)
 
         if (total !== this.length) {
-            this.observer.observe()
+            this.observer!.observe()
         } 
     }
 
-    _updatePagingInfo({ total, display }) {
+    _updatePagingInfo({ total, display }: { total: number, display: number}) {
         const obj = {
             keyword: `${this.keyword}`,
             length: `${this.length.toLocaleString()}`,
@@ -102,15 +116,16 @@ export default class BookList extends HTMLElement {
             display: `${display}개씩`
         }
         for (const [key, value] of Object.entries(obj)) {
-            this.pagingInfo.querySelector(`.__${key}`).textContent = value
+            this.pagingInfo.querySelector(`.__${key}`)!.textContent = value
         }
     }
 
-    _appendBookItems(items, prevLength) {
+    _appendBookItems(items: any[], prevLength: number) {
         const fragment = new DocumentFragment()
 
         items.forEach( (item, index) => {
-            const el = document.querySelector('[data-template=book-item]').content.firstElementChild.cloneNode(true)
+            const template = document.querySelector('[data-template=book-item]') as HTMLTemplateElement
+            const el = template.content.firstElementChild!.cloneNode(true) as BookItem
             el.data = item
             el.index = prevLength + index
             fragment.appendChild(el)
@@ -119,8 +134,9 @@ export default class BookList extends HTMLElement {
         this.books.appendChild(fragment)
     }
 
-    showMessage(type) {
-        const el = document.querySelector(`#tp-${type}`).content.firstElementChild.cloneNode(true)
+    showMessage(type: string) {
+        const template = document.querySelector(`#tp-${type}`) as HTMLTemplateElement
+        const el = template.content.firstElementChild!.cloneNode(true)
         this.books.innerHTML = ''
         this.books.appendChild(el)
     }

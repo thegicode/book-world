@@ -1,6 +1,6 @@
 
 import { BookImage } from '../../components/index'
-import { CustomFetch } from '../../utils/index.js'
+import { CustomFetch } from '../../utils/index'
 
 interface BookData {
     bookname: string

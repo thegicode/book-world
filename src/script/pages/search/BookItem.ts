@@ -1,19 +1,33 @@
-import { state } from '../../modules/model.js'
+import { state } from '../../modules/model'
+import { BookDescription, BookImage, LibraryBookExist } from '../../components';
+
+interface BookData {
+    author: string;
+    description: string;
+    image: string;
+    isbn: string;
+    link: string;
+    pubdate: string;
+    publisher: string;
+    title: string;
+}
 
 export default class BookItem extends HTMLElement {
 
-    libraryButton
-    libraryBookExist
-    link
+    libraryButton!: HTMLButtonElement
+    libraryBookExist!: LibraryBookExist
+    link!: HTMLElement
+    data!: BookData
+    index!: number
 
     constructor() {
         super()
     }
 
     connectedCallback() {
-        this.libraryButton = this.querySelector('.library-button')
-        this.libraryBookExist = this.querySelector('library-book-exist')
-        this.link = this.querySelector('.book-summary')
+        this.libraryButton = this.querySelector('.library-button') as HTMLButtonElement
+        this.libraryBookExist = this.querySelector<LibraryBookExist>('library-book-exist')!
+        this.link = this.querySelector('.book-summary') as HTMLElement
 
         this.render()
 
@@ -41,32 +55,33 @@ export default class BookItem extends HTMLElement {
         } = this.data
 
         const formattedPubdate = `${pubdate.substring(0,4)}.${pubdate.substring(4,6)}.${pubdate.substring(6)}`
-        this.querySelector('.title').textContent = title
-        this.querySelector('.publisher').textContent = publisher
-        this.querySelector('.author').textContent = author
-        this.querySelector('.pubdate').textContent = formattedPubdate
-        this.querySelector('.isbn').textContent = `isbn : ${isbn.split(' ').join(', ')}`
-        this.querySelector('book-description').data = description
-        this.querySelector('.__link').href = link
+        this.querySelector('.title')!.textContent = title
+        this.querySelector('.publisher')!.textContent = publisher
+        this.querySelector('.author')!.textContent = author
+        this.querySelector('.pubdate')!.textContent = formattedPubdate
+        this.querySelector('.isbn')!.textContent = `isbn : ${isbn.split(' ').join(', ')}`
+        this.querySelector<BookDescription>('book-description')!.data = description;
+        (this.querySelector('.__link') as HTMLAnchorElement).href = link
 
-        this.querySelector('book-image').data = {
+        this.querySelector<BookImage>('book-image')!.data = {
             bookImageURL: image,
             bookname: title
         }
 
-        this.dataset.index = this.index
+        this.dataset.index = this.index.toString()
         // this.isbn = isbn.split(' ')[0]
         this.dataset.isbn = isbn
 
     }
 
     onClickLibraryButton() {
+        const isbn = this.dataset.isbn || ''
         this.libraryBookExist
-            .onLibraryBookExist(this.libraryButton, this.dataset.isbn, state.libraries)
+            .onLibraryBookExist(this.libraryButton, isbn, state.libraries)
 
     }
     
-    onClickLink(event) {
+    onClickLink(event: MouseEvent) {
         event.preventDefault()
         location.href = `book?isbn=${this.dataset.isbn}`
     }

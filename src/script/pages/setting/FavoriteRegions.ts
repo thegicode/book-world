@@ -1,13 +1,16 @@
 
 // import { getState } from '../../modules/model.js'
 // import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
-import { CustomEventEmitter } from '../../utils/index.js'
-import { getState } from '../../modules/model.js'
+import { CustomEventEmitter } from '../../utils/index'
+import { getState } from '../../modules/model'
 
 export default class FavoriteRegions extends HTMLElement {
+
+    container: HTMLElement
+
     constructor() {
         super()
-        this.container = this.querySelector('.favorites')
+        this.container = this.querySelector('.favorites') as HTMLElement
     }
 
     connectedCallback() {
@@ -33,7 +36,7 @@ export default class FavoriteRegions extends HTMLElement {
         }
     }
 
-    renderDetail(detaioRegions) {
+    renderDetail(detaioRegions: string[]) {
         const fragment = new DocumentFragment()
         detaioRegions.forEach( name => {
             const element = document.createElement('p')

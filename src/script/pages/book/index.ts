@@ -1,8 +1,8 @@
 
-import { NavGnb, CheckboxFavoriteBook, BookImage } from '/js/components/index.js'
+import { NavGnb, CheckboxFavoriteBook, BookImage } from '../../components/index'
 
-import Book from './Book.js'
-import LibrarySearchByBook from './LibrarySearchByBook.js'
+import Book from './Book'
+import LibrarySearchByBook from './LibrarySearchByBook'
 
 customElements.define('nav-gnb', NavGnb)
 customElements.define('app-book', Book)

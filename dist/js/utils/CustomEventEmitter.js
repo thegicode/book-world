@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 class CustomEventEmitter {
     constructor() {
         this._bus = document.createElement('div');
@@ -14,5 +12,5 @@ class CustomEventEmitter {
         this._bus.dispatchEvent(new CustomEvent(event, { detail }));
     }
 }
-exports.default = new CustomEventEmitter();
+export default new CustomEventEmitter();
 //# sourceMappingURL=CustomEventEmitter.js.map

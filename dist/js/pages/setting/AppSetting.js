@@ -1,13 +1,10 @@
-
 export default class AppSetting extends HTMLElement {
     constructor() {
-        super()
+        super();
     }
-
     connectedCallback() {
     }
-
     disconnectedCallback() {
     }
-
 }
+//# sourceMappingURL=AppSetting.js.map

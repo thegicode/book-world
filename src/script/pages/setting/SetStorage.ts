@@ -1,12 +1,16 @@
 
-import { CustomFetch, CustomEventEmitter } from '../../utils/index.js'
-import { setState } from '../../modules/model.js'
+import { CustomFetch, CustomEventEmitter } from '../../utils/index'
+import { setState } from '../../modules/model'
 
 export default class SetStorage extends HTMLElement {
+
+    storageButton: HTMLButtonElement
+    resetButton: HTMLButtonElement
+
     constructor() {
         super()
-        this.storageButton = this.querySelector('.localStorage button')
-        this.resetButton = this.querySelector('.resetStorage button')
+        this.storageButton = this.querySelector('.localStorage button') as HTMLButtonElement
+        this.resetButton = this.querySelector('.resetStorage button') as HTMLButtonElement
     }
 
     connectedCallback() {

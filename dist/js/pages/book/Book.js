@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,9 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_js_1 = require("../../utils/index.js");
-class Book extends HTMLElement {
+import { CustomFetch } from '../../utils/index';
+export default class Book extends HTMLElement {
     constructor() {
         super();
         this.$loadingElement = this.querySelector('.loading');
@@ -24,7 +22,7 @@ class Book extends HTMLElement {
     _fetchUsageAnalysisList(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const data = yield index_js_1.CustomFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`);
+                const data = yield CustomFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`);
                 this.data = data;
                 this._render();
             }
@@ -68,5 +66,4 @@ class Book extends HTMLElement {
         this.$loadingElement.textContent = '정보를 가져올 수 없습니다.';
     }
 }
-exports.default = Book;
 //# sourceMappingURL=Book.js.map

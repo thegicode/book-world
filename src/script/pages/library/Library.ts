@@ -1,11 +1,16 @@
-import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
-import { hasLibrary } from '../../modules/model.js'
+import { CustomEventEmitter, CustomFetch } from '../../utils/index'
+import { hasLibrary } from '../../modules/model'
+import LibraryItem from './LibraryItem'
 
 interface LibraryData {
 	libCode: string
 	libName: string
 	address: string
 	telephone: string
+}
+
+interface CustomEvent<T> extends Event {
+    detail: T;
 }
 
 export default class Library extends HTMLElement {
@@ -18,11 +23,11 @@ export default class Library extends HTMLElement {
 	}
 
 	connectedCallback() {
-		CustomEventEmitter.add('set-detail-region', this.handleDetailRegion.bind(this))
+		CustomEventEmitter.add('set-detail-region', this.handleDetailRegion.bind(this) as EventListener)
 	}
 
 	disconnectedCallback() {
-		CustomEventEmitter.remove('set-detail-region', this.handleDetailRegion)
+		CustomEventEmitter.remove('set-detail-region', this.handleDetailRegion as EventListener)
 	}
 
 	async fetchLibrarySearch(detailRegionCode: string) {
@@ -47,12 +52,12 @@ export default class Library extends HTMLElement {
 		}
 
 		const template = (document.querySelector('#tp-item') as HTMLTemplateElement).content.firstElementChild
-		const fragment = libs.reduce((fragment, lib) => {
+		const fragment = libs.reduce((fragment: DocumentFragment, lib: LibraryData) => {
 			if (template) {
-				const element = template.cloneNode(true) as HTMLElement
+				const element = template.cloneNode(true) as LibraryItem
 				element.data = lib
 				if(hasLibrary(lib.libCode)) {
-					element.dataset.has = true
+					element.dataset.has = 'true'
 					fragment.insertBefore(element, fragment.firstChild)
 				} else {
 					fragment.appendChild(element)
@@ -66,15 +71,17 @@ export default class Library extends HTMLElement {
 	}
 
 	showMessage(type: string) {
-		const tpl = document.querySelector(`#tp-${type}`)!
-		const el = tpl.content.firstElementChild.cloneNode(true) as HTMLElement
-		this.form.innerHTML = ''
-        this.form.appendChild(el)
+        const template = (document.querySelector('#tp-${type}') as HTMLTemplateElement).content.firstElementChild 
+		if (template) {
+            const element = template.cloneNode(true) 
+			this.form.innerHTML = ''
+        	this.form.appendChild(element)
+		}
 	}
 
-	handleDetailRegion({ detail } : { detail: { detailRegionCode: string } }) {
+	handleDetailRegion(evt: CustomEvent<{ detailRegionCode: string }>) {
 		this.showMessage('loading')
-		this.fetchLibrarySearch(detail.detailRegionCode)
+		this.fetchLibrarySearch(evt.detail.detailRegionCode)
 	}
 
 }

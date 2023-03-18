@@ -1,5 +1,5 @@
-import { CustomEventEmitter } from '/js/utils/index.js'
-import { addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '/js/modules/model.js'
+import { CustomEventEmitter } from '../utils/index'
+import { addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../modules/model'
 
 export default class CheckboxFavoriteBook extends HTMLElement {
 
@@ -24,7 +24,8 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     }
 
     private render(): void {
-        const checked = isFavoriteBook(this.isbn) ? 'checked' : ''
+        const isbn = this.isbn || ''
+        const checked = isFavoriteBook(isbn) ? 'checked' : ''
         this.innerHTML = `<label>
             <input type="checkbox" name="favorite" ${checked}>
             <span>관심책</span>
@@ -33,7 +34,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     }
 
     private onChange(): void {
-        const ISBN = this.isbn
+        const ISBN = this.isbn || ''
         if (this.$input?.checked) {
             addFavoriteBook(ISBN)
         } else {

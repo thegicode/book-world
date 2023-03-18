@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_js_1 = require("/js/utils/index.js");
-const model_js_1 = require("/js/modules/model.js");
-class CheckboxFavoriteBook extends HTMLElement {
+import { CustomEventEmitter } from '../utils/index';
+import { addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../modules/model';
+export default class CheckboxFavoriteBook extends HTMLElement {
     constructor() {
         super();
         this.$input = null;
@@ -20,7 +18,8 @@ class CheckboxFavoriteBook extends HTMLElement {
         (_a = this.$input) === null || _a === void 0 ? void 0 : _a.addEventListener('change', this.onChange);
     }
     render() {
-        const checked = (0, model_js_1.isFavoriteBook)(this.isbn) ? 'checked' : '';
+        const isbn = this.isbn || '';
+        const checked = isFavoriteBook(isbn) ? 'checked' : '';
         this.innerHTML = `<label>
             <input type="checkbox" name="favorite" ${checked}>
             <span>관심책</span>
@@ -29,15 +28,14 @@ class CheckboxFavoriteBook extends HTMLElement {
     }
     onChange() {
         var _a;
-        const ISBN = this.isbn;
+        const ISBN = this.isbn || '';
         if ((_a = this.$input) === null || _a === void 0 ? void 0 : _a.checked) {
-            (0, model_js_1.addFavoriteBook)(ISBN);
+            addFavoriteBook(ISBN);
         }
         else {
-            (0, model_js_1.removeFavoriteBook)(ISBN);
+            removeFavoriteBook(ISBN);
         }
-        index_js_1.CustomEventEmitter.dispatch('favorite-books-changed');
+        CustomEventEmitter.dispatch('favorite-books-changed');
     }
 }
-exports.default = CheckboxFavoriteBook;
 //# sourceMappingURL=CheckboxFavoriteBook.js.map

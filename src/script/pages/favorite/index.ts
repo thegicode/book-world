@@ -4,10 +4,10 @@ import { BookDescription,
     LibraryBookExist, 
     NavGnb,
     BookImage
-} from '/js/components/index.js'
+} from '../../components/index'
 
-import Favorite from './Favorite.js'
-import FavoriteItem from './FavoriteItem.js'
+import Favorite from './Favorite'
+import FavoriteItem from './FavoriteItem'
 
 customElements.define('nav-gnb', NavGnb)
 customElements.define('app-favorite', Favorite)

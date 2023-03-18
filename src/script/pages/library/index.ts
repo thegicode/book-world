@@ -1,9 +1,10 @@
 
-import { NavGnb } from '/js/components/index.js'
+import { NavGnb } from '../../components/index'
 
-import Library from './Library.js'
-import LibraryRegion from './LibraryRegion.js'
-import LibraryItem from './LibraryItem.js'
+
+import Library from './Library'
+import LibraryRegion from './LibraryRegion'
+import LibraryItem from './LibraryItem'
 
 customElements.define('nav-gnb', NavGnb)
 customElements.define('app-library', Library)

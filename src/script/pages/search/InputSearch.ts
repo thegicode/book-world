@@ -1,11 +1,15 @@
 
-import { CustomEventEmitter } from '../../utils/index.js'
+import { CustomEventEmitter } from '../../utils/index'
 
 export default class InputSearch extends HTMLElement {
+
+    form: HTMLFormElement
+    input: HTMLInputElement
+
     constructor() {
         super()
-        this.form = this.querySelector('form')
-        this.input = this.querySelector('input')
+        this.form = this.querySelector('form') as HTMLFormElement
+        this.input = this.querySelector('input') as HTMLInputElement
     }
 
     connectedCallback() {
@@ -16,7 +20,7 @@ export default class InputSearch extends HTMLElement {
         this.form.removeEventListener('submit', this.onSubmit)
     }
 
-    onSubmit(event) {
+    onSubmit(event: Event) {
         event.preventDefault()
         
         const keyword = this.input.value 

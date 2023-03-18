@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // import { CustomEventEmitter } from '../../utils/index.js'
-const model_js_1 = require("../../modules/model.js");
-class Favorite extends HTMLElement {
+import { getState } from '../../modules/model';
+export default class Favorite extends HTMLElement {
     // $countEl
     // $observer
     // set count(value) {
@@ -12,7 +10,7 @@ class Favorite extends HTMLElement {
     //     return this.getAttribute('count')
     // }
     get favoriteBooks() {
-        return (0, model_js_1.getState)().favoriteBooks;
+        return getState().favoriteBooks;
     }
     constructor() {
         super();
@@ -73,5 +71,4 @@ class Favorite extends HTMLElement {
         }
     }
 }
-exports.default = Favorite;
 //# sourceMappingURL=Favorite.js.map

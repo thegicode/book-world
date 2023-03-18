@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class BookDescription extends HTMLElement {
+export default class BookDescription extends HTMLElement {
     constructor() {
         super();
         this.el = null;
@@ -51,5 +49,4 @@ class BookDescription extends HTMLElement {
         }
     }
 }
-exports.default = BookDescription;
 //# sourceMappingURL=BookDescription.js.map

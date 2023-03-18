@@ -1,5 +1,5 @@
-import { CustomEventEmitter } from '/js/utils/index.js'
-import { getState } from '/js/modules/model.js'
+import { CustomEventEmitter } from '../utils/index'
+import { getState } from '../modules/model'
 
 export default class NavGnb extends HTMLElement {
 
@@ -42,8 +42,9 @@ export default class NavGnb extends HTMLElement {
             this.querySelectorAll('a')[idx].ariaSelected = 'true'
     }
 
-    private favoriteBooksChanged({ detail }: CustomEvent): void {
-        const { size } = detail
+    private favoriteBooksChanged(event: Event): void {
+        const customEvent = event as CustomEvent<{ size: number }>
+        const { size } = customEvent.detail
         this.querySelector('.size')!.textContent = String(size || this.getFavoriteBooksSize())
     }
 

@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Observer {
+export default class Observer {
     constructor(target, callback) {
         this.target = target;
         this.observer = new IntersectionObserver((changes) => {
@@ -26,5 +24,4 @@ class Observer {
         });
     }
 }
-exports.default = Observer;
 //# sourceMappingURL=Observer.js.map

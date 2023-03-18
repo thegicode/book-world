@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,10 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_js_1 = require("../../utils/index.js");
-const model_js_1 = require("../../modules/model.js");
-class FavoriteItem extends HTMLElement {
+import { CustomFetch } from '../../utils/index';
+import { state } from '../../modules/model';
+export default class FavoriteItem extends HTMLElement {
     constructor() {
         super();
         this.libraryButton = this.querySelector('.library-button');
@@ -32,7 +30,7 @@ class FavoriteItem extends HTMLElement {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `/usage-analysis-list?isbn13=${isbn}`;
             try {
-                const data = yield index_js_1.CustomFetch.fetch(url);
+                const data = yield CustomFetch.fetch(url);
                 this.render(data);
             }
             catch (error) {
@@ -77,7 +75,7 @@ class FavoriteItem extends HTMLElement {
             .textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`;
     }
     onLibrary() {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, this.dataset.isbn, model_js_1.state.libraries);
+        this.libraryBookExist.onLibraryBookExist(this.libraryButton, this.dataset.isbn, state.libraries);
     }
     loading() {
         this.dataset.loading = 'true';
@@ -90,5 +88,4 @@ class FavoriteItem extends HTMLElement {
         location.href = `book?isbn=${this.dataset.isbn}`;
     }
 }
-exports.default = FavoriteItem;
 //# sourceMappingURL=FavoriteItem.js.map

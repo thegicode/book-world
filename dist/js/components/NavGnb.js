@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_js_1 = require("/js/utils/index.js");
-const model_js_1 = require("/js/modules/model.js");
-class NavGnb extends HTMLElement {
+import { CustomEventEmitter } from '../utils/index';
+import { getState } from '../modules/model';
+export default class NavGnb extends HTMLElement {
     constructor() {
         super();
         this.favoriteBooksSize = this.getFavoriteBooksSize();
@@ -10,13 +8,13 @@ class NavGnb extends HTMLElement {
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
-        index_js_1.CustomEventEmitter.add('favorite-books-changed', this.favoriteBooksChanged.bind(this));
+        CustomEventEmitter.add('favorite-books-changed', this.favoriteBooksChanged.bind(this));
     }
     disconnectedCallback() {
-        index_js_1.CustomEventEmitter.remove('favorite-books-changed', this.favoriteBooksChanged);
+        CustomEventEmitter.remove('favorite-books-changed', this.favoriteBooksChanged);
     }
     getFavoriteBooksSize() {
-        return (0, model_js_1.getState)().favoriteBooks.length;
+        return getState().favoriteBooks.length;
     }
     render() {
         this.innerHTML = `
@@ -33,10 +31,10 @@ class NavGnb extends HTMLElement {
         if (idx >= 0)
             this.querySelectorAll('a')[idx].ariaSelected = 'true';
     }
-    favoriteBooksChanged({ detail }) {
-        const { size } = detail;
+    favoriteBooksChanged(event) {
+        const customEvent = event;
+        const { size } = customEvent.detail;
         this.querySelector('.size').textContent = String(size || this.getFavoriteBooksSize());
     }
 }
-exports.default = NavGnb;
 //# sourceMappingURL=NavGnb.js.map
