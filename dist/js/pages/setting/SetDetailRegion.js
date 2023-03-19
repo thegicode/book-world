@@ -5,8 +5,8 @@ import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../
 export default class SetDetailRegion extends HTMLElement {
     constructor() {
         super();
-        this.detailRegionsElement = this.querySelector('.detailRegions');
         this.regionData = null;
+        this.region = '';
     }
     connectedCallback() {
         CustomEventEmitter.add('fetch-region-data', this.setRegionData.bind(this));
@@ -42,17 +42,18 @@ export default class SetDetailRegion extends HTMLElement {
         this.changeRegion();
     }
     renderDetailRegions(regionName) {
+        const detailRegionsElement = this.querySelector('.detailRegions');
         if (!this.regionData)
             return;
         const regionObj = getState().regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
         const template = document.querySelector('#tp-detail-region').content.firstElementChild;
-        this.detailRegionsElement.innerHTML = '';
+        detailRegionsElement.innerHTML = '';
         const fragment = new DocumentFragment();
-        const detailRegionObject = this.regionData.detailRegion[regionName];
-        if (!detailRegionObject)
+        const detailRegionData = this.regionData.detailRegion[regionName];
+        if (!detailRegionData)
             return;
-        for (const [key, value] of Object.entries(detailRegionObject)) {
+        for (const [key, value] of Object.entries(detailRegionData)) {
             const element = template.cloneNode(true);
             element.querySelector('span').textContent = key;
             const input = element.querySelector('input');
@@ -65,8 +66,8 @@ export default class SetDetailRegion extends HTMLElement {
                 fragment.appendChild(element);
             }
         }
-        this.detailRegionsElement.appendChild(fragment);
-        this.detailRegionsElement.region = regionName;
+        detailRegionsElement.appendChild(fragment);
+        this.region = regionName;
         this.onChangeDetail();
     }
     changeRegion() {
@@ -82,7 +83,7 @@ export default class SetDetailRegion extends HTMLElement {
         });
     }
     onChangeDetail() {
-        const region = this.detailRegionsElement.region;
+        const region = this.region;
         if (!getState().regions[region]) {
             addRegion(region);
         }

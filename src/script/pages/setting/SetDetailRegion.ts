@@ -16,13 +16,13 @@ interface RegionData {
 
 export default class SetDetailRegion extends HTMLElement {
 
-    detailRegionsElement: HTMLElement
     regionData: RegionData | null
+    region: string
 
     constructor() {
         super()
-        this.detailRegionsElement = this.querySelector('.detailRegions') as HTMLElement
         this.regionData = null
+        this.region = ''
     }
 
     connectedCallback() {
@@ -64,17 +64,18 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     renderDetailRegions(regionName: string) { 
+        const detailRegionsElement = this.querySelector('.detailRegions') as HTMLElement
         if (!this.regionData) return
         const regionObj = getState().regions[regionName]
         const regionCodes = regionObj? Object.values(regionObj) : []
 
         const template = (document.querySelector('#tp-detail-region') as HTMLTemplateElement).content.firstElementChild
-		this.detailRegionsElement.innerHTML = ''
+		detailRegionsElement.innerHTML = ''
         const fragment = new DocumentFragment()
 
-		const detailRegionObject = this.regionData.detailRegion[regionName]
-        if (!detailRegionObject) return
-		for (const [key, value] of Object.entries(detailRegionObject)) {
+		const detailRegionData = this.regionData.detailRegion[regionName]
+        if (!detailRegionData) return
+		for (const [key, value] of Object.entries(detailRegionData)) {
             const element = template!.cloneNode(true) as HTMLElement
             element.querySelector('span')!.textContent = key
             const input = element.querySelector('input')!
@@ -86,8 +87,8 @@ export default class SetDetailRegion extends HTMLElement {
                 fragment.appendChild(element)
             }
 		}
-		this.detailRegionsElement.appendChild(fragment)
-        this.detailRegionsElement.region = regionName
+		detailRegionsElement.appendChild(fragment)
+        this.region = regionName
 		this.onChangeDetail()
 	}
 
@@ -105,7 +106,7 @@ export default class SetDetailRegion extends HTMLElement {
 	}
 
     onChangeDetail() {
-        const region = this.detailRegionsElement.region
+        const region = this.region
         if (!getState().regions[region]) {
             addRegion(region)
         }

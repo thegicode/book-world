@@ -35,13 +35,28 @@ set-region {
         margin-top: 10px;
         label {
             width: 50%;
+            font-size: 14px;
         }
     }
 }
 
 favorite-regions {
+    .favorites {
+        margin: 5px 0;
+        padding: 1rem;
+        border-radius: 10px;
+        border: 1px solid #ebf3e7;
+        background-color: #f4fcee;
+    }
+    h3 {
+        margin: 0;
+    }
     p {
-        margin: 10px;
+        margin: 5px 0 0;
+        font-size: 14px;
+    }
+    p + h3 {
+        margin-top: 1rem;
     }
 }
 
@@ -58,6 +73,7 @@ set-detail-region {
         label {
             width: 50%;
             margin-bottom: 5px;
+            font-size: 14px;
         }
     }
 }
