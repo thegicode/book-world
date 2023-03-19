@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 // import { getState, addRegion, removeRegion } from '../../modules/model.js'
 // import CustomEventEmitter from "../../modules/CustomEventEmitter.js"
 // import CustomFetch from "../../modules/CustomFetch.js"
-import { CustomEventEmitter, CustomFetch } from '../../utils/index';
-import { getState, addRegion, removeRegion } from '../../modules/model';
+import { CustomEventEmitter, CustomFetch } from '../../utils/index.js';
+import { getState, addRegion, removeRegion } from '../../modules/model.js';
 export default class SetRegion extends HTMLElement {
     constructor() {
         super();

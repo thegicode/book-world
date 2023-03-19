@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CustomFetch } from '../../utils/index';
-import { state } from '../../modules/model';
+import { CustomFetch } from '../../utils/index.js';
+import { state } from '../../modules/model.js';
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super();

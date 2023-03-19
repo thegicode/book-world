@@ -1,4 +1,4 @@
-import { addLibrary, removeLibrary, hasLibrary } from '../../modules/model'
+import { addLibrary, removeLibrary, hasLibrary } from '../../modules/model.js'
 
 interface LibraryData {
 	libCode: string
@@ -13,7 +13,7 @@ export default class LibraryItem extends HTMLElement {
 	#checkbox: HTMLInputElement | null = null
 	#libCode = ''
 	#libName = ''
-	data: LibraryData
+	// data: LibraryData
 
 	constructor() {
 		super()
@@ -29,6 +29,11 @@ export default class LibraryItem extends HTMLElement {
 		}
 	}
 
+	set data(value: LibraryData) {
+		this.data = value
+		this.render()
+	}
+
 	connectedCallback() {
 		this.render()
 		this.#checkbox?.addEventListener('click', event => this.onChange.bind(this))
@@ -42,6 +47,8 @@ export default class LibraryItem extends HTMLElement {
 	render(): void {
 		const { data } = this
 		const keys = Object.keys(data)
+
+		// console.log('render', this.data)
 
 		// keys.forEach( key => {
 		// 	const element = this.querySelector(`.${key}`)

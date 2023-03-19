@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CustomEventEmitter, CustomFetch } from '../../utils/index';
-import { hasLibrary } from '../../modules/model';
+import { CustomEventEmitter, CustomFetch } from '../../utils/index.js';
+import { hasLibrary } from '../../modules/model.js';
 export default class Library extends HTMLElement {
     constructor() {
         super();
@@ -53,14 +53,14 @@ export default class Library extends HTMLElement {
                 else {
                     fragment.appendChild(element);
                 }
-                return fragment;
             }
+            return fragment;
         }, new DocumentFragment());
         this.form.innerHTML = '';
         this.form.appendChild(fragment);
     }
     showMessage(type) {
-        const template = document.querySelector('#tp-${type}').content.firstElementChild;
+        const template = document.querySelector(`#tp-${type}`).content.firstElementChild;
         if (template) {
             const element = template.cloneNode(true);
             this.form.innerHTML = '';

@@ -1,8 +1,8 @@
 // import Observer from "/js/utils/Observer"
 // import CustomFetch from "/js/utils/CustomFetch"
 // import CustomEventEmitter from '/js/utils/CustomEventEmitter'
-import BookItem from "./BookItem";
-import { Observer, CustomFetch, CustomEventEmitter } from '../../utils/index'
+import BookItem from "./BookItem.js"
+import { Observer, CustomFetch, CustomEventEmitter } from '../../utils/index.js'
 
 interface Data {
     total: number;

@@ -1,5 +1,5 @@
-import { state } from '../../modules/model'
-import { BookDescription, BookImage, LibraryBookExist } from '../../components';
+import { state } from '../../modules/model.js'
+import { BookDescription, BookImage, LibraryBookExist } from '../../components/index.js'
 
 interface BookData {
     author: string;

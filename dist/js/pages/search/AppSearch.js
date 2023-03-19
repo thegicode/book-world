@@ -1,4 +1,4 @@
-import { CustomEventEmitter } from '../../utils/index';
+import { CustomEventEmitter } from '../../utils/index.js';
 export default class AppSearch extends HTMLElement {
     constructor() {
         super();

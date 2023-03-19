@@ -1,5 +1,5 @@
 
-import { CustomEventEmitter } from '../../utils/index'
+import { CustomEventEmitter } from '../../utils/index.js'
 
 export default class InputSearch extends HTMLElement {
 

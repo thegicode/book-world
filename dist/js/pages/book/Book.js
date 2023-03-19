@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CustomFetch } from '../../utils/index';
+import { CustomFetch } from '../../utils/index.js';
 export default class Book extends HTMLElement {
     constructor() {
         super();

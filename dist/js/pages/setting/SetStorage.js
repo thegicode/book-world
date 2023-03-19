@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CustomFetch, CustomEventEmitter } from '../../utils/index';
-import { setState } from '../../modules/model';
+import { CustomFetch, CustomEventEmitter } from '../../utils/index.js';
+import { setState } from '../../modules/model.js';
 export default class SetStorage extends HTMLElement {
     constructor() {
         super();

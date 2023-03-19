@@ -10,13 +10,16 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _LibraryItem_checkbox, _LibraryItem_libCode, _LibraryItem_libName;
-import { addLibrary, removeLibrary, hasLibrary } from '../../modules/model';
+import { addLibrary, removeLibrary, hasLibrary } from '../../modules/model.js';
 export default class LibraryItem extends HTMLElement {
+    // data: LibraryData
     constructor() {
         super();
         _LibraryItem_checkbox.set(this, null);
         _LibraryItem_libCode.set(this, '');
-        _LibraryItem_libName.set(this, '');
+        _LibraryItem_libName.set(this, ''
+        // data: LibraryData
+        );
         __classPrivateFieldSet(this, _LibraryItem_checkbox, this.querySelector('[name=myLibrary]') || null, "f");
         __classPrivateFieldSet(this, _LibraryItem_libCode, '', "f");
         __classPrivateFieldSet(this, _LibraryItem_libName, '', "f");
@@ -27,6 +30,10 @@ export default class LibraryItem extends HTMLElement {
             telephone: '',
             homepage: ''
         };
+    }
+    set data(value) {
+        this.data = value;
+        this.render();
     }
     connectedCallback() {
         var _a;
@@ -40,6 +47,7 @@ export default class LibraryItem extends HTMLElement {
     render() {
         const { data } = this;
         const keys = Object.keys(data);
+        // console.log('render', this.data)
         // keys.forEach( key => {
         // 	const element = this.querySelector(`.${key}`)
         // 	if (element) {

@@ -1,9 +1,9 @@
-import { NavGnb, BookDescription, CheckboxFavoriteBook, LibraryBookExist, BookImage } from '../../components/index';
-import AppSearch from './AppSearch';
-import InputSearch from './InputSearch';
-import BookList from './BookList';
-import BookItem from './BookItem';
-// import TestElement from './TestElement'
+import { NavGnb, BookDescription, CheckboxFavoriteBook, LibraryBookExist, BookImage } from '../../components/index.js';
+import AppSearch from './AppSearch.js';
+import InputSearch from './InputSearch.js';
+import BookList from './BookList.js';
+import BookItem from './BookItem.js';
+// import TestElement from './TestElement.js'
 customElements.define('nav-gnb', NavGnb);
 customElements.define('book-list', BookList);
 customElements.define('app-search', AppSearch);

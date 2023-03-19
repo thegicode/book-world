@@ -1,4 +1,4 @@
-import { state } from '../../modules/model';
+import { state } from '../../modules/model.js';
 export default class BookItem extends HTMLElement {
     constructor() {
         super();

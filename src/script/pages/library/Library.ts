@@ -1,12 +1,13 @@
-import { CustomEventEmitter, CustomFetch } from '../../utils/index'
-import { hasLibrary } from '../../modules/model'
-import LibraryItem from './LibraryItem'
+import { CustomEventEmitter, CustomFetch } from '../../utils/index.js'
+import { hasLibrary } from '../../modules/model.js'
+import LibraryItem from './LibraryItem.js'
 
 interface LibraryData {
 	libCode: string
 	libName: string
 	address: string
 	telephone: string
+	homepage: string
 }
 
 interface CustomEvent<T> extends Event {
@@ -62,8 +63,8 @@ export default class Library extends HTMLElement {
 				} else {
 					fragment.appendChild(element)
 				}
-				return fragment
 			}
+			return fragment
 		}, new DocumentFragment())
 
 		this.form.innerHTML = ''
@@ -71,7 +72,7 @@ export default class Library extends HTMLElement {
 	}
 
 	showMessage(type: string) {
-        const template = (document.querySelector('#tp-${type}') as HTMLTemplateElement).content.firstElementChild 
+        const template = (document.querySelector(`#tp-${type}`) as HTMLTemplateElement).content.firstElementChild 
 		if (template) {
             const element = template.cloneNode(true) 
 			this.form.innerHTML = ''

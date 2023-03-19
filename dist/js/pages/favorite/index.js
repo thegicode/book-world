@@ -1,6 +1,6 @@
-import { BookDescription, CheckboxFavoriteBook, LibraryBookExist, NavGnb, BookImage } from '../../components/index';
-import Favorite from './Favorite';
-import FavoriteItem from './FavoriteItem';
+import { BookDescription, CheckboxFavoriteBook, LibraryBookExist, NavGnb, BookImage } from '../../components/index.js';
+import Favorite from './Favorite.js';
+import FavoriteItem from './FavoriteItem.js';
 customElements.define('nav-gnb', NavGnb);
 customElements.define('app-favorite', Favorite);
 customElements.define('favorite-item', FavoriteItem);

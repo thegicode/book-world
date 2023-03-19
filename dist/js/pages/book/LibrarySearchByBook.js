@@ -61,7 +61,7 @@ export default class LibrarySearchByBook extends HTMLElement {
             const template = document.querySelector('#tp-librarySearchByBookItem');
             if (!template)
                 return;
-            const cloned = template.content.querySelector(':scope > *').cloneNode(true);
+            const cloned = template.content.firstElementChild.cloneNode(true);
             const link = cloned.querySelector('a');
             if (!link)
                 return;

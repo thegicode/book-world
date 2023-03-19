@@ -1,9 +1,9 @@
-import { CustomFetch } from '../../utils/index'
-import { state } from '../../modules/model'
-// import BookDescription from '../../components/BookDescription'
-// import BookImage from '../../components/BookImage'
-// import LibraryBookExist from '../../components/LibraryBookExist'
-import { BookDescription, BookImage, LibraryBookExist } from '../../components/index'
+import { CustomFetch } from '../../utils/index.js'
+import { state } from '../../modules/model.js'
+// import BookDescription from '../../components/BookDescription.js'
+// import BookImage from '../../components/BookImage.js'
+// import LibraryBookExist from '../../components/LibraryBookExist.js'
+import { BookDescription, BookImage, LibraryBookExist } from '../../components/index.js'
 
 
 export default class FavoriteItem extends HTMLElement {
