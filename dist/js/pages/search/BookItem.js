@@ -6,7 +6,6 @@ export default class BookItem extends HTMLElement {
     }
     connectedCallback() {
         this.libraryButton = this.querySelector('.library-button');
-        this.libraryBookExist = this.querySelector('library-book-exist');
         this.link = this.querySelector('.book-summary');
         this.render();
         this.libraryButton.addEventListener('click', this.onClickLibraryButton.bind(this));
@@ -22,25 +21,42 @@ export default class BookItem extends HTMLElement {
         // price,
          } = this.data;
         const formattedPubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
-        this.querySelector('.title').textContent = title;
-        this.querySelector('.publisher').textContent = publisher;
-        this.querySelector('.author').textContent = author;
-        this.querySelector('.pubdate').textContent = formattedPubdate;
-        this.querySelector('.isbn').textContent = `isbn : ${isbn.split(' ').join(', ')}`;
-        this.querySelector('book-description').data = description;
-        this.querySelector('.__link').href = link;
-        this.querySelector('book-image').dataset.object = JSON.stringify({
-            bookImageURL: image,
-            bookname: title
-        });
+        const titleEl = this.querySelector('.title');
+        if (titleEl)
+            titleEl.textContent = title;
+        const pubEl = this.querySelector('.publisher');
+        if (pubEl)
+            pubEl.textContent = publisher;
+        const authorEl = this.querySelector('.author');
+        if (authorEl)
+            authorEl.textContent = author;
+        const pubdateEl = this.querySelector('.pubdate');
+        if (pubdateEl)
+            pubdateEl.textContent = formattedPubdate;
+        const isbnEl = this.querySelector('.isbn');
+        if (isbnEl)
+            isbnEl.textContent = `isbn : ${isbn.split(' ').join(', ')}`;
+        const bookDespEl = this.querySelector('book-description');
+        if (bookDespEl)
+            bookDespEl.data = description;
+        const linkEl = this.querySelector('.__link');
+        if (linkEl)
+            linkEl.href = link;
+        const bookImageEl = this.querySelector('book-image');
+        if (bookImageEl)
+            bookImageEl.dataset.object = JSON.stringify({
+                bookImageURL: image,
+                bookname: title
+            });
         this.dataset.index = this.index.toString();
-        // this.isbn = isbn.split(' ')[0]
         this.dataset.isbn = isbn;
     }
     onClickLibraryButton() {
         const isbn = this.dataset.isbn || '';
-        this.libraryBookExist
-            .onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+        const libraryBookExist = this.querySelector('library-book-exist');
+        if (libraryBookExist) {
+            libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+        }
     }
     onClickLink(event) {
         event.preventDefault();

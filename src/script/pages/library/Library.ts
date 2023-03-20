@@ -20,7 +20,7 @@ export default class Library extends HTMLElement {
 
 	constructor() {
 		super()
-		this.form = this.querySelector('form')!
+		this.form = this.querySelector('form') as HTMLFormElement
 	}
 
 	connectedCallback() {
@@ -74,9 +74,9 @@ export default class Library extends HTMLElement {
 	showMessage(type: string) {
         const template = (document.querySelector(`#tp-${type}`) as HTMLTemplateElement).content.firstElementChild 
 		if (template) {
-            const element = template.cloneNode(true) 
+            const element = template.cloneNode(true)
 			this.form.innerHTML = ''
-        	this.form.appendChild(element)
+			this.form.appendChild(element)
 		}
 	}
 

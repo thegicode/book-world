@@ -25,7 +25,7 @@ export default class Favorite extends HTMLElement {
     constructor() {
         super()
 
-        this.$booksEl = this.querySelector('.favorite-books')!
+        this.$booksEl = this.querySelector('.favorite-books') as HTMLElement
         // this.$countEl = this.querySelector('.count')
         
         // this.updateCount = this.updateCount.bind(this)

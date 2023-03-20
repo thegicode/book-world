@@ -4,7 +4,6 @@ export default class LibraryRegion extends HTMLElement {
     constructor() {
         super();
         this.selectElement = this.querySelector('select');
-        this.regionObject = {};
     }
     connectedCallback() {
         this.renderRegion();
@@ -24,8 +23,12 @@ export default class LibraryRegion extends HTMLElement {
             const size = Object.keys(favoriteRegions[regionName]).length;
             if (template && size > 0) {
                 const element = template.cloneNode(true);
-                element.querySelector('input').value = regionName;
-                element.querySelector('span').textContent = regionName;
+                const inputElement = element.querySelector('input');
+                if (inputElement)
+                    inputElement.value = regionName;
+                const spanElement = element.querySelector('span');
+                if (spanElement)
+                    spanElement.textContent = regionName;
                 fragment.appendChild(element);
             }
         }

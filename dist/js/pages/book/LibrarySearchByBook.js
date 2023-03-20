@@ -7,14 +7,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CustomFetch } from '../../utils/index.js';
-import { getState } from '../../modules/model.js';
+import { CustomFetch } from "../../utils/index.js";
+import { getState } from "../../modules/model.js";
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
         super();
     }
     connectedCallback() {
-        const isbn = new URLSearchParams(location.search).get('isbn');
+        const isbn = new URLSearchParams(location.search).get("isbn");
         this.fetchList(isbn);
     }
     fetchList(isbn) {
@@ -25,7 +25,7 @@ export default class LibrarySearchByBook extends HTMLElement {
                 if (detailCodes.length === 0)
                     return;
                 const regionCode = detailCodes[0].slice(0, 2);
-                detailCodes.forEach(detailCode => {
+                detailCodes.forEach((detailCode) => {
                     this.fetchLibrarySearchByBook(isbn, regionCode, detailCode);
                 });
             }
@@ -36,7 +36,7 @@ export default class LibrarySearchByBook extends HTMLElement {
             const searchParams = new URLSearchParams({
                 isbn,
                 region,
-                dtl_region
+                dtl_region,
             });
             const url = `/library-search-by-book?${searchParams}`;
             try {
@@ -52,23 +52,24 @@ export default class LibrarySearchByBook extends HTMLElement {
     render({ libs }, isbn) {
         if (libs.length < 1)
             return;
-        const container = document.querySelector('.library-search-by-book');
+        const container = document.querySelector(".library-search-by-book");
         if (!container)
             return;
-        const listElement = document.createElement('ul');
+        const listElement = document.createElement("ul");
         const fragment = new DocumentFragment();
         libs.forEach(({ homepage, libCode, libName }) => {
-            const template = document.querySelector('#tp-librarySearchByBookItem');
+            var _a;
+            const template = document.querySelector("#tp-librarySearchByBookItem");
             if (!template)
                 return;
-            const cloned = template.content.firstElementChild.cloneNode(true);
-            const link = cloned.querySelector('a');
+            const cloned = (_a = template.content.firstElementChild) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
+            const link = cloned.querySelector("a");
             if (!link)
                 return;
             cloned.dataset.code = libCode;
             link.textContent = libName;
             link.href = homepage;
-            this.loanAvailable(isbn, libCode, cloned.querySelector('p'));
+            this.loanAvailable(isbn, libCode, cloned.querySelector("p"));
             fragment.appendChild(cloned);
         });
         listElement.appendChild(fragment);
@@ -77,11 +78,11 @@ export default class LibrarySearchByBook extends HTMLElement {
     loanAvailable(isbn, libCode, el) {
         return __awaiter(this, void 0, void 0, function* () {
             const isAvailable = yield this.fetchLoadnAvailabilty(isbn, libCode);
-            const element = el.querySelector('.loanAvailable');
+            const element = el.querySelector(".loanAvailable");
             if (element) {
-                element.textContent = isAvailable ? '대출 가능' : '대출 불가';
+                element.textContent = isAvailable ? "대출 가능" : "대출 불가";
                 if (isAvailable && el.parentElement) {
-                    el.parentElement.dataset.available = 'true';
+                    el.parentElement.dataset.available = "true";
                 }
             }
         });
@@ -90,15 +91,15 @@ export default class LibrarySearchByBook extends HTMLElement {
         return __awaiter(this, void 0, void 0, function* () {
             const searchParams = new URLSearchParams({
                 isbn13,
-                libCode
+                libCode,
             });
             const url = `/book-exist?${searchParams}`;
             try {
                 const data = yield CustomFetch.fetch(url, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' }
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
                 });
-                return data.loanAvailable === 'Y';
+                return data.loanAvailable === "Y";
             }
             catch (error) {
                 console.error(error);

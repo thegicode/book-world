@@ -1,4 +1,4 @@
-import { getState } from '../modules/model.js';
+import { getState } from "../modules/model.js";
 export default class NavGnb extends HTMLElement {
     constructor() {
         super();
@@ -25,10 +25,10 @@ export default class NavGnb extends HTMLElement {
             </nav>`;
     }
     setSelectedMenu() {
-        const PATHS = ['/search', '/favorite', '/library', '/setting'];
+        const PATHS = ["/search", "/favorite", "/library", "/setting"];
         const idx = PATHS.indexOf(document.location.pathname);
         if (idx >= 0)
-            this.querySelectorAll('a')[idx].ariaSelected = 'true';
+            this.querySelectorAll("a")[idx].ariaSelected = "true";
     }
 }
 //# sourceMappingURL=NavGnb.js.map

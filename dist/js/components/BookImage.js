@@ -6,7 +6,7 @@ export default class BookImage extends HTMLElement {
     // 즐겨찾기, 상세
     set data(objectData) {
         this.bookData = objectData;
-        if (!this.querySelector('img')) {
+        if (!this.querySelector("img")) {
             this.render();
         }
         else {
@@ -19,10 +19,10 @@ export default class BookImage extends HTMLElement {
     }
     // searc : dataset
     render() {
-        const data = this.bookData || JSON.parse(this.dataset.object);
+        const data = this.bookData || (this.dataset.object && JSON.parse(this.dataset.object));
         const { bookImageURL, bookname } = data;
-        let imageSrc = '';
-        let imageAlt = '';
+        let imageSrc = "";
+        let imageAlt = "";
         if (data) {
             imageSrc = bookImageURL;
             imageAlt = bookname;
@@ -31,22 +31,22 @@ export default class BookImage extends HTMLElement {
             <div class="book-image">
                 <img class="thumb" src="${imageSrc}" alt="${imageAlt}"></img>
             </div>`;
-        if (this.querySelector('img')) {
+        if (this.querySelector("img")) {
             this.handleError();
         }
     }
-    onSetThumb({ bookImageURL, bookname }) {
-        const imgElement = this.querySelector('img');
+    onSetThumb({ bookImageURL, bookname, }) {
+        const imgElement = this.querySelector("img");
         if (imgElement) {
             imgElement.src = `${bookImageURL}`;
             imgElement.alt = bookname;
         }
     }
     handleError() {
-        const imgElement = this.querySelector('img');
+        const imgElement = this.querySelector("img");
         if (imgElement) {
             imgElement.onerror = () => {
-                this.dataset.fail = 'true';
+                this.dataset.fail = "true";
                 imgElement.remove();
             };
         }

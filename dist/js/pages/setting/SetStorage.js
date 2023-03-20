@@ -7,22 +7,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CustomFetch } from '../../utils/index.js';
-import { setState } from '../../modules/model.js';
-import { updateFavoriteBooksSize } from '../../modules/events.js';
+import { CustomFetch } from "../../utils/index.js";
+import { setState } from "../../modules/model.js";
+import { updateFavoriteBooksSize } from "../../modules/events.js";
 export default class SetStorage extends HTMLElement {
     constructor() {
         super();
-        this.storageButton = this.querySelector('.localStorage button');
-        this.resetButton = this.querySelector('.resetStorage button');
+        this.storageButton = this.querySelector(".localStorage button");
+        this.resetButton = this.querySelector(".resetStorage button");
     }
     connectedCallback() {
-        this.storageButton.addEventListener('click', this.setLocalStorageToBase.bind(this));
-        this.resetButton.addEventListener('click', this.resetStorage.bind(this));
+        this.storageButton.addEventListener("click", this.setLocalStorageToBase.bind(this));
+        this.resetButton.addEventListener("click", this.resetStorage.bind(this));
     }
     disconnectedCallback() {
-        this.storageButton.removeEventListener('click', this.setLocalStorageToBase);
-        this.resetButton.removeEventListener('click', this.resetStorage);
+        this.storageButton.removeEventListener("click", this.setLocalStorageToBase);
+        this.resetButton.removeEventListener("click", this.resetStorage);
     }
     setLocalStorageToBase() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -30,18 +30,18 @@ export default class SetStorage extends HTMLElement {
             try {
                 const data = yield CustomFetch.fetch(url);
                 setState(data);
-                console.log('Saved local stronage by base data!');
+                console.log("Saved local stronage by base data!");
                 // CustomEventEmitter.dispatch('favorite-books-changed')
                 updateFavoriteBooksSize();
             }
             catch (error) {
                 console.error(error);
-                throw new Error('Fail to get storage sample data.');
+                throw new Error("Fail to get storage sample data.");
             }
         });
     }
     resetStorage() {
-        localStorage.removeItem('BookWorld');
+        localStorage.removeItem("BookWorld");
         // CustomEventEmitter.dispatch('favorite-books-changed', { size : 0 })
         updateFavoriteBooksSize(0);
     }

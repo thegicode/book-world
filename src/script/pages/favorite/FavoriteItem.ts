@@ -2,19 +2,29 @@ import { CustomFetch } from '../../utils/index.js'
 import { state } from '../../modules/model.js'
 import { BookDescription, BookImage, LibraryBookExist } from '../../components/index.js'
 
+interface BookData {
+    authors: string,
+    bookImageURL: string,
+    bookname: string,
+    class_nm: string,
+    description: string,
+    isbn13: string,
+    loanCnt: string,
+    publication_year: string,
+    publisher: string
+}
 
 export default class FavoriteItem extends HTMLElement {
 
     private libraryButton: HTMLButtonElement
-    private libraryBookExist: LibraryBookExist
     private link: HTMLElement
-    private linkData: any
+    private linkData: { book: BookData } | undefined;
 
 
     constructor() {
         super()
         this.libraryButton = this.querySelector('.library-button') as HTMLButtonElement
-        this.libraryBookExist = this.querySelector<LibraryBookExist>('library-book-exist')!
+        
         this.link = this.querySelector('a') as HTMLElement
     }
 
@@ -42,7 +52,7 @@ export default class FavoriteItem extends HTMLElement {
         }
     }
 
-    render(data: {book : any}) {
+    render(data: {book : BookData}) {
         const { 
             book, 
             // loanHistory,
@@ -66,33 +76,43 @@ export default class FavoriteItem extends HTMLElement {
             // vol
         } = book
 
-        this.linkData = data
+        this.linkData = data;
 
-        this.querySelector('.bookname')!.textContent = bookname
-        this.querySelector('.authors')!.textContent = authors
-        this.querySelector('.class_nm')!.textContent = class_nm
-        this.querySelector('.isbn13')!.textContent = isbn13
-        this.querySelector('.loanCnt')!.textContent = loanCnt.toLocaleString()
-        this.querySelector('.publication_year')!.textContent = publication_year
-        this.querySelector('.publisher')!.textContent = publisher
-        this.querySelector<BookDescription>('book-description')!.data = description
-        this.querySelector<BookImage>('book-image')!.data = {
-            bookImageURL,
-            bookname
+        (this.querySelector('.bookname') as HTMLElement).textContent = bookname;
+        (this.querySelector('.authors') as HTMLElement).textContent = authors;
+        (this.querySelector('.class_nm') as HTMLElement).textContent = class_nm;
+        (this.querySelector('.isbn13') as HTMLElement).textContent = isbn13;
+        (this.querySelector('.loanCnt') as HTMLElement).textContent = loanCnt.toLocaleString();
+        (this.querySelector('.publication_year') as HTMLElement).textContent = publication_year;
+        (this.querySelector('.publisher') as HTMLElement).textContent = publisher;
+        const descriptionElement = this.querySelector<BookDescription>('book-description')
+        if (descriptionElement) {
+            descriptionElement.data = description;
+        }
+        const imageElement = this.querySelector<BookImage>('book-image')
+        if (imageElement) {
+            imageElement.data = {
+                bookImageURL,
+                bookname
+            }
         }
         this.removeLoading()
     }
 
     errorRender() {
         this.removeLoading()
-        this.dataset.fail = 'true'
-        this.querySelector('h4')!
+        this.dataset.fail = 'true';
+        (this.querySelector('h4') as HTMLElement)
             .textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`
         
     }
 
     onLibrary() {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, this.dataset.isbn!, state.libraries)
+        const isbn = this.dataset.isbn || ''
+        const libraryBookExist = this.querySelector<LibraryBookExist>('library-book-exist')
+        if (libraryBookExist) {
+            libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries)
+        }
     }
 
     loading() {

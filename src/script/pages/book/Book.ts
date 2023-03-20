@@ -1,107 +1,126 @@
-
-import { BookImage } from '../../components/index.js'
-import { CustomFetch } from '../../utils/index.js'
+import { BookImage } from "../../components/index.js";
+import { CustomFetch } from "../../utils/index.js";
 
 interface BookData {
-    bookname: string
-    authors: string
-    bookImageURL: string
-    class_nm: string
-    class_no: string
-    description: string
-    isbn13: string
-    loanCnt: number
-    publication_year: string
-    publisher: string
+    bookname: string;
+    authors: string;
+    bookImageURL: string;
+    class_nm: string;
+    class_no: string;
+    description: string;
+    isbn13: string;
+    loanCnt: number;
+    publication_year: string;
+    publisher: string;
 }
 
 interface KeywordData {
-    word: string
+    word: string;
 }
 
 interface RecBookData {
-    bookname: string
-    isbn13: string
+    bookname: string;
+    isbn13: string;
 }
 
 interface UsageAnalysisListData {
-    book: BookData
-    keywords: KeywordData[]
-    recBooks: RecBookData[]
+    book: BookData;
+    keywords: KeywordData[];
+    recBooks: RecBookData[];
 }
 
 export default class Book extends HTMLElement {
-
-    private $loadingElement: HTMLElement
-    private data: UsageAnalysisListData | null
+    private $loadingElement: HTMLElement;
+    private data: UsageAnalysisListData | null;
 
     constructor() {
-        super()
-        this.$loadingElement = this.querySelector('.loading')!
-        this.data = null
+        super();
+        this.$loadingElement = this.querySelector(".loading") as HTMLElement;
+        this.data = null;
     }
 
     connectedCallback(): void {
-        const isbn = new URLSearchParams(location.search).get('isbn')
-        this.dataset.isbn = isbn!
-        this._fetchUsageAnalysisList(isbn!)
+        const isbn = new URLSearchParams(location.search).get("isbn") as string;
+        this.dataset.isbn = isbn;
+        this._fetchUsageAnalysisList(isbn);
     }
 
     async _fetchUsageAnalysisList(isbn: string): Promise<void> {
         try {
-            const data = await CustomFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`)
-            this.data = data
-            this._render()
+            const data = await CustomFetch.fetch(
+                `/usage-analysis-list?isbn13=${isbn}`
+            );
+            this.data = data;
+            this._render();
         } catch (error) {
-            this._renderError()
-            console.log(error)
-            throw new Error(`Fail to get usage analysis list.`)
+            this._renderError();
+            console.log(error);
+            throw new Error(`Fail to get usage analysis list.`);
         }
     }
 
     _render() {
         const {
             book: {
-                bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher
+                bookname,
+                authors,
+                bookImageURL,
+                class_nm,
+                class_no,
+                description,
+                isbn13,
+                loanCnt,
+                publication_year,
+                publisher,
             },
             keywords,
-            recBooks
-        } = this.data! // coLoanBooks, loanGrps,loanHistory,
+            recBooks,
+        } = this.data as UsageAnalysisListData; // coLoanBooks, loanGrps,loanHistory,
 
         const bookNames = bookname
             .split(/[=/:]/)
-            .map(item => `<p>${item}</p>`)
-            .join('')
+            .map((item) => `<p>${item}</p>`)
+            .join("");
         const keywordsString = keywords
-            .map(item => `<span>${item.word}</span>`)
-            .join('')
+            .map((item) => `<span>${item.word}</span>`)
+            .join("");
         const recBooksString = recBooks
-            .map(({ bookname, isbn13 }) => `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`)
-            .join('')
-        this.querySelector('.bookname')!.innerHTML = bookNames
-        this.querySelector('.authors')!.textContent = authors
-        this.querySelector('.class_nm')!.textContent = class_nm
-        this.querySelector('.class_no')!.textContent = class_no
-        this.querySelector('.description')!.textContent = description
-        this.querySelector('.isbn13')!.textContent = isbn13
-        this.querySelector('.loanCnt')!.textContent = loanCnt.toLocaleString()
-        this.querySelector('.publication_year')!.textContent = publication_year
-        this.querySelector('.publisher')!.textContent = publisher
-        this.querySelector('.keyword')!.innerHTML = keywordsString
-        this.querySelector('.recBooks')!.innerHTML = recBooksString
-        
-        const imageData = {
-            bookImageURL,
-            bookname
+            .map(
+                ({ bookname, isbn13 }) =>
+                    `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`
+            )
+            .join("");
+
+        (this.querySelector(".bookname") as HTMLElement).innerHTML = bookNames;
+        (this.querySelector(".authors") as HTMLElement).textContent = authors;
+        (this.querySelector(".class_nm") as HTMLElement).textContent = class_nm;
+        (this.querySelector(".class_no") as HTMLElement).textContent = class_no;
+        (this.querySelector(".description") as HTMLElement).textContent =
+            description;
+        (this.querySelector(".isbn13") as HTMLElement).textContent = isbn13;
+        (this.querySelector(".loanCnt") as HTMLElement).textContent =
+            loanCnt.toLocaleString();
+        (this.querySelector(".publication_year") as HTMLElement).textContent =
+            publication_year;
+        (this.querySelector(".publisher") as HTMLElement).textContent =
+            publisher;
+        (this.querySelector(".keyword") as HTMLElement).innerHTML =
+            keywordsString;
+        (this.querySelector(".recBooks") as HTMLElement).innerHTML =
+            recBooksString;
+
+        const bookImageElement = this.querySelector<BookImage>("book-image");
+        if (bookImageElement) {
+            bookImageElement.data = {
+                bookImageURL,
+                bookname,
+            };
         }
-        this.querySelector<BookImage>('book-image')!.data = imageData
 
-        this.$loadingElement.remove()
+        this.$loadingElement.remove();
     }
-
 
     _renderError() {
-        this.$loadingElement.textContent = '정보를 가져올 수 없습니다.'
+        this.$loadingElement.textContent = "정보를 가져올 수 없습니다.";
     }
 }
-

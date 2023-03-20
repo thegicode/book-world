@@ -4,12 +4,10 @@ import { getState } from '../../modules/model.js'
 export default class LibraryRegion extends HTMLElement {
 
 	selectElement: HTMLSelectElement
-	regionObject: Record<string, any>
 
 	constructor() {
 		super()
 		this.selectElement = this.querySelector('select') as HTMLSelectElement
-		this.regionObject = {}
 	}
 
 	connectedCallback() {
@@ -23,6 +21,7 @@ export default class LibraryRegion extends HTMLElement {
 
 	renderRegion() {
 		const favoriteRegions = getState().regions
+		
 		if (Object.values(favoriteRegions).length < 1) return
 
 		const template = (document.querySelector('#tp-region') as HTMLTemplateElement).content.firstElementChild 
@@ -33,8 +32,10 @@ export default class LibraryRegion extends HTMLElement {
 			const size = Object.keys(favoriteRegions[regionName]).length
 			if (template && size > 0) {
 				const element = template.cloneNode(true) as HTMLElement
-				element.querySelector('input')!.value = regionName
-				element.querySelector('span')!.textContent = regionName
+				const inputElement = element.querySelector<HTMLInputElement>('input')
+				if(inputElement) inputElement.value = regionName
+				const spanElement = element.querySelector('span')
+				if (spanElement) spanElement.textContent = regionName
 				fragment.appendChild(element)
 			}
 		}

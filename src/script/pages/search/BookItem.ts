@@ -27,7 +27,6 @@ export default class BookItem extends HTMLElement {
 
     connectedCallback() {
         this.libraryButton = this.querySelector('.library-button') as HTMLButtonElement
-        this.libraryBookExist = this.querySelector<LibraryBookExist>('library-book-exist')!
         this.link = this.querySelector('.book-summary') as HTMLElement
 
         this.render()
@@ -41,7 +40,7 @@ export default class BookItem extends HTMLElement {
         this.link.removeEventListener('click', this.onClickLink)
     }
 
-    render() {
+    private render() {
         const { 
             author,
             description,
@@ -56,30 +55,36 @@ export default class BookItem extends HTMLElement {
         } = this.data
 
         const formattedPubdate = `${pubdate.substring(0,4)}.${pubdate.substring(4,6)}.${pubdate.substring(6)}`
-        this.querySelector('.title')!.textContent = title
-        this.querySelector('.publisher')!.textContent = publisher
-        this.querySelector('.author')!.textContent = author
-        this.querySelector('.pubdate')!.textContent = formattedPubdate
-        this.querySelector('.isbn')!.textContent = `isbn : ${isbn.split(' ').join(', ')}`
-        this.querySelector<BookDescription>('book-description')!.data = description;
-        (this.querySelector('.__link') as HTMLAnchorElement).href = link
-
-        this.querySelector<BookImage>('book-image')!.dataset.object = JSON.stringify({
+        const titleEl =  this.querySelector('.title')
+        if (titleEl) titleEl.textContent = title
+        const pubEl = this.querySelector('.publisher')
+        if (pubEl) pubEl.textContent = publisher
+        const authorEl = this.querySelector('.author')
+        if (authorEl) authorEl.textContent = author
+        const pubdateEl = this.querySelector('.pubdate')
+        if (pubdateEl) pubdateEl.textContent = formattedPubdate
+        const isbnEl = this.querySelector('.isbn')
+        if (isbnEl) isbnEl.textContent = `isbn : ${isbn.split(' ').join(', ')}`
+        const bookDespEl = this.querySelector<BookDescription>('book-description')
+        if (bookDespEl) bookDespEl.data = description;
+        const linkEl = this.querySelector('.__link') as HTMLAnchorElement
+        if (linkEl) linkEl.href = link
+        const bookImageEl = this.querySelector<BookImage>('book-image')
+        if (bookImageEl) bookImageEl.dataset.object = JSON.stringify({
             bookImageURL: image,
             bookname: title
         })
 
         this.dataset.index = this.index.toString()
-        // this.isbn = isbn.split(' ')[0]
         this.dataset.isbn = isbn
-
     }
 
     onClickLibraryButton() {
         const isbn = this.dataset.isbn || ''
-        this.libraryBookExist
-            .onLibraryBookExist(this.libraryButton, isbn, state.libraries)
-
+        const libraryBookExist = this.querySelector<LibraryBookExist>('library-book-exist')
+        if (libraryBookExist) {
+            libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries)
+        }
     }
     
     onClickLink(event: MouseEvent) {

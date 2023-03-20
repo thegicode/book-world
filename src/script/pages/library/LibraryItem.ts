@@ -10,51 +10,51 @@ interface LibraryData {
 
 export default class LibraryItem extends HTMLElement {
 
-	#checkbox: HTMLInputElement | null = null
-	#libCode = ''
-	#libName = ''
+	private checkbox: HTMLInputElement | null = null
+	private libCode = ''
+	private libName = ''
 
 	constructor() {
 		super()
-		this.#checkbox = this.querySelector('[name=myLibrary]') as HTMLInputElement || null
-		this.#libCode = ''
-		this.#libName = ''
+		this.checkbox = this.querySelector<HTMLInputElement>('[name=myLibrary]')
 	}
 
 	connectedCallback() {
 		this.render()
-		this.#checkbox?.addEventListener('click', event => this.onChange.bind(this))
+		this.checkbox?.addEventListener('click', this.onChange.bind(this))
 	}
 
 	disconnectedCallback() {
-		this.#checkbox?.addEventListener('click', event => this.onChange)
-
+		this.checkbox?.removeEventListener('click', this.onChange)
 	}
 	
-	render(): void {
-		const data = JSON.parse(this.dataset.object || '')
-		const keys = Object.keys(data)
+	private render(): void {
+		const data = JSON.parse(this.dataset.object || '') as LibraryData
+		const { libCode, libName } = data
 
-		for (const key of keys) {
+		Object.entries(data).forEach( ([key, value])  => {
 			const element = this.querySelector(`.${key}`)
 			if (element) {
-				element.innerHTML = `${data[key as keyof LibraryData]}`
+				element.innerHTML = value
 			}
-		}
+		})
 
-		(this.querySelector('.homepage') as HTMLLinkElement).href = data.homepage
+		const hoempageLink = this.querySelector<HTMLLinkElement>('.homepage')
+		if (hoempageLink) hoempageLink.href = data.homepage
 
-		const { libCode, libName } = data
-		this.#libCode = libCode
-		this.#libName = libName
+		this.libCode = libCode
+		this.libName = libName
 
-		this.#checkbox!.checked = hasLibrary(libCode)
+		if (this.checkbox) this.checkbox.checked = hasLibrary(this.libCode)
 	}
 
-	onChange(event: MouseEvent) {
-		(event.target as HTMLInputElement).checked
-			? addLibrary(this.#libCode, this.#libName)
-			: removeLibrary(this.#libCode)
+	private onChange(event: MouseEvent): void {
+		const target = event.target as HTMLInputElement
+		if (target.checked) {
+			addLibrary(this.libCode, this.libName)
+		} else {
+			removeLibrary(this.libCode)
+		}
 	}
 
 }

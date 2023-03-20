@@ -13,7 +13,6 @@ export default class FavoriteItem extends HTMLElement {
     constructor() {
         super();
         this.libraryButton = this.querySelector('.library-button');
-        this.libraryBookExist = this.querySelector('library-book-exist');
         this.link = this.querySelector('a');
     }
     connectedCallback() {
@@ -61,11 +60,17 @@ export default class FavoriteItem extends HTMLElement {
         this.querySelector('.loanCnt').textContent = loanCnt.toLocaleString();
         this.querySelector('.publication_year').textContent = publication_year;
         this.querySelector('.publisher').textContent = publisher;
-        this.querySelector('book-description').data = description;
-        this.querySelector('book-image').data = {
-            bookImageURL,
-            bookname
-        };
+        const descriptionElement = this.querySelector('book-description');
+        if (descriptionElement) {
+            descriptionElement.data = description;
+        }
+        const imageElement = this.querySelector('book-image');
+        if (imageElement) {
+            imageElement.data = {
+                bookImageURL,
+                bookname
+            };
+        }
         this.removeLoading();
     }
     errorRender() {
@@ -75,7 +80,11 @@ export default class FavoriteItem extends HTMLElement {
             .textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`;
     }
     onLibrary() {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, this.dataset.isbn, state.libraries);
+        const isbn = this.dataset.isbn || '';
+        const libraryBookExist = this.querySelector('library-book-exist');
+        if (libraryBookExist) {
+            libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+        }
     }
     loading() {
         this.dataset.loading = 'true';

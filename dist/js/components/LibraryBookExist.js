@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 export default class LibraryBookExist extends HTMLElement {
     constructor() {
         super();
-        this.root = this.querySelector('.library-list');
-        this.itemTemplate = '';
+        this.root = this.querySelector(".library-list");
+        this.itemTemplate = "";
     }
     connectedCallback() {
         this.itemTemplate = this.template();
@@ -39,7 +39,7 @@ export default class LibraryBookExist extends HTMLElement {
                 this.removeLoading();
             }
             catch (error) {
-                console.error('Failed to fetch data for some libraries');
+                console.error("Failed to fetch data for some libraries");
             }
             // Promise.all(promises)
             //     .then( () => {
@@ -52,27 +52,27 @@ export default class LibraryBookExist extends HTMLElement {
     }
     renderBookExist(data, libName, index) {
         const { hasBook, loanAvailable } = data;
-        const _hasBook = hasBook === 'Y' ? '소장, ' : '미소장';
-        let _loanAvailable = '';
-        if (hasBook === 'Y') {
-            _loanAvailable = loanAvailable === 'Y' ? '대출가능' : '대출불가';
+        const _hasBook = hasBook === "Y" ? "소장, " : "미소장";
+        let _loanAvailable = "";
+        if (hasBook === "Y") {
+            _loanAvailable = loanAvailable === "Y" ? "대출가능" : "대출불가";
         }
-        const el = this.querySelectorAll('.library-item')[index];
-        const elName = el.querySelector('.name');
+        const el = this.querySelectorAll(".library-item")[index];
+        const elName = el.querySelector(".name");
         if (elName) {
             elName.textContent = `☼ ${libName} : `;
         }
-        const elHasBook = el.querySelector('.hasBook');
+        const elHasBook = el.querySelector(".hasBook");
         if (elHasBook) {
             elHasBook.textContent = _hasBook;
         }
-        const elLoanAvailable = el.querySelector('.loanAvailable');
+        const elLoanAvailable = el.querySelector(".loanAvailable");
         if (elLoanAvailable) {
             elLoanAvailable.textContent = _loanAvailable;
         }
     }
     loading(size) {
-        let tp = '';
+        let tp = "";
         while (size > 0) {
             tp += this.itemTemplate;
             size--;
@@ -80,8 +80,8 @@ export default class LibraryBookExist extends HTMLElement {
         this.root.innerHTML = tp;
     }
     removeLoading() {
-        const loadingItems = this.querySelectorAll('.library-item[data-loading=true]');
-        loadingItems.forEach(el => {
+        const loadingItems = this.querySelectorAll(".library-item[data-loading=true]");
+        loadingItems.forEach((el) => {
             delete el.dataset.loading;
         });
     }
