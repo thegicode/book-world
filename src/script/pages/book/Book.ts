@@ -90,10 +90,11 @@ export default class Book extends HTMLElement {
         this.querySelector('.keyword')!.innerHTML = keywordsString
         this.querySelector('.recBooks')!.innerHTML = recBooksString
         
-        this.querySelector<BookImage>('book-image')!.data = {
+        const imageData = {
             bookImageURL,
             bookname
         }
+        this.querySelector<BookImage>('book-image')!.data = imageData
 
         this.$loadingElement.remove()
     }

@@ -2,6 +2,7 @@ import { state } from '../../modules/model.js';
 export default class BookItem extends HTMLElement {
     constructor() {
         super();
+        this.render();
     }
     connectedCallback() {
         this.libraryButton = this.querySelector('.library-button');
@@ -28,10 +29,10 @@ export default class BookItem extends HTMLElement {
         this.querySelector('.isbn').textContent = `isbn : ${isbn.split(' ').join(', ')}`;
         this.querySelector('book-description').data = description;
         this.querySelector('.__link').href = link;
-        this.querySelector('book-image').data = {
+        this.querySelector('book-image').dataset.object = JSON.stringify({
             bookImageURL: image,
             bookname: title
-        };
+        });
         this.dataset.index = this.index.toString();
         // this.isbn = isbn.split(' ')[0]
         this.dataset.isbn = isbn;

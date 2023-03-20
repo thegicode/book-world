@@ -83,7 +83,6 @@ export default class FavoriteItem extends HTMLElement {
             bookImageURL,
             bookname
         }
-
         this.removeLoading()
     }
 

@@ -56,10 +56,11 @@ export default class Book extends HTMLElement {
         this.querySelector('.publisher').textContent = publisher;
         this.querySelector('.keyword').innerHTML = keywordsString;
         this.querySelector('.recBooks').innerHTML = recBooksString;
-        this.querySelector('book-image').data = {
+        const imageData = {
             bookImageURL,
             bookname
         };
+        this.querySelector('book-image').data = imageData;
         this.$loadingElement.remove();
     }
     _renderError() {

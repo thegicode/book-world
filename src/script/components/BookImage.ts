@@ -7,24 +7,32 @@ export default class BookImage extends HTMLElement {
         this.bookData = null
     }
 
+    // 즐겨찾기, 상세
     set data(objectData: { bookImageURL: string, bookname: string }) {
+        console.log('set', this.querySelector('img'))
         this.bookData = objectData
         if (!this.querySelector('img')) {
             this.render()
+        } else {
+            // this.onSetThumb(objectData)
+            this.handleError()
         }
-        this.onSetThumb(objectData)
-        this.handleError()
     }
 
     connectedCallback(): void {
         this.render()
+        
     }
 
+    // searc : dataset
     private render(): void {
+        console.log('render')
+        const data =  this.bookData || JSON.parse(this.dataset.object!)
+        const { bookImageURL, bookname } = data
+
         let imageSrc = ''
         let imageAlt = ''
-        if (this.bookData) {
-            const { bookImageURL, bookname } = this.bookData
+        if (data) {
             imageSrc = bookImageURL
             imageAlt = bookname
         }
@@ -34,12 +42,13 @@ export default class BookImage extends HTMLElement {
                 <img class="thumb" src="${imageSrc}" alt="${imageAlt}"></img>
             </div>`
         
-        if (this.bookData) {
+        if (this.querySelector('img')) {
             this.handleError()
         }
     }
 
     private onSetThumb({ bookImageURL, bookname }: { bookImageURL: string; bookname: string }): void {
+        console.log('onSetThumb', this)
         const imgElement = this.querySelector('img')
         if (imgElement) {
             imgElement.src = `${bookImageURL}`

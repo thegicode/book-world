@@ -22,6 +22,7 @@ export default class BookItem extends HTMLElement {
 
     constructor() {
         super()
+        this.render()
     }
 
     connectedCallback() {
@@ -63,10 +64,10 @@ export default class BookItem extends HTMLElement {
         this.querySelector<BookDescription>('book-description')!.data = description;
         (this.querySelector('.__link') as HTMLAnchorElement).href = link
 
-        this.querySelector<BookImage>('book-image')!.data = {
+        this.querySelector<BookImage>('book-image')!.dataset.object = JSON.stringify({
             bookImageURL: image,
             bookname: title
-        }
+        })
 
         this.dataset.index = this.index.toString()
         // this.isbn = isbn.split(' ')[0]
