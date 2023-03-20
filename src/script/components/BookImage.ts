@@ -9,7 +9,6 @@ export default class BookImage extends HTMLElement {
 
     // 즐겨찾기, 상세
     set data(objectData: { bookImageURL: string, bookname: string }) {
-        console.log('set', this.querySelector('img'))
         this.bookData = objectData
         if (!this.querySelector('img')) {
             this.render()
@@ -26,7 +25,6 @@ export default class BookImage extends HTMLElement {
 
     // searc : dataset
     private render(): void {
-        console.log('render')
         const data =  this.bookData || JSON.parse(this.dataset.object!)
         const { bookImageURL, bookname } = data
 
@@ -48,7 +46,6 @@ export default class BookImage extends HTMLElement {
     }
 
     private onSetThumb({ bookImageURL, bookname }: { bookImageURL: string; bookname: string }): void {
-        console.log('onSetThumb', this)
         const imgElement = this.querySelector('img')
         if (imgElement) {
             imgElement.src = `${bookImageURL}`

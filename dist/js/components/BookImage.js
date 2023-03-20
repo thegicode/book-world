@@ -5,7 +5,6 @@ export default class BookImage extends HTMLElement {
     }
     // 즐겨찾기, 상세
     set data(objectData) {
-        console.log('set', this.querySelector('img'));
         this.bookData = objectData;
         if (!this.querySelector('img')) {
             this.render();
@@ -20,7 +19,6 @@ export default class BookImage extends HTMLElement {
     }
     // searc : dataset
     render() {
-        console.log('render');
         const data = this.bookData || JSON.parse(this.dataset.object);
         const { bookImageURL, bookname } = data;
         let imageSrc = '';
@@ -38,7 +36,6 @@ export default class BookImage extends HTMLElement {
         }
     }
     onSetThumb({ bookImageURL, bookname }) {
-        console.log('onSetThumb', this);
         const imgElement = this.querySelector('img');
         if (imgElement) {
             imgElement.src = `${bookImageURL}`;
