@@ -12,28 +12,14 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _LibraryItem_checkbox, _LibraryItem_libCode, _LibraryItem_libName;
 import { addLibrary, removeLibrary, hasLibrary } from '../../modules/model.js';
 export default class LibraryItem extends HTMLElement {
-    // data: LibraryData
     constructor() {
         super();
         _LibraryItem_checkbox.set(this, null);
         _LibraryItem_libCode.set(this, '');
-        _LibraryItem_libName.set(this, ''
-        // data: LibraryData
-        );
+        _LibraryItem_libName.set(this, '');
         __classPrivateFieldSet(this, _LibraryItem_checkbox, this.querySelector('[name=myLibrary]') || null, "f");
         __classPrivateFieldSet(this, _LibraryItem_libCode, '', "f");
         __classPrivateFieldSet(this, _LibraryItem_libName, '', "f");
-        this.data = {
-            libCode: '',
-            libName: '',
-            address: '',
-            telephone: '',
-            homepage: ''
-        };
-    }
-    set data(value) {
-        this.data = value;
-        this.render();
     }
     connectedCallback() {
         var _a;
@@ -45,15 +31,8 @@ export default class LibraryItem extends HTMLElement {
         (_a = __classPrivateFieldGet(this, _LibraryItem_checkbox, "f")) === null || _a === void 0 ? void 0 : _a.addEventListener('click', event => this.onChange);
     }
     render() {
-        const { data } = this;
+        const data = JSON.parse(this.dataset.object || '');
         const keys = Object.keys(data);
-        // console.log('render', this.data)
-        // keys.forEach( key => {
-        // 	const element = this.querySelector(`.${key}`)
-        // 	if (element) {
-        // 		element.innerHTML = `${data[key as keyof LibraryData]}`
-        // 	}
-        // })
         for (const key of keys) {
             const element = this.querySelector(`.${key}`);
             if (element) {

@@ -44,14 +44,14 @@ export default class Library extends HTMLElement {
         const template = document.querySelector('#tp-item').content.firstElementChild;
         const fragment = libs.reduce((fragment, lib) => {
             if (template) {
-                const element = template.cloneNode(true);
-                element.data = lib;
+                const libraryItem = template.cloneNode(true);
+                libraryItem.dataset.object = JSON.stringify(lib);
                 if (hasLibrary(lib.libCode)) {
-                    element.dataset.has = 'true';
-                    fragment.insertBefore(element, fragment.firstChild);
+                    libraryItem.dataset.has = 'true';
+                    fragment.insertBefore(libraryItem, fragment.firstChild);
                 }
                 else {
-                    fragment.appendChild(element);
+                    fragment.appendChild(libraryItem);
                 }
             }
             return fragment;

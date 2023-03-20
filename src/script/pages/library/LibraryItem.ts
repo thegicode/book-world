@@ -13,25 +13,12 @@ export default class LibraryItem extends HTMLElement {
 	#checkbox: HTMLInputElement | null = null
 	#libCode = ''
 	#libName = ''
-	// data: LibraryData
 
 	constructor() {
 		super()
 		this.#checkbox = this.querySelector('[name=myLibrary]') as HTMLInputElement || null
 		this.#libCode = ''
 		this.#libName = ''
-		this.data = {
-			libCode: '',
-			libName: '',
-			address: '',
-			telephone: '',
-			homepage: ''
-		}
-	}
-
-	set data(value: LibraryData) {
-		this.data = value
-		this.render()
 	}
 
 	connectedCallback() {
@@ -45,17 +32,8 @@ export default class LibraryItem extends HTMLElement {
 	}
 	
 	render(): void {
-		const { data } = this
+		const data = JSON.parse(this.dataset.object || '')
 		const keys = Object.keys(data)
-
-		// console.log('render', this.data)
-
-		// keys.forEach( key => {
-		// 	const element = this.querySelector(`.${key}`)
-		// 	if (element) {
-		// 		element.innerHTML = `${data[key as keyof LibraryData]}`
-		// 	}
-		// })
 
 		for (const key of keys) {
 			const element = this.querySelector(`.${key}`)
