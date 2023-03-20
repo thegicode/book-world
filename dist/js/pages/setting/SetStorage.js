@@ -7,8 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CustomFetch, CustomEventEmitter } from '../../utils/index.js';
+import { CustomFetch } from '../../utils/index.js';
 import { setState } from '../../modules/model.js';
+import { updateFavoriteBooksSize } from '../../modules/events.js';
 export default class SetStorage extends HTMLElement {
     constructor() {
         super();
@@ -30,7 +31,8 @@ export default class SetStorage extends HTMLElement {
                 const data = yield CustomFetch.fetch(url);
                 setState(data);
                 console.log('Saved local stronage by base data!');
-                CustomEventEmitter.dispatch('favorite-books-changed');
+                // CustomEventEmitter.dispatch('favorite-books-changed')
+                updateFavoriteBooksSize();
             }
             catch (error) {
                 console.error(error);
@@ -40,7 +42,8 @@ export default class SetStorage extends HTMLElement {
     }
     resetStorage() {
         localStorage.removeItem('BookWorld');
-        CustomEventEmitter.dispatch('favorite-books-changed', { size: 0 });
+        // CustomEventEmitter.dispatch('favorite-books-changed', { size : 0 })
+        updateFavoriteBooksSize(0);
     }
 }
 //# sourceMappingURL=SetStorage.js.map

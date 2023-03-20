@@ -1,4 +1,3 @@
-import { CustomEventEmitter } from '../utils/index.js';
 import { getState } from '../modules/model.js';
 export default class NavGnb extends HTMLElement {
     constructor() {
@@ -8,10 +7,10 @@ export default class NavGnb extends HTMLElement {
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
-        CustomEventEmitter.add('favorite-books-changed', this.favoriteBooksChanged.bind(this));
+        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
     }
     disconnectedCallback() {
-        CustomEventEmitter.remove('favorite-books-changed', this.favoriteBooksChanged);
+        // CustomEventEmitter.remove('favorite-books-changed', this.updateFavoriteBooksSize)
     }
     getFavoriteBooksSize() {
         return getState().favoriteBooks.length;
@@ -30,11 +29,6 @@ export default class NavGnb extends HTMLElement {
         const idx = PATHS.indexOf(document.location.pathname);
         if (idx >= 0)
             this.querySelectorAll('a')[idx].ariaSelected = 'true';
-    }
-    favoriteBooksChanged(event) {
-        const customEvent = event;
-        const { size } = customEvent.detail;
-        this.querySelector('.size').textContent = String(size || this.getFavoriteBooksSize());
     }
 }
 //# sourceMappingURL=NavGnb.js.map

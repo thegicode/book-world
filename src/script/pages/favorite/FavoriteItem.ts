@@ -1,8 +1,5 @@
 import { CustomFetch } from '../../utils/index.js'
 import { state } from '../../modules/model.js'
-// import BookDescription from '../../components/BookDescription.js'
-// import BookImage from '../../components/BookImage.js'
-// import LibraryBookExist from '../../components/LibraryBookExist.js'
 import { BookDescription, BookImage, LibraryBookExist } from '../../components/index.js'
 
 

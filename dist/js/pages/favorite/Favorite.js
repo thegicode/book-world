@@ -17,7 +17,7 @@ export default class Favorite extends HTMLElement {
         this.$booksEl = this.querySelector('.favorite-books');
         // this.$countEl = this.querySelector('.count')
         // this.updateCount = this.updateCount.bind(this)
-        // CustomEventEmitter.add('favorite-books-changed', this.favoriteBooksChanged.bind(this))
+        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
     }
     connectedCallback() {
         // 속성 변경을 감지하기 위해 MutationObserver를 사용합니다.
@@ -41,7 +41,7 @@ export default class Favorite extends HTMLElement {
     disconnectedCallback() {
         // this.$observer.disconnect();
     }
-    // favoriteBooksChanged({ detail }) {
+    // updateFavoriteBooksSize({ detail }) {
     //     this.count = detail.count
     // }
     // updateCount() {

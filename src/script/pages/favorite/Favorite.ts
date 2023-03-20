@@ -29,7 +29,7 @@ export default class Favorite extends HTMLElement {
         // this.$countEl = this.querySelector('.count')
         
         // this.updateCount = this.updateCount.bind(this)
-        // CustomEventEmitter.add('favorite-books-changed', this.favoriteBooksChanged.bind(this))
+        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
     }
 
     connectedCallback() {
@@ -59,7 +59,7 @@ export default class Favorite extends HTMLElement {
         // this.$observer.disconnect();
     }
 
-    // favoriteBooksChanged({ detail }) {
+    // updateFavoriteBooksSize({ detail }) {
     //     this.count = detail.count
     // }
 

@@ -1,5 +1,5 @@
-import { CustomEventEmitter } from '../utils/index.js';
 import { addFavoriteBook, removeFavoriteBook, isFavoriteBook } from '../modules/model.js';
+import { updateFavoriteBooksSize } from '../modules/events.js';
 export default class CheckboxFavoriteBook extends HTMLElement {
     constructor() {
         super();
@@ -35,7 +35,8 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         else {
             removeFavoriteBook(ISBN);
         }
-        CustomEventEmitter.dispatch('favorite-books-changed');
+        // CustomEventEmitter.dispatch('favorite-books-changed')
+        updateFavoriteBooksSize();
     }
 }
 //# sourceMappingURL=CheckboxFavoriteBook.js.map

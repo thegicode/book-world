@@ -13,12 +13,12 @@ export default class NavGnb extends HTMLElement {
     connectedCallback(): void {
         this.render()
         this.setSelectedMenu()
-        CustomEventEmitter.add('favorite-books-changed', this.favoriteBooksChanged.bind(this))
+        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
 
     }
 
     disconnectedCallback(): void {
-        CustomEventEmitter.remove('favorite-books-changed', this.favoriteBooksChanged)
+        // CustomEventEmitter.remove('favorite-books-changed', this.updateFavoriteBooksSize)
     }
 
     private getFavoriteBooksSize(): number {
@@ -42,10 +42,10 @@ export default class NavGnb extends HTMLElement {
             this.querySelectorAll('a')[idx].ariaSelected = 'true'
     }
 
-    private favoriteBooksChanged(event: Event): void {
-        const customEvent = event as CustomEvent<{ size: number }>
-        const { size } = customEvent.detail
-        this.querySelector('.size')!.textContent = String(size || this.getFavoriteBooksSize())
-    }
+    // private updateFavoriteBooksSize(event: Event): void {
+    //     const customEvent = event as CustomEvent<{ size: number }>
+    //     const { size } = customEvent.detail
+    //     this.querySelector('.size')!.textContent = String(size || this.getFavoriteBooksSize())
+    // }
 
 }
