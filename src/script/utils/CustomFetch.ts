@@ -13,7 +13,7 @@ class CustomFetch {
         }
     }
 
-    async fetch(url: string, options?: RequestInit): Promise<unknown> {
+    async fetch<T = unknown>(url: string, options?: RequestInit): Promise<T> {
         const finalOptions: RequestInit & { timeout?: number} = {
             ...this.defaultOptions,
             ...options,
@@ -25,7 +25,7 @@ class CustomFetch {
                 throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`)
             } 
             const data = await response.json()
-            return data
+            return data as T
         } catch(error: unknown) {
             console.error(`Error fetching data: ${error}`)
             throw new Error(`Error fetching data: ${error}`)

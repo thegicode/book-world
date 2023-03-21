@@ -14,6 +14,10 @@ interface BookData {
     publisher: string
 }
 
+interface UsageAnalysisData {
+    book : BookData
+}
+
 export default class FavoriteItem extends HTMLElement {
 
     private libraryButton: HTMLButtonElement
@@ -43,7 +47,7 @@ export default class FavoriteItem extends HTMLElement {
     async fetchData(isbn: string) {
         const url = `/usage-analysis-list?isbn13=${isbn}`
         try {
-            const data = await CustomFetch.fetch(url)
+            const data = await CustomFetch.fetch<UsageAnalysisData>(url)
             this.render(data)
         } catch(error) {
             this.errorRender()

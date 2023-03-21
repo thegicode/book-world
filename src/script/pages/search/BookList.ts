@@ -88,7 +88,7 @@ export default class BookList extends HTMLElement {
 
         const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`
         try {
-            const data = await CustomFetch.fetch(url)
+            const data = await CustomFetch.fetch<Data>(url)
             this.render(data)
         } catch(error) {
             console.error(error)

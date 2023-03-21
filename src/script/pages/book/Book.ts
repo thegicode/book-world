@@ -47,7 +47,7 @@ export default class Book extends HTMLElement {
 
     async _fetchUsageAnalysisList(isbn: string): Promise<void> {
         try {
-            const data = await CustomFetch.fetch(
+            const data = await CustomFetch.fetch<UsageAnalysisListData>(
                 `/usage-analysis-list?isbn13=${isbn}`
             );
             this.data = data;

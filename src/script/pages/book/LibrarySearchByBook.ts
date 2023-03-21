@@ -11,6 +11,10 @@ interface LibrarySearchResult {
     libs: Library[];
 }
 
+interface BookExist {
+    loanAvailable: string
+}
+
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
         super();
@@ -46,7 +50,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         const url = `/library-search-by-book?${searchParams}`;
 
         try {
-            const data = await CustomFetch.fetch(url);
+            const data = await CustomFetch.fetch<LibrarySearchResult>(url);
             this.render(data, isbn);
         } catch (error) {
             console.error(error);
@@ -108,7 +112,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         const url = `/book-exist?${searchParams}`;
 
         try {
-            const data = await CustomFetch.fetch(url, {
+            const data = await CustomFetch.fetch<BookExist>(url, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });

@@ -14,6 +14,10 @@ interface CustomEvent<T> extends Event {
     detail: T;
 }
 
+interface LibrarySearchData {
+	libs: LibraryData[]
+}
+
 export default class Library extends HTMLElement {
 
 	private form: HTMLFormElement
@@ -34,7 +38,7 @@ export default class Library extends HTMLElement {
 	async fetchLibrarySearch(detailRegionCode: string) {
 		try {
 			const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`
-			const data = await CustomFetch.fetch(url)
+			const data = await CustomFetch.fetch<LibrarySearchData>(url)
 			this.render(data)
 		} catch(error) {
 			console.error(error)
