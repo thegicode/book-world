@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index & npm run css & npm run tsc",
-    "css": "npx sass --watch ./src/sass/:./dist/css/ --style=compressed --source-map",
+    "css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
     "tsc": "tsc -w",
     "eslint": "eslint src --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
