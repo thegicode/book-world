@@ -1,6 +1,4 @@
 
-// import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model'
-// import CustomEventEmitter from "../../modules/CustomEventEmitter"
 import { CustomEventEmitter } from '../../utils/index.js'
 import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model.js'
 
@@ -47,20 +45,25 @@ export default class SetDetailRegion extends HTMLElement {
         
         const fragment = new DocumentFragment()
         const template = (document.querySelector('#tp-favorite-region') as HTMLTemplateElement).content.firstElementChild
-		const container = this.querySelector('.regions')!
+		const container = this.querySelector('.regions') as HTMLElement
         container.innerHTML = ''
         favoriteRegions.forEach( key => {
-			const element = template!.cloneNode(true) as HTMLElement
-			element.querySelector('span')!.textContent = key
+            if (!template) return
+			const element = template.cloneNode(true) as HTMLElement
+            const spanElement = element.querySelector<HTMLElement>('span')
+            if (spanElement) spanElement.textContent = key
 			fragment.appendChild(element)
 		})
         container.appendChild(fragment)
 
-		const firstInput = container.querySelector('input')!
-		firstInput.checked = true
-        const label = (firstInput.nextElementSibling as HTMLElement).textContent || ''
-		this.renderDetailRegions(label)
-		this.changeRegion()
+		const firstInput = container.querySelector<HTMLInputElement>('input') 
+		if (firstInput) {
+            firstInput.checked = true
+            const label = (firstInput.nextElementSibling as HTMLElement).textContent || ''
+            this.renderDetailRegions(label)
+            this.changeRegion()
+        }
+
     }
 
     renderDetailRegions(regionName: string) { 
@@ -76,15 +79,19 @@ export default class SetDetailRegion extends HTMLElement {
 		const detailRegionData = this.regionData.detailRegion[regionName]
         if (!detailRegionData) return
 		for (const [key, value] of Object.entries(detailRegionData)) {
-            const element = template!.cloneNode(true) as HTMLElement
-            element.querySelector('span')!.textContent = key
-            const input = element.querySelector('input')!
-			input.value = value
-            if (regionCodes.includes(value)) {
-                input.checked = true
-                fragment.insertBefore(element, fragment.firstChild)
-            } else {
-                fragment.appendChild(element)
+            if (!template) return
+            const element = template.cloneNode(true) as HTMLElement
+            const spanElement = element.querySelector('span')
+            if (spanElement) spanElement.textContent = key
+            const input = element.querySelector<HTMLInputElement>('input')
+            if (input) {
+                input.value = value
+                if (regionCodes.includes(value)) {
+                    input.checked = true
+                    fragment.insertBefore(element, fragment.firstChild)
+                } else {
+                    fragment.appendChild(element)
+                }
             }
 		}
 		detailRegionsElement.appendChild(fragment)
@@ -98,7 +105,7 @@ export default class SetDetailRegion extends HTMLElement {
             const inputRadio = radio as HTMLInputElement
             inputRadio.addEventListener('change', () => {
 				if (inputRadio.checked) {
-                    const label = inputRadio.nextElementSibling!.textContent || ''
+                    const label = (inputRadio.nextElementSibling as HTMLElement).textContent || ''
 					this.renderDetailRegions(label)
 				}
 			})
@@ -115,7 +122,7 @@ export default class SetDetailRegion extends HTMLElement {
             const inputCheckbox = checkbox as HTMLInputElement
             inputCheckbox.addEventListener('change', () => {
                 const { value } = inputCheckbox 
-                const label = inputCheckbox.nextElementSibling!.textContent || ''
+                const label = (inputCheckbox.nextElementSibling as HTMLElement).textContent || ''
                 if (inputCheckbox.checked) {
                     addDetailRegion(region, label, value)
                 } else  {

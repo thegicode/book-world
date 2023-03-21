@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index & npm run css",
+    "start": "node index & npm run css & npm run tsc",
     "css": "npx sass --watch ./src/sass/:./dist/css/ --style=compressed --source-map",
     "tsc": "tsc -w",
     "eslint": "eslint src --ext .ts",

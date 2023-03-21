@@ -1,13 +1,22 @@
-// import Observer from "/js/utils/Observer"
-// import CustomFetch from "/js/utils/CustomFetch"
-// import CustomEventEmitter from '/js/utils/CustomEventEmitter'
 import BookItem from "./BookItem.js"
 import { Observer, CustomFetch, CustomEventEmitter } from '../../utils/index.js'
 
+interface BookItemData {
+    title: string
+    link: string
+    image: string
+    author: string
+    price: string
+    description: string
+    isbn: string
+    pubdate: string
+    publisher: string
+}
+
 interface Data {
-    total: number;
-    display: number;
-    items: any[];
+    total: number
+    display: number
+    items: BookItemData[]
 }
 
 export default class BookList extends HTMLElement {
@@ -20,21 +29,21 @@ export default class BookList extends HTMLElement {
 
     constructor() {
         super()
-        this._initializeProperties()
-        this._bindMethods()
+        this.initializeProperties()
+        this.bindMethods()
     }
 
-    _initializeProperties() {
+    private initializeProperties(): void {
         this.pagingInfo = this.querySelector('.paging-info') as HTMLElement
         this.books = this.querySelector('.books') as HTMLElement
     }
 
-    _bindMethods() {
+    private bindMethods(): void {
         this.fetchSearchNaverBook = this.fetchSearchNaverBook.bind(this)
     }
 
     connectedCallback() {
-        this._setupObserver()
+        this.setupObserver()
         CustomEventEmitter.add('search-page-init', this.onSearchPageInit.bind(this))
     }
 
@@ -43,56 +52,56 @@ export default class BookList extends HTMLElement {
         CustomEventEmitter.remove('search-page-init', this.onSearchPageInit)
     }
 
-    _setupObserver() {
+    private setupObserver(): void {
         const target = this.querySelector('.observe') as HTMLElement
         const callback = this.fetchSearchNaverBook
         this.observer = new Observer(target, callback)
     }
 
-    onSearchPageInit(event: Event) {
+    onSearchPageInit(event: Event): void {
         const customEvent = event as CustomEvent<{ keyword: string }>
         this.keyword = customEvent.detail.keyword
         this.length = 0
 
         if (this.keyword) { // onSubmit으로 들어온 경우와 브라우저 
-            this._handleKeywordPresent()
+            this.handleKeywordPresent()
             return
         } 
 
         // keyword 없을 때 기본 화면 노출, 브라우저
-        this._handleKeywordAbsent()
+        this.handleKeywordAbsent()
     }
 
-    _handleKeywordPresent() {
+    private handleKeywordPresent(): void {
         this.showMessage('loading')
         this.books.innerHTML = ''
         this.fetchSearchNaverBook()
     }
 
-    _handleKeywordAbsent() {
+    private handleKeywordAbsent(): void {
         this.pagingInfo.hidden = true
         this.showMessage('message')
     }
 
-    async fetchSearchNaverBook() {
+    async fetchSearchNaverBook(): Promise<void> {
         if (!this.keyword) return
 
         const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`
         try {
             const data = await CustomFetch.fetch(url)
-            this._render(data)
+            this.render(data)
         } catch(error) {
             console.error(error)
             throw new Error('Fail to get naver book.')
         }
     }
 
-    _render(data: Data) {
+    private render(data: Data): void {
         const { total, display, items } = data
         const prevLength = this.length
 
         this.length += Number(display)
-        this._updatePagingInfo({ total, display })
+        this.updatePagingInfo({ total, display })
 
         this.pagingInfo.hidden = false
 
@@ -101,14 +110,14 @@ export default class BookList extends HTMLElement {
             return
         }
 
-        this._appendBookItems(items, prevLength)
+        this.appendBookItems(items, prevLength)
 
         if (total !== this.length) {
-            this.observer!.observe()
+            this.observer?.observe()
         } 
     }
 
-    _updatePagingInfo({ total, display }: { total: number, display: number}) {
+    private updatePagingInfo({ total, display }: { total: number, display: number}) {
         const obj = {
             keyword: `${this.keyword}`,
             length: `${this.length.toLocaleString()}`,
@@ -116,16 +125,18 @@ export default class BookList extends HTMLElement {
             display: `${display}개씩`
         }
         for (const [key, value] of Object.entries(obj)) {
-            this.pagingInfo.querySelector(`.__${key}`)!.textContent = value
+            const element = this.pagingInfo.querySelector(`.__${key}`) as HTMLElement
+            element.textContent = value
         }
     }
 
-    _appendBookItems(items: any[], prevLength: number) {
+    private appendBookItems(items: BookItemData[], prevLength: number): void {
         const fragment = new DocumentFragment()
 
         items.forEach( (item, index) => {
-            const template = document.querySelector('[data-template=book-item]') as HTMLTemplateElement
-            const el = template.content.firstElementChild!.cloneNode(true) as BookItem
+            const template = (document.querySelector('[data-template=book-item]') as HTMLTemplateElement).content.firstElementChild
+            if (!template) return
+            const el = template.cloneNode(true) as BookItem
             el.data = item
             el.index = prevLength + index
             fragment.appendChild(el)
@@ -135,8 +146,9 @@ export default class BookList extends HTMLElement {
     }
 
     showMessage(type: string) {
-        const template = document.querySelector(`#tp-${type}`) as HTMLTemplateElement
-        const el = template.content.firstElementChild!.cloneNode(true)
+        const template = (document.querySelector(`#tp-${type}`) as HTMLTemplateElement).content.firstElementChild
+        if (!template) return
+        const el = template.cloneNode(true)
         this.books.innerHTML = ''
         this.books.appendChild(el)
     }

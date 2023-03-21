@@ -1,4 +1,9 @@
-class CustomEventEmitter {
+
+interface CustomEventDetail {
+    [key: string]: unknown;
+}
+
+class CustomEventEmitter<T extends CustomEventDetail>  {
     private _bus: HTMLDivElement
 
     constructor() {
@@ -13,7 +18,7 @@ class CustomEventEmitter {
         this._bus.removeEventListener(event, callback)
     }
 
-    dispatch(event: string, detail: Record<string, any> = {}): void {
+    dispatch(event: string, detail: T = {} as T): void {
         this._bus.dispatchEvent(new CustomEvent(event, { detail }))
     }
 }

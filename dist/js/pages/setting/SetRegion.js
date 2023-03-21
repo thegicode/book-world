@@ -20,7 +20,6 @@ export default class SetRegion extends HTMLElement {
     connectedCallback() {
         this.fetchRegion();
     }
-    disconnectedCallback() { }
     fetchRegion() {
         return __awaiter(this, void 0, void 0, function* () {
             const url = '../../json/region.json';
@@ -45,13 +44,17 @@ export default class SetRegion extends HTMLElement {
         const fragment = new DocumentFragment();
         const stateRegions = Object.keys(getState().regions);
         for (const [key, value] of Object.entries(regionData)) {
+            if (!template)
+                return;
             const element = template.cloneNode(true);
             const checkbox = element.querySelector('input');
             checkbox.value = value;
             if (stateRegions.includes(key)) {
                 checkbox.checked = true;
             }
-            element.querySelector('span').textContent = key;
+            const spanElement = element.querySelector('span');
+            if (spanElement)
+                spanElement.textContent = key;
             fragment.appendChild(element);
         }
         container.appendChild(fragment);

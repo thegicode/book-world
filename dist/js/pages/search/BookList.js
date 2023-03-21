@@ -11,18 +11,18 @@ import { Observer, CustomFetch, CustomEventEmitter } from '../../utils/index.js'
 export default class BookList extends HTMLElement {
     constructor() {
         super();
-        this._initializeProperties();
-        this._bindMethods();
+        this.initializeProperties();
+        this.bindMethods();
     }
-    _initializeProperties() {
+    initializeProperties() {
         this.pagingInfo = this.querySelector('.paging-info');
         this.books = this.querySelector('.books');
     }
-    _bindMethods() {
+    bindMethods() {
         this.fetchSearchNaverBook = this.fetchSearchNaverBook.bind(this);
     }
     connectedCallback() {
-        this._setupObserver();
+        this.setupObserver();
         CustomEventEmitter.add('search-page-init', this.onSearchPageInit.bind(this));
     }
     disconnectedCallback() {
@@ -30,7 +30,7 @@ export default class BookList extends HTMLElement {
         (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
         CustomEventEmitter.remove('search-page-init', this.onSearchPageInit);
     }
-    _setupObserver() {
+    setupObserver() {
         const target = this.querySelector('.observe');
         const callback = this.fetchSearchNaverBook;
         this.observer = new Observer(target, callback);
@@ -40,18 +40,18 @@ export default class BookList extends HTMLElement {
         this.keyword = customEvent.detail.keyword;
         this.length = 0;
         if (this.keyword) { // onSubmit으로 들어온 경우와 브라우저 
-            this._handleKeywordPresent();
+            this.handleKeywordPresent();
             return;
         }
         // keyword 없을 때 기본 화면 노출, 브라우저
-        this._handleKeywordAbsent();
+        this.handleKeywordAbsent();
     }
-    _handleKeywordPresent() {
+    handleKeywordPresent() {
         this.showMessage('loading');
         this.books.innerHTML = '';
         this.fetchSearchNaverBook();
     }
-    _handleKeywordAbsent() {
+    handleKeywordAbsent() {
         this.pagingInfo.hidden = true;
         this.showMessage('message');
     }
@@ -62,7 +62,7 @@ export default class BookList extends HTMLElement {
             const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`;
             try {
                 const data = yield CustomFetch.fetch(url);
-                this._render(data);
+                this.render(data);
             }
             catch (error) {
                 console.error(error);
@@ -70,22 +70,23 @@ export default class BookList extends HTMLElement {
             }
         });
     }
-    _render(data) {
+    render(data) {
+        var _a;
         const { total, display, items } = data;
         const prevLength = this.length;
         this.length += Number(display);
-        this._updatePagingInfo({ total, display });
+        this.updatePagingInfo({ total, display });
         this.pagingInfo.hidden = false;
         if (total === 0) {
             this.showMessage('notFound');
             return;
         }
-        this._appendBookItems(items, prevLength);
+        this.appendBookItems(items, prevLength);
         if (total !== this.length) {
-            this.observer.observe();
+            (_a = this.observer) === null || _a === void 0 ? void 0 : _a.observe();
         }
     }
-    _updatePagingInfo({ total, display }) {
+    updatePagingInfo({ total, display }) {
         const obj = {
             keyword: `${this.keyword}`,
             length: `${this.length.toLocaleString()}`,
@@ -93,14 +94,17 @@ export default class BookList extends HTMLElement {
             display: `${display}개씩`
         };
         for (const [key, value] of Object.entries(obj)) {
-            this.pagingInfo.querySelector(`.__${key}`).textContent = value;
+            const element = this.pagingInfo.querySelector(`.__${key}`);
+            element.textContent = value;
         }
     }
-    _appendBookItems(items, prevLength) {
+    appendBookItems(items, prevLength) {
         const fragment = new DocumentFragment();
         items.forEach((item, index) => {
-            const template = document.querySelector('[data-template=book-item]');
-            const el = template.content.firstElementChild.cloneNode(true);
+            const template = document.querySelector('[data-template=book-item]').content.firstElementChild;
+            if (!template)
+                return;
+            const el = template.cloneNode(true);
             el.data = item;
             el.index = prevLength + index;
             fragment.appendChild(el);
@@ -108,8 +112,10 @@ export default class BookList extends HTMLElement {
         this.books.appendChild(fragment);
     }
     showMessage(type) {
-        const template = document.querySelector(`#tp-${type}`);
-        const el = template.content.firstElementChild.cloneNode(true);
+        const template = document.querySelector(`#tp-${type}`).content.firstElementChild;
+        if (!template)
+            return;
+        const el = template.cloneNode(true);
         this.books.innerHTML = '';
         this.books.appendChild(el);
     }

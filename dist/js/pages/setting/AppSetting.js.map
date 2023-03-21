@@ -1,1 +1,1 @@
-{"version":3,"file":"AppSetting.js","sourceRoot":"","sources":["../../../../src/script/pages/setting/AppSetting.ts"],"names":[],"mappings":"AACA,MAAM,CAAC,OAAO,OAAO,UAAW,SAAQ,WAAW;IAC/C;QACI,KAAK,EAAE,CAAA;IACX,CAAC;IAED,iBAAiB;IACjB,CAAC;IAED,oBAAoB;IACpB,CAAC;CAEJ"}
+{"version":3,"file":"AppSetting.js","sourceRoot":"","sources":["../../../../src/script/pages/setting/AppSetting.ts"],"names":[],"mappings":"AACA,MAAM,CAAC,OAAO,OAAO,UAAW,SAAQ,WAAW;IAC/C;QACI,KAAK,EAAE,CAAA;IACX,CAAC;CAQJ"}

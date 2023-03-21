@@ -13,7 +13,7 @@ class CustomFetch {
         }
     }
 
-    async fetch(url: string, options?: RequestInit): Promise<any> {
+    async fetch(url: string, options?: RequestInit): Promise<unknown> {
         const finalOptions: RequestInit & { timeout?: number} = {
             ...this.defaultOptions,
             ...options,

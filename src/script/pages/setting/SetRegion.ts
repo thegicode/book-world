@@ -24,8 +24,6 @@ export default class SetRegion extends HTMLElement {
         this.fetchRegion()
     }
 
-    disconnectedCallback() {}
-  
     async fetchRegion() {
 		const url = '../../json/region.json'
 		try {
@@ -51,13 +49,15 @@ export default class SetRegion extends HTMLElement {
 
         const stateRegions = Object.keys(getState().regions)
 		for (const [ key, value ] of Object.entries(regionData)) {
-			const element = template!.cloneNode(true) as HTMLElement
+            if (!template) return
+			const element = template.cloneNode(true) as HTMLElement
             const checkbox = element.querySelector('input') as HTMLInputElement
 			checkbox.value = value
             if (stateRegions.includes(key)) {
                 checkbox.checked = true
             }
-			element.querySelector('span')!.textContent = key
+            const spanElement = element.querySelector('span')
+			if (spanElement) spanElement.textContent = key
 			fragment.appendChild(element)
 		}
         container.appendChild(fragment)
@@ -69,7 +69,7 @@ export default class SetRegion extends HTMLElement {
         const checkboxes = this.querySelectorAll<HTMLInputElement>('[name=region]')
         checkboxes.forEach( checkbox => {
             checkbox.addEventListener('change', () => {
-                const key = checkbox.nextElementSibling!.textContent || ''
+                const key = (checkbox.nextElementSibling as HTMLElement).textContent || ''
                 if (checkbox.checked) {
                     addRegion(key)
                 } else {

@@ -4,10 +4,10 @@ export default class AppSetting extends HTMLElement {
         super()
     }
 
-    connectedCallback() {
-    }
+    // connectedCallback() {
+    // }
 
-    disconnectedCallback() {
-    }
+    // disconnectedCallback() {
+    // }
 
 }

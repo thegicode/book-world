@@ -1,5 +1,3 @@
-// import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model'
-// import CustomEventEmitter from "../../modules/CustomEventEmitter"
 import { CustomEventEmitter } from '../../utils/index.js';
 import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model.js';
 export default class SetDetailRegion extends HTMLElement {
@@ -30,16 +28,22 @@ export default class SetDetailRegion extends HTMLElement {
         const container = this.querySelector('.regions');
         container.innerHTML = '';
         favoriteRegions.forEach(key => {
+            if (!template)
+                return;
             const element = template.cloneNode(true);
-            element.querySelector('span').textContent = key;
+            const spanElement = element.querySelector('span');
+            if (spanElement)
+                spanElement.textContent = key;
             fragment.appendChild(element);
         });
         container.appendChild(fragment);
         const firstInput = container.querySelector('input');
-        firstInput.checked = true;
-        const label = firstInput.nextElementSibling.textContent || '';
-        this.renderDetailRegions(label);
-        this.changeRegion();
+        if (firstInput) {
+            firstInput.checked = true;
+            const label = firstInput.nextElementSibling.textContent || '';
+            this.renderDetailRegions(label);
+            this.changeRegion();
+        }
     }
     renderDetailRegions(regionName) {
         const detailRegionsElement = this.querySelector('.detailRegions');
@@ -54,16 +58,22 @@ export default class SetDetailRegion extends HTMLElement {
         if (!detailRegionData)
             return;
         for (const [key, value] of Object.entries(detailRegionData)) {
+            if (!template)
+                return;
             const element = template.cloneNode(true);
-            element.querySelector('span').textContent = key;
+            const spanElement = element.querySelector('span');
+            if (spanElement)
+                spanElement.textContent = key;
             const input = element.querySelector('input');
-            input.value = value;
-            if (regionCodes.includes(value)) {
-                input.checked = true;
-                fragment.insertBefore(element, fragment.firstChild);
-            }
-            else {
-                fragment.appendChild(element);
+            if (input) {
+                input.value = value;
+                if (regionCodes.includes(value)) {
+                    input.checked = true;
+                    fragment.insertBefore(element, fragment.firstChild);
+                }
+                else {
+                    fragment.appendChild(element);
+                }
             }
         }
         detailRegionsElement.appendChild(fragment);
