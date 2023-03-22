@@ -15,7 +15,9 @@ export default class BookImage extends HTMLElement {
     }
     // search : dataset
     render() {
-        const data = this.dataset.object && JSON.parse(this.dataset.object);
+        const data = this.dataset.object
+            ? JSON.parse(this.dataset.object)
+            : null;
         let imageSrc = "";
         let imageAlt = "";
         if (data) {

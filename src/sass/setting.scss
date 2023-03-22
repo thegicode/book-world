@@ -1,15 +1,15 @@
-@import './_reset.scss';
-@import './_gnb.scss';
+@import "./_reset.scss";
+@import "./_gnb.scss";
 
 .root {
-	display: flex;
+    display: flex;
     flex-direction: column;
-	height: 100%;
+    height: 100%;
 }
 
 app-setting {
     overflow: auto;
-	height: 100%;
+    height: 100%;
 }
 
 h1 {
@@ -45,7 +45,7 @@ favorite-regions {
         margin: 5px 0;
         padding: 1rem;
         border-radius: 10px;
-        border: 1px solid #ebf3e7;
+        border: 3px solid #c6e7b6;
         background-color: #f4fcee;
     }
     h3 {

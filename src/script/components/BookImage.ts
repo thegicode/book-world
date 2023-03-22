@@ -1,10 +1,15 @@
+type BookImageData = {
+    bookImageURL: string;
+    bookname: string;
+};
+
 export default class BookImage extends HTMLElement {
     constructor() {
         super();
     }
 
     // 즐겨찾기, 상세
-    set data(objectData: { bookImageURL: string; bookname: string }) {
+    set data(objectData: BookImageData) {
         this.dataset.object = JSON.stringify(objectData);
 
         const imgElement = this.querySelector("img");
@@ -19,7 +24,9 @@ export default class BookImage extends HTMLElement {
 
     // search : dataset
     private render(): void {
-        const data = this.dataset.object && JSON.parse(this.dataset.object);
+        const data: BookImageData | null = this.dataset.object
+            ? JSON.parse(this.dataset.object)
+            : null;
 
         let imageSrc = "";
         let imageAlt = "";
