@@ -1,12 +1,7 @@
+import { IStorageData } from "../../modules/types.js";
 import { CustomFetch } from "../../utils/index.js";
 import { setState } from "../../modules/model.js";
 import { updateFavoriteBooksSize } from "../../modules/events.js";
-
-interface StorageData {
-    favoriteBooks: string[];
-    libraries: Record<string, string>;
-    regions: Record<string, Record<string, string>>;
-}
 
 export default class SetStorage extends HTMLElement {
     storageButton: HTMLButtonElement;
@@ -44,7 +39,7 @@ export default class SetStorage extends HTMLElement {
     async setLocalStorageToBase() {
         const url = `../../json/storage-sample.json`;
         try {
-            const data = await CustomFetch.fetch<StorageData>(url);
+            const data = await CustomFetch.fetch<IStorageData>(url);
             setState(data);
             console.log("Saved local stronage by base data!");
             // CustomEventEmitter.dispatch('favorite-books-changed')

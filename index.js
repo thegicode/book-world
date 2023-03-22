@@ -1,205 +1,205 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
-const express = require('express');
-const fs = require('fs')
-const path = require('path')
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 const port = 7777;
 
 app.use(express.static(`${__dirname}/src/`));
 
-const { libKey, naverKey } = require("./user.js")
+const { libKey, naverKey } = require("./user.js");
 
 /** NAVER */
 
 // 키워드 검색
-app.get('/search-naver-book', async (req, res) => {
-    const { keyword, display, start } = req.query
+app.get("/search-naver-book", async (req, res) => {
+    const { keyword, display, start } = req.query;
     const queryParams = new URLSearchParams({
         query: keyword,
-        display, 
-        start
-    })
+        display,
+        start,
+    });
     const headers = {
         "X-Naver-Client-Id": naverKey.clientID,
-        "X-Naver-Client-Secret": naverKey.clientSecret
-    }
-    const url = `https://openapi.naver.com/v1/search/book.json?${queryParams}`
+        "X-Naver-Client-Secret": naverKey.clientSecret,
+    };
+    const url = `https://openapi.naver.com/v1/search/book.json?${queryParams}`;
     try {
-        const response = await fetch(url, { headers })
+        const response = await fetch(url, { headers });
         if (!response.ok) {
-            throw new Error(`Failed to get books from Naver: ${response.statusText}`)
+            throw new Error(
+                `Failed to get books from Naver: ${response.statusText}`
+            );
         }
-        const data = await response.json()
-        const { total, start, display, items } = data
-        res.send({ total, start, display, items })
+        const data = await response.json();
+        const { total, start, display, items } = data;
+        res.send({ total, start, display, items });
     } catch (error) {
-        console.error(error)
-        res.status(500).send('Failed to get books from Naver')
+        console.error(error);
+        res.status(500).send("Failed to get books from Naver");
     }
-})
-
+});
 
 /** 도서관 정보나루 */
-const host = 'http://data4library.kr/api'
-const authKey = `authKey=${libKey}`
+const host = "http://data4library.kr/api";
+const authKey = `authKey=${libKey}`;
 // const authToken = `Bearer ${libKey}`
-const formatType = 'json'
+const formatType = "json";
 
 // 정보공개 도서관 조회
-app.get('/library-search', async (req, res) => {
-    const { dtl_region, page, pageSize } = req.query
+app.get("/library-search", async (req, res) => {
+    const { dtl_region, page, pageSize } = req.query;
     const queryParams = new URLSearchParams({
         dtl_region,
         pageNo: page,
         pageSize,
-        format: formatType
-    })
-    const url = `${host}/libSrch?${authKey}&${queryParams}`
+        format: formatType,
+    });
+    const url = `${host}/libSrch?${authKey}&${queryParams}`;
     try {
-        const response = await fetch(url)
+        const response = await fetch(url);
         if (!response.ok) {
-            throw new Error(`Failed to get library search data: ${response.statusText}`)
+            throw new Error(
+                `Failed to get library search data: ${response.statusText}`
+            );
         }
-        const data = await response.json()
-        const { pageNo, pageSize, numFound, resultNum, libs } = data.response
+        const data = await response.json();
+        const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
         const formattedData = {
-            pageNo, 
-            pageSize, 
-            numFound, 
-            resultNum, 
-            libs: libs.map(item => item.lib)
-        }
-        res.send(formattedData)
+            pageNo,
+            pageSize,
+            numFound,
+            resultNum,
+            libraries: libs.map((item) => item.lib),
+        };
+        res.send(formattedData);
     } catch (error) {
-        console.error(error)
-        res.status(500).send('Failed to get library search data')
+        console.error(error);
+        res.status(500).send("Failed to get library search data");
     }
-})
+});
 
 // 지정 도서관, 책 소장 & 대출 가능 여부
-app.get('/book-exist', async (req, res) => {
-    const { isbn13, libCode } = req.query
+app.get("/book-exist", async (req, res) => {
+    const { isbn13, libCode } = req.query;
     const queryParams = new URLSearchParams({
         isbn13,
         libCode,
-        format: formatType
-    })
-    const url = `${host}/bookExist?${authKey}&${queryParams}`
+        format: formatType,
+    });
+    const url = `${host}/bookExist?${authKey}&${queryParams}`;
     try {
-        const response = await fetch(url)
+        const response = await fetch(url);
         if (!response.ok) {
-            throw new Error(`Failed to check book exist data: ${response.statusText}`)
+            throw new Error(
+                `Failed to check book exist data: ${response.statusText}`
+            );
         }
-        const data = await response.json()
-        const result = data.response?.result
+        const data = await response.json();
+        const result = data.response?.result;
         // console.log(result)
 
-        res.send(result)
+        res.send(result);
     } catch (error) {
-        console.error(error)
-        res.status(500).send('Failed to check book exist data')
+        console.error(error);
+        res.status(500).send("Failed to check book exist data");
     }
-})
+});
 
 // 도서별 이용 분석
-app.get('/usage-analysis-list', async (req, res) => {
-    const { isbn13 } = req.query
+app.get("/usage-analysis-list", async (req, res) => {
+    const { isbn13 } = req.query;
     const params = new URLSearchParams({
-        isbn13, 
-        loaninfoYN: 'Y',
-        format: formatType
-    })
-    const url = `${host}/usageAnalysisList?${authKey}&${params}`
+        isbn13,
+        loaninfoYN: "Y",
+        format: formatType,
+    });
+    const url = `${host}/usageAnalysisList?${authKey}&${params}`;
     try {
-        const response = await fetch(url)
+        const response = await fetch(url);
         if (!response.ok) {
-            throw new Error(`Failed to get usage analysis list data: ${response.statusText} `)
+            throw new Error(
+                `Failed to get usage analysis list data: ${response.statusText} `
+            );
         }
-        const data = await response.json()
-        const { 
-            book, 
-            loanHistory,
-            loanGrps,
-            keywords,
-            recBooks,
-            coLoanBooks 
-        } = data.response
+        const data = await response.json();
+        const { book, loanHistory, loanGrps, keywords, recBooks, coLoanBooks } =
+            data.response;
 
-        const loanHistoryItems = loanHistory.map(item => item.loan)
-        const loanGrpsItems = loanGrps.map(item => item.loanGrp)
-        const keywordsItems = keywords.map(item => item.keyword)
-        const recBooksItems = recBooks.map(item => item.book)
-        const coLoanBooksItems = coLoanBooks.map(item => item.book)
+        const loanHistoryItems = loanHistory.map((item) => item.loan);
+        const loanGrpsItems = loanGrps.map((item) => item.loanGrp);
+        const keywordsItems = keywords.map((item) => item.keyword);
+        const recBooksItems = recBooks.map((item) => item.book);
+        const coLoanBooksItems = coLoanBooks.map((item) => item.book);
 
         res.send({
-            book, 
+            book,
             loanHistory: loanHistoryItems,
             loanGrps: loanGrpsItems,
             keywords: keywordsItems,
             recBooks: recBooksItems,
-            coLoanBooks: coLoanBooksItems
-        })
+            coLoanBooks: coLoanBooksItems,
+        });
     } catch (error) {
-        console.error(error)
-        res.status(500).send('Failed to get usage analysis list data')
+        console.error(error);
+        res.status(500).send("Failed to get usage analysis list data");
     }
-})
-
+});
 
 // 도서 소장 도서관 조회
-app.get('/library-search-by-book', async (req, res)=> {
-    const { isbn, region, dtl_region } = req.query
+app.get("/library-search-by-book", async (req, res) => {
+    const { isbn, region, dtl_region } = req.query;
     const params = new URLSearchParams({
-        isbn, 
-        region, 
+        isbn,
+        region,
         dtl_region,
-        format: formatType
-    })
-    const url = `${host}/libSrchByBook?${authKey}&${params}`
+        format: formatType,
+    });
+    const url = `${host}/libSrchByBook?${authKey}&${params}`;
     try {
-        const response = await fetch(url, { method : 'GET' })
+        const response = await fetch(url, { method: "GET" });
         if (!response.ok) {
-            throw new Error(`Failed to get library data: ${response.statusText}`)
+            throw new Error(
+                `Failed to get library data: ${response.statusText}`
+            );
         }
-        const data = await response.json()
-        const { pageNo, pageSize, numFound, resultNum, libs } = data.response
+        const data = await response.json();
+        const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
         res.send({
-            pageNo, 
-            pageSize, 
-            numFound, 
-            resultNum, 
-            libs: libs.map(item => item.lib)
-        })
+            pageNo,
+            pageSize,
+            numFound,
+            resultNum,
+            libraries: libs.map((item) => item.lib),
+        });
     } catch (error) {
-        console.error(error)
-        res.status(500).send('Failed to get library data')
+        console.error(error);
+        res.status(500).send("Failed to get library data");
     }
-})
-
+});
 
 // Router
-const routes = ['favorite', 'library', 'search', 'book', 'setting']
+const routes = ["favorite", "library", "search", "book", "setting"];
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
-        console.log('route:', `/${route}`)
+        console.log("route:", `/${route}`);
 
-        const htmlPath = path.resolve(__dirname, `src/html/${route}.html`)
-        fs.readFile(htmlPath, 'utf8', (err, data) => {
+        const htmlPath = path.resolve(__dirname, `src/html/${route}.html`);
+        fs.readFile(htmlPath, "utf8", (err, data) => {
             if (err) {
-                console.error(err)
-                return res.status(500).send('Failed to load HTML file')
+                console.error(err);
+                return res.status(500).send("Failed to load HTML file");
             }
-            res.send(data)
-        })
-    })
-})
+            res.send(data);
+        });
+    });
+});
 
 app.listen(port, () => {
     console.log(`Start : http://localhost:${port}`);
 });
-
 
 // 111007 고덕도서관
 
@@ -208,7 +208,7 @@ app.listen(port, () => {
 //     const { libCode, keyword } = req.query
 
 //     // console.log(keyword, libCode)
-    
+
 //     const lib = `libCode=${libCode}`
 //     const keywordStr = `keyword=${encodeURIComponent(keyword)}`
 
@@ -223,7 +223,6 @@ app.listen(port, () => {
 //             console.error(error)
 //         })
 // });
-
 
 // 도서 상세 조회
 // app.get('/srchDtlList', function(req, res) {

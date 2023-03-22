@@ -1,7 +1,4 @@
-type BookImageData = {
-    bookImageURL: string;
-    bookname: string;
-};
+import { IBookImageData } from "../modules/types.js";
 
 export default class BookImage extends HTMLElement {
     constructor() {
@@ -9,7 +6,7 @@ export default class BookImage extends HTMLElement {
     }
 
     // 즐겨찾기, 상세
-    set data(objectData: BookImageData) {
+    set data(objectData: IBookImageData) {
         this.dataset.object = JSON.stringify(objectData);
 
         const imgElement = this.querySelector("img");
@@ -24,7 +21,7 @@ export default class BookImage extends HTMLElement {
 
     // search : dataset
     private render(): void {
-        const data: BookImageData | null = this.dataset.object
+        const data: IBookImageData | null = this.dataset.object
             ? JSON.parse(this.dataset.object)
             : null;
 

@@ -1,17 +1,6 @@
+import { IBookExist, ILibrarySearchByBookResult } from "../../modules/types.js";
 import { CustomFetch } from "../../utils/index.js";
 import { getState } from "../../modules/model.js";
-
-interface LibrarySearchResult {
-    libs: {
-        homepage: string;
-        libCode: string;
-        libName: string;
-    }[];
-}
-
-type BookExist = {
-    loanAvailable: string;
-};
 
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
@@ -48,7 +37,9 @@ export default class LibrarySearchByBook extends HTMLElement {
         const url = `/library-search-by-book?${searchParams}`;
 
         try {
-            const data = await CustomFetch.fetch<LibrarySearchResult>(url);
+            const data = await CustomFetch.fetch<ILibrarySearchByBookResult>(
+                url
+            );
             this.render(data, isbn);
         } catch (error) {
             console.error(error);
@@ -56,8 +47,11 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    private render({ libs }: LibrarySearchResult, isbn: string): void {
-        if (libs.length < 1) return;
+    private render(
+        { libraries }: ILibrarySearchByBookResult,
+        isbn: string
+    ): void {
+        if (libraries.length < 1) return;
 
         const container = document.querySelector(".library-search-by-book");
         if (!container) return;
@@ -65,7 +59,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         const listElement = document.createElement("ul");
         const fragment = new DocumentFragment();
 
-        libs.forEach(({ homepage, libCode, libName }) => {
+        libraries.forEach(({ homepage, libCode, libName }) => {
             const template = document.querySelector(
                 "#tp-librarySearchByBookItem"
             ) as HTMLTemplateElement;
@@ -120,7 +114,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         const url = `/book-exist?${searchParams}`;
 
         try {
-            const data = await CustomFetch.fetch<BookExist>(url, {
+            const data = await CustomFetch.fetch<IBookExist>(url, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });

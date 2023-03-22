@@ -1,3 +1,4 @@
+import { IBook, IUsageAnalysisResult } from "../../modules/types.js";
 import { CustomFetch } from "../../utils/index.js";
 import { state } from "../../modules/model.js";
 import {
@@ -6,26 +7,10 @@ import {
     LibraryBookExist,
 } from "../../components/index.js";
 
-interface BookData {
-    authors: string;
-    bookImageURL: string;
-    bookname: string;
-    class_nm: string;
-    description: string;
-    isbn13: string;
-    loanCnt: string;
-    publication_year: string;
-    publisher: string;
-}
-
-interface UsageAnalysisData {
-    book: BookData;
-}
-
 export default class FavoriteItem extends HTMLElement {
     private libraryButton: HTMLButtonElement;
     private link: HTMLElement;
-    private linkData: { book: BookData } | undefined;
+    private linkData: { book: IBook } | undefined;
 
     constructor() {
         super();
@@ -51,7 +36,7 @@ export default class FavoriteItem extends HTMLElement {
     async fetchData(isbn: string) {
         const url = `/usage-analysis-list?isbn13=${isbn}`;
         try {
-            const data = await CustomFetch.fetch<UsageAnalysisData>(url);
+            const data = await CustomFetch.fetch<IUsageAnalysisResult>(url);
             this.render(data);
         } catch (error) {
             this.errorRender();
@@ -60,7 +45,7 @@ export default class FavoriteItem extends HTMLElement {
         }
     }
 
-    render(data: { book: BookData }) {
+    render(data: { book: IBook }) {
         const {
             book,
             // loanHistory,

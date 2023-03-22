@@ -49,15 +49,15 @@ export default class LibrarySearchByBook extends HTMLElement {
             }
         });
     }
-    render({ libs }, isbn) {
-        if (libs.length < 1)
+    render({ libraries }, isbn) {
+        if (libraries.length < 1)
             return;
         const container = document.querySelector(".library-search-by-book");
         if (!container)
             return;
         const listElement = document.createElement("ul");
         const fragment = new DocumentFragment();
-        libs.forEach(({ homepage, libCode, libName }) => {
+        libraries.forEach(({ homepage, libCode, libName }) => {
             var _a;
             const template = document.querySelector("#tp-librarySearchByBookItem");
             if (!template)

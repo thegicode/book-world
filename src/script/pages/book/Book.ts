@@ -1,37 +1,10 @@
+import { IUsageAnalysisListData } from "../../modules/types.js";
 import { BookImage } from "../../components/index.js";
 import { CustomFetch } from "../../utils/index.js";
 
-interface BookData {
-    bookname: string;
-    authors: string;
-    bookImageURL: string;
-    class_nm: string;
-    class_no: string;
-    description: string;
-    isbn13: string;
-    loanCnt: number;
-    publication_year: string;
-    publisher: string;
-}
-
-interface KeywordData {
-    word: string;
-}
-
-interface RecBookData {
-    bookname: string;
-    isbn13: string;
-}
-
-interface UsageAnalysisListData {
-    book: BookData;
-    keywords: KeywordData[];
-    recBooks: RecBookData[];
-}
-
 export default class Book extends HTMLElement {
     private loadingElement: HTMLElement;
-    private data: UsageAnalysisListData | null;
+    private data: IUsageAnalysisListData | null;
 
     constructor() {
         super();
@@ -47,7 +20,7 @@ export default class Book extends HTMLElement {
 
     private async fetchUsageAnalysisList(isbn: string): Promise<void> {
         try {
-            const data = await CustomFetch.fetch<UsageAnalysisListData>(
+            const data = await CustomFetch.fetch<IUsageAnalysisListData>(
                 `/usage-analysis-list?isbn13=${isbn}`
             );
             this.data = data;

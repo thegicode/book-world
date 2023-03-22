@@ -1,3 +1,4 @@
+import { ISearchBook } from "../../modules/types.js";
 import { state } from "../../modules/model.js";
 import {
     BookDescription,
@@ -5,22 +6,11 @@ import {
     LibraryBookExist,
 } from "../../components/index.js";
 
-interface BookData {
-    author: string;
-    description: string;
-    image: string;
-    isbn: string;
-    link: string;
-    pubdate: string;
-    publisher: string;
-    title: string;
-}
-
 export default class BookItem extends HTMLElement {
     libraryButton!: HTMLButtonElement;
     libraryBookExist!: LibraryBookExist;
     link!: HTMLElement;
-    data!: BookData;
+    data!: ISearchBook;
     index!: number;
 
     constructor() {

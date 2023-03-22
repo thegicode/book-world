@@ -1,6 +1,6 @@
 class CustomEventEmitter {
     constructor() {
-        this._bus = document.createElement('div');
+        this._bus = document.createElement("div");
     }
     add(event, callback) {
         this._bus.addEventListener(event, callback);

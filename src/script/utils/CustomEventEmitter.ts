@@ -1,26 +1,23 @@
+import { ICustomEventDetail } from "../modules/types.js";
 
-interface CustomEventDetail {
-    [key: string]: unknown;
-}
-
-class CustomEventEmitter<T extends CustomEventDetail>  {
-    private _bus: HTMLDivElement
+class CustomEventEmitter<T extends ICustomEventDetail> {
+    private _bus: HTMLDivElement;
 
     constructor() {
-        this._bus = document.createElement('div')
+        this._bus = document.createElement("div");
     }
 
-    add(event: string, callback: EventListenerOrEventListenerObject):void {
-        this._bus.addEventListener(event, callback)
+    add(event: string, callback: EventListenerOrEventListenerObject): void {
+        this._bus.addEventListener(event, callback);
     }
 
     remove(event: string, callback: EventListenerOrEventListenerObject) {
-        this._bus.removeEventListener(event, callback)
+        this._bus.removeEventListener(event, callback);
     }
 
     dispatch(event: string, detail: T = {} as T): void {
-        this._bus.dispatchEvent(new CustomEvent(event, { detail }))
+        this._bus.dispatchEvent(new CustomEvent(event, { detail }));
     }
 }
 
-export default new CustomEventEmitter()
+export default new CustomEventEmitter();

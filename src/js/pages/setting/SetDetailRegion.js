@@ -1,18 +1,18 @@
-import { CustomEventEmitter } from '../../utils/index.js';
-import { getState, addRegion, addDetailRegion, removeDetailRegion } from '../../modules/model.js';
+import { CustomEventEmitter } from "../../utils/index.js";
+import { getState, addRegion, addDetailRegion, removeDetailRegion, } from "../../modules/model.js";
 export default class SetDetailRegion extends HTMLElement {
     constructor() {
         super();
         this.regionData = null;
-        this.region = '';
+        this.region = "";
     }
     connectedCallback() {
-        CustomEventEmitter.add('fetch-region-data', this.setRegionData.bind(this));
-        CustomEventEmitter.add('set-favorite-regions', this.renderRegion.bind(this));
+        CustomEventEmitter.add("fetch-region-data", this.setRegionData.bind(this));
+        CustomEventEmitter.add("set-favorite-regions", this.renderRegion.bind(this));
     }
     disconnectedCallback() {
-        CustomEventEmitter.remove('fetch-region-data', this.setRegionData);
-        CustomEventEmitter.remove('set-favorite-regions', this.renderRegion);
+        CustomEventEmitter.remove("fetch-region-data", this.setRegionData);
+        CustomEventEmitter.remove("set-favorite-regions", this.renderRegion);
     }
     setRegionData(event) {
         const customEvent = event;
@@ -24,35 +24,36 @@ export default class SetDetailRegion extends HTMLElement {
         if (favoriteRegions.length < 1)
             return;
         const fragment = new DocumentFragment();
-        const template = document.querySelector('#tp-favorite-region').content.firstElementChild;
-        const container = this.querySelector('.regions');
-        container.innerHTML = '';
-        favoriteRegions.forEach(key => {
+        const template = document.querySelector("#tp-favorite-region").content.firstElementChild;
+        const container = this.querySelector(".regions");
+        container.innerHTML = "";
+        favoriteRegions.forEach((key) => {
             if (!template)
                 return;
             const element = template.cloneNode(true);
-            const spanElement = element.querySelector('span');
+            const spanElement = element.querySelector("span");
             if (spanElement)
                 spanElement.textContent = key;
             fragment.appendChild(element);
         });
         container.appendChild(fragment);
-        const firstInput = container.querySelector('input');
+        const firstInput = container.querySelector("input");
         if (firstInput) {
             firstInput.checked = true;
-            const label = firstInput.nextElementSibling.textContent || '';
+            const label = firstInput.nextElementSibling.textContent ||
+                "";
             this.renderDetailRegions(label);
             this.changeRegion();
         }
     }
     renderDetailRegions(regionName) {
-        const detailRegionsElement = this.querySelector('.detailRegions');
+        const detailRegionsElement = this.querySelector(".detailRegions");
         if (!this.regionData)
             return;
         const regionObj = getState().regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
-        const template = document.querySelector('#tp-detail-region').content.firstElementChild;
-        detailRegionsElement.innerHTML = '';
+        const template = document.querySelector("#tp-detail-region").content.firstElementChild;
+        detailRegionsElement.innerHTML = "";
         const fragment = new DocumentFragment();
         const detailRegionData = this.regionData.detailRegion[regionName];
         if (!detailRegionData)
@@ -61,10 +62,10 @@ export default class SetDetailRegion extends HTMLElement {
             if (!template)
                 return;
             const element = template.cloneNode(true);
-            const spanElement = element.querySelector('span');
+            const spanElement = element.querySelector("span");
             if (spanElement)
                 spanElement.textContent = key;
-            const input = element.querySelector('input');
+            const input = element.querySelector("input");
             if (input) {
                 input.value = value;
                 if (regionCodes.includes(value)) {
@@ -81,12 +82,13 @@ export default class SetDetailRegion extends HTMLElement {
         this.onChangeDetail();
     }
     changeRegion() {
-        const regionRadios = this.querySelectorAll('[name=favorite-region]');
+        const regionRadios = this.querySelectorAll("[name=favorite-region]");
         Array.from(regionRadios).forEach((radio) => {
             const inputRadio = radio;
-            inputRadio.addEventListener('change', () => {
+            inputRadio.addEventListener("change", () => {
                 if (inputRadio.checked) {
-                    const label = inputRadio.nextElementSibling.textContent || '';
+                    const label = inputRadio.nextElementSibling
+                        .textContent || "";
                     this.renderDetailRegions(label);
                 }
             });
@@ -97,19 +99,20 @@ export default class SetDetailRegion extends HTMLElement {
         if (!getState().regions[region]) {
             addRegion(region);
         }
-        const checkboxes = document.querySelectorAll('[name=detailRegion]');
+        const checkboxes = document.querySelectorAll("[name=detailRegion]");
         checkboxes.forEach((checkbox) => {
             const inputCheckbox = checkbox;
-            inputCheckbox.addEventListener('change', () => {
+            inputCheckbox.addEventListener("change", () => {
                 const { value } = inputCheckbox;
-                const label = inputCheckbox.nextElementSibling.textContent || '';
+                const label = inputCheckbox.nextElementSibling
+                    .textContent || "";
                 if (inputCheckbox.checked) {
                     addDetailRegion(region, label, value);
                 }
                 else {
                     removeDetailRegion(region, label);
                 }
-                CustomEventEmitter.dispatch('set-detail-regions', {});
+                CustomEventEmitter.dispatch("set-detail-regions", {});
             });
         });
     }
