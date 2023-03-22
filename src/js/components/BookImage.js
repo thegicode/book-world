@@ -1,29 +1,25 @@
 export default class BookImage extends HTMLElement {
     constructor() {
         super();
-        this.bookData = null;
     }
     // 즐겨찾기, 상세
     set data(objectData) {
-        this.bookData = objectData;
-        if (!this.querySelector("img")) {
+        this.dataset.object = JSON.stringify(objectData);
+        const imgElement = this.querySelector("img");
+        if (imgElement && imgElement.getAttribute("src") === "") {
             this.render();
-        }
-        else {
-            // this.onSetThumb(objectData)
-            this.handleError();
         }
     }
     connectedCallback() {
         this.render();
     }
-    // searc : dataset
+    // search : dataset
     render() {
-        const data = this.bookData || (this.dataset.object && JSON.parse(this.dataset.object));
-        const { bookImageURL, bookname } = data;
+        const data = this.dataset.object && JSON.parse(this.dataset.object);
         let imageSrc = "";
         let imageAlt = "";
         if (data) {
+            const { bookImageURL, bookname } = data;
             imageSrc = bookImageURL;
             imageAlt = bookname;
         }
@@ -31,19 +27,12 @@ export default class BookImage extends HTMLElement {
             <div class="book-image">
                 <img class="thumb" src="${imageSrc}" alt="${imageAlt}"></img>
             </div>`;
-        if (this.querySelector("img")) {
-            this.handleError();
+        const imgElement = this.querySelector("img");
+        if (imgElement && imgElement.getAttribute("src")) {
+            this.handleError(imgElement);
         }
     }
-    onSetThumb({ bookImageURL, bookname, }) {
-        const imgElement = this.querySelector("img");
-        if (imgElement) {
-            imgElement.src = `${bookImageURL}`;
-            imgElement.alt = bookname;
-        }
-    }
-    handleError() {
-        const imgElement = this.querySelector("img");
+    handleError(imgElement) {
         if (imgElement) {
             imgElement.onerror = () => {
                 this.dataset.fail = "true";

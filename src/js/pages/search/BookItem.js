@@ -1,19 +1,19 @@
-import { state } from '../../modules/model.js';
+import { state } from "../../modules/model.js";
 export default class BookItem extends HTMLElement {
     constructor() {
         super();
         this.render();
     }
     connectedCallback() {
-        this.libraryButton = this.querySelector('.library-button');
-        this.link = this.querySelector('.book-summary');
+        this.libraryButton = this.querySelector(".library-button");
+        this.link = this.querySelector(".book-summary");
         this.render();
-        this.libraryButton.addEventListener('click', this.onClickLibraryButton.bind(this));
-        this.link.addEventListener('click', this.onClickLink.bind(this));
+        this.libraryButton.addEventListener("click", this.onClickLibraryButton.bind(this));
+        this.link.addEventListener("click", this.onClickLink.bind(this));
     }
     disconnectedCallback() {
-        this.libraryButton.removeEventListener('click', this.onClickLibraryButton);
-        this.link.removeEventListener('click', this.onClickLink);
+        this.libraryButton.removeEventListener("click", this.onClickLibraryButton);
+        this.link.removeEventListener("click", this.onClickLink);
     }
     render() {
         const { author, description, image, isbn, link, pubdate, publisher, title,
@@ -21,39 +21,39 @@ export default class BookItem extends HTMLElement {
         // price,
          } = this.data;
         const formattedPubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
-        const titleEl = this.querySelector('.title');
+        const titleEl = this.querySelector(".title");
         if (titleEl)
             titleEl.textContent = title;
-        const pubEl = this.querySelector('.publisher');
+        const pubEl = this.querySelector(".publisher");
         if (pubEl)
             pubEl.textContent = publisher;
-        const authorEl = this.querySelector('.author');
+        const authorEl = this.querySelector(".author");
         if (authorEl)
             authorEl.textContent = author;
-        const pubdateEl = this.querySelector('.pubdate');
+        const pubdateEl = this.querySelector(".pubdate");
         if (pubdateEl)
             pubdateEl.textContent = formattedPubdate;
-        const isbnEl = this.querySelector('.isbn');
+        const isbnEl = this.querySelector(".isbn");
         if (isbnEl)
-            isbnEl.textContent = `isbn : ${isbn.split(' ').join(', ')}`;
-        const bookDespEl = this.querySelector('book-description');
+            isbnEl.textContent = `isbn : ${isbn.split(" ").join(", ")}`;
+        const bookDespEl = this.querySelector("book-description");
         if (bookDespEl)
             bookDespEl.data = description;
-        const linkEl = this.querySelector('.__link');
+        const linkEl = this.querySelector(".__link");
         if (linkEl)
             linkEl.href = link;
-        const bookImageEl = this.querySelector('book-image');
+        const bookImageEl = this.querySelector("book-image");
         if (bookImageEl)
             bookImageEl.dataset.object = JSON.stringify({
                 bookImageURL: image,
-                bookname: title
+                bookname: title,
             });
         this.dataset.index = this.index.toString();
         this.dataset.isbn = isbn;
     }
     onClickLibraryButton() {
-        const isbn = this.dataset.isbn || '';
-        const libraryBookExist = this.querySelector('library-book-exist');
+        const isbn = this.dataset.isbn || "";
+        const libraryBookExist = this.querySelector("library-book-exist");
         if (libraryBookExist) {
             libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
         }
