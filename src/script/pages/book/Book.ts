@@ -30,36 +30,38 @@ interface UsageAnalysisListData {
 }
 
 export default class Book extends HTMLElement {
-    private $loadingElement: HTMLElement;
+    private loadingElement: HTMLElement;
     private data: UsageAnalysisListData | null;
 
     constructor() {
         super();
-        this.$loadingElement = this.querySelector(".loading") as HTMLElement;
+        this.loadingElement = this.querySelector(".loading") as HTMLElement;
         this.data = null;
     }
 
     connectedCallback(): void {
         const isbn = new URLSearchParams(location.search).get("isbn") as string;
         this.dataset.isbn = isbn;
-        this._fetchUsageAnalysisList(isbn);
+        this.fetchUsageAnalysisList(isbn);
     }
 
-    async _fetchUsageAnalysisList(isbn: string): Promise<void> {
+    private async fetchUsageAnalysisList(isbn: string): Promise<void> {
         try {
             const data = await CustomFetch.fetch<UsageAnalysisListData>(
                 `/usage-analysis-list?isbn13=${isbn}`
             );
             this.data = data;
-            this._render();
+            this.render();
         } catch (error) {
-            this._renderError();
-            console.log(error);
+            this.renderError();
+            console.error(error);
             throw new Error(`Fail to get usage analysis list.`);
         }
     }
 
-    _render() {
+    private render(): void {
+        if (!this.data) return;
+
         const {
             book: {
                 bookname,
@@ -75,7 +77,7 @@ export default class Book extends HTMLElement {
             },
             keywords,
             recBooks,
-        } = this.data as UsageAnalysisListData; // coLoanBooks, loanGrps,loanHistory,
+        } = this.data; // coLoanBooks, loanGrps,loanHistory,
 
         const bookNames = bookname
             .split(/[=/:]/)
@@ -117,10 +119,10 @@ export default class Book extends HTMLElement {
             };
         }
 
-        this.$loadingElement.remove();
+        this.loadingElement.remove();
     }
 
-    _renderError() {
-        this.$loadingElement.textContent = "정보를 가져올 수 없습니다.";
+    private renderError() {
+        this.loadingElement.textContent = "정보를 가져올 수 없습니다.";
     }
 }

@@ -1,19 +1,17 @@
 import { CustomFetch } from "../../utils/index.js";
 import { getState } from "../../modules/model.js";
 
-interface Library {
-    homepage: string;
-    libCode: string;
-    libName: string;
-}
-
 interface LibrarySearchResult {
-    libs: Library[];
+    libs: {
+        homepage: string;
+        libCode: string;
+        libName: string;
+    }[];
 }
 
-interface BookExist {
-    loanAvailable: string
-}
+type BookExist = {
+    loanAvailable: string;
+};
 
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
@@ -25,7 +23,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         this.fetchList(isbn);
     }
 
-    async fetchList(isbn: string) {
+    private async fetchList(isbn: string): Promise<void> {
         const favoriteLibraries = getState().regions;
         for (const regionName in favoriteLibraries) {
             const detailCodes = Object.values(favoriteLibraries[regionName]);
@@ -37,11 +35,11 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    async fetchLibrarySearchByBook(
+    private async fetchLibrarySearchByBook(
         isbn: string,
         region: string,
         dtl_region: string
-    ) {
+    ): Promise<void> {
         const searchParams = new URLSearchParams({
             isbn,
             region,
@@ -58,7 +56,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    render({ libs }: LibrarySearchResult, isbn: string) {
+    private render({ libs }: LibrarySearchResult, isbn: string): void {
         if (libs.length < 1) return;
 
         const container = document.querySelector(".library-search-by-book");
@@ -73,7 +71,9 @@ export default class LibrarySearchByBook extends HTMLElement {
             ) as HTMLTemplateElement;
             if (!template) return;
 
-            const cloned = template.content.firstElementChild?.cloneNode(true) as HTMLElement;
+            const cloned = template.content.firstElementChild?.cloneNode(
+                true
+            ) as HTMLElement;
             const link = cloned.querySelector("a");
             if (!link) return;
 
@@ -81,7 +81,11 @@ export default class LibrarySearchByBook extends HTMLElement {
             link.textContent = libName;
             link.href = homepage;
 
-            this.loanAvailable(isbn, libCode, cloned.querySelector("p") as HTMLElement);
+            this.loanAvailable(
+                isbn,
+                libCode,
+                cloned.querySelector("p") as HTMLElement
+            );
 
             fragment.appendChild(cloned);
         });
@@ -90,7 +94,11 @@ export default class LibrarySearchByBook extends HTMLElement {
         container.appendChild(listElement);
     }
 
-    async loanAvailable(isbn: string, libCode: string, el: HTMLElement) {
+    private async loanAvailable(
+        isbn: string,
+        libCode: string,
+        el: HTMLElement
+    ) {
         const isAvailable = await this.fetchLoadnAvailabilty(isbn, libCode);
         const element = el.querySelector(".loanAvailable");
         if (element) {
@@ -101,7 +109,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    async fetchLoadnAvailabilty(
+    private async fetchLoadnAvailabilty(
         isbn13: string,
         libCode: string
     ): Promise<boolean> {

@@ -11,29 +11,31 @@ import { CustomFetch } from "../../utils/index.js";
 export default class Book extends HTMLElement {
     constructor() {
         super();
-        this.$loadingElement = this.querySelector(".loading");
+        this.loadingElement = this.querySelector(".loading");
         this.data = null;
     }
     connectedCallback() {
         const isbn = new URLSearchParams(location.search).get("isbn");
         this.dataset.isbn = isbn;
-        this._fetchUsageAnalysisList(isbn);
+        this.fetchUsageAnalysisList(isbn);
     }
-    _fetchUsageAnalysisList(isbn) {
+    fetchUsageAnalysisList(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield CustomFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`);
                 this.data = data;
-                this._render();
+                this.render();
             }
             catch (error) {
-                this._renderError();
-                console.log(error);
+                this.renderError();
+                console.error(error);
                 throw new Error(`Fail to get usage analysis list.`);
             }
         });
     }
-    _render() {
+    render() {
+        if (!this.data)
+            return;
         const { book: { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher, }, keywords, recBooks, } = this.data; // coLoanBooks, loanGrps,loanHistory,
         const bookNames = bookname
             .split(/[=/:]/)
@@ -69,10 +71,10 @@ export default class Book extends HTMLElement {
                 bookname,
             };
         }
-        this.$loadingElement.remove();
+        this.loadingElement.remove();
     }
-    _renderError() {
-        this.$loadingElement.textContent = "정보를 가져올 수 없습니다.";
+    renderError() {
+        this.loadingElement.textContent = "정보를 가져올 수 없습니다.";
     }
 }
 //# sourceMappingURL=Book.js.map
