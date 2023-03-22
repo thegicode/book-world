@@ -1,13 +1,12 @@
 // import { CustomEventEmitter } from '../../utils/index.js'
-import { getState } from '../../modules/model.js'
+import { getState } from "../../modules/model.js";
 
 export default class Favorite extends HTMLElement {
-    
     // static get observedAttributes() {
     //     return ['count']
     // }
 
-    $booksEl : HTMLElement
+    $booksEl: HTMLElement;
     // $countEl
     // $observer
 
@@ -19,15 +18,15 @@ export default class Favorite extends HTMLElement {
     // }
 
     get favoriteBooks() {
-        return getState().favoriteBooks
+        return getState().favoriteBooks;
     }
 
     constructor() {
-        super()
+        super();
 
-        this.$booksEl = this.querySelector('.favorite-books') as HTMLElement
+        this.$booksEl = this.querySelector(".favorite-books") as HTMLElement;
         // this.$countEl = this.querySelector('.count')
-        
+
         // this.updateCount = this.updateCount.bind(this)
         // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
     }
@@ -40,7 +39,7 @@ export default class Favorite extends HTMLElement {
         //         if (mutation.attributeName === 'count') {
         //             this.updateCount()
         //         } else if (mutation.type ==='childList') {
-                   
+
         //         }
         //     }
         // })
@@ -49,10 +48,10 @@ export default class Favorite extends HTMLElement {
         // this.updateCount()
 
         if (this.favoriteBooks.length === 0) {
-            this.renderMessage()
-            return
+            this.renderMessage();
+            return;
         }
-        this.render()
+        this.render();
     }
 
     disconnectedCallback() {
@@ -68,29 +67,32 @@ export default class Favorite extends HTMLElement {
     //     this.$countEl.textContent = `${count}권`
     // }
 
-    render() {
-        const fragment = new DocumentFragment()
-        const template = (document.querySelector('#tp-favorite-item') as HTMLTemplateElement).content.firstElementChild 
+    private render() {
+        const fragment = new DocumentFragment();
+        const template = (
+            document.querySelector("#tp-favorite-item") as HTMLTemplateElement
+        ).content.firstElementChild;
         if (template) {
-            this.favoriteBooks.forEach( isbn => {
-                if (typeof isbn !== 'string') return  // TODO
-                const el = template.cloneNode(true) as HTMLElement
-                el.dataset.isbn = isbn
-                fragment.appendChild(el)
-            })
+            this.favoriteBooks.forEach((isbn) => {
+                if (typeof isbn !== "string") return; // TODO
+                const el = template.cloneNode(true) as HTMLElement;
+                el.dataset.isbn = isbn;
+                fragment.appendChild(el);
+            });
         }
-        
-        this.$booksEl.appendChild(fragment)
+
+        this.$booksEl.appendChild(fragment);
     }
 
-    renderMessage() {
-        const template = (document.querySelector('#tp-message') as HTMLTemplateElement).content.firstElementChild 
+    private renderMessage() {
+        const template = (
+            document.querySelector("#tp-message") as HTMLTemplateElement
+        ).content.firstElementChild;
         if (template) {
-            const element = template.cloneNode(true) 
-            element.textContent = '관심책을 등록해주세요.'
-            this.$booksEl.appendChild(element)
+            const element = template.cloneNode(true);
+            element.textContent = "관심책을 등록해주세요.";
+            this.$booksEl.appendChild(element);
         }
-        
     }
 
     // attributeChangedCallback(name, oldValue, newValue) {
@@ -98,6 +100,4 @@ export default class Favorite extends HTMLElement {
     //         this.updateCount()
     //     }
     // }
-
 }
-

@@ -39,6 +39,7 @@ export interface ILibrarySearchByBookResult {
 }
 
 export interface IBookExist {
+    hasBook: string;
     loanAvailable: string;
 }
 

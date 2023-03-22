@@ -106,8 +106,8 @@ export default class BookList extends HTMLElement {
             if (!template)
                 return;
             const el = template.cloneNode(true);
-            el.data = item;
-            el.index = prevLength + index;
+            el.bookData = item;
+            el.dataset.index = (prevLength + index).toString();
             fragment.appendChild(el);
         });
         this.books.appendChild(fragment);

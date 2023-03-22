@@ -3,7 +3,7 @@ import { CustomEventEmitter, CustomFetch } from "../../utils/index.js";
 import { getState, addRegion, removeRegion } from "../../modules/model.js";
 
 export default class SetRegion extends HTMLElement {
-    regionData: TotalRegions | null;
+    private regionData: TotalRegions | null;
 
     constructor() {
         super();
@@ -14,7 +14,7 @@ export default class SetRegion extends HTMLElement {
         this.fetchRegion();
     }
 
-    async fetchRegion() {
+    private async fetchRegion() {
         const url = "../../json/region.json";
         try {
             this.regionData = (await CustomFetch.fetch(url)) as TotalRegions;
@@ -28,7 +28,7 @@ export default class SetRegion extends HTMLElement {
         }
     }
 
-    render() {
+    private render() {
         if (!this.regionData) {
             throw new Error("regionData is null.");
         }
@@ -59,7 +59,7 @@ export default class SetRegion extends HTMLElement {
         this.changeRegion();
     }
 
-    changeRegion() {
+    private changeRegion() {
         const checkboxes =
             this.querySelectorAll<HTMLInputElement>("[name=region]");
         checkboxes.forEach((checkbox) => {

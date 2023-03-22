@@ -47,7 +47,7 @@ export default class BookList extends HTMLElement {
         this.observer = new Observer(target, callback);
     }
 
-    onSearchPageInit(event: Event): void {
+    private onSearchPageInit(event: Event): void {
         const customEvent = event as CustomEvent<{ keyword: string }>;
         this.keyword = customEvent.detail.keyword;
         this.length = 0;
@@ -73,7 +73,7 @@ export default class BookList extends HTMLElement {
         this.showMessage("message");
     }
 
-    async fetchSearchNaverBook(): Promise<void> {
+    private async fetchSearchNaverBook(): Promise<void> {
         if (!this.keyword) return;
 
         const url = `/search-naver-book?keyword=${encodeURIComponent(
@@ -141,15 +141,15 @@ export default class BookList extends HTMLElement {
             ).content.firstElementChild;
             if (!template) return;
             const el = template.cloneNode(true) as BookItem;
-            el.data = item;
-            el.index = prevLength + index;
+            el.bookData = item;
+            el.dataset.index = (prevLength + index).toString();
             fragment.appendChild(el);
         });
 
         this.books.appendChild(fragment);
     }
 
-    showMessage(type: string) {
+    private showMessage(type: string) {
         const template = (
             document.querySelector(`#tp-${type}`) as HTMLTemplateElement
         ).content.firstElementChild;

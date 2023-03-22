@@ -1,5 +1,5 @@
 // import { CustomEventEmitter } from '../../utils/index.js'
-import { getState } from '../../modules/model.js';
+import { getState } from "../../modules/model.js";
 export default class Favorite extends HTMLElement {
     // $countEl
     // $observer
@@ -14,7 +14,7 @@ export default class Favorite extends HTMLElement {
     }
     constructor() {
         super();
-        this.$booksEl = this.querySelector('.favorite-books');
+        this.$booksEl = this.querySelector(".favorite-books");
         // this.$countEl = this.querySelector('.count')
         // this.updateCount = this.updateCount.bind(this)
         // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
@@ -50,10 +50,10 @@ export default class Favorite extends HTMLElement {
     // }
     render() {
         const fragment = new DocumentFragment();
-        const template = document.querySelector('#tp-favorite-item').content.firstElementChild;
+        const template = document.querySelector("#tp-favorite-item").content.firstElementChild;
         if (template) {
-            this.favoriteBooks.forEach(isbn => {
-                if (typeof isbn !== 'string')
+            this.favoriteBooks.forEach((isbn) => {
+                if (typeof isbn !== "string")
                     return; // TODO
                 const el = template.cloneNode(true);
                 el.dataset.isbn = isbn;
@@ -63,10 +63,10 @@ export default class Favorite extends HTMLElement {
         this.$booksEl.appendChild(fragment);
     }
     renderMessage() {
-        const template = document.querySelector('#tp-message').content.firstElementChild;
+        const template = document.querySelector("#tp-message").content.firstElementChild;
         if (template) {
             const element = template.cloneNode(true);
-            element.textContent = '관심책을 등록해주세요.';
+            element.textContent = "관심책을 등록해주세요.";
             this.$booksEl.appendChild(element);
         }
     }

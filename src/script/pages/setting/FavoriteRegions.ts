@@ -2,7 +2,7 @@ import { CustomEventEmitter } from "../../utils/index.js";
 import { getState } from "../../modules/model.js";
 
 export default class FavoriteRegions extends HTMLElement {
-    container: HTMLElement;
+    private container: HTMLElement;
 
     constructor() {
         super();
@@ -18,7 +18,7 @@ export default class FavoriteRegions extends HTMLElement {
         CustomEventEmitter.remove("set-detail-regions", this.render);
     }
 
-    render() {
+    private render() {
         this.container.innerHTML = "";
         const { regions } = getState();
         for (const regionName in regions) {
@@ -32,7 +32,7 @@ export default class FavoriteRegions extends HTMLElement {
         }
     }
 
-    renderDetail(detaioRegions: string[]) {
+    private renderDetail(detaioRegions: string[]) {
         const fragment = new DocumentFragment();
         detaioRegions.forEach((name) => {
             const element = document.createElement("p");

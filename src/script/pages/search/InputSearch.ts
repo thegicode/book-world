@@ -1,45 +1,38 @@
-
-import { CustomEventEmitter } from '../../utils/index.js'
+import { CustomEventEmitter } from "../../utils/index.js";
 
 export default class InputSearch extends HTMLElement {
-
-    form: HTMLFormElement
-    input: HTMLInputElement
+    form: HTMLFormElement;
+    input: HTMLInputElement;
 
     constructor() {
-        super()
-        this.form = this.querySelector('form') as HTMLFormElement
-        this.input = this.querySelector('input') as HTMLInputElement
+        super();
+        this.form = this.querySelector("form") as HTMLFormElement;
+        this.input = this.querySelector("input") as HTMLInputElement;
     }
 
     connectedCallback() {
-        this.form.addEventListener('submit', this.onSubmit.bind(this))
+        this.form.addEventListener("submit", this.onSubmit.bind(this));
     }
 
     disconnectedCallback() {
-        this.form.removeEventListener('submit', this.onSubmit)
+        this.form.removeEventListener("submit", this.onSubmit);
     }
 
-    onSubmit(event: Event) {
-        event.preventDefault()
-        
-        const keyword = this.input.value 
-        
-        if (!keyword) return
+    private onSubmit(event: Event) {
+        event.preventDefault();
 
-        this.input.value = ''
+        const keyword = this.input.value;
 
-        const url = new URL(window.location.href)
-        url.searchParams.set('keyword', keyword)
-        window.history.pushState({}, "", url)
+        if (!keyword) return;
 
-        CustomEventEmitter.dispatch('search-page-init', { keyword })
+        this.input.value = "";
 
-        this.input.focus()
+        const url = new URL(window.location.href);
+        url.searchParams.set("keyword", keyword);
+        window.history.pushState({}, "", url);
+
+        CustomEventEmitter.dispatch("search-page-init", { keyword });
+
+        this.input.focus();
     }
-  
 }
-
-
-
-

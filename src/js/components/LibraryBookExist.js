@@ -7,10 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { CustomFetch } from "../utils/index.js";
 export default class LibraryBookExist extends HTMLElement {
     constructor() {
         super();
-        this.root = this.querySelector(".library-list");
+        this.container = this.querySelector(".library-list");
         this.itemTemplate = "";
     }
     connectedCallback() {
@@ -25,13 +26,12 @@ export default class LibraryBookExist extends HTMLElement {
             }
             const promises = entries.map(([libCode, libName], index) => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const response = yield fetch(`/book-exist?isbn13=${isbn13}&libCode=${libCode}`);
-                    const data = yield response.json();
+                    const data = yield CustomFetch.fetch(`/book-exist?isbn13=${isbn13}&libCode=${libCode}`);
                     this.renderBookExist(data, libName, index);
                 }
                 catch (error) {
                     console.error(error);
-                    throw error;
+                    throw new Error(`Fail to get usage analysis list.`);
                 }
             }));
             try {
@@ -77,7 +77,7 @@ export default class LibraryBookExist extends HTMLElement {
             tp += this.itemTemplate;
             size--;
         }
-        this.root.innerHTML = tp;
+        this.container.innerHTML = tp;
     }
     removeLoading() {
         const loadingItems = this.querySelectorAll(".library-item[data-loading=true]");

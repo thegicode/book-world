@@ -1,27 +1,26 @@
-import { CustomEventEmitter } from '../../utils/index.js'
+import { CustomEventEmitter } from "../../utils/index.js";
 
 export default class AppSearch extends HTMLElement {
     constructor() {
-        super()
+        super();
     }
 
     connectedCallback() {
-        this.renderBookList()
-        window.addEventListener('popstate', this.onPopState.bind(this))
+        this.renderBookList();
+        window.addEventListener("popstate", this.onPopState.bind(this));
     }
 
     disconnectedCallback() {
-        window.removeEventListener('popstate', this.onPopState)
+        window.removeEventListener("popstate", this.onPopState);
     }
 
-    onPopState() {
-        this.renderBookList()
+    private onPopState() {
+        this.renderBookList();
     }
 
-    renderBookList() {
-        const params = new URLSearchParams(location.search)
-        const keyword = params.get('keyword')
-        CustomEventEmitter.dispatch('search-page-init', { keyword })
+    private renderBookList() {
+        const params = new URLSearchParams(location.search);
+        const keyword = params.get("keyword");
+        CustomEventEmitter.dispatch("search-page-init", { keyword });
     }
-    
 }

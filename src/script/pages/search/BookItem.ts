@@ -7,11 +7,10 @@ import {
 } from "../../components/index.js";
 
 export default class BookItem extends HTMLElement {
-    libraryButton!: HTMLButtonElement;
-    libraryBookExist!: LibraryBookExist;
-    link!: HTMLElement;
-    data!: ISearchBook;
-    index!: number;
+    private libraryButton!: HTMLButtonElement;
+    private anchorElement!: HTMLElement;
+    // index!: number;
+    bookData!: ISearchBook;
 
     constructor() {
         super();
@@ -22,7 +21,7 @@ export default class BookItem extends HTMLElement {
         this.libraryButton = this.querySelector(
             ".library-button"
         ) as HTMLButtonElement;
-        this.link = this.querySelector(".book-summary") as HTMLElement;
+        this.anchorElement = this.querySelector(".book-summary") as HTMLElement;
 
         this.render();
 
@@ -30,7 +29,10 @@ export default class BookItem extends HTMLElement {
             "click",
             this.onClickLibraryButton.bind(this)
         );
-        this.link.addEventListener("click", this.onClickLink.bind(this));
+        this.anchorElement.addEventListener(
+            "click",
+            this.onClickLink.bind(this)
+        );
     }
 
     disconnectedCallback() {
@@ -38,7 +40,7 @@ export default class BookItem extends HTMLElement {
             "click",
             this.onClickLibraryButton
         );
-        this.link.removeEventListener("click", this.onClickLink);
+        this.anchorElement.removeEventListener("click", this.onClickLink);
     }
 
     private render() {
@@ -53,27 +55,35 @@ export default class BookItem extends HTMLElement {
             title,
             // discount,
             // price,
-        } = this.data;
+        } = this.bookData;
 
         const formattedPubdate = `${pubdate.substring(
             0,
             4
         )}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
+
         const titleEl = this.querySelector(".title");
         if (titleEl) titleEl.textContent = title;
+
         const pubEl = this.querySelector(".publisher");
         if (pubEl) pubEl.textContent = publisher;
+
         const authorEl = this.querySelector(".author");
         if (authorEl) authorEl.textContent = author;
+
         const pubdateEl = this.querySelector(".pubdate");
         if (pubdateEl) pubdateEl.textContent = formattedPubdate;
+
         const isbnEl = this.querySelector(".isbn");
         if (isbnEl) isbnEl.textContent = `isbn : ${isbn.split(" ").join(", ")}`;
+
         const bookDespEl =
             this.querySelector<BookDescription>("book-description");
         if (bookDespEl) bookDespEl.data = description;
+
         const linkEl = this.querySelector(".__link") as HTMLAnchorElement;
         if (linkEl) linkEl.href = link;
+
         const bookImageEl = this.querySelector<BookImage>("book-image");
         if (bookImageEl)
             bookImageEl.dataset.object = JSON.stringify({
@@ -81,11 +91,11 @@ export default class BookItem extends HTMLElement {
                 bookname: title,
             });
 
-        this.dataset.index = this.index.toString();
+        // this.dataset.index = this.index.toString();
         this.dataset.isbn = isbn;
     }
 
-    onClickLibraryButton() {
+    private onClickLibraryButton() {
         const isbn = this.dataset.isbn || "";
         const libraryBookExist =
             this.querySelector<LibraryBookExist>("library-book-exist");
@@ -98,7 +108,7 @@ export default class BookItem extends HTMLElement {
         }
     }
 
-    onClickLink(event: MouseEvent) {
+    private onClickLink(event: MouseEvent) {
         event.preventDefault();
         location.href = `book?isbn=${this.dataset.isbn}`;
     }

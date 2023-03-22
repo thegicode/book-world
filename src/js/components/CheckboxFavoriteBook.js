@@ -3,7 +3,7 @@ import { updateFavoriteBooksSize } from "../modules/events.js";
 export default class CheckboxFavoriteBook extends HTMLElement {
     constructor() {
         super();
-        this.$input = null;
+        this.inputElement = null;
         this.isbn = null;
     }
     connectedCallback() {
@@ -11,11 +11,11 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         const isbnElement = this.closest("[data-isbn]");
         this.isbn = isbnElement.dataset.isbn;
         this.render();
-        (_a = this.$input) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange.bind(this));
+        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange.bind(this));
     }
     disconnectedCallback() {
         var _a;
-        (_a = this.$input) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange);
+        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange);
     }
     render() {
         const isbn = this.isbn || "";
@@ -24,12 +24,12 @@ export default class CheckboxFavoriteBook extends HTMLElement {
             <input type="checkbox" name="favorite" ${checked}>
             <span>관심책</span>
         </label>`;
-        this.$input = this.querySelector("input");
+        this.inputElement = this.querySelector("input");
     }
     onChange() {
         var _a;
         const ISBN = this.isbn || "";
-        if ((_a = this.$input) === null || _a === void 0 ? void 0 : _a.checked) {
+        if ((_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.checked) {
             addFavoriteBook(ISBN);
         }
         else {

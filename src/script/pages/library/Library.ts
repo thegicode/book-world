@@ -29,7 +29,7 @@ export default class Library extends HTMLElement {
         );
     }
 
-    async fetchLibrarySearch(detailRegionCode: string) {
+    private async fetchLibrarySearch(detailRegionCode: string) {
         try {
             const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`;
             const data = await CustomFetch.fetch<ILibrarySearchByBookResult>(
@@ -42,7 +42,7 @@ export default class Library extends HTMLElement {
         }
     }
 
-    render(data: ILibrarySearchByBookResult) {
+    private render(data: ILibrarySearchByBookResult) {
         const {
             // pageNo, pageSize, numFound, resultNum,
             libraries,
@@ -77,7 +77,7 @@ export default class Library extends HTMLElement {
         this.form.appendChild(fragment);
     }
 
-    showMessage(type: string) {
+    private showMessage(type: string) {
         const template = (
             document.querySelector(`#tp-${type}`) as HTMLTemplateElement
         ).content.firstElementChild;
@@ -88,7 +88,9 @@ export default class Library extends HTMLElement {
         }
     }
 
-    handleDetailRegion(evt: ICustomEvent<{ detailRegionCode: string }>) {
+    private handleDetailRegion(
+        evt: ICustomEvent<{ detailRegionCode: string }>
+    ) {
         this.showMessage("loading");
         this.fetchLibrarySearch(evt.detail.detailRegionCode);
     }

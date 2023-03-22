@@ -4,8 +4,8 @@ import { setState } from "../../modules/model.js";
 import { updateFavoriteBooksSize } from "../../modules/events.js";
 
 export default class SetStorage extends HTMLElement {
-    storageButton: HTMLButtonElement;
-    resetButton: HTMLButtonElement;
+    private storageButton: HTMLButtonElement;
+    private resetButton: HTMLButtonElement;
 
     constructor() {
         super();
@@ -36,7 +36,7 @@ export default class SetStorage extends HTMLElement {
         this.resetButton.removeEventListener("click", this.resetStorage);
     }
 
-    async setLocalStorageToBase() {
+    private async setLocalStorageToBase() {
         const url = `../../json/storage-sample.json`;
         try {
             const data = await CustomFetch.fetch<IStorageData>(url);
@@ -50,7 +50,7 @@ export default class SetStorage extends HTMLElement {
         }
     }
 
-    resetStorage() {
+    private resetStorage() {
         localStorage.removeItem("BookWorld");
         // CustomEventEmitter.dispatch('favorite-books-changed', { size : 0 })
         updateFavoriteBooksSize(0);

@@ -13,17 +13,17 @@ export default class FavoriteItem extends HTMLElement {
     constructor() {
         super();
         this.libraryButton = this.querySelector(".library-button");
-        this.link = this.querySelector("a");
+        this.anchorElement = this.querySelector("a");
     }
     connectedCallback() {
         this.loading();
         this.fetchData(this.dataset.isbn);
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
-        this.link.addEventListener("click", this.onClick.bind(this));
+        this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
     disconnectedCallback() {
         this.libraryButton.removeEventListener("click", this.onLibrary);
-        this.link.removeEventListener("click", this.onClick);
+        this.anchorElement.removeEventListener("click", this.onClick);
     }
     fetchData(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -52,7 +52,7 @@ export default class FavoriteItem extends HTMLElement {
         description, isbn13, loanCnt, publication_year, publisher,
         // vol
          } = book;
-        this.linkData = data;
+        this.bookData = data;
         this.querySelector(".bookname").textContent = bookname;
         this.querySelector(".authors").textContent = authors;
         this.querySelector(".class_nm").textContent = class_nm;

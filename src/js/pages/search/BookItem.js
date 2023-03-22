@@ -6,20 +6,20 @@ export default class BookItem extends HTMLElement {
     }
     connectedCallback() {
         this.libraryButton = this.querySelector(".library-button");
-        this.link = this.querySelector(".book-summary");
+        this.anchorElement = this.querySelector(".book-summary");
         this.render();
         this.libraryButton.addEventListener("click", this.onClickLibraryButton.bind(this));
-        this.link.addEventListener("click", this.onClickLink.bind(this));
+        this.anchorElement.addEventListener("click", this.onClickLink.bind(this));
     }
     disconnectedCallback() {
         this.libraryButton.removeEventListener("click", this.onClickLibraryButton);
-        this.link.removeEventListener("click", this.onClickLink);
+        this.anchorElement.removeEventListener("click", this.onClickLink);
     }
     render() {
         const { author, description, image, isbn, link, pubdate, publisher, title,
         // discount,
         // price,
-         } = this.data;
+         } = this.bookData;
         const formattedPubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
         const titleEl = this.querySelector(".title");
         if (titleEl)
@@ -48,7 +48,7 @@ export default class BookItem extends HTMLElement {
                 bookImageURL: image,
                 bookname: title,
             });
-        this.dataset.index = this.index.toString();
+        // this.dataset.index = this.index.toString();
         this.dataset.isbn = isbn;
     }
     onClickLibraryButton() {

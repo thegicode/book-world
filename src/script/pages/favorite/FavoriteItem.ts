@@ -1,4 +1,4 @@
-import { IBook, IUsageAnalysisResult } from "../../modules/types.js";
+import { IUsageAnalysisResult } from "../../modules/types.js";
 import { CustomFetch } from "../../utils/index.js";
 import { state } from "../../modules/model.js";
 import {
@@ -9,31 +9,30 @@ import {
 
 export default class FavoriteItem extends HTMLElement {
     private libraryButton: HTMLButtonElement;
-    private link: HTMLElement;
-    private linkData: { book: IBook } | undefined;
+    private anchorElement: HTMLAnchorElement;
+    private bookData: IUsageAnalysisResult | undefined;
 
     constructor() {
         super();
         this.libraryButton = this.querySelector(
             ".library-button"
         ) as HTMLButtonElement;
-
-        this.link = this.querySelector("a") as HTMLElement;
+        this.anchorElement = this.querySelector("a") as HTMLAnchorElement;
     }
 
     connectedCallback() {
         this.loading();
         this.fetchData(this.dataset.isbn as string);
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
-        this.link.addEventListener("click", this.onClick.bind(this));
+        this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
 
     disconnectedCallback() {
         this.libraryButton.removeEventListener("click", this.onLibrary);
-        this.link.removeEventListener("click", this.onClick);
+        this.anchorElement.removeEventListener("click", this.onClick);
     }
 
-    async fetchData(isbn: string) {
+    private async fetchData(isbn: string) {
         const url = `/usage-analysis-list?isbn13=${isbn}`;
         try {
             const data = await CustomFetch.fetch<IUsageAnalysisResult>(url);
@@ -45,7 +44,7 @@ export default class FavoriteItem extends HTMLElement {
         }
     }
 
-    render(data: { book: IBook }) {
+    private render(data: IUsageAnalysisResult) {
         const {
             book,
             // loanHistory,
@@ -69,7 +68,7 @@ export default class FavoriteItem extends HTMLElement {
             // vol
         } = book;
 
-        this.linkData = data;
+        this.bookData = data;
 
         (this.querySelector(".bookname") as HTMLElement).textContent = bookname;
         (this.querySelector(".authors") as HTMLElement).textContent = authors;
@@ -97,7 +96,7 @@ export default class FavoriteItem extends HTMLElement {
         this.removeLoading();
     }
 
-    errorRender() {
+    private errorRender() {
         this.removeLoading();
         this.dataset.fail = "true";
         (
@@ -105,7 +104,7 @@ export default class FavoriteItem extends HTMLElement {
         ).textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`;
     }
 
-    onLibrary() {
+    private onLibrary() {
         const isbn = this.dataset.isbn || "";
         const libraryBookExist =
             this.querySelector<LibraryBookExist>("library-book-exist");
@@ -118,14 +117,15 @@ export default class FavoriteItem extends HTMLElement {
         }
     }
 
-    loading() {
+    private loading() {
         this.dataset.loading = "true";
     }
-    removeLoading() {
+
+    private removeLoading() {
         delete this.dataset.loading;
     }
 
-    onClick(event: MouseEvent) {
+    private onClick(event: MouseEvent) {
         event.preventDefault();
         location.href = `book?isbn=${this.dataset.isbn}`;
     }

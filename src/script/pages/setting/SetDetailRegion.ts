@@ -8,8 +8,8 @@ import {
 } from "../../modules/model.js";
 
 export default class SetDetailRegion extends HTMLElement {
-    regionData: TotalRegions | null;
-    region: string;
+    private regionData: TotalRegions | null;
+    private region: string;
 
     constructor() {
         super();
@@ -33,13 +33,13 @@ export default class SetDetailRegion extends HTMLElement {
         CustomEventEmitter.remove("set-favorite-regions", this.renderRegion);
     }
 
-    setRegionData(event: Event) {
+    private setRegionData(event: Event) {
         const customEvent = event as CustomEvent<{ regionData: TotalRegions }>;
         this.regionData = customEvent.detail.regionData;
         this.renderRegion();
     }
 
-    renderRegion() {
+    private renderRegion() {
         const favoriteRegions = Object.keys(getState().regions);
         if (favoriteRegions.length < 1) return;
 
@@ -69,7 +69,7 @@ export default class SetDetailRegion extends HTMLElement {
         }
     }
 
-    renderDetailRegions(regionName: string) {
+    private renderDetailRegions(regionName: string) {
         const detailRegionsElement = this.querySelector(
             ".detailRegions"
         ) as HTMLElement;
@@ -106,7 +106,7 @@ export default class SetDetailRegion extends HTMLElement {
         this.onChangeDetail();
     }
 
-    changeRegion() {
+    private changeRegion() {
         const regionRadios = this.querySelectorAll("[name=favorite-region]");
         Array.from(regionRadios).forEach((radio: Element) => {
             const inputRadio = radio as HTMLInputElement;
@@ -121,7 +121,7 @@ export default class SetDetailRegion extends HTMLElement {
         });
     }
 
-    onChangeDetail() {
+    private onChangeDetail() {
         const region = this.region;
         if (!getState().regions[region]) {
             addRegion(region);
