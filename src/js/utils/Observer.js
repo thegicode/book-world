@@ -16,7 +16,7 @@ export default class Observer {
         this.observer.disconnect();
     }
     handleIntersection(changes, callback) {
-        changes.forEach(change => {
+        changes.forEach((change) => {
             if (change.isIntersecting) {
                 this.unobserve();
                 callback();

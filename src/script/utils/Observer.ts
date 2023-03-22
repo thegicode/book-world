@@ -1,9 +1,9 @@
 export default class Observer {
-    target: Element
-    observer: IntersectionObserver
+    target: Element;
+    observer: IntersectionObserver;
 
     constructor(target: Element, callback: () => void) {
-        this.target = target
+        this.target = target;
         this.observer = new IntersectionObserver((changes) => {
             this.handleIntersection(changes, callback);
         });
@@ -11,23 +11,26 @@ export default class Observer {
     }
 
     observe(): void {
-        this.observer.observe(this.target)
+        this.observer.observe(this.target);
     }
 
     unobserve(): void {
-        this.observer.unobserve(this.target)
+        this.observer.unobserve(this.target);
     }
 
     disconnect(): void {
-        this.observer.disconnect()
+        this.observer.disconnect();
     }
 
-    handleIntersection(changes: IntersectionObserverEntry[], callback: () => void): void  {
-        changes.forEach(change => {
+    handleIntersection(
+        changes: IntersectionObserverEntry[],
+        callback: () => void
+    ): void {
+        changes.forEach((change) => {
             if (change.isIntersecting) {
-                this.unobserve()
-                callback()
+                this.unobserve();
+                callback();
             }
-        })
+        });
     }
 }
