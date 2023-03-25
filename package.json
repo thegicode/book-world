@@ -9,12 +9,8 @@
         "tsc": "tsc -w",
         "eslint": "eslint src --ext .ts",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "npm run build:search && npm run build:favorite && npm run build:library &&  npm run build:book && npm run build:setting",
-        "build:search": "esbuild src/js/pages/search/index.js --outfile=src/js/bundles/search.js --bundle --minify",
-        "build:favorite": "esbuild src/js/pages/favorite/index.js --outfile=src/js/bundles/favorite.js --bundle --minify",
-        "build:library": "esbuild src/js/pages/library/index.js --outfile=src/js/bundles/library.js --bundle --minify",
-        "build:book": "esbuild src/js/pages/book/index.js --outfile=src/js/bundles/book.js --bundle --minify",
-        "build:setting": "esbuild src/js/pages/setting/index.js --outfile=src/js/bundles/setting.js --bundle --minify"
+        "build": "npm run build:pages",
+        "build:pages": "esbuild src/js/pages/**/index.js --outdir=src/js/bundles --bundle --minify"
     },
     "repository": {
         "type": "git",
