@@ -1,33 +1,40 @@
 {
-  "name": "book-world",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index & npm run css & npm run tsc",
-    "css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
-    "tsc": "tsc -w",
-    "eslint": "eslint src --ext .ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thegicode/book-world.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/thegicode/book-world/issues"
-  },
-  "homepage": "https://github.com/thegicode/book-world#readme",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.55.0",
-    "@typescript-eslint/parser": "^5.55.0",
-    "eslint": "^8.36.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-plugin-typescript": "^0.14.0",
-    "express": "^4.17.3",
-    "sass": "^1.49.9",
-    "typescript": "^5.0.2"
-  }
+    "name": "book-world",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index & npm run css & npm run tsc",
+        "css": "npx sass --watch ./src/sass/:./src/css/ --style=compressed --source-map",
+        "tsc": "tsc -w",
+        "eslint": "eslint src --ext .ts",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "npm run build:search && npm run build:favorite && npm run build:library &&  npm run build:book && npm run build:setting",
+        "build:search": "esbuild src/js/pages/search/index.js --outfile=src/js/bundles/search.js --bundle --minify",
+        "build:favorite": "esbuild src/js/pages/favorite/index.js --outfile=src/js/bundles/favorite.js --bundle --minify",
+        "build:library": "esbuild src/js/pages/library/index.js --outfile=src/js/bundles/library.js --bundle --minify",
+        "build:book": "esbuild src/js/pages/book/index.js --outfile=src/js/bundles/book.js --bundle --minify",
+        "build:setting": "esbuild src/js/pages/setting/index.js --outfile=src/js/bundles/setting.js --bundle --minify"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/thegicode/book-world.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/thegicode/book-world/issues"
+    },
+    "homepage": "https://github.com/thegicode/book-world#readme",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.55.0",
+        "@typescript-eslint/parser": "^5.55.0",
+        "esbuild": "^0.17.13",
+        "eslint": "^8.36.0",
+        "eslint-config-airbnb": "^19.0.4",
+        "eslint-plugin-typescript": "^0.14.0",
+        "express": "^4.17.3",
+        "sass": "^1.49.9",
+        "typescript": "^5.0.2"
+    }
 }

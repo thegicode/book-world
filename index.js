@@ -181,7 +181,7 @@ app.get("/library-search-by-book", async (req, res) => {
 });
 
 // Router
-const routes = ["favorite", "library", "search", "book", "setting"];
+const routes = ["search", "favorite", "library", "book", "setting"];
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
         console.log("route:", `/${route}`);
