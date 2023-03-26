@@ -1,4 +1,4 @@
-import { getState } from "./model.js";
+import { getState } from "./model";
 
 export const updateFavoriteBooksSize = (
     size: number = getState().favoriteBooks.length

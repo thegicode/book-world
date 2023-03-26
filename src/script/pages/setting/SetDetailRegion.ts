@@ -1,5 +1,5 @@
-import { TotalRegions } from "../../modules/types.js";
-import { CustomEventEmitter } from "../../utils/index.js";
+import { TotalRegions } from "../../modules/types";
+import { CustomEventEmitter } from "../../utils/index";
 import {
     getState,
     addRegion,

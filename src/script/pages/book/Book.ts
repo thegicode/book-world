@@ -1,6 +1,6 @@
-import { IUsageAnalysisListData } from "../../modules/types.js";
-import { BookImage } from "../../components/index.js";
-import { CustomFetch } from "../../utils/index.js";
+import { IUsageAnalysisListData } from "../../modules/types";
+import { BookImage } from "../../components/index";
+import { CustomFetch } from "../../utils/index";
 
 export default class Book extends HTMLElement {
     private loadingElement: HTMLElement;

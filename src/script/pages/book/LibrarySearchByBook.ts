@@ -1,6 +1,6 @@
-import { IBookExist, ILibrarySearchByBookResult } from "../../modules/types.js";
-import { CustomFetch } from "../../utils/index.js";
-import { getState } from "../../modules/model.js";
+import { IBookExist, ILibrarySearchByBookResult } from "../../modules/types";
+import { CustomFetch } from "../../utils/index";
+import { getState } from "../../modules/model";
 
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {

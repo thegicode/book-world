@@ -1,11 +1,11 @@
-import { IUsageAnalysisResult } from "../../modules/types.js";
-import { CustomFetch } from "../../utils/index.js";
-import { state } from "../../modules/model.js";
+import { IUsageAnalysisResult } from "../../modules/types";
+import { CustomFetch } from "../../utils/index";
+import { state } from "../../modules/model";
 import {
     BookDescription,
     BookImage,
     LibraryBookExist,
-} from "../../components/index.js";
+} from "../../components/index";
 
 export default class FavoriteItem extends HTMLElement {
     private libraryButton: HTMLButtonElement;

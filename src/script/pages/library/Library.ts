@@ -2,10 +2,10 @@ import {
     ICustomEvent,
     ILibrary,
     ILibrarySearchByBookResult,
-} from "../../modules/types.js";
-import { CustomEventEmitter, CustomFetch } from "../../utils/index.js";
-import { hasLibrary } from "../../modules/model.js";
-import LibraryItem from "./LibraryItem.js";
+} from "../../modules/types";
+import { CustomEventEmitter, CustomFetch } from "../../utils/index";
+import { hasLibrary } from "../../modules/model";
+import LibraryItem from "./LibraryItem";
 
 export default class Library extends HTMLElement {
     private form: HTMLFormElement;

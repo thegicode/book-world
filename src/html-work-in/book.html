@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Book | Book World</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex, nofollow" />
+        <link
+            rel="shortcut icon"
+            href="/asset/favicon.ico"
+            type="image/x-icon"
+        />
+        <link rel="icon" href="/asset/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="/css/book.css" />
+        <script type="module" src="../js/book/index.js" async></script>
+    </head>
+    <body>
+        <div class="root">
+            <nav-gnb></nav-gnb>
+            <app-book>
+                <h3 class="bookname"></h3>
+
+                <p class="authors"></p>
+
+                <book-image></book-image>
+
+                <div class="actions">
+                    <checkbox-favorite-book></checkbox-favorite-book>
+                </div>
+
+                <library-search-by-book>
+                    <h4>도서 소장 도서관 조회</h4>
+                    <div class="library-search-by-book"></div>
+                </library-search-by-book>
+
+                <div class="cols">
+                    <div class="col">
+                        <h4>분류</h4>
+                        <p class="class_nm"></p>
+                    </div>
+                    <div class="col">
+                        <h4>class_no</h4>
+                        <p class="class_no"></p>
+                    </div>
+                    <div class="col">
+                        <h4>isbn13</h4>
+                        <p class="isbn13"></p>
+                    </div>
+                    <div class="col">
+                        <h4>대출횟수</h4>
+                        <p class="loanCnt"></p>
+                    </div>
+                    <div class="col">
+                        <h4>발행년도</h4>
+                        <p class="publication_year"></p>
+                    </div>
+                    <div class="col">
+                        <h4>출판사</h4>
+                        <p class="publisher"></p>
+                    </div>
+                </div>
+
+                <h4>설명</h4>
+                <p class="description"></p>
+
+                <h4>키워드</h4>
+                <p class="keyword"></p>
+
+                <h4>관련 도서</h4>
+
+                <ul class="recBooks"></ul>
+
+                <div class="loading">Loading</div>
+            </app-book>
+        </div>
+
+        <template id="tp-librarySearchByBookItem">
+            <li>
+                <a href="" target="_blank"></a>
+                <p>
+                    <span class="loanAvailable"></span>
+                </p>
+            </li>
+        </template>
+    </body>
+</html>

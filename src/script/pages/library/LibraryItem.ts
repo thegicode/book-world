@@ -1,5 +1,5 @@
-import { ILibrary } from "../../modules/types.js";
-import { addLibrary, removeLibrary, hasLibrary } from "../../modules/model.js";
+import { ILibrary } from "../../modules/types";
+import { addLibrary, removeLibrary, hasLibrary } from "../../modules/model";
 
 export default class LibraryItem extends HTMLElement {
     private checkbox: HTMLInputElement | null = null;

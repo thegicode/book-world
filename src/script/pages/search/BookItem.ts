@@ -1,5 +1,5 @@
-import { ISearchBook } from "../../modules/types.js";
-import { state } from "../../modules/model.js";
+import { ISearchBook } from "../../modules/types";
+import { state } from "../../modules/model";
 import {
     BookDescription,
     BookImage,

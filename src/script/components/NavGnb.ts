@@ -1,4 +1,4 @@
-import { getState } from "../modules/model.js";
+import { getState } from "../modules/model";
 
 export default class NavGnb extends HTMLElement {
     private favoriteBooksSize: number;

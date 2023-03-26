@@ -1,10 +1,6 @@
-import { ISearchBook, ISearchNaverBookResult } from "../../modules/types.js";
-import BookItem from "./BookItem.js";
-import {
-    Observer,
-    CustomFetch,
-    CustomEventEmitter,
-} from "../../utils/index.js";
+import { ISearchBook, ISearchNaverBookResult } from "../../modules/types";
+import BookItem from "./BookItem";
+import { Observer, CustomFetch, CustomEventEmitter } from "../../utils/index";
 
 export default class BookList extends HTMLElement {
     pagingInfo!: HTMLElement;

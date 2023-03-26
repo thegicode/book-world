@@ -1,6 +1,6 @@
-import { TotalRegions } from "../../modules/types.js";
-import { CustomEventEmitter, CustomFetch } from "../../utils/index.js";
-import { getState, addRegion, removeRegion } from "../../modules/model.js";
+import { TotalRegions } from "../../modules/types";
+import { CustomEventEmitter, CustomFetch } from "../../utils/index";
+import { getState, addRegion, removeRegion } from "../../modules/model";
 
 export default class SetRegion extends HTMLElement {
     private regionData: TotalRegions | null;
