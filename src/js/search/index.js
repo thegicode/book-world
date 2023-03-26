@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  // src/js-work-in/components/BookDescription.js
+  // src/script/components/BookDescription.js
   var BookDescription = class extends HTMLElement {
     constructor() {
       super();
@@ -50,7 +50,7 @@
     }
   };
 
-  // src/js-work-in/utils/CustomEventEmitter.js
+  // src/script/utils/CustomEventEmitter.js
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
@@ -67,7 +67,7 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // src/js-work-in/utils/CustomFetch.js
+  // src/script/utils/CustomFetch.js
   var __awaiter = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -121,7 +121,7 @@
   };
   var CustomFetch_default = new CustomFetch();
 
-  // src/js-work-in/utils/Observer.js
+  // src/script/utils/Observer.js
   var Observer = class {
     constructor(target, callback) {
       this.target = target;
@@ -148,7 +148,7 @@
     }
   };
 
-  // src/js-work-in/components/LibraryBookExist.js
+  // src/script/components/LibraryBookExist.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -253,7 +253,7 @@
     }
   };
 
-  // src/js-work-in/modules/model.js
+  // src/script/modules/model.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -299,7 +299,7 @@
     return state.favoriteBooks.includes(isbn);
   };
 
-  // src/js-work-in/components/NavGnb.js
+  // src/script/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -331,13 +331,13 @@
     }
   };
 
-  // src/js-work-in/modules/events.js
+  // src/script/modules/events.js
   var updateFavoriteBooksSize = (size = getState().favoriteBooks.length) => {
     const navElement = document.querySelector("nav-gnb");
     navElement.querySelector(".size").textContent = String(size);
   };
 
-  // src/js-work-in/components/CheckboxFavoriteBook.js
+  // src/script/components/CheckboxFavoriteBook.js
   var CheckboxFavoriteBook = class extends HTMLElement {
     constructor() {
       super();
@@ -376,7 +376,7 @@
     }
   };
 
-  // src/js-work-in/components/BookImage.js
+  // src/script/components/BookImage.js
   var BookImage = class extends HTMLElement {
     constructor() {
       super();
@@ -421,7 +421,7 @@
     }
   };
 
-  // src/js-work-in/pages/search/AppSearch.js
+  // src/script/pages/search/AppSearch.js
   var AppSearch = class extends HTMLElement {
     constructor() {
       super();
@@ -443,7 +443,7 @@
     }
   };
 
-  // src/js-work-in/pages/search/InputSearch.js
+  // src/script/pages/search/InputSearch.js
   var InputSearch = class extends HTMLElement {
     constructor() {
       super();
@@ -470,7 +470,7 @@
     }
   };
 
-  // src/js-work-in/pages/search/BookList.js
+  // src/script/pages/search/BookList.js
   var __awaiter3 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -609,7 +609,7 @@
     }
   };
 
-  // src/js-work-in/pages/search/BookItem.js
+  // src/script/pages/search/BookItem.js
   var BookItem = class extends HTMLElement {
     constructor() {
       super();
@@ -682,7 +682,7 @@
     }
   };
 
-  // src/js-work-in/pages/search/index.js
+  // src/script/pages/search/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("book-list", BookList);
   customElements.define("app-search", AppSearch);

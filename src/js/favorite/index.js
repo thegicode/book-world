@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  // src/js-work-in/components/BookDescription.js
+  // src/script/components/BookDescription.js
   var BookDescription = class extends HTMLElement {
     constructor() {
       super();
@@ -50,7 +50,7 @@
     }
   };
 
-  // src/js-work-in/utils/CustomEventEmitter.js
+  // src/script/utils/CustomEventEmitter.js
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
@@ -67,7 +67,7 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // src/js-work-in/utils/CustomFetch.js
+  // src/script/utils/CustomFetch.js
   var __awaiter = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -121,7 +121,7 @@
   };
   var CustomFetch_default = new CustomFetch();
 
-  // src/js-work-in/components/LibraryBookExist.js
+  // src/script/components/LibraryBookExist.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -226,7 +226,7 @@
     }
   };
 
-  // src/js-work-in/modules/model.js
+  // src/script/modules/model.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -272,7 +272,7 @@
     return state.favoriteBooks.includes(isbn);
   };
 
-  // src/js-work-in/components/NavGnb.js
+  // src/script/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -304,13 +304,13 @@
     }
   };
 
-  // src/js-work-in/modules/events.js
+  // src/script/modules/events.js
   var updateFavoriteBooksSize = (size = getState().favoriteBooks.length) => {
     const navElement = document.querySelector("nav-gnb");
     navElement.querySelector(".size").textContent = String(size);
   };
 
-  // src/js-work-in/components/CheckboxFavoriteBook.js
+  // src/script/components/CheckboxFavoriteBook.js
   var CheckboxFavoriteBook = class extends HTMLElement {
     constructor() {
       super();
@@ -349,7 +349,7 @@
     }
   };
 
-  // src/js-work-in/components/BookImage.js
+  // src/script/components/BookImage.js
   var BookImage = class extends HTMLElement {
     constructor() {
       super();
@@ -394,7 +394,7 @@
     }
   };
 
-  // src/js-work-in/pages/favorite/Favorite.js
+  // src/script/pages/favorite/Favorite.js
   var Favorite = class extends HTMLElement {
     // $countEl
     // $observer
@@ -451,7 +451,7 @@
     }
   };
 
-  // src/js-work-in/pages/favorite/FavoriteItem.js
+  // src/script/pages/favorite/FavoriteItem.js
   var __awaiter3 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -575,7 +575,7 @@
     }
   };
 
-  // src/js-work-in/pages/favorite/index.js
+  // src/script/pages/favorite/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-favorite", Favorite);
   customElements.define("favorite-item", FavoriteItem);
