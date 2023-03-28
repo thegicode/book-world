@@ -4,7 +4,10 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node index & npm run tsc & npm run esbuild-dev & npm run css-dev & npm run watch-html",
+        "start": "npm run start:dev",
+        "start:dev": "NODE_ENV=development node index && npm run local",
+        "start:prod": "NODE_ENV=production node index && npm run build",
+        "local": "npm run tsc && npm run esbuild-dev && npm run css-dev && npm run watch-html",
         "build": "npm run esbuild-prod && npm run css-prod &&  npm run html-prod",
         "tsc": "tsc -w",
         "esbuild-dev": "esbuild src/script/pages/**/index.js --outdir=src/js --bundle --watch --sourcemap",
@@ -39,5 +42,8 @@
         "nodemon": "^2.0.22",
         "sass": "^1.49.9",
         "typescript": "^5.0.2"
+    },
+    "dependencies": {
+        "dotenv": "^16.0.3"
     }
 }

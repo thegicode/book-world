@@ -3,14 +3,18 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const dotenv = require('dotenv');
 
 const app = express();
-const port = 7777;
+
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+dotenv.config({ path: path.resolve(__dirname, envFile) });
+const { NODE_ENV, PORT } = process.env
 
 app.use(express.static(`${__dirname}/src/`));
 
-app.listen(port, () => {
-    console.log(`Start : http://localhost:${port}`);
+app.listen(PORT, () => {
+    console.log(`Start : http://localhost:${PORT}`);
 });
 
 const apiHandlers = require("./apiHandlers.js");
