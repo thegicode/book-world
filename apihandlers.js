@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
-const { libKey, naverKey } = require("./user.js");
+const path = require("path");
+const dotenv = require('dotenv');
+dotenv.config({ path: path.resolve(__dirname, '.env.key') });
+const { LIBRARY_KEY, NAVER_CLIENT_ID, NAVER_SECRET_KEY } = process.env
 
 /** NAVER */
 
@@ -13,8 +14,8 @@ async function searchNaverBook(req, res) {
         start,
     });
     const headers = {
-        "X-Naver-Client-Id": naverKey.clientID,
-        "X-Naver-Client-Secret": naverKey.clientSecret,
+        "X-Naver-Client-Id": NAVER_CLIENT_ID,
+        "X-Naver-Client-Secret": NAVER_SECRET_KEY,
     };
     const url = `https://openapi.naver.com/v1/search/book.json?${queryParams}`;
     try {
@@ -35,7 +36,7 @@ async function searchNaverBook(req, res) {
 
 /** 도서관 정보나루 */
 const host = "http://data4library.kr/api";
-const authKey = `authKey=${libKey}`;
+const authKey = `authKey=${LIBRARY_KEY}`;
 const formatType = "json";
 
 // 정보공개 도서관 조회

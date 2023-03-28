@@ -1,4 +1,5 @@
 /node_modules/
+.env.key
 .env.development
 .env.production
 user.js
