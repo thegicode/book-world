@@ -1,5 +1,6 @@
 const path = require("path");
 const dotenv = require('dotenv');
+
 dotenv.config({ path: path.resolve(__dirname, '.env.key') });
 const { LIBRARY_KEY, NAVER_CLIENT_ID, NAVER_SECRET_KEY } = process.env
 

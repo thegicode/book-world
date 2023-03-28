@@ -2,16 +2,34 @@
 /* eslint-disable no-undef */
 const express = require("express");
 const fs = require("fs");
+const fsExtra = require("fs-extra");
 const path = require("path");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 
 const app = express();
 
-const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+const isProduction = process.env.NODE_ENV === "production";
+const envFile = isProduction ? ".env.production" : ".env.development";
 dotenv.config({ path: path.resolve(__dirname, envFile) });
-const { NODE_ENV, PORT } = process.env
+const { PORT } = process.env;
 
-app.use(express.static(`${__dirname}/src/`));
+const directory = isProduction ? "src" : "dist";
+
+if (isProduction) {
+    const copyAssets = async (srcSubDir, distSubdir) => {
+        const srcDir = path.join(__dirname, "src", srcSubDir);
+        const distDir = path.join(__dirname, "dist", distSubdir);
+        try {
+            await fsExtra.copy(srcDir, distDir);
+            console.log(`${srcSubDir} copied sucessfully!`);
+        } catch (err) {
+            console.error(`An error occured while coping ${srcSubDir}`, err);
+        }
+    };
+    copyAssets("asset", "asset");
+    copyAssets("json", "json");
+}
+app.use(express.static(`${__dirname}/${directory}`));
 
 app.listen(PORT, () => {
     console.log(`Start : http://localhost:${PORT}`);
@@ -32,7 +50,10 @@ routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
         console.log("route:", `/${route}`);
 
-        const htmlPath = path.resolve(__dirname, `src/html/${route}.html`);
+        const htmlPath = path.resolve(
+            __dirname,
+            `${directory}/html/${route}.html`
+        );
         fs.readFile(htmlPath, "utf8", (err, data) => {
             if (err) {
                 console.error(err);
