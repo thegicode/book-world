@@ -5,8 +5,8 @@
     "main": "index.js",
     "scripts": {
         "start": "npm run start:dev",
-        "start:dev": "NODE_ENV=development node index && npm run local",
-        "start:prod": "NODE_ENV=production node index npm run build",
+        "start:dev": "npm run local && NODE_ENV=development node index",
+        "start:prod": "npm run build && NODE_ENV=production node index",
         "local": "npm run tsc && npm run esbuild:dev && npm run css:dev && npm run watch-html",
         "build": "npm run esbuild:prod && npm run css:prod &&  npm run html:prod",
         "tsc": "npx tsc && npx tsc --project ./src -w",
