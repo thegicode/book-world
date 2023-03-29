@@ -9,7 +9,7 @@
         "start:prod": "NODE_ENV=production node index npm run build",
         "local": "npm run tsc && npm run esbuild:dev && npm run css:dev && npm run watch-html",
         "build": "npm run esbuild:prod && npm run css:prod &&  npm run html:prod",
-        "tsc": "tsc -w",
+        "tsc": "npx tsc && npx tsc --project ./src -w",
         "esbuild:dev": "esbuild src/script/pages/**/index.js --outdir=src/js --bundle --watch --sourcemap",
         "esbuild:prod": "esbuild src/script/pages/**/index.js --outdir=dist/js --bundle --minify",
         "css:dev": "npx sass ./src/sass/:./src/css/ --style=expanded --source-map --watch",
@@ -31,6 +31,9 @@
     },
     "homepage": "https://github.com/thegicode/book-world#readme",
     "devDependencies": {
+        "@types/express": "^4.17.17",
+        "@types/fs-extra": "^11.0.1",
+        "@types/node": "^18.15.11",
         "@typescript-eslint/eslint-plugin": "^5.55.0",
         "@typescript-eslint/parser": "^5.55.0",
         "esbuild": "^0.17.13",
