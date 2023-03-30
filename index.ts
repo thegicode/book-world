@@ -12,13 +12,13 @@ import {
 } from "./apiHandlers";
 
 const app = express();
-
 const isProduction = process.env.NODE_ENV === "production";
 const envFile = isProduction ? ".env.production" : ".env.development";
+const directory = isProduction ? "dist" : "src";
+
 dotenv.config({ path: path.resolve(__dirname, envFile) });
 const { PORT } = process.env;
 
-const directory = isProduction ? "dist" : "src";
 console.log("***[Server]*** isProduction: ", isProduction);
 
 if (isProduction) {
@@ -36,19 +36,20 @@ if (isProduction) {
     copyAssets("json", "json");
 }
 app.use(express.static(`${__dirname}/${directory}`));
+// app.use("/api", apiRoutes);
 
 app.listen(PORT, () => {
     console.log(`Start : http://localhost:${PORT}`);
 });
 
-// API 라우트
+// API routes
 app.get("/search-naver-book", searchNaverBook);
 app.get("/library-search", librarySearch);
 app.get("/book-exist", bookExist);
 app.get("/usage-analysis-list", usageAnalysisList);
 app.get("/library-search-by-book", librarySearchByBook);
 
-// 정적 페이지 라우트
+// Static page routes
 const routes = ["search", "favorite", "library", "book", "setting"];
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {

@@ -21,9 +21,9 @@ const apiHandlers_1 = require("./apiHandlers");
 const app = (0, express_1.default)();
 const isProduction = process.env.NODE_ENV === "production";
 const envFile = isProduction ? ".env.production" : ".env.development";
+const directory = isProduction ? "dist" : "src";
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, envFile) });
 const { PORT } = process.env;
-const directory = isProduction ? "dist" : "src";
 console.log("***[Server]*** isProduction: ", isProduction);
 if (isProduction) {
     const copyAssets = (srcSubDir, distSubdir) => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,13 +44,11 @@ app.use(express_1.default.static(`${__dirname}/${directory}`));
 app.listen(PORT, () => {
     console.log(`Start : http://localhost:${PORT}`);
 });
-// API 라우트
 app.get("/search-naver-book", apiHandlers_1.searchNaverBook);
 app.get("/library-search", apiHandlers_1.librarySearch);
 app.get("/book-exist", apiHandlers_1.bookExist);
 app.get("/usage-analysis-list", apiHandlers_1.usageAnalysisList);
 app.get("/library-search-by-book", apiHandlers_1.librarySearchByBook);
-// 정적 페이지 라우트
 const routes = ["search", "favorite", "library", "book", "setting"];
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
