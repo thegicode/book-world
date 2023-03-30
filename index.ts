@@ -19,7 +19,7 @@ dotenv.config({ path: path.resolve(__dirname, envFile) });
 const { PORT } = process.env;
 
 const directory = isProduction ? "dist" : "src";
-console.log("isProduction", isProduction, directory);
+console.log("***[Server]*** isProduction: ", isProduction);
 
 if (isProduction) {
     const copyAssets = async (srcSubDir: string, distSubdir: string) => {
