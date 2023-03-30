@@ -18,7 +18,8 @@ const envFile = isProduction ? ".env.production" : ".env.development";
 dotenv.config({ path: path.resolve(__dirname, envFile) });
 const { PORT } = process.env;
 
-const directory = isProduction ? "src" : "dist";
+const directory = isProduction ? "dist" : "src";
+console.log("isProduction", isProduction, directory);
 
 if (isProduction) {
     const copyAssets = async (srcSubDir: string, distSubdir: string) => {

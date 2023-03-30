@@ -23,7 +23,8 @@ const isProduction = process.env.NODE_ENV === "production";
 const envFile = isProduction ? ".env.production" : ".env.development";
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, envFile) });
 const { PORT } = process.env;
-const directory = isProduction ? "src" : "dist";
+const directory = isProduction ? "dist" : "src";
+console.log("isProduction", isProduction, directory);
 if (isProduction) {
     const copyAssets = (srcSubDir, distSubdir) => __awaiter(void 0, void 0, void 0, function* () {
         const srcDir = path_1.default.join(__dirname, "src", srcSubDir);
