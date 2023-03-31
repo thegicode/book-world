@@ -1,4 +1,3 @@
-import { ISearchBook, ISearchNaverBookResult } from "../../modules/types";
 import BookItem from "./BookItem";
 import { Observer, CustomFetch, CustomEventEmitter } from "../../utils/index";
 

@@ -1,4 +1,4 @@
-export interface IBook {
+interface IBook {
     authors: string;
     bookImageURL: string;
     bookname: string;
@@ -11,22 +11,22 @@ export interface IBook {
     publisher: string;
 }
 
-export interface IKeyword {
+interface IKeyword {
     word: string;
 }
 
-export interface IRecommendedBook {
+interface IRecommendedBook {
     bookname: string;
     isbn13: string;
 }
 
-export interface IUsageAnalysisListData {
+interface IUsageAnalysisListData {
     book: IBook;
     keywords: IKeyword[];
     recBooks: IRecommendedBook[];
 }
 
-export interface ILibrary {
+interface ILibrary {
     address: string;
     homepage: string;
     libCode: string;
@@ -34,20 +34,20 @@ export interface ILibrary {
     telephone: string;
 }
 
-export interface ILibrarySearchByBookResult {
+interface ILibrarySearchByBookResult {
     libraries: ILibrary[];
 }
 
-export interface IBookExist {
+interface IBookExist {
     hasBook: string;
     loanAvailable: string;
 }
 
-export interface IUsageAnalysisResult {
+interface IUsageAnalysisResult {
     book: IBook;
 }
 
-export interface ISearchBook {
+interface ISearchBook {
     author: string;
     description: string;
     image: string;
@@ -59,42 +59,42 @@ export interface ISearchBook {
     price: string;
 }
 
-export interface ISearchNaverBookResult {
+interface ISearchNaverBookResult {
     total: number;
     display: number;
     items: ISearchBook[];
 }
 
-export interface IRegionData {
+interface IRegionData {
     [key: string]: string;
 }
 
-export interface IDetailRegionData {
+interface IDetailRegionData {
     [key: string]: {
         [key: string]: string;
     };
 }
 
-export interface TotalRegions {
+interface TotalRegions {
     region: IRegionData;
     detailRegion: IDetailRegionData;
 }
 
-export interface IStorageData {
+interface IStorageData {
     favoriteBooks: string[];
     libraries: Record<string, string>;
     regions: Record<string, Record<string, string>>;
 }
 
-export interface IBookImageData {
+interface IBookImageData {
     bookImageURL: string;
     bookname: string;
 }
 
-export interface ICustomEvent<T> extends Event {
+interface ICustomEvent<T> extends Event {
     detail: T;
 }
 
-export interface ICustomEventDetail {
+interface ICustomEventDetail {
     [key: string]: unknown;
 }

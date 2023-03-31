@@ -1,4 +1,3 @@
-import { ISearchBook } from "../../modules/types";
 import { state } from "../../modules/model";
 import {
     BookDescription,

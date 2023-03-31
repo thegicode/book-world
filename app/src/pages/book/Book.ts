@@ -1,4 +1,3 @@
-import { IUsageAnalysisListData } from "../../modules/types";
 import { BookImage } from "../../components/index";
 import { CustomFetch } from "../../utils/index";
 

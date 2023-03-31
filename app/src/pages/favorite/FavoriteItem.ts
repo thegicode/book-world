@@ -1,4 +1,3 @@
-import { IUsageAnalysisResult } from "../../modules/types";
 import { CustomFetch } from "../../utils/index";
 import { state } from "../../modules/model";
 import {

@@ -1,5 +1,3 @@
-import { ICustomEvent, ICustomEventDetail } from "../modules/types.js";
-
 class CustomEventEmitter<T extends ICustomEventDetail> {
     private _bus: HTMLElement;
 

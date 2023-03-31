@@ -1,8 +1,3 @@
-import {
-    ICustomEvent,
-    ILibrary,
-    ILibrarySearchByBookResult,
-} from "../../modules/types";
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { hasLibrary } from "../../modules/model";
 import LibraryItem from "./LibraryItem";

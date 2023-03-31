@@ -1,4 +1,3 @@
-import { IStorageData } from "../../modules/types";
 import { CustomFetch } from "../../utils/index";
 import { setState } from "../../modules/model";
 // import { updateFavoriteBooksSize } from "../../modules/events.js";

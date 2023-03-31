@@ -1,4 +1,3 @@
-import { TotalRegions } from "../../modules/types";
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { getState, addRegion, removeRegion } from "../../modules/model";
 

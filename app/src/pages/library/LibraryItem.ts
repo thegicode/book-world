@@ -1,4 +1,3 @@
-import { ILibrary } from "../../modules/types";
 import { addLibrary, removeLibrary, hasLibrary } from "../../modules/model";
 
 export default class LibraryItem extends HTMLElement {

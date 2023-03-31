@@ -1,4 +1,3 @@
-import { TotalRegions } from "../../modules/types";
 import { CustomEventEmitter } from "../../utils/index";
 import {
     getState,

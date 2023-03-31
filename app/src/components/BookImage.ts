@@ -1,5 +1,3 @@
-import { IBookImageData } from "../modules/types";
-
 export default class BookImage extends HTMLElement {
     constructor() {
         super();

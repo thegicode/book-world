@@ -1,4 +1,3 @@
-import { IBookExist } from "../modules/types";
 import { CustomFetch } from "../utils/index";
 
 export default class LibraryBookExist extends HTMLElement {
