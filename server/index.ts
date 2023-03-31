@@ -15,6 +15,7 @@ const app = express();
 const isProduction = process.env.NODE_ENV === "production";
 const envFile = isProduction ? ".env.production" : ".env.development";
 const directory = isProduction ? "dist" : "src";
+const rootPath = path.join(__dirname, "..");
 
 dotenv.config({ path: path.resolve(__dirname, envFile) });
 const { PORT } = process.env;
@@ -23,8 +24,8 @@ console.log("***[Server]*** isProduction: ", isProduction);
 
 if (isProduction) {
     const copyAssets = async (srcSubDir: string, distSubdir: string) => {
-        const srcDir = path.join(__dirname, "src", srcSubDir);
-        const distDir = path.join(__dirname, "dist", distSubdir);
+        const srcDir = path.join(rootPath, "src", srcSubDir);
+        const distDir = path.join(rootPath, "dist", distSubdir);
         try {
             await fsExtra.copy(srcDir, distDir);
             console.log(`${srcSubDir} copied sucessfully!`);
@@ -32,11 +33,10 @@ if (isProduction) {
             console.error(`An error occured while coping ${srcSubDir}`, err);
         }
     };
-    copyAssets("asset", "asset");
-    copyAssets("json", "json");
+    copyAssets("assets", "assets");
+    // copyAssets("json", "json");
 }
-app.use(express.static(`${__dirname}/${directory}`));
-// app.use("/api", apiRoutes);
+app.use(express.static(path.join(rootPath, directory)));
 
 app.listen(PORT, () => {
     console.log(`Start : http://localhost:${PORT}`);
@@ -56,7 +56,7 @@ routes.forEach((route) => {
         console.log("route:", `/${route}`);
 
         const htmlPath = path.resolve(
-            __dirname,
+            rootPath,
             `${directory}/html/${route}.html`
         );
         fs.readFile(htmlPath, "utf8", (err, data) => {

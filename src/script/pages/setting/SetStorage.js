@@ -26,7 +26,7 @@ export default class SetStorage extends HTMLElement {
     }
     setLocalStorageToBase() {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `../../json/storage-sample.json`;
+            const url = `../../../assets/json/storage-sample.json`;
             try {
                 const data = yield CustomFetch.fetch(url);
                 setState(data);

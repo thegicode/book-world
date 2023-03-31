@@ -19,7 +19,7 @@ export default class SetRegion extends HTMLElement {
     }
     fetchRegion() {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = "../../json/region.json";
+            const url = "../../../assets/json/region.json";
             try {
                 this.regionData = (yield CustomFetch.fetch(url));
                 this.render();

@@ -22,13 +22,14 @@ const app = (0, express_1.default)();
 const isProduction = process.env.NODE_ENV === "production";
 const envFile = isProduction ? ".env.production" : ".env.development";
 const directory = isProduction ? "dist" : "src";
+const rootPath = path_1.default.join(__dirname, "..");
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, envFile) });
 const { PORT } = process.env;
 console.log("***[Server]*** isProduction: ", isProduction);
 if (isProduction) {
     const copyAssets = (srcSubDir, distSubdir) => __awaiter(void 0, void 0, void 0, function* () {
-        const srcDir = path_1.default.join(__dirname, "src", srcSubDir);
-        const distDir = path_1.default.join(__dirname, "dist", distSubdir);
+        const srcDir = path_1.default.join(rootPath, "src", srcSubDir);
+        const distDir = path_1.default.join(rootPath, "dist", distSubdir);
         try {
             yield fs_extra_1.default.copy(srcDir, distDir);
             console.log(`${srcSubDir} copied sucessfully!`);
@@ -37,10 +38,9 @@ if (isProduction) {
             console.error(`An error occured while coping ${srcSubDir}`, err);
         }
     });
-    copyAssets("asset", "asset");
-    copyAssets("json", "json");
+    copyAssets("assets", "assets");
 }
-app.use(express_1.default.static(`${__dirname}/${directory}`));
+app.use(express_1.default.static(path_1.default.join(rootPath, directory)));
 app.listen(PORT, () => {
     console.log(`Start : http://localhost:${PORT}`);
 });
@@ -53,7 +53,7 @@ const routes = ["search", "favorite", "library", "book", "setting"];
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
         console.log("route:", `/${route}`);
-        const htmlPath = path_1.default.resolve(__dirname, `${directory}/html/${route}.html`);
+        const htmlPath = path_1.default.resolve(rootPath, `${directory}/html/${route}.html`);
         fs_1.default.readFile(htmlPath, "utf8", (err, data) => {
             if (err) {
                 console.error(err);

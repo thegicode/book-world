@@ -8,6 +8,6 @@
         "removeComments": true,
         "sourceMap": false
     },
-    "include": ["*.ts"],
-    "exclude": ["node_modules", "**/*.test.ts"]
+    "include": ["*.ts"]
+    // "exclude": ["node_modules", "**/*.test.ts"]
 }

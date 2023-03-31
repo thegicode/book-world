@@ -196,7 +196,7 @@
     }
     fetchRegion() {
       return __awaiter2(this, void 0, void 0, function* () {
-        const url = "../../json/region.json";
+        const url = "../../../assets/json/region.json";
         try {
           this.regionData = yield CustomFetch_default.fetch(url);
           this.render();
@@ -446,7 +446,7 @@
     }
     setLocalStorageToBase() {
       return __awaiter3(this, void 0, void 0, function* () {
-        const url = `../../json/storage-sample.json`;
+        const url = `../../../assets/json/storage-sample.json`;
         try {
           const data = yield CustomFetch_default.fetch(url);
           setState(data);

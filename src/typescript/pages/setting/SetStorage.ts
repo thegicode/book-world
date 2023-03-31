@@ -37,7 +37,7 @@ export default class SetStorage extends HTMLElement {
     }
 
     private async setLocalStorageToBase() {
-        const url = `../../json/storage-sample.json`;
+        const url = `../../../assets/json/storage-sample.json`;
         try {
             const data = await CustomFetch.fetch<IStorageData>(url);
             setState(data);

@@ -15,7 +15,7 @@ export default class SetRegion extends HTMLElement {
     }
 
     private async fetchRegion() {
-        const url = "../../json/region.json";
+        const url = "../../../assets/json/region.json";
         try {
             this.regionData = (await CustomFetch.fetch(url)) as TotalRegions;
             this.render();
