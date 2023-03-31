@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  // src/script/utils/CustomEventEmitter.js
+  // app/script/utils/CustomEventEmitter.js
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
@@ -17,7 +17,7 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // src/script/utils/CustomFetch.js
+  // app/script/utils/CustomFetch.js
   var __awaiter = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -71,7 +71,7 @@
   };
   var CustomFetch_default = new CustomFetch();
 
-  // src/script/modules/model.js
+  // app/script/modules/model.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -119,7 +119,7 @@
     setState(state);
   };
 
-  // src/script/components/NavGnb.js
+  // app/script/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -151,14 +151,14 @@
     }
   };
 
-  // src/script/pages/setting/AppSetting.js
+  // app/script/pages/setting/AppSetting.js
   var AppSetting = class extends HTMLElement {
     constructor() {
       super();
     }
   };
 
-  // src/script/pages/setting/SetRegion.js
+  // app/script/pages/setting/SetRegion.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -251,7 +251,7 @@
     }
   };
 
-  // src/script/pages/setting/SetDetailRegion.js
+  // app/script/pages/setting/SetDetailRegion.js
   var SetDetailRegion = class extends HTMLElement {
     constructor() {
       super();
@@ -365,7 +365,7 @@
     }
   };
 
-  // src/script/pages/setting/FavoriteRegions.js
+  // app/script/pages/setting/FavoriteRegions.js
   var FavoriteRegions = class extends HTMLElement {
     constructor() {
       super();
@@ -402,7 +402,7 @@
     }
   };
 
-  // src/script/pages/setting/SetStorage.js
+  // app/script/pages/setting/SetStorage.js
   var __awaiter3 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -464,7 +464,7 @@
     }
   };
 
-  // src/script/pages/setting/index.js
+  // app/script/pages/setting/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-setting", AppSetting);
   customElements.define("set-region", SetRegion);

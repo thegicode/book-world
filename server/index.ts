@@ -14,7 +14,7 @@ import {
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
 const envFile = isProduction ? ".env.production" : ".env.development";
-const directory = isProduction ? "dist" : "src";
+const directory = isProduction ? "dist" : "app";
 const rootPath = path.join(__dirname, "..");
 
 dotenv.config({ path: path.resolve(__dirname, envFile) });
@@ -24,10 +24,10 @@ console.log("***[Server]*** isProduction: ", isProduction);
 
 // Copy assets file
 if (isProduction) {
-    const srcDir = path.join(rootPath, "src", "assets");
+    const appDir = path.join(rootPath, "app", "assets");
     const distDir = path.join(rootPath, "dist", "assets");
     try {
-        fsExtra.copy(srcDir, distDir);
+        fsExtra.copy(appDir, distDir);
         console.log(`Assets copied sucessfully!`);
     } catch (err) {
         console.error(`An error occured while coping Assets`, err);

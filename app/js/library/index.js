@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  // src/script/utils/CustomEventEmitter.js
+  // app/script/utils/CustomEventEmitter.js
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
@@ -17,7 +17,7 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // src/script/utils/CustomFetch.js
+  // app/script/utils/CustomFetch.js
   var __awaiter = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -71,7 +71,7 @@
   };
   var CustomFetch_default = new CustomFetch();
 
-  // src/script/modules/model.js
+  // app/script/modules/model.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -114,7 +114,7 @@
     return code in state.libraries;
   };
 
-  // src/script/components/NavGnb.js
+  // app/script/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -146,7 +146,7 @@
     }
   };
 
-  // src/script/pages/library/Library.js
+  // app/script/pages/library/Library.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -237,7 +237,7 @@
     }
   };
 
-  // src/script/pages/library/LibraryRegion.js
+  // app/script/pages/library/LibraryRegion.js
   var LibraryRegion = class extends HTMLElement {
     constructor() {
       super();
@@ -308,7 +308,7 @@
     }
   };
 
-  // src/script/pages/library/LibraryItem.js
+  // app/script/pages/library/LibraryItem.js
   var LibraryItem = class extends HTMLElement {
     constructor() {
       super();
@@ -353,7 +353,7 @@
     }
   };
 
-  // src/script/pages/library/index.js
+  // app/script/pages/library/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-library", Library);
   customElements.define("library-region", LibraryRegion);

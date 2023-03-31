@@ -12,16 +12,16 @@ const apiHandlers_1 = require("./apiHandlers");
 const app = (0, express_1.default)();
 const isProduction = process.env.NODE_ENV === "production";
 const envFile = isProduction ? ".env.production" : ".env.development";
-const directory = isProduction ? "dist" : "src";
+const directory = isProduction ? "dist" : "app";
 const rootPath = path_1.default.join(__dirname, "..");
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, envFile) });
 const { PORT } = process.env;
 console.log("***[Server]*** isProduction: ", isProduction);
 if (isProduction) {
-    const srcDir = path_1.default.join(rootPath, "src", "assets");
+    const appDir = path_1.default.join(rootPath, "app", "assets");
     const distDir = path_1.default.join(rootPath, "dist", "assets");
     try {
-        fs_extra_1.default.copy(srcDir, distDir);
+        fs_extra_1.default.copy(appDir, distDir);
         console.log(`Assets copied sucessfully!`);
     }
     catch (err) {
