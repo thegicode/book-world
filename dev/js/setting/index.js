@@ -1,3 +1,4 @@
+"use strict";
 (() => {
   // dev/scripts/utils/CustomEventEmitter.js
   var CustomEventEmitter = class {

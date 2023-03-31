@@ -1,3 +1,4 @@
+"use strict";
 (() => {
   // dev/scripts/components/BookDescription.js
   var BookDescription = class extends HTMLElement {
@@ -14,7 +15,7 @@
     }
     disconnectedCallback() {
       if (this.button)
-        this.button.removeEventListener("click", this.onClickButton.bind(this));
+        this.button.removeEventListener("click", this.onButtonClick.bind(this));
     }
     render(value) {
       const template = `
@@ -24,12 +25,12 @@
       this.el = this.querySelector(".description");
       this.button = this.querySelector(".more-description-button");
       if (this.button)
-        this.button.addEventListener("click", this.onClickButton.bind(this));
+        this.button.addEventListener("click", this.onButtonClick.bind(this));
     }
     // isEllipsisActive(el) {
     //     return (el.offsetHeight < el.scrollHeight);
     // }
-    onClickButton() {
+    onButtonClick() {
       if (!this.el)
         return;
       switch (this.el.dataset.ellipsis) {
@@ -43,8 +44,6 @@
           if (this.button)
             this.button.textContent = "\uC124\uBA85 \uB354\uBCF4\uAE30";
           break;
-        default:
-          console.log("\uC124\uBA85 \uB354\uBCF4\uAE30 \uBC84\uD2BC \uC2E4\uD589");
       }
     }
   };
@@ -395,6 +394,10 @@
 
   // dev/scripts/pages/favorite/Favorite.js
   var Favorite = class extends HTMLElement {
+    constructor() {
+      super();
+      this.$booksEl = this.querySelector(".favorite-books");
+    }
     // $countEl
     // $observer
     // set count(value) {
@@ -405,10 +408,6 @@
     // }
     get favoriteBooks() {
       return getState().favoriteBooks;
-    }
-    constructor() {
-      super();
-      this.$booksEl = this.querySelector(".favorite-books");
     }
     connectedCallback() {
       if (this.favoriteBooks.length === 0) {

@@ -1,0 +1,18 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "target": "es6",
+        "lib": ["ES6", "ESNext", "DOM"],
+        "module": "ESNext",
+        "strict": true,
+        "esModuleInterop": true,
+        "outDir": "./dev/scripts",
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "types": ["jest"],
+        "forceConsistentCasingInFileNames": true,
+        "sourceMap": true
+    },
+    "include": ["app/**/*.ts"],
+    "exclude": ["node_modules", "**/*.test.ts", "server/**.ts"]
+}
