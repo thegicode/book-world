@@ -1,5 +1,5 @@
 (() => {
-  // dev/src/utils/CustomEventEmitter.js
+  // dev/scripts/utils/CustomEventEmitter.js
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
@@ -16,7 +16,7 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // dev/src/utils/CustomFetch.js
+  // dev/scripts/utils/CustomFetch.js
   var __awaiter = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -70,7 +70,7 @@
   };
   var CustomFetch_default = new CustomFetch();
 
-  // dev/src/modules/model.js
+  // dev/scripts/modules/model.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -118,7 +118,7 @@
     setState(state);
   };
 
-  // dev/src/components/NavGnb.js
+  // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -150,14 +150,14 @@
     }
   };
 
-  // dev/src/pages/setting/AppSetting.js
+  // dev/scripts/pages/setting/AppSetting.js
   var AppSetting = class extends HTMLElement {
     constructor() {
       super();
     }
   };
 
-  // dev/src/pages/setting/SetRegion.js
+  // dev/scripts/pages/setting/SetRegion.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -250,7 +250,7 @@
     }
   };
 
-  // dev/src/pages/setting/SetDetailRegion.js
+  // dev/scripts/pages/setting/SetDetailRegion.js
   var SetDetailRegion = class extends HTMLElement {
     constructor() {
       super();
@@ -364,7 +364,7 @@
     }
   };
 
-  // dev/src/pages/setting/FavoriteRegions.js
+  // dev/scripts/pages/setting/FavoriteRegions.js
   var FavoriteRegions = class extends HTMLElement {
     constructor() {
       super();
@@ -401,7 +401,7 @@
     }
   };
 
-  // dev/src/pages/setting/SetStorage.js
+  // dev/scripts/pages/setting/SetStorage.js
   var __awaiter3 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -463,7 +463,7 @@
     }
   };
 
-  // dev/src/pages/setting/index.js
+  // dev/scripts/pages/setting/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-setting", AppSetting);
   customElements.define("set-region", SetRegion);

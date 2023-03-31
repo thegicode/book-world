@@ -1,5 +1,5 @@
 (() => {
-  // dev/src/components/BookDescription.js
+  // dev/scripts/components/BookDescription.js
   var BookDescription = class extends HTMLElement {
     constructor() {
       super();
@@ -49,7 +49,7 @@
     }
   };
 
-  // dev/src/utils/CustomEventEmitter.js
+  // dev/scripts/utils/CustomEventEmitter.js
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
@@ -66,7 +66,7 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // dev/src/utils/CustomFetch.js
+  // dev/scripts/utils/CustomFetch.js
   var __awaiter = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -120,7 +120,7 @@
   };
   var CustomFetch_default = new CustomFetch();
 
-  // dev/src/utils/Observer.js
+  // dev/scripts/utils/Observer.js
   var Observer = class {
     constructor(target, callback) {
       this.target = target;
@@ -147,7 +147,7 @@
     }
   };
 
-  // dev/src/components/LibraryBookExist.js
+  // dev/scripts/components/LibraryBookExist.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -252,7 +252,7 @@
     }
   };
 
-  // dev/src/modules/model.js
+  // dev/scripts/modules/model.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -298,7 +298,7 @@
     return state.favoriteBooks.includes(isbn);
   };
 
-  // dev/src/components/NavGnb.js
+  // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -330,13 +330,13 @@
     }
   };
 
-  // dev/src/modules/events.js
+  // dev/scripts/modules/events.js
   var updateFavoriteBooksSize = (size = getState().favoriteBooks.length) => {
     const navElement = document.querySelector("nav-gnb");
     navElement.querySelector(".size").textContent = String(size);
   };
 
-  // dev/src/components/CheckboxFavoriteBook.js
+  // dev/scripts/components/CheckboxFavoriteBook.js
   var CheckboxFavoriteBook = class extends HTMLElement {
     constructor() {
       super();
@@ -375,7 +375,7 @@
     }
   };
 
-  // dev/src/components/BookImage.js
+  // dev/scripts/components/BookImage.js
   var BookImage = class extends HTMLElement {
     constructor() {
       super();
@@ -420,7 +420,7 @@
     }
   };
 
-  // dev/src/pages/search/AppSearch.js
+  // dev/scripts/pages/search/AppSearch.js
   var AppSearch = class extends HTMLElement {
     constructor() {
       super();
@@ -442,7 +442,7 @@
     }
   };
 
-  // dev/src/pages/search/InputSearch.js
+  // dev/scripts/pages/search/InputSearch.js
   var InputSearch = class extends HTMLElement {
     constructor() {
       super();
@@ -469,7 +469,7 @@
     }
   };
 
-  // dev/src/pages/search/BookList.js
+  // dev/scripts/pages/search/BookList.js
   var __awaiter3 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -608,7 +608,7 @@
     }
   };
 
-  // dev/src/pages/search/BookItem.js
+  // dev/scripts/pages/search/BookItem.js
   var BookItem = class extends HTMLElement {
     constructor() {
       super();
@@ -681,7 +681,7 @@
     }
   };
 
-  // dev/src/pages/search/index.js
+  // dev/scripts/pages/search/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("book-list", BookList);
   customElements.define("app-search", AppSearch);
