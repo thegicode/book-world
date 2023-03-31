@@ -1,6 +1,6 @@
+import { Request, Response } from "express";
 import path from "path";
 import dotenv from "dotenv";
-import { Request, Response } from "express";
 
 dotenv.config({ path: path.resolve(__dirname, ".env.key") });
 const { LIBRARY_KEY, NAVER_CLIENT_ID, NAVER_SECRET_KEY } = process.env;
