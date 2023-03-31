@@ -1,8 +1,8 @@
-@import "./_reset.scss";
-@import "./_gnb.scss";
-@import "./_library-book-exist.scss";
-@import "./checkbox-favorite-book.scss";
-@import "./book-image.scss";
+@import "./base/_reset.scss";
+@import "./components/_gnb.scss";
+@import "./components/_library-book-exist.scss";
+@import "./components/checkbox-favorite-book.scss";
+@import "./components/book-image.scss";
 
 .root {
     display: flex;

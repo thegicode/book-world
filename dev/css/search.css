@@ -224,7 +224,8 @@ app-search {
   color: #133e6e;
   font-size: 1.2rem;
 }
-.paging-info .__count, .paging-info .__display {
+.paging-info .__count,
+.paging-info .__display {
   font-size: 14px;
 }
 

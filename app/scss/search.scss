@@ -1,9 +1,9 @@
-@import './_reset.scss';
-@import './_gnb.scss';
-@import './_book-description.scss';
-@import './_library-book-exist.scss';
-@import './checkbox-favorite-book.scss';
-@import './book-image.scss';
+@import "./base/_reset.scss";
+@import "./components/_gnb.scss";
+@import "./components/_book-description.scss";
+@import "./components/_library-book-exist.scss";
+@import "./components/checkbox-favorite-book.scss";
+@import "./components/book-image.scss";
 
 .root {
     display: flex;
@@ -32,7 +32,6 @@ app-search {
     // left: 0;
     padding: 7px 1rem;
     background-color: #f1fff4;
-
 }
 .input-search {
     display: block;
@@ -96,9 +95,9 @@ app-search {
     .__keyword {
         color: #133e6e;
         font-size: 1.2rem;
-
     }
-    .__count, .__display {
+    .__count,
+    .__display {
         font-size: 14px;
     }
 }
@@ -106,7 +105,6 @@ app-search {
 .book-list {
     flex: 1;
     overflow: auto;
-    
 }
 
 .books {
@@ -114,7 +112,6 @@ app-search {
     margin: 0;
     padding: 0 1rem;
     text-align: center;
-
 }
 .book {
     display: block;
@@ -126,12 +123,14 @@ app-search {
         position: relative;
         margin-bottom: 5px;
         checkbox-favorite-book {
-            position: absolute; bottom: 10px; right: 1rem;
+            position: absolute;
+            bottom: 10px;
+            right: 1rem;
         }
     }
     .book-summary {
         display: flex;
-        gap : 1rem;
+        gap: 1rem;
         font-size: 14px;
         color: #333;
         text-decoration: none;
@@ -147,7 +146,7 @@ app-search {
     }
 
     book-image {
-        &[data-fail=true] {
+        &[data-fail="true"] {
             .book-image {
                 width: 120px;
                 height: 130px;
@@ -169,7 +168,7 @@ app-search {
             padding: 5px 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
-            font-size: 12px;;
+            font-size: 12px;
             text-decoration: none;
         }
     }
@@ -198,7 +197,6 @@ app-search {
             margin-top: 10px;
             text-align: center;
         }
-
     }
 }
 
