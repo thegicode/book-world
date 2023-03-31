@@ -132,7 +132,7 @@ project/
 ├── index.js
 └── index.css
 
-2023.03.31 app 폴더 아
+2023.03.31 app 폴더 아래
 
 ├── src/ # 모든 원본 코드가 위치하는 디렉토리
 │ ├── index.html # 어플리케이션의 진입점 HTML 파일

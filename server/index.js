@@ -5,30 +5,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const fs_1 = __importDefault(require("fs"));
-const fs_extra_1 = __importDefault(require("fs-extra"));
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const apiHandlers_1 = require("./apiHandlers");
+const watch_and_copy_1 = require("./watch-and-copy");
 const app = (0, express_1.default)();
 const isProduction = process.env.NODE_ENV === "production";
 const envFile = isProduction ? ".env.production" : ".env.development";
-const directory = isProduction ? "dist" : "app";
+const directory = isProduction ? "prod" : "dev";
 const rootPath = path_1.default.join(__dirname, "..");
+const destPath = path_1.default.join(rootPath, directory);
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, envFile) });
 const { PORT } = process.env;
 console.log("***[Server]*** isProduction: ", isProduction);
-if (isProduction) {
-    const appDir = path_1.default.join(rootPath, "app", "assets");
-    const distDir = path_1.default.join(rootPath, "dist", "assets");
-    try {
-        fs_extra_1.default.copy(appDir, distDir);
-        console.log(`Assets copied sucessfully!`);
-    }
-    catch (err) {
-        console.error(`An error occured while coping Assets`, err);
-    }
-}
-app.use(express_1.default.static(path_1.default.join(rootPath, directory)));
+(0, watch_and_copy_1.watchAndCopy)(rootPath, isProduction);
+app.use(express_1.default.static(destPath));
 app.listen(PORT, () => {
     console.log(`Start : http://localhost:${PORT}`);
 });
@@ -41,7 +32,7 @@ const routes = ["search", "favorite", "library", "book", "setting"];
 routes.forEach((route) => {
     app.get(`/${route}`, (req, res) => {
         console.log("route:", `/${route}`);
-        const htmlPath = path_1.default.resolve(rootPath, `${directory}/html/${route}.html`);
+        const htmlPath = path_1.default.join(destPath, `/html/${route}.html`);
         fs_1.default.readFile(htmlPath, "utf8", (err, data) => {
             if (err) {
                 console.error(err);
