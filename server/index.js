@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -27,18 +18,15 @@ dotenv_1.default.config({ path: path_1.default.resolve(__dirname, envFile) });
 const { PORT } = process.env;
 console.log("***[Server]*** isProduction: ", isProduction);
 if (isProduction) {
-    const copyAssets = (srcSubDir, distSubdir) => __awaiter(void 0, void 0, void 0, function* () {
-        const srcDir = path_1.default.join(rootPath, "src", srcSubDir);
-        const distDir = path_1.default.join(rootPath, "dist", distSubdir);
-        try {
-            yield fs_extra_1.default.copy(srcDir, distDir);
-            console.log(`${srcSubDir} copied sucessfully!`);
-        }
-        catch (err) {
-            console.error(`An error occured while coping ${srcSubDir}`, err);
-        }
-    });
-    copyAssets("assets", "assets");
+    const srcDir = path_1.default.join(rootPath, "src", "assets");
+    const distDir = path_1.default.join(rootPath, "dist", "assets");
+    try {
+        fs_extra_1.default.copy(srcDir, distDir);
+        console.log(`Assets copied sucessfully!`);
+    }
+    catch (err) {
+        console.error(`An error occured while coping Assets`, err);
+    }
 }
 app.use(express_1.default.static(path_1.default.join(rootPath, directory)));
 app.listen(PORT, () => {

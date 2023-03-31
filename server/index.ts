@@ -22,20 +22,18 @@ const { PORT } = process.env;
 
 console.log("***[Server]*** isProduction: ", isProduction);
 
+// Copy assets file
 if (isProduction) {
-    const copyAssets = async (srcSubDir: string, distSubdir: string) => {
-        const srcDir = path.join(rootPath, "src", srcSubDir);
-        const distDir = path.join(rootPath, "dist", distSubdir);
-        try {
-            await fsExtra.copy(srcDir, distDir);
-            console.log(`${srcSubDir} copied sucessfully!`);
-        } catch (err) {
-            console.error(`An error occured while coping ${srcSubDir}`, err);
-        }
-    };
-    copyAssets("assets", "assets");
-    // copyAssets("json", "json");
+    const srcDir = path.join(rootPath, "src", "assets");
+    const distDir = path.join(rootPath, "dist", "assets");
+    try {
+        fsExtra.copy(srcDir, distDir);
+        console.log(`Assets copied sucessfully!`);
+    } catch (err) {
+        console.error(`An error occured while coping Assets`, err);
+    }
 }
+
 app.use(express.static(path.join(rootPath, directory)));
 
 app.listen(PORT, () => {
