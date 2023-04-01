@@ -1,6 +1,6 @@
 import express from "express";
-import { watchAndCopy } from "./watchAndCopy";
 import { isProduction, destinationPath, PORT } from "./config";
+import { watchAndCopy } from "./watchAndCopy";
 import { setupApiRoutes } from "./apiRoutes";
 import { setupStaticRoutes } from "./staticRoutes";
 

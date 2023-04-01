@@ -6,20 +6,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.watchAndCopy = void 0;
 const path_1 = __importDefault(require("path"));
 const chokidar_1 = __importDefault(require("chokidar"));
+const fs_1 = __importDefault(require("fs"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const config_1 = require("./config");
 const watchAndCopy = () => {
-    const buildType = config_1.isProduction ? "prod" : "dev";
-    const assetSrcPath = path_1.default.join(config_1.rootPath, "app", "assets");
-    const assetDistPath = path_1.default.join(config_1.rootPath, buildType, "assets");
-    const watcher = chokidar_1.default.watch(`${assetSrcPath}/**/*`, {
+    const assetsSrcPath = path_1.default.join(config_1.rootPath, "app", "assets");
+    const assetsDistPath = path_1.default.join(config_1.rootPath, config_1.buildType, "assets");
+    const watcher = chokidar_1.default.watch(`${assetsSrcPath}/**/*`, {
+        ignored: /\.DS_Store$/,
         persistent: true,
     });
-    const copyFile = (path) => {
-        const destinationPath = path.replace(assetSrcPath, assetDistPath);
-        fs_extra_1.default.copy(path, destinationPath)
-            .then(() => console.log(`Copied ${path} to ${destinationPath}`))
-            .catch((err) => console.error(`Error copying ${path}:`, err));
+    const copyFile = (srcPath) => {
+        const targetPath = srcPath.replace(assetsSrcPath, assetsDistPath);
+        fs_extra_1.default
+            .copy(srcPath, targetPath)
+            .then(() => console.log(`Copied ${srcPath} to ${targetPath}`))
+            .catch((err) => console.error(`Error copying ${srcPath}:`, err));
+    };
+    const removeFile = (srcPath) => {
+        const targetPath = srcPath.replace(assetsSrcPath, assetsDistPath);
+        fs_1.default.unlink(targetPath, (err) => {
+            if (err) {
+                console.error(`Error while deleting the file: ${err.message}`);
+                return;
+            }
+            console.log(`File ${targetPath} deleted successfully`);
+        });
     };
     watcher
         .on("add", (path) => {
@@ -29,6 +41,10 @@ const watchAndCopy = () => {
         .on("change", (path) => {
         console.log(`File ${path} has been changed`);
         copyFile(path);
+    })
+        .on("unlink", (path) => {
+        console.log(`File ${path} has been removed`);
+        removeFile(path);
     });
 };
 exports.watchAndCopy = watchAndCopy;
