@@ -158,29 +158,6 @@ export async function librarySearchByBook(req: Request, res: Response) {
     }
 }
 
-// export function searchNaverBook(arg0: string, searchNaverBook: any) {
-//     throw new Error("Function not implemented.");
-// }
-
-// export function librarySearch(arg0: string, librarySearch: any) {
-//     throw new Error("Function not implemented.");
-// }
-
-// export function bookExist(arg0: string, bookExist: any) {
-//     throw new Error("Function not implemented.");
-// }
-
-// export function usageAnalysisList(arg0: string, usageAnalysisList: any) {
-//     throw new Error("Function not implemented.");
-// }
-
-// export function librarySearchByBook(arg0: string, librarySearchByBook: any) {
-//     throw new Error("Function not implemented.");
-// }
-
-// export function searchNaverBook(arg0: string, searchNaverBook: any) {
-//     throw new Error("Function not implemented.");
-// }
 // 111007 고덕도서관
 
 // 도서관별 장서/대출 데이터 조회

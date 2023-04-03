@@ -278,7 +278,7 @@
       return cloneDeep(JSON.parse(storedState));
     } catch (error) {
       console.error(error);
-      throw new Error("Failed to get state from localStrage.");
+      throw new Error("Failed to get state from localStorage.");
     }
   };
   var state = getState();
