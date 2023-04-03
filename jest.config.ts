@@ -11,11 +11,11 @@ export default {
     testEnvironment: "jest-environment-jsdom",
     roots: ["<rootDir>"],
     collectCoverage: true, // 커버리지 데이터 수집 활성화
-    collectCoverageFrom: [
-        "<rootDir>/app/**/*.{ts,tsx}",
-        "<rootDir>/server/**/*.{ts,tsx}",
-        "!<rootDir>/app/**/*.d.ts",
-    ],
+    // collectCoverageFrom: [
+    //     "<rootDir>/app/**/*.{ts,tsx}",
+    //     "<rootDir>/server/**/*.{ts,tsx}",
+    //     "!<rootDir>/app/**/*.d.ts",
+    // ],
     coverageReporters: ["json", "lcov", "text", "clover"], // 커버리지 리포트 형식 지정
     coverageDirectory: "coverage", // 커버리지 리포트를 저장할 디렉토리 지정
     moduleNameMapper: {
