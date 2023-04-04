@@ -1,10 +1,10 @@
 import BookDescription from "../../scripts/components/BookDescription";
 
 class TestableBookDescription extends BookDescription {
-    setEl(value: HTMLElement | null) {
+    setRootElement(value: HTMLElement | null) {
         this.el = value;
     }
-    callOnButtonClick() {
+    triggerOnButtonClick() {
         this.onButtonClick();
     }
 }
@@ -69,9 +69,9 @@ describe("BookDescription", () => {
             throw new Error("More button not found");
         }
 
-        bookDescription.setEl(null);
+        bookDescription.setRootElement(null);
 
         moreButton.click();
-        expect(() => bookDescription.callOnButtonClick()).not.toThrow();
+        expect(() => bookDescription.triggerOnButtonClick()).not.toThrow();
     });
 });
