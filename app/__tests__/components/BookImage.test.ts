@@ -1,9 +1,9 @@
 import BookImage from "../../scripts/components/BookImage";
 
 class TestableBookImage extends BookImage {
-    setConnected(): void {
-        this.connectedCallback();
-    }
+    // setConnected(): void {
+    //     this.connectedCallback();
+    // }
 }
 
 describe("BokkImage", () => {
