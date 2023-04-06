@@ -1,5 +1,5 @@
-import { addFavoriteBook, removeFavoriteBook, isFavoriteBook, } from "../modules/model.js";
-import { updateFavoriteBooksSize } from "../modules/events.js";
+import { addFavoriteBook, removeFavoriteBook, isFavoriteBook, } from "../modules/model";
+import { updateFavoriteBooksSize } from "../modules/events";
 export default class CheckboxFavoriteBook extends HTMLElement {
     constructor() {
         super();
@@ -9,7 +9,9 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     connectedCallback() {
         var _a;
         const isbnElement = this.closest("[data-isbn]");
-        this.isbn = isbnElement.dataset.isbn;
+        if (isbnElement) {
+            this.isbn = isbnElement.dataset.isbn;
+        }
         this.render();
         (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange.bind(this));
     }
