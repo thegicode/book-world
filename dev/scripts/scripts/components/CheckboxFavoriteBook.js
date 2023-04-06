@@ -1,37 +1,25 @@
-import {
-    addFavoriteBook,
-    removeFavoriteBook,
-    isFavoriteBook,
-} from "../modules/model";
+import { addFavoriteBook, removeFavoriteBook, isFavoriteBook, } from "../modules/model";
 import { updateFavoriteBooksSize } from "../modules/events";
-
 export default class CheckboxFavoriteBook extends HTMLElement {
-    protected inputElement: HTMLInputElement | null;
-    protected isbn: string | null;
-
     constructor() {
         super();
         this.inputElement = null;
         this.isbn = null;
     }
-
-    connectedCallback(): void {
+    connectedCallback() {
+        var _a;
         const isbnElement = this.closest("[data-isbn]");
         if (isbnElement) {
-            this.isbn = (
-                isbnElement as HTMLElement & { dataset: { isbn: string } }
-            ).dataset.isbn;
+            this.isbn = isbnElement.dataset.isbn;
         }
         this.render();
-
-        this.inputElement?.addEventListener("change", this.onChange.bind(this));
+        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange.bind(this));
     }
-
-    disconnectedCallback(): void {
-        this.inputElement?.addEventListener("change", this.onChange);
+    disconnectedCallback() {
+        var _a;
+        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange);
     }
-
-    protected render(): void {
+    render() {
         const isbn = this.isbn || "";
         const checked = isFavoriteBook(isbn) ? "checked" : "";
         this.innerHTML = `<label>
@@ -40,16 +28,18 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         </label>`;
         this.inputElement = this.querySelector("input");
     }
-
-    protected onChange(): void {
+    onChange() {
         const ISBN = this.isbn || "";
-        if (!ISBN || !this.inputElement) return;
+        if (!ISBN || !this.inputElement)
+            return;
         if (this.inputElement.checked) {
             addFavoriteBook(ISBN);
-        } else {
+        }
+        else {
             removeFavoriteBook(ISBN);
         }
         // CustomEventEmitter.dispatch('favorite-books-changed')
         updateFavoriteBooksSize();
     }
 }
+//# sourceMappingURL=CheckboxFavoriteBook.js.map

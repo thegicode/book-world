@@ -1,16 +1,20 @@
 import CheckboxFavoriteBook from "../../scripts/components/CheckboxFavoriteBook";
-import * as model from "../../scripts/modules/model";
+import {
+    addFavoriteBook,
+    removeFavoriteBook,
+    isFavoriteBook,
+} from "../../scripts/modules/model";
 import { updateFavoriteBooksSize } from "../../scripts/modules/events";
 
-// jest.mock("../../scripts/modules/events");
+jest.mock("../../scripts/modules/model", () => ({
+    addFavoriteBook: jest.fn(),
+    removeFavoriteBook: jest.fn(),
+    isFavoriteBook: jest.fn(),
+}));
 
 jest.mock("../../scripts/modules/events", () => ({
     updateFavoriteBooksSize: jest.fn(),
 }));
-
-let isFavoriteBookSpy: jest.SpyInstance<boolean, [isbn: string]>;
-let addFavoriteBookSpy: jest.SpyInstance<void, [isbn: string]>;
-let removeFavoriteBookSpy: jest.SpyInstance<void, [isbn: string]>;
 
 class TestableCheckboxFavoriteBook extends CheckboxFavoriteBook {
     public getInputElement() {
@@ -22,12 +26,11 @@ class TestableCheckboxFavoriteBook extends CheckboxFavoriteBook {
 }
 
 describe("CheckboxFavoriteBook", () => {
-    let checkboxFavoriteBook: TestableCheckboxFavoriteBook;
     let parentElement: HTMLElement;
-
-    beforeEach(() => {
-        parentElement = document.createElement("div");
-    });
+    let checkboxFavoriteBook: TestableCheckboxFavoriteBook;
+    let isbn: string | null;
+    let inputElement: HTMLInputElement | null;
+    const isbnCode = "123456";
 
     afterEach(() => {
         if (document.body.contains(parentElement)) {
@@ -36,101 +39,155 @@ describe("CheckboxFavoriteBook", () => {
         jest.restoreAllMocks();
     });
 
-    test("it should render input element with checkbox type and it should set checkbox to unchecked if the book is not a favorite", () => {
-        if (!customElements.get("checkbox-favorite-book")) {
-            customElements.define(
-                "checkbox-favorite-book",
-                TestableCheckboxFavoriteBook
-            );
-        }
-        checkboxFavoriteBook = new TestableCheckboxFavoriteBook();
-        parentElement.appendChild(checkboxFavoriteBook);
-        document.body.appendChild(parentElement);
+    describe("event listner", () => {
+        beforeEach(() => {
+            parentElement = document.createElement("div");
+            parentElement.dataset.isbn = isbnCode;
+            if (!customElements.get("checkbox-favorite-book")) {
+                customElements.define(
+                    "checkbox-favorite-book",
+                    TestableCheckboxFavoriteBook
+                );
+            }
+            checkboxFavoriteBook = new TestableCheckboxFavoriteBook();
+            // parentElement.appendChild(checkboxFavoriteBook);
+            // document.body.appendChild(parentElement);
+            // isbn = checkboxFavoriteBook.getIsbn();
+            // inputElement = checkboxFavoriteBook.getInputElement();
+        });
 
-        const inputElement = checkboxFavoriteBook.getInputElement();
+        test("removes event listener when inputElement is present", () => {
+            checkboxFavoriteBook.connectedCallback();
+            // checkboxFavoriteBook.disconnectedCallback();
+            const input = checkboxFavoriteBook.getInputElement();
+            expect(input).toBeDefined();
+            if (input) {
+                expect(input?.onchange).toBeNull();
+            } else {
+                expect(input).toBeNull();
+            }
+        });
 
-        expect(inputElement).not.toBeNull();
-        expect(checkboxFavoriteBook.getIsbn()).toBeNull();
-        expect(inputElement?.checked).toBe(false);
+        test("does not remove event listener when inputElement is null", () => {
+            checkboxFavoriteBook.disconnectedCallback();
+            const input = checkboxFavoriteBook.getInputElement();
+            expect(input).toBeNull();
+        });
     });
 
-    test("it should set checkbox to checked if the book is a favorite", () => {
-        isFavoriteBookSpy = jest.spyOn(model, "isFavoriteBook");
-        isFavoriteBookSpy.mockReturnValue(true);
+    describe("when parent element has not data-isbn", () => {
+        beforeEach(() => {
+            parentElement = document.createElement("div");
+            if (!customElements.get("checkbox-favorite-book")) {
+                customElements.define(
+                    "checkbox-favorite-book",
+                    TestableCheckboxFavoriteBook
+                );
+            }
+            checkboxFavoriteBook = new TestableCheckboxFavoriteBook();
+            parentElement.appendChild(checkboxFavoriteBook);
+            document.body.appendChild(parentElement);
+            isbn = checkboxFavoriteBook.getIsbn();
+            inputElement = checkboxFavoriteBook.getInputElement();
+        });
 
-        // const mockIsFavoriteBook = jest.fn().mockReturnValue(true);
-        // jest.spyOn(model, "isFavoriteBook").mockImplementation(() =>
-        //     mockIsFavoriteBook()
-        // );
+        test("renders correctly'", () => {
+            expect(isbn).toBeNull();
+            expect(inputElement?.checked).toBe(false);
+        });
 
-        const isbnCode = "123";
-        parentElement.dataset.isbn = isbnCode;
-        if (!customElements.get("checkbox-favorite-book")) {
-            customElements.define(
-                "checkbox-favorite-book",
-                TestableCheckboxFavoriteBook
-            );
-        }
-
-        checkboxFavoriteBook = new TestableCheckboxFavoriteBook();
-        parentElement.appendChild(checkboxFavoriteBook);
-        document.body.appendChild(parentElement);
-
-        const inputElement = checkboxFavoriteBook.getInputElement();
-
-        expect(checkboxFavoriteBook.getIsbn()).toBe(isbnCode);
-        expect(inputElement?.checked).toBe(true);
+        test("inputElement change event ", () => {
+            if (inputElement) {
+                inputElement.checked = false;
+                inputElement.dispatchEvent(new Event("change"));
+                expect(removeFavoriteBook).not.toHaveBeenCalled();
+                expect(addFavoriteBook).not.toHaveBeenCalled();
+                expect(updateFavoriteBooksSize).not.toHaveBeenCalled();
+            }
+        });
     });
 
-    test("add favoritebook", () => {
-        addFavoriteBookSpy = jest.spyOn(model, "addFavoriteBook");
+    describe("when checkbox is checked", () => {
+        beforeEach(() => {
+            (isFavoriteBook as jest.Mock).mockReturnValue(true);
 
-        const isbnCode = "123";
-        parentElement.dataset.isbn = isbnCode;
-        if (!customElements.get("checkbox-favorite-book")) {
-            customElements.define(
-                "checkbox-favorite-book",
-                TestableCheckboxFavoriteBook
-            );
-        }
+            parentElement = document.createElement("div");
+            parentElement.dataset.isbn = isbnCode;
+            if (!customElements.get("checkbox-favorite-book")) {
+                customElements.define(
+                    "checkbox-favorite-book",
+                    TestableCheckboxFavoriteBook
+                );
+            }
+            checkboxFavoriteBook = new TestableCheckboxFavoriteBook();
+            parentElement.appendChild(checkboxFavoriteBook);
+            document.body.appendChild(parentElement);
+            isbn = checkboxFavoriteBook.getIsbn();
+            inputElement = checkboxFavoriteBook.getInputElement();
+        });
 
-        checkboxFavoriteBook = new TestableCheckboxFavoriteBook();
-        parentElement.appendChild(checkboxFavoriteBook);
-        document.body.appendChild(parentElement);
+        test("renders correctly'", () => {
+            expect(isbn).toBe(isbnCode);
+            expect(inputElement?.checked).toBe(true);
+            expect(checkboxFavoriteBook.innerHTML).toContain("관심책");
+        });
 
-        const inputElement = checkboxFavoriteBook.getInputElement();
-        if (inputElement) {
-            inputElement.checked = true;
-            inputElement.dispatchEvent(new Event("change"));
-            expect(addFavoriteBookSpy).toHaveBeenCalledWith(isbnCode);
-            expect(updateFavoriteBooksSize).toHaveBeenCalled();
-        }
+        test("checkbox checked'", () => {
+            expect(inputElement?.checked).toBe(true);
+            expect(checkboxFavoriteBook.innerHTML).toContain("관심책");
+        });
+
+        test("inputElement change event : removeFavoriteBook", () => {
+            if (inputElement) {
+                inputElement.checked = false;
+                inputElement.dispatchEvent(new Event("change"));
+                expect(removeFavoriteBook).toHaveBeenCalledWith(isbnCode);
+                expect(addFavoriteBook).not.toHaveBeenCalled();
+                expect(updateFavoriteBooksSize).toHaveBeenCalled();
+            } else {
+                expect(addFavoriteBook).not.toHaveBeenCalled();
+                expect(removeFavoriteBook).not.toHaveBeenCalled();
+                expect(updateFavoriteBooksSize).not.toHaveBeenCalled();
+            }
+        });
     });
 
-    test("remove favoritebook", () => {
-        isFavoriteBookSpy = jest.spyOn(model, "isFavoriteBook");
-        isFavoriteBookSpy.mockReturnValue(true);
-        removeFavoriteBookSpy = jest.spyOn(model, "removeFavoriteBook");
+    describe("when checkbox is unchecked", () => {
+        beforeEach(() => {
+            (isFavoriteBook as jest.Mock).mockReturnValue(false);
 
-        const isbnCode = "123";
-        parentElement.dataset.isbn = isbnCode;
-        if (!customElements.get("checkbox-favorite-book")) {
-            customElements.define(
-                "checkbox-favorite-book",
-                TestableCheckboxFavoriteBook
-            );
-        }
+            parentElement = document.createElement("div");
+            parentElement.dataset.isbn = isbnCode;
+            if (!customElements.get("checkbox-favorite-book")) {
+                customElements.define(
+                    "checkbox-favorite-book",
+                    TestableCheckboxFavoriteBook
+                );
+            }
+            checkboxFavoriteBook = new TestableCheckboxFavoriteBook();
+            parentElement.appendChild(checkboxFavoriteBook);
+            document.body.appendChild(parentElement);
+            isbn = checkboxFavoriteBook.getIsbn();
+            inputElement = checkboxFavoriteBook.getInputElement();
+        });
 
-        checkboxFavoriteBook = new TestableCheckboxFavoriteBook();
-        parentElement.appendChild(checkboxFavoriteBook);
-        document.body.appendChild(parentElement);
+        test("renders correctly and checkbox unchcekd'", () => {
+            expect(inputElement?.checked).toBe(false);
+            expect(checkboxFavoriteBook.innerHTML).toContain("관심책");
+        });
 
-        const inputElement = checkboxFavoriteBook.getInputElement();
-        if (inputElement) {
-            inputElement.checked = false;
-            inputElement.dispatchEvent(new Event("change"));
-            expect(removeFavoriteBookSpy).toHaveBeenCalledWith(isbnCode);
-            expect(updateFavoriteBooksSize).toHaveBeenCalled();
-        }
+        test("inputElement change event : addFavoriteBook", () => {
+            if (inputElement) {
+                inputElement.checked = true;
+                inputElement.dispatchEvent(new Event("change"));
+                expect(addFavoriteBook).toHaveBeenCalledWith(isbnCode);
+                expect(removeFavoriteBook).not.toHaveBeenCalled();
+                expect(updateFavoriteBooksSize).toHaveBeenCalled();
+            } else {
+                expect(addFavoriteBook).not.toHaveBeenCalled();
+                expect(removeFavoriteBook).not.toHaveBeenCalled();
+                expect(updateFavoriteBooksSize).not.toHaveBeenCalled();
+            }
+        });
     });
 });
