@@ -28,7 +28,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     }
 
     disconnectedCallback(): void {
-        this.inputElement?.addEventListener("change", this.onChange);
+        this.inputElement?.removeEventListener("change", this.onChange);
     }
 
     protected render(): void {
