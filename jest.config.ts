@@ -9,6 +9,7 @@
 export default {
     preset: "ts-jest",
     testEnvironment: "jest-environment-jsdom",
+    // testEnvironment: "jsdom",
     roots: ["<rootDir>"],
     collectCoverage: true, // 커버리지 데이터 수집 활성화
     // collectCoverageFrom: [

@@ -17,7 +17,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     }
     disconnectedCallback() {
         var _a;
-        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange);
+        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.removeEventListener("change", this.onChange);
     }
     render() {
         const isbn = this.isbn || "";

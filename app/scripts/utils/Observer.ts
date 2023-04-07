@@ -1,3 +1,5 @@
+import "intersection-observer";
+
 export default class Observer {
     target: Element;
     observer: IntersectionObserver;
@@ -7,6 +9,7 @@ export default class Observer {
         this.observer = new IntersectionObserver((changes) => {
             this.handleIntersection(changes, callback);
         });
+
         // this.observer = new IntersectionObserver(this.handleIntersection.bind(this, callback))
     }
 
