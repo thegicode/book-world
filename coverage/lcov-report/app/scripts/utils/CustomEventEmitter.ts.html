@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -94,56 +94,56 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">class CustomEventEmitter&lt;T extends ICustomEventDetail&gt; {
     private _bus: HTMLElement;
 &nbsp;
-<span class="fstat-no" title="function not covered" >    constructor() {</span>
-<span class="cstat-no" title="statement not covered" >        this._bus = document.createElement("div");</span>
+    constructor() {
+        this._bus = document.createElement("div");
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    add(</span>event: string, callback: (event: ICustomEvent&lt;T&gt;) =&gt; void): void {
-<span class="cstat-no" title="statement not covered" >        this._bus.addEventListener(</span>
+    add(event: string, callback: (event: ICustomEvent&lt;T&gt;) =&gt; void): void {
+        this._bus.addEventListener(
             event,
             callback as EventListenerOrEventListenerObject
         );
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    remove(</span>event: string, callback: (event: ICustomEvent&lt;T&gt;) =&gt; void): void {
-<span class="cstat-no" title="statement not covered" >        this._bus.removeEventListener(</span>
+    remove(event: string, callback: (event: ICustomEvent&lt;T&gt;) =&gt; void): void {
+        this._bus.removeEventListener(
             event,
             callback as EventListenerOrEventListenerObject
         );
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    dispatch(</span>event: string, detail: T = <span class="branch-0 cbranch-no" title="branch not covered" >{} as T)</span>: void {
-<span class="cstat-no" title="statement not covered" >        this._bus.dispatchEvent(new CustomEvent(event, { detail }));</span>
+    dispatch(event: string, detail: T = {} as T): void {
+        this._bus.dispatchEvent(new CustomEvent(event, { detail }));
     }
 }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >export default new CustomEventEmitter();</span>
+export default new CustomEventEmitter();
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -151,7 +151,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-04-03T09:35:25.132Z
+                at 2023-04-07T12:14:12.398Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

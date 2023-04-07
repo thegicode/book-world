@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">18.18% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>2/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">18.18% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>2/11</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -116,21 +116,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -152,22 +152,22 @@ class CustomFetch {
         }
     }
 &nbsp;
-    async fetch&lt;T = unknown&gt;(url: string, options?: RequestInit): Promise&lt;T&gt; {
-        const finalOptions: RequestInit &amp; { timeout?: number} = {
+    async <span class="fstat-no" title="function not covered" >fetch&lt;</span>T = unknown&gt;(url: string, options?: RequestInit): Promise&lt;T&gt; {
+        const finalOptions<span class="cstat-no" title="statement not covered" >: RequestInit &amp; { timeout?: number} = {</span>
             ...this.defaultOptions,
             ...options,
             timeout: 5000
         }
-        try {
-            const response = await fetch(url, finalOptions)
-            if (!response.ok) {
-                throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`)
+<span class="cstat-no" title="statement not covered" >        try {</span>
+            const response = <span class="cstat-no" title="statement not covered" >await fetch(url, finalOptions)</span>
+<span class="cstat-no" title="statement not covered" >            <span class="missing-if-branch" title="if path not taken" >I</span>if (!response.ok) {</span>
+<span class="cstat-no" title="statement not covered" >                throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`)</span>
             } 
-            const data = await response.json()
-            return data as T
+            const data = <span class="cstat-no" title="statement not covered" >await response.json()</span>
+<span class="cstat-no" title="statement not covered" >            return data as T</span>
         } catch(error: unknown) {
-            console.error(`Error fetching data: ${error}`)
-            throw new Error(`Error fetching data: ${error}`)
+<span class="cstat-no" title="statement not covered" >            console.error(`Error fetching data: ${error}`)</span>
+<span class="cstat-no" title="statement not covered" >            throw new Error(`Error fetching data: ${error}`)</span>
 &nbsp;
         }
     }
@@ -181,7 +181,7 @@ export default new CustomFetch()
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-04-07T09:21:14.295Z
+                at 2023-04-07T12:05:11.812Z
             </div>
         <script src="prettify.js"></script>
         <script>
