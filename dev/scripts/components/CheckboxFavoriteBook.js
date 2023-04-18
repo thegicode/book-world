@@ -17,7 +17,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     }
     disconnectedCallback() {
         var _a;
-        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange);
+        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.removeEventListener("change", this.onChange);
     }
     render() {
         const isbn = this.isbn || "";
@@ -29,9 +29,10 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         this.inputElement = this.querySelector("input");
     }
     onChange() {
-        var _a;
         const ISBN = this.isbn || "";
-        if ((_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.checked) {
+        if (!ISBN || !this.inputElement)
+            return;
+        if (this.inputElement.checked) {
             addFavoriteBook(ISBN);
         }
         else {

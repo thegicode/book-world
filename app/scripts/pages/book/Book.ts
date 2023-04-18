@@ -2,22 +2,24 @@ import { BookImage } from "../../components/index";
 import { CustomFetch } from "../../utils/index";
 
 export default class Book extends HTMLElement {
-    private loadingElement: HTMLElement;
-    private data: IUsageAnalysisListData | null;
+    protected loadingElement: HTMLElement | null;
+    protected data: IUsageAnalysisListData | null;
 
     constructor() {
         super();
-        this.loadingElement = this.querySelector(".loading") as HTMLElement;
+        this.loadingElement = null;
         this.data = null;
     }
 
     connectedCallback(): void {
+        this.loadingElement = this.querySelector(".loading") as HTMLElement;
+
         const isbn = new URLSearchParams(location.search).get("isbn") as string;
         this.dataset.isbn = isbn;
         this.fetchUsageAnalysisList(isbn);
     }
 
-    private async fetchUsageAnalysisList(isbn: string): Promise<void> {
+    protected async fetchUsageAnalysisList(isbn: string): Promise<void> {
         try {
             const data = await CustomFetch.fetch<IUsageAnalysisListData>(
                 `/usage-analysis-list?isbn13=${isbn}`
@@ -31,7 +33,7 @@ export default class Book extends HTMLElement {
         }
     }
 
-    private render(): void {
+    protected render(): void {
         if (!this.data) return;
 
         const {
@@ -91,10 +93,14 @@ export default class Book extends HTMLElement {
             };
         }
 
-        this.loadingElement.remove();
+        if (this.loadingElement) {
+            this.loadingElement.remove();
+            this.loadingElement = null;
+        }
     }
 
-    private renderError() {
-        this.loadingElement.textContent = "정보를 가져올 수 없습니다.";
+    protected renderError() {
+        if (this.loadingElement)
+            this.loadingElement.textContent = "정보를 가져올 수 없습니다.";
     }
 }

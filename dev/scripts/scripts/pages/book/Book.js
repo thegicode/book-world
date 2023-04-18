@@ -11,10 +11,11 @@ import { CustomFetch } from "../../utils/index";
 export default class Book extends HTMLElement {
     constructor() {
         super();
-        this.loadingElement = this.querySelector(".loading");
+        this.loadingElement = null;
         this.data = null;
     }
     connectedCallback() {
+        this.loadingElement = this.querySelector(".loading");
         const isbn = new URLSearchParams(location.search).get("isbn");
         this.dataset.isbn = isbn;
         this.fetchUsageAnalysisList(isbn);
@@ -71,10 +72,14 @@ export default class Book extends HTMLElement {
                 bookname,
             };
         }
-        this.loadingElement.remove();
+        if (this.loadingElement) {
+            this.loadingElement.remove();
+            this.loadingElement = null;
+        }
     }
     renderError() {
-        this.loadingElement.textContent = "정보를 가져올 수 없습니다.";
+        if (this.loadingElement)
+            this.loadingElement.textContent = "정보를 가져올 수 없습니다.";
     }
 }
 //# sourceMappingURL=Book.js.map
