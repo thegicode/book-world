@@ -811,10 +811,11 @@
   var Book = class extends HTMLElement {
     constructor() {
       super();
-      this.loadingElement = this.querySelector(".loading");
+      this.loadingElement = null;
       this.data = null;
     }
     connectedCallback() {
+      this.loadingElement = this.querySelector(".loading");
       const isbn = new URLSearchParams(location.search).get("isbn");
       this.dataset.isbn = isbn;
       this.fetchUsageAnalysisList(isbn);
@@ -857,10 +858,14 @@
           bookname
         };
       }
-      this.loadingElement.remove();
+      if (this.loadingElement) {
+        this.loadingElement.remove();
+        this.loadingElement = null;
+      }
     }
     renderError() {
-      this.loadingElement.textContent = "\uC815\uBCF4\uB97C \uAC00\uC838\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.";
+      if (this.loadingElement)
+        this.loadingElement.textContent = "\uC815\uBCF4\uB97C \uAC00\uC838\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.";
     }
   };
 

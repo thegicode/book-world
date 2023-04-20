@@ -20,7 +20,6 @@ describe("pages book index", () => {
     test("Book is defined", () => {
         expect(Book).toBeDefined();
     });
-
     test("LibrarySearchByBook is defined", () => {
         expect(LibrarySearchByBook).toBeDefined();
     });

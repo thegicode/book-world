@@ -5,6 +5,7 @@ export default class NavGnb extends HTMLElement {
         this.favoriteBooksSize = this.getFavoriteBooksSize();
     }
     connectedCallback() {
+        console.log("NavGnb");
         this.render();
         this.setSelectedMenu();
         // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))

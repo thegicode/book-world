@@ -1,5 +1,5 @@
 import LibrarySearchByBook from "../../../scripts/pages/book/LibrarySearchByBook";
-import CustomFetch from "../../../scripts/utils/CustomFetch";
+// import CustomFetch from "../../../scripts/utils/CustomFetch";
 import { getState } from "../../../scripts/modules/model";
 
 jest.mock("../../../scripts/utils/CustomFetch");
@@ -20,7 +20,7 @@ describe("LibrarySearchByBook", () => {
     let testLibrarySearchByBook: TestLibrarySearchByBook;
     let originalLocation: Location;
 
-    const mockedCustomFetch = CustomFetch as jest.Mocked<typeof CustomFetch>;
+    // const mockedCustomFetch = CustomFetch as jest.Mocked<typeof CustomFetch>;
     const mockIsbn = "1234567890123";
 
     beforeAll(() => {
