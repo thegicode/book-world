@@ -11,7 +11,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         this.fetchList(isbn);
     }
 
-    private async fetchList(isbn: string): Promise<void> {
+    protected async fetchList(isbn: string): Promise<void> {
         const favoriteLibraries = getState().regions;
         for (const regionName in favoriteLibraries) {
             const detailCodes = Object.values(favoriteLibraries[regionName]);
@@ -23,7 +23,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    private async fetchLibrarySearchByBook(
+    protected async fetchLibrarySearchByBook(
         isbn: string,
         region: string,
         dtl_region: string
@@ -46,7 +46,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    private render(
+    protected render(
         { libraries }: ILibrarySearchByBookResult,
         isbn: string
     ): void {
@@ -87,7 +87,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         container.appendChild(listElement);
     }
 
-    private async loanAvailable(
+    protected async loanAvailable(
         isbn: string,
         libCode: string,
         el: HTMLElement
@@ -102,7 +102,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    private async fetchLoadnAvailabilty(
+    protected async fetchLoadnAvailabilty(
         isbn13: string,
         libCode: string
     ): Promise<boolean> {

@@ -11,13 +11,13 @@
         "skipLibCheck": true,
         "types": ["jest"],
         "forceConsistentCasingInFileNames": true,
-        "baseUrl": "./app",
-        "paths": {
-            "@components/*": ["scripts/components/*"],
-            "@modules/*": ["scripts/modules/*"],
-            "@pages/*": ["scripts/pages/*"],
-            "@utils/*": ["scripts/utils/*"]
-        },
+        // "baseUrl": "./app",
+        // "paths": {
+        //     "@components/*": ["scripts/components/*"],
+        //     "@modules/*": ["scripts/modules/*"],
+        //     "@pages/*": ["scripts/pages/*"],
+        //     "@utils/*": ["scripts/utils/*"]
+        // },
         "sourceMap": true
     },
     "include": ["app/**/*.ts"],
