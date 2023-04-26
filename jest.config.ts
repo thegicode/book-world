@@ -17,7 +17,7 @@ export default {
         "<rootDir>/server/**/*.{ts,tsx}",
         "!<rootDir>/app/**/*.d.ts",
     ],
-    coverageReporters: ["json", "lcov", "text", "clover"], // 커버리지 리포트 형식 지정
+    coverageReporters: ["text"], // 커버리지 리포트 형식 지정 ["json", "lcov", "text", "clover"]
     coverageDirectory: "coverage", // 커버리지 리포트를 저장할 디렉토리 지정
     moduleNameMapper: {
         "^@/(.*)$": "<rootDir>/scripts/$1",
