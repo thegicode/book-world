@@ -13,6 +13,8 @@ export default class LibrarySearchByBook extends HTMLElement {
 
     protected async fetchList(isbn: string): Promise<void> {
         const favoriteLibraries = getState().regions;
+        if (Object.entries(favoriteLibraries).length === 0) return;
+
         for (const regionName in favoriteLibraries) {
             const detailCodes = Object.values(favoriteLibraries[regionName]);
             if (detailCodes.length === 0) return;
@@ -59,28 +61,44 @@ export default class LibrarySearchByBook extends HTMLElement {
         const fragment = new DocumentFragment();
 
         libraries.forEach(({ homepage, libCode, libName }) => {
-            const template = document.querySelector(
-                "#tp-librarySearchByBookItem"
-            ) as HTMLTemplateElement;
-            if (!template) return;
-
-            const cloned = template.content.firstElementChild?.cloneNode(
-                true
+            const element = this.elements(
+                isbn,
+                homepage,
+                libCode,
+                libName
             ) as HTMLElement;
-            const link = cloned.querySelector("a");
-            if (!link) return;
-
-            cloned.dataset.code = libCode;
-            link.textContent = libName;
-            link.href = homepage;
-
-            this.loanAvailable(isbn, libCode, cloned);
-
-            fragment.appendChild(cloned);
+            if (element) {
+                fragment.appendChild(element);
+            }
         });
 
         listElement.appendChild(fragment);
         container.appendChild(listElement);
+    }
+
+    protected elements(
+        isbn: string,
+        homepage: string,
+        libCode: string,
+        libName: string
+    ) {
+        const template = document.querySelector(
+            "#tp-librarySearchByBookItem"
+        ) as HTMLTemplateElement;
+        if (!template) return;
+
+        const cloned = template.content.firstElementChild?.cloneNode(
+            true
+        ) as HTMLElement;
+        const link = cloned.querySelector("a");
+        if (!link) return;
+
+        cloned.dataset.code = libCode;
+        link.textContent = libName;
+        link.href = homepage;
+
+        this.loanAvailable(isbn, libCode, cloned);
+        return cloned;
     }
 
     protected async loanAvailable(

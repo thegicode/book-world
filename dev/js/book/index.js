@@ -908,6 +908,8 @@
     fetchList(isbn) {
       return __awaiter3(this, void 0, void 0, function* () {
         const favoriteLibraries = getState().regions;
+        if (Object.entries(favoriteLibraries).length === 0)
+          return;
         for (const regionName in favoriteLibraries) {
           const detailCodes = Object.values(favoriteLibraries[regionName]);
           if (detailCodes.length === 0)
@@ -945,22 +947,28 @@
       const listElement = document.createElement("ul");
       const fragment = new DocumentFragment();
       libraries.forEach(({ homepage, libCode, libName }) => {
-        var _a;
-        const template = document.querySelector("#tp-librarySearchByBookItem");
-        if (!template)
-          return;
-        const cloned = (_a = template.content.firstElementChild) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
-        const link = cloned.querySelector("a");
-        if (!link)
-          return;
-        cloned.dataset.code = libCode;
-        link.textContent = libName;
-        link.href = homepage;
-        this.loanAvailable(isbn, libCode, cloned);
-        fragment.appendChild(cloned);
+        const element = this.elements(isbn, homepage, libCode, libName);
+        if (element) {
+          fragment.appendChild(element);
+        }
       });
       listElement.appendChild(fragment);
       container.appendChild(listElement);
+    }
+    elements(isbn, homepage, libCode, libName) {
+      var _a;
+      const template = document.querySelector("#tp-librarySearchByBookItem");
+      if (!template)
+        return;
+      const cloned = (_a = template.content.firstElementChild) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
+      const link = cloned.querySelector("a");
+      if (!link)
+        return;
+      cloned.dataset.code = libCode;
+      link.textContent = libName;
+      link.href = homepage;
+      this.loanAvailable(isbn, libCode, cloned);
+      return cloned;
     }
     loanAvailable(isbn, libCode, el) {
       return __awaiter3(this, void 0, void 0, function* () {
