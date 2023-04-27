@@ -74,11 +74,7 @@ export default class LibrarySearchByBook extends HTMLElement {
             link.textContent = libName;
             link.href = homepage;
 
-            this.loanAvailable(
-                isbn,
-                libCode,
-                cloned.querySelector("p") as HTMLElement
-            );
+            this.loanAvailable(isbn, libCode, cloned);
 
             fragment.appendChild(cloned);
         });
@@ -96,8 +92,8 @@ export default class LibrarySearchByBook extends HTMLElement {
         const element = el.querySelector(".loanAvailable");
         if (element) {
             element.textContent = isAvailable ? "대출 가능" : "대출 불가";
-            if (isAvailable && el.parentElement) {
-                el.parentElement.dataset.available = "true";
+            if (isAvailable) {
+                el.dataset.available = "true";
             }
         }
     }
@@ -111,7 +107,6 @@ export default class LibrarySearchByBook extends HTMLElement {
             libCode,
         });
         const url = `/book-exist?${searchParams}`;
-
         try {
             const data = await CustomFetch.fetch<IBookExist>(url, {
                 method: "GET",

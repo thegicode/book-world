@@ -956,7 +956,7 @@
         cloned.dataset.code = libCode;
         link.textContent = libName;
         link.href = homepage;
-        this.loanAvailable(isbn, libCode, cloned.querySelector("p"));
+        this.loanAvailable(isbn, libCode, cloned);
         fragment.appendChild(cloned);
       });
       listElement.appendChild(fragment);
@@ -968,8 +968,8 @@
         const element = el.querySelector(".loanAvailable");
         if (element) {
           element.textContent = isAvailable ? "\uB300\uCD9C \uAC00\uB2A5" : "\uB300\uCD9C \uBD88\uAC00";
-          if (isAvailable && el.parentElement) {
-            el.parentElement.dataset.available = "true";
+          if (isAvailable) {
+            el.dataset.available = "true";
           }
         }
       });

@@ -69,7 +69,7 @@ export default class LibrarySearchByBook extends HTMLElement {
             cloned.dataset.code = libCode;
             link.textContent = libName;
             link.href = homepage;
-            this.loanAvailable(isbn, libCode, cloned.querySelector("p"));
+            this.loanAvailable(isbn, libCode, cloned);
             fragment.appendChild(cloned);
         });
         listElement.appendChild(fragment);
@@ -81,8 +81,8 @@ export default class LibrarySearchByBook extends HTMLElement {
             const element = el.querySelector(".loanAvailable");
             if (element) {
                 element.textContent = isAvailable ? "대출 가능" : "대출 불가";
-                if (isAvailable && el.parentElement) {
-                    el.parentElement.dataset.available = "true";
+                if (isAvailable) {
+                    el.dataset.available = "true";
                 }
             }
         });
