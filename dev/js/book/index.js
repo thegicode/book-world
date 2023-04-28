@@ -947,7 +947,7 @@
       const listElement = document.createElement("ul");
       const fragment = new DocumentFragment();
       libraries.forEach(({ homepage, libCode, libName }) => {
-        const element = this.elements(isbn, homepage, libCode, libName);
+        const element = this.createLibrarySearchResultItem(isbn, homepage, libCode, libName);
         if (element) {
           fragment.appendChild(element);
         }
@@ -955,15 +955,17 @@
       listElement.appendChild(fragment);
       container.appendChild(listElement);
     }
-    elements(isbn, homepage, libCode, libName) {
+    createLibrarySearchResultItem(isbn, homepage, libCode, libName) {
       var _a;
       const template = document.querySelector("#tp-librarySearchByBookItem");
       if (!template)
-        return;
+        return null;
       const cloned = (_a = template.content.firstElementChild) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
+      if (!cloned)
+        return null;
       const link = cloned.querySelector("a");
       if (!link)
-        return;
+        return null;
       cloned.dataset.code = libCode;
       link.textContent = libName;
       link.href = homepage;

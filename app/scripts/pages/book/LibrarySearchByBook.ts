@@ -61,7 +61,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         const fragment = new DocumentFragment();
 
         libraries.forEach(({ homepage, libCode, libName }) => {
-            const element = this.elements(
+            const element = this.createLibrarySearchResultItem(
                 isbn,
                 homepage,
                 libCode,
@@ -76,7 +76,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         container.appendChild(listElement);
     }
 
-    protected elements(
+    protected createLibrarySearchResultItem(
         isbn: string,
         homepage: string,
         libCode: string,
@@ -85,19 +85,22 @@ export default class LibrarySearchByBook extends HTMLElement {
         const template = document.querySelector(
             "#tp-librarySearchByBookItem"
         ) as HTMLTemplateElement;
-        if (!template) return;
+        if (!template) return null;
 
         const cloned = template.content.firstElementChild?.cloneNode(
             true
         ) as HTMLElement;
+        if (!cloned) return null;
+
         const link = cloned.querySelector("a");
-        if (!link) return;
+        if (!link) return null;
 
         cloned.dataset.code = libCode;
         link.textContent = libName;
         link.href = homepage;
 
         this.loanAvailable(isbn, libCode, cloned);
+
         return cloned;
     }
 

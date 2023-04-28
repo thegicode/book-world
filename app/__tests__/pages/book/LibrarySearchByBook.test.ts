@@ -49,13 +49,18 @@ class TestLibrarySearchByBook extends LibrarySearchByBook {
         this.render({ libraries }, isbn);
     }
 
-    testElements(
+    testCreateLibrarySearchResultItem(
         isbn: string,
         homepage: string,
         libCode: string,
         libName: string
     ) {
-        this.elements(isbn, homepage, libCode, libName);
+        return this.createLibrarySearchResultItem(
+            isbn,
+            homepage,
+            libCode,
+            libName
+        );
     }
 }
 
@@ -87,10 +92,11 @@ describe("LibrarySearchByBook", () => {
         if (document.body.contains(instance)) {
             document.body.removeChild(instance);
         }
+        document.body.innerHTML = "";
         jest.clearAllMocks();
     });
 
-    describe(" state region length = 0, libraries length = 0", () => {
+    describe("check state, libries, template", () => {
         const mockGetState = getState as jest.MockedFunction<typeof getState>;
         beforeEach(() => {
             if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
@@ -169,21 +175,26 @@ describe("LibrarySearchByBook", () => {
             ).toBeNull();
         });
 
-        test("elements: !template", () => {
+        test("createLibrarySearchResultItem: !template", () => {
             document.body.innerHTML = `
                 <library-search-by-book>
                     <h4>도서 소장 도서관 조회</h4>
                     <div class="library-search-by-book"></div>
                 </library-search-by-book>`;
 
-            instance.testElements(mockIsbn, "homepage", "libCode", "libName");
+            instance.testCreateLibrarySearchResultItem(
+                mockIsbn,
+                "homepage",
+                "libCode",
+                "libName"
+            );
 
             expect(
                 document.body.querySelector("#tp-librarySearchByBookItem")
             ).toBeNull();
         });
 
-        test("elements: template no a element", () => {
+        test("createLibrarySearchResultItem: not exist a element in template", () => {
             document.body.innerHTML = `
                 <library-search-by-book>
                     <h4>도서 소장 도서관 조회</h4>
@@ -191,7 +202,12 @@ describe("LibrarySearchByBook", () => {
                 </library-search-by-book>
                 <template id="tp-librarySearchByBookItem"><li><p><span class="loanAvailable"></span></p></li></template>`;
 
-            instance.testElements(mockIsbn, "homepage", "libCode", "libName");
+            instance.testCreateLibrarySearchResultItem(
+                mockIsbn,
+                "homepage",
+                "libCode",
+                "libName"
+            );
 
             const template = document.querySelector(
                 "#tp-librarySearchByBookItem"
@@ -204,17 +220,31 @@ describe("LibrarySearchByBook", () => {
             expect(cloned.querySelector("a")).toBeNull();
         });
 
-        // const mockData: ILibrarySearchByBookResult = {
-        //     libraries: [
-        //         {
-        //             address: "address",
-        //             homepage: "https://example.com",
-        //             libCode: "123",
-        //             libName: "Example Library",
-        //             telephone: "0101234567",
-        //         },
-        //     ],
-        // };
+        test("createLibrarySearchResultItem: cloned null", () => {
+            document.body.innerHTML = `
+                <library-search-by-book>
+                    <h4>도서 소장 도서관 조회</h4>
+                    <div class="library-search-by-book"></div>
+                </library-search-by-book>
+                <template id="tp-librarySearchByBookItem"></template>`;
+
+            instance.testCreateLibrarySearchResultItem(
+                mockIsbn,
+                "homepage",
+                "libCode",
+                "libName"
+            );
+
+            const template = document.querySelector(
+                "#tp-librarySearchByBookItem"
+            ) as HTMLTemplateElement;
+
+            const cloned = template.content.firstElementChild?.cloneNode(
+                true
+            ) as HTMLElement;
+
+            expect(cloned).toBeUndefined();
+        });
     });
 
     describe("state > 0 & libraries > 0", () => {
@@ -254,7 +284,7 @@ describe("LibrarySearchByBook", () => {
                 );
             }
 
-            instance = new TestLibrarySearchByBook();
+            // instance = new TestLibrarySearchByBook();
 
             instance.innerHTML = template;
             document.body.appendChild(instance);
@@ -325,19 +355,20 @@ describe("LibrarySearchByBook", () => {
             }
         });
 
-        test("render should create and append elements to the container", () => {
-            const mockData: ILibrarySearchByBookResult = {
-                libraries: [
-                    {
-                        address: "address",
-                        homepage: "https://example.com",
-                        libCode: "123",
-                        libName: "Example Library",
-                        telephone: "39393939",
-                    },
-                ],
-            };
-            instance.testRender(mockData, mockIsbn);
+        test("createLibrarySearchResultItem", () => {
+            const homepage = "https://example.com/";
+            const libCode = "123";
+            const libName = "Example Library";
+            const element = instance.testCreateLibrarySearchResultItem(
+                mockIsbn,
+                homepage,
+                libCode,
+                libName
+            );
+            expect(element?.dataset.code).toBe(libCode);
+            const link = element?.querySelector("a");
+            expect(link?.textContent).toBe(libName);
+            expect(link?.href).toBe(homepage);
         });
     });
 });
