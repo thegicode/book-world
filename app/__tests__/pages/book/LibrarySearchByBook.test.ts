@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../../type.d.ts" />
+
 import LibrarySearchByBook from "../../../scripts/pages/book/LibrarySearchByBook";
 import CustomFetch from "../../../scripts/utils/CustomFetch";
 import { getState } from "../../../scripts/modules/model";
@@ -6,17 +9,6 @@ jest.mock("../../../scripts/utils/CustomFetch");
 jest.mock("../../../scripts/modules/model", () => ({
     getState: jest.fn(),
 }));
-
-interface ILibrarySearchByBookResult {
-    libraries: ILibrary[];
-}
-interface ILibrary {
-    address: string;
-    homepage: string;
-    libCode: string;
-    libName: string;
-    telephone: string;
-}
 
 class TestLibrarySearchByBook extends LibrarySearchByBook {
     async testFetchList(isbn: string) {

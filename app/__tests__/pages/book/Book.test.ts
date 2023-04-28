@@ -1,33 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../../type.d.ts" />
+
 import Book from "../../../scripts/pages/book/Book";
 import CustomFetch from "../../../scripts/utils/CustomFetch";
 
 jest.mock("../../../scripts/utils/CustomFetch");
-
-interface IBook {
-    authors: string;
-    bookImageURL: string;
-    bookname: string;
-    class_nm: string;
-    class_no: string;
-    description: string;
-    isbn13: string;
-    loanCnt: string;
-    publication_year: string;
-    publisher: string;
-}
-interface IKeyword {
-    word: string;
-}
-
-interface IRecommendedBook {
-    bookname: string;
-    isbn13: string;
-}
-interface IUsageAnalysisListData {
-    book: IBook;
-    keywords: IKeyword[];
-    recBooks: IRecommendedBook[];
-}
 
 class TestBook extends Book {
     async testFetchUsageAnalysisList(isbn: string) {

@@ -1,12 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../type.d.ts" />
+
 import LibraryBookExist from "../../scripts/components/LibraryBookExist";
 import CustomFetch from "../../scripts/utils/CustomFetch";
 
 jest.mock("../../scripts/utils/CustomFetch");
-
-interface IBookExist {
-    hasBook: string;
-    loanAvailable: string;
-}
 
 class TestLibraryBookExist extends LibraryBookExist {
     public setContainer(container: Element) {

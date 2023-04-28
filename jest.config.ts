@@ -19,6 +19,11 @@ export default {
     // ],
     coverageReporters: ["text"], // 커버리지 리포트 형식 지정 ["json", "lcov", "text", "clover"]
     coverageDirectory: "coverage", // 커버리지 리포트를 저장할 디렉토리 지정
+    globals: {
+        "ts-jest": {
+            tsconfig: "tsconfig.test.json",
+        },
+    },
     moduleNameMapper: {
         "^@/(.*)$": "<rootDir>/scripts/$1",
         // "\\.(css|less|scss|sass)$": "identity-obj-proxy",
