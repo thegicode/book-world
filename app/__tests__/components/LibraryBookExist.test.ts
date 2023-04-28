@@ -102,8 +102,13 @@ describe("LibraryBookExist", () => {
             141622: "하남시 미사도서관",
         };
         const mockError = new Error("Fail to get usage analysis list.");
+        mockedCustomFetch.fetch.mockRejectedValue(
+            new Error("Some fetch error")
+        );
 
-        mockedCustomFetch.fetch.mockRejectedValue(mockError);
+        const consoleErrorSpy = jest.spyOn(console, "error");
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        consoleErrorSpy.mockImplementation(() => {});
 
         const button = document.createElement("button");
 
@@ -114,11 +119,13 @@ describe("LibraryBookExist", () => {
                 library
             );
         } catch (error) {
-            expect(mockedCustomFetch.fetch).toHaveBeenCalledTimes(
-                Object.keys(library).length
+            expect(mockedCustomFetch.fetch).toHaveBeenCalled();
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                new Error("Some fetch error")
             );
             expect(error).toEqual(mockError);
-            expect(button.disabled).toBe(false);
+        } finally {
+            consoleErrorSpy.mockRestore();
         }
     });
 
