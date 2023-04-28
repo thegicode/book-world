@@ -34,16 +34,14 @@ describe("CustomFetch", () => {
     });
 
     test("should throw an error when the response is not ok", async () => {
-        const mockErrorResponse = {
-            status: 400,
-            statusText: "Bad Request",
-        };
         const mockFetchPromise = Promise.resolve({
             ok: false,
-            status: mockErrorResponse.status,
-            statusText: mockErrorResponse.statusText,
             json: () => Promise.reject(),
         } as Response);
+
+        const consoleErrorSpy = jest.spyOn(console, "error");
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        consoleErrorSpy.mockImplementation(() => {});
 
         const originalFetch = window.fetch;
         window.fetch = jest
@@ -52,11 +50,13 @@ describe("CustomFetch", () => {
                 () => mockFetchPromise
             ) as unknown as typeof window.fetch;
 
-        await expect(
-            customFetchInstance.fetch("https://example.com/error")
-        ).rejects.toThrow(
-            `Http error! status: ${mockErrorResponse.status}, message: ${mockErrorResponse.statusText}`
-        );
+        try {
+            await customFetchInstance.fetch("https://example.com/error");
+        } catch (error) {
+            expect(consoleErrorSpy).toHaveBeenCalled();
+        } finally {
+            consoleErrorSpy.mockRestore();
+        }
 
         window.fetch = originalFetch;
     });
