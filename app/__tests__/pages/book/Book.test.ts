@@ -175,13 +175,24 @@ describe("Book", () => {
 
     test("fetchUsageAnalysisList handles fetch error correctly", async () => {
         const mockError = new Error("Fail to get usage analysis list.");
-        mockedCustomFetch.fetch.mockRejectedValue(mockError);
+        mockedCustomFetch.fetch.mockRejectedValue(
+            new Error("Some fetch error")
+        );
+
+        const consoleErrorSpy = jest.spyOn(console, "error");
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        consoleErrorSpy.mockImplementation(() => {});
 
         try {
             await testBook.testFetchUsageAnalysisList(mockIsbn);
         } catch (error) {
             expect(mockedCustomFetch.fetch).toHaveBeenCalled();
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                new Error("Some fetch error")
+            );
             expect(error).toEqual(mockError);
+        } finally {
+            consoleErrorSpy.mockRestore();
         }
     });
 });
