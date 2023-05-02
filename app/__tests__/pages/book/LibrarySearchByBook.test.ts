@@ -1,5 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../type.d.ts" />
+/// <reference types="node" />
+
+import fs from "fs";
+import path from "path";
 
 import LibrarySearchByBook from "../../../scripts/pages/book/LibrarySearchByBook";
 import CustomFetch from "../../../scripts/utils/CustomFetch";
@@ -12,10 +16,7 @@ jest.mock("../../../scripts/modules/model", () => ({
 
 class TestLibrarySearchByBook extends LibrarySearchByBook {
     async testFetchList(isbn: string) {
-        // const state = getState();
-        // if (state) {
         await this.fetchList(isbn);
-        // }
     }
 
     async testFetchLibrarySearchByBook(
@@ -56,20 +57,27 @@ class TestLibrarySearchByBook extends LibrarySearchByBook {
     }
 }
 
+function readHtml() {
+    const filePath = path.join(__dirname, "../../../markup/book.html");
+    return fs.readFileSync(filePath, "utf-8");
+}
+
+function getElement(bookHtml: string) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(bookHtml, "text/html");
+    return doc.querySelector("library-search-by-book") as HTMLElement | null;
+}
+
 describe("LibrarySearchByBook", () => {
     const CUSTOM_ELEMENT_NAME = "library-search-by-book";
 
     let instance: TestLibrarySearchByBook;
     let originalLocation: Location;
+    const bookHtml = readHtml();
+    const element = getElement(bookHtml);
 
     const mockedFetch = CustomFetch as jest.Mocked<typeof CustomFetch>;
     const mockIsbn = "1234567890123";
-    const template = `
-            <library-search-by-book>
-                <h4>도서 소장 도서관 조회</h4>
-                <div class="library-search-by-book"></div>
-            </library-search-by-book>
-            <template id="tp-librarySearchByBookItem"><li><a href="" target="_blank"></a><p><span class="loanAvailable"></span></p></li></template>`;
 
     beforeEach(() => {
         originalLocation = window.location;
@@ -81,11 +89,14 @@ describe("LibrarySearchByBook", () => {
 
     afterEach(() => {
         window.location = originalLocation;
-        if (document.body.contains(instance)) {
+        if (document.body.contains(instance) && instance !== null) {
             document.body.removeChild(instance);
         }
+        instance.innerHTML = "";
         document.body.innerHTML = "";
         jest.clearAllMocks();
+
+        // console.log("instance.body", instance.innerHTML);
     });
 
     describe("check state, libries, template", () => {
@@ -97,6 +108,9 @@ describe("LibrarySearchByBook", () => {
                     TestLibrarySearchByBook
                 );
             }
+
+            // console.log("instance", instance.innerHTML);
+            // console.log("document.body", document.body.innerHTML);
         });
 
         test("fetchList : regions = {}", async () => {
@@ -108,7 +122,9 @@ describe("LibrarySearchByBook", () => {
 
             instance = new TestLibrarySearchByBook();
 
-            instance.innerHTML = template;
+            if (element !== null) {
+                instance.appendChild(element);
+            }
             document.body.appendChild(instance);
 
             expect(
@@ -126,7 +142,10 @@ describe("LibrarySearchByBook", () => {
                 },
             });
 
-            instance.innerHTML = template;
+            if (element !== null) {
+                instance.appendChild(element);
+            }
+
             document.body.appendChild(instance);
 
             expect(
@@ -140,7 +159,9 @@ describe("LibrarySearchByBook", () => {
                 libraries: [],
             };
 
-            instance.innerHTML = template;
+            if (element !== null) {
+                instance.appendChild(element);
+            }
             instance.testRender(mockData, mockIsbn);
 
             expect(
@@ -276,28 +297,24 @@ describe("LibrarySearchByBook", () => {
                 );
             }
 
-            // instance = new TestLibrarySearchByBook();
+            instance = new TestLibrarySearchByBook();
 
-            instance.innerHTML = template;
-            document.body.appendChild(instance);
+            document.body.innerHTML = bookHtml;
         });
 
         test("loanAvailable sets available data attribute when isAvailable is true", async () => {
             const mockLibCode = "001111";
-
             const fetchSpy = jest.spyOn(CustomFetch, "fetch");
             fetchSpy.mockResolvedValue({ loanAvailable: "Y" });
-
             const el = document.createElement("li");
             const childEl = document.createElement("span");
             childEl.className = "loanAvailable";
+
             el.appendChild(childEl);
 
             await instance.testLoanAvailable(mockIsbn, mockLibCode, el);
-
             expect(fetchSpy).toHaveBeenCalled();
             expect(el.dataset.available).toEqual("true");
-
             fetchSpy.mockRestore();
         });
 

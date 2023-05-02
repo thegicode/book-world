@@ -1,5 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../type.d.ts" />
+/// <reference types="node" />
+
+import fs from "fs";
+import path from "path";
 
 import Book from "../../../scripts/pages/book/Book";
 import CustomFetch from "../../../scripts/utils/CustomFetch";
@@ -19,6 +23,11 @@ class TestBook extends Book {
     testRender() {
         this.render();
     }
+}
+
+function readHtml() {
+    const filePath = path.join(__dirname, "../../../markup/book.html");
+    return fs.readFileSync(filePath, "utf-8");
 }
 
 describe("Book", () => {
@@ -74,63 +83,9 @@ describe("Book", () => {
 
         testBook = new TestBook();
 
-        const template = `<app-book>
-            <h3 class="bookname"></h3>
+        const bookHtml = readHtml();
 
-            <p class="authors"></p>
-
-            <book-image></book-image>
-
-            <div class="actions">
-                <checkbox-favorite-book></checkbox-favorite-book>
-            </div>
-
-            <library-search-by-book>
-                <h4>도서 소장 도서관 조회</h4>
-                <div class="library-search-by-book"></div>
-            </library-search-by-book>
-
-            <div class="cols">
-                <div class="col">
-                    <h4>분류</h4>
-                    <p class="class_nm"></p>
-                </div>
-                <div class="col">
-                    <h4>class_no</h4>
-                    <p class="class_no"></p>
-                </div>
-                <div class="col">
-                    <h4>isbn13</h4>
-                    <p class="isbn13"></p>
-                </div>
-                <div class="col">
-                    <h4>대출횟수</h4>
-                    <p class="loanCnt"></p>
-                </div>
-                <div class="col">
-                    <h4>발행년도</h4>
-                    <p class="publication_year"></p>
-                </div>
-                <div class="col">
-                    <h4>출판사</h4>
-                    <p class="publisher"></p>
-                </div>
-            </div>
-
-            <h4>설명</h4>
-            <p class="description"></p>
-
-            <h4>키워드</h4>
-            <p class="keyword"></p>
-
-            <h4>관련 도서</h4>
-
-            <ul class="recBooks"></ul>
-
-            <div class="loading">Loading</div>
-        </app-book>`;
-
-        testBook.innerHTML = template;
+        testBook.innerHTML = bookHtml;
 
         document.body.appendChild(testBook);
     });
