@@ -13,7 +13,7 @@ export default {
     roots: ["<rootDir>"],
     collectCoverage: true, // 커버리지 데이터 수집 활성화
     // collectCoverageFrom: [
-    //     "<rootDir>/app/**/*.{ts,tsx}",
+    //     "<rootDir>/app/scripts/**/*.{ts,tsx}",
     //     "<rootDir>/server/**/*.{ts,tsx}",
     //     "!<rootDir>/app/**/*.d.ts",
     // ],
@@ -34,6 +34,7 @@ export default {
         ],
     },
     testMatch: ["**/__tests__/**/*.ts"],
+    testPathIgnorePatterns: ["app/__tests__/helpers/"],
     // setupFilesAfterEnv: ["./jest.setup.ts"],
 };
 

@@ -1,9 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../type.d.ts" />
-/// <reference types="node" />
 
-import fs from "fs";
-import path from "path";
+import { readHtmlFile, getElementFromHtml } from "../../helpers";
 
 import LibrarySearchByBook from "../../../scripts/pages/book/LibrarySearchByBook";
 import CustomFetch from "../../../scripts/utils/CustomFetch";
@@ -57,24 +55,13 @@ class TestLibrarySearchByBook extends LibrarySearchByBook {
     }
 }
 
-function readHtml() {
-    const filePath = path.join(__dirname, "../../../markup/book.html");
-    return fs.readFileSync(filePath, "utf-8");
-}
-
-function getElement(bookHtml: string) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(bookHtml, "text/html");
-    return doc.querySelector("library-search-by-book") as HTMLElement | null;
-}
-
 describe("LibrarySearchByBook", () => {
     const CUSTOM_ELEMENT_NAME = "library-search-by-book";
 
     let instance: TestLibrarySearchByBook;
     let originalLocation: Location;
-    const bookHtml = readHtml();
-    const element = getElement(bookHtml);
+    const bookHtml = readHtmlFile("../../markup/book.html");
+    const element = getElementFromHtml(bookHtml, "library-search-by-book");
 
     const mockedFetch = CustomFetch as jest.Mocked<typeof CustomFetch>;
     const mockIsbn = "1234567890123";

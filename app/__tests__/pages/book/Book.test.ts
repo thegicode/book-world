@@ -1,16 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../type.d.ts" />
-/// <reference types="node" />
 
-import fs from "fs";
-import path from "path";
+import { readHtmlFile } from "../../helpers";
 
 import Book from "../../../scripts/pages/book/Book";
 import CustomFetch from "../../../scripts/utils/CustomFetch";
 
 jest.mock("../../../scripts/utils/CustomFetch");
 
-class TestBook extends Book {
+class BookForTesting extends Book {
     async testFetchUsageAnalysisList(isbn: string) {
         await this.fetchUsageAnalysisList(isbn);
     }
@@ -25,13 +23,8 @@ class TestBook extends Book {
     }
 }
 
-function readHtml() {
-    const filePath = path.join(__dirname, "../../../markup/book.html");
-    return fs.readFileSync(filePath, "utf-8");
-}
-
 describe("Book", () => {
-    let testBook: TestBook;
+    let bookUnderTest: BookForTesting;
     let originalLocation: Location;
     const mockedCustomFetch = CustomFetch as jest.Mocked<typeof CustomFetch>;
     const mockIsbn = "1234567890123";
@@ -67,7 +60,9 @@ describe("Book", () => {
     };
 
     beforeAll(() => {
-        customElements.define("app-book", TestBook);
+        if (!customElements.get("app-book")) {
+            customElements.define("app-book", BookForTesting);
+        }
     });
 
     beforeEach(() => {
@@ -78,21 +73,21 @@ describe("Book", () => {
         });
 
         if (!customElements.get("app-book")) {
-            customElements.define("app-book", TestBook);
+            customElements.define("app-book", BookForTesting);
         }
 
-        testBook = new TestBook();
+        bookUnderTest = new BookForTesting();
 
-        const bookHtml = readHtml();
+        const bookHtml = readHtmlFile("../../markup/book.html");
 
-        testBook.innerHTML = bookHtml;
+        bookUnderTest.innerHTML = bookHtml;
 
-        document.body.appendChild(testBook);
+        document.body.appendChild(bookUnderTest);
     });
 
     afterEach(() => {
-        if (document.body.contains(testBook)) {
-            document.body.removeChild(testBook);
+        if (document.body.contains(bookUnderTest)) {
+            document.body.removeChild(bookUnderTest);
         }
         window.location = originalLocation;
         jest.clearAllMocks();
@@ -101,8 +96,8 @@ describe("Book", () => {
     test("fetchUsageAnalysisList fetches data and renders it correctly", async () => {
         (CustomFetch.fetch as jest.Mock).mockResolvedValueOnce(mockData);
 
-        await testBook.testFetchUsageAnalysisList(mockIsbn);
-        expect(testBook.getLoadingElement()).toBeNull();
+        await bookUnderTest.testFetchUsageAnalysisList(mockIsbn);
+        expect(bookUnderTest.getLoadingElement()).toBeNull();
     });
 
     test("fetchUsageAnalysisList handles fetch error correctly", async () => {
@@ -116,7 +111,7 @@ describe("Book", () => {
         consoleErrorSpy.mockImplementation(() => {});
 
         try {
-            await testBook.testFetchUsageAnalysisList(mockIsbn);
+            await bookUnderTest.testFetchUsageAnalysisList(mockIsbn);
         } catch (error) {
             expect(mockedCustomFetch.fetch).toHaveBeenCalled();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
