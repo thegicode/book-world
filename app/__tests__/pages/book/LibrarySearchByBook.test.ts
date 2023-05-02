@@ -13,10 +13,6 @@ jest.mock("../../../scripts/modules/model", () => ({
 }));
 
 class TestLibrarySearchByBook extends LibrarySearchByBook {
-    async testFetchList(isbn: string) {
-        await this.fetchList(isbn);
-    }
-
     async testFetchLibrarySearchByBook(
         isbn: string,
         region: string,
@@ -57,6 +53,8 @@ class TestLibrarySearchByBook extends LibrarySearchByBook {
 
 describe("LibrarySearchByBook", () => {
     const CUSTOM_ELEMENT_NAME = "library-search-by-book";
+    const TEST_ELEMENT_ID = "tp-librarySearchByBookItem";
+    const LOAN_AVAILABLE_CLASS = "loanAvailable";
 
     let instance: TestLibrarySearchByBook;
     let originalLocation: Location;
@@ -200,7 +198,7 @@ describe("LibrarySearchByBook", () => {
                     <h4>도서 소장 도서관 조회</h4>
                     <div class="library-search-by-book"></div>
                 </library-search-by-book>
-                <template id="tp-librarySearchByBookItem"><li><p><span class="loanAvailable"></span></p></li></template>`;
+                <template id=${TEST_ELEMENT_ID}><li><p><span class=${LOAN_AVAILABLE_CLASS}></span></p></li></template>`;
 
             instance.testCreateLibrarySearchResultItem(
                 mockIsbn,
@@ -226,7 +224,7 @@ describe("LibrarySearchByBook", () => {
                     <h4>도서 소장 도서관 조회</h4>
                     <div class="library-search-by-book"></div>
                 </library-search-by-book>
-                <template id="tp-librarySearchByBookItem"></template>`;
+                <template id=${TEST_ELEMENT_ID}></template>`;
 
             instance.testCreateLibrarySearchResultItem(
                 mockIsbn,
@@ -235,8 +233,8 @@ describe("LibrarySearchByBook", () => {
                 "libName"
             );
 
-            const template = document.querySelector(
-                "#tp-librarySearchByBookItem"
+            const template = document.getElementById(
+                TEST_ELEMENT_ID
             ) as HTMLTemplateElement;
 
             const cloned = template.content.firstElementChild?.cloneNode(
@@ -295,7 +293,7 @@ describe("LibrarySearchByBook", () => {
             fetchSpy.mockResolvedValue({ loanAvailable: "Y" });
             const el = document.createElement("li");
             const childEl = document.createElement("span");
-            childEl.className = "loanAvailable";
+            childEl.className = LOAN_AVAILABLE_CLASS;
 
             el.appendChild(childEl);
 
