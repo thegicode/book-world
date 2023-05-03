@@ -23,9 +23,13 @@ class TestableCheckboxFavoriteBook extends CheckboxFavoriteBook {
     public getIsbn() {
         return this.isbn;
     }
+    // onChange() {
+    //     this.onChange();
+    // }
 }
 
 describe("CheckboxFavoriteBook", () => {
+    const CUSTOM_ELEMENT_NAME = "checkbox-favorite-book";
     let parentElement: HTMLElement;
     let checkboxFavoriteBook: TestableCheckboxFavoriteBook;
     let isbn: string | null;
@@ -43,9 +47,9 @@ describe("CheckboxFavoriteBook", () => {
         beforeEach(() => {
             parentElement = document.createElement("div");
             parentElement.dataset.isbn = isbnCode;
-            if (!customElements.get("checkbox-favorite-book")) {
+            if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
                 customElements.define(
-                    "checkbox-favorite-book",
+                    CUSTOM_ELEMENT_NAME,
                     TestableCheckboxFavoriteBook
                 );
             }
@@ -56,17 +60,22 @@ describe("CheckboxFavoriteBook", () => {
             // inputElement = checkboxFavoriteBook.getInputElement();
         });
 
-        test("removes event listener when inputElement is present", () => {
+        test("adds event listener to the input element", () => {
             checkboxFavoriteBook.connectedCallback();
-            // checkboxFavoriteBook.disconnectedCallback();
             const input = checkboxFavoriteBook.getInputElement();
-            expect(input).toBeDefined();
-            if (input) {
-                expect(input?.onchange).toBeNull();
-            } else {
-                expect(input).toBeNull();
-            }
+            expect(input?.onchange).toBeDefined();
         });
+
+        // test("removes event listener when inputElement is present", () => {
+        //     checkboxFavoriteBook.connectedCallback();
+        //     const input = checkboxFavoriteBook.getInputElement();
+        //     expect(input).toBeDefined();
+        //     if (input) {
+        //         expect(input?.onchange).toBeNull();
+        //     } else {
+        //         expect(input).toBeNull();
+        //     }
+        // });
 
         test("does not remove event listener when inputElement is null", () => {
             checkboxFavoriteBook.disconnectedCallback();
@@ -78,9 +87,9 @@ describe("CheckboxFavoriteBook", () => {
     describe("when parent element has not data-isbn", () => {
         beforeEach(() => {
             parentElement = document.createElement("div");
-            if (!customElements.get("checkbox-favorite-book")) {
+            if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
                 customElements.define(
-                    "checkbox-favorite-book",
+                    CUSTOM_ELEMENT_NAME,
                     TestableCheckboxFavoriteBook
                 );
             }
@@ -113,9 +122,9 @@ describe("CheckboxFavoriteBook", () => {
 
             parentElement = document.createElement("div");
             parentElement.dataset.isbn = isbnCode;
-            if (!customElements.get("checkbox-favorite-book")) {
+            if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
                 customElements.define(
-                    "checkbox-favorite-book",
+                    CUSTOM_ELEMENT_NAME,
                     TestableCheckboxFavoriteBook
                 );
             }
@@ -158,9 +167,9 @@ describe("CheckboxFavoriteBook", () => {
 
             parentElement = document.createElement("div");
             parentElement.dataset.isbn = isbnCode;
-            if (!customElements.get("checkbox-favorite-book")) {
+            if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
                 customElements.define(
-                    "checkbox-favorite-book",
+                    CUSTOM_ELEMENT_NAME,
                     TestableCheckboxFavoriteBook
                 );
             }

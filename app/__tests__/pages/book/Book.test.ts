@@ -59,12 +59,6 @@ describe("Book", () => {
         ],
     };
 
-    beforeAll(() => {
-        if (!customElements.get("app-book")) {
-            customElements.define("app-book", BookForTesting);
-        }
-    });
-
     beforeEach(() => {
         originalLocation = window.location;
         Object.defineProperty(window, "location", {

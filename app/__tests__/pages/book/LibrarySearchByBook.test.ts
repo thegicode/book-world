@@ -80,8 +80,6 @@ describe("LibrarySearchByBook", () => {
         instance.innerHTML = "";
         document.body.innerHTML = "";
         jest.clearAllMocks();
-
-        // console.log("instance.body", instance.innerHTML);
     });
 
     describe("check state, libries, template", () => {
@@ -93,9 +91,6 @@ describe("LibrarySearchByBook", () => {
                     TestLibrarySearchByBook
                 );
             }
-
-            // console.log("instance", instance.innerHTML);
-            // console.log("document.body", document.body.innerHTML);
         });
 
         test("fetchList : regions = {}", async () => {
