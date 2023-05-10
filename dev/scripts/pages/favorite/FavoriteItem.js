@@ -82,11 +82,13 @@ export default class FavoriteItem extends HTMLElement {
         this.querySelector("h4").textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`;
     }
     onLibrary() {
-        const isbn = this.dataset.isbn || "";
-        const libraryBookExist = this.querySelector("library-book-exist");
-        if (libraryBookExist) {
-            libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            const isbn = this.dataset.isbn || "";
+            const libraryBookExist = this.querySelector("library-book-exist");
+            if (libraryBookExist) {
+                yield libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+            }
+        });
     }
     loading() {
         this.dataset.loading = "true";
