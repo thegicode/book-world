@@ -83,7 +83,7 @@ export default class FavoriteItem extends HTMLElement {
         this.querySelector("h4").textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`;
     }
     onLibrary() {
-        const isbn = this.dataset.isbn || "";
+        const isbn = this.dataset.isbn;
         const libraryBookExist = this.querySelector("library-book-exist");
         if (libraryBookExist && this.libraryButton) {
             libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);

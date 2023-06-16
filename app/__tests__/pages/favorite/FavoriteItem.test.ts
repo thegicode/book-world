@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../type.d.ts" />
 
@@ -18,6 +19,13 @@ class FavoriteItemForTest extends FavoriteItem {
     }
     getLibraryButton() {
         return this.libraryButton;
+    }
+    testOnClick(event: MouseEvent) {
+        this.onClick(event);
+    }
+    resetButton() {
+        this.libraryButton = undefined;
+        this.anchorElement = undefined;
     }
 }
 
@@ -64,8 +72,6 @@ describe("FavoriteItem", () => {
             instance.innerHTML = element.innerHTML;
         }
         document.body.appendChild(instance); // -> connectedCallback
-
-        // console.log("beforeEach", document.body.innerHTML);
     });
 
     afterEach(() => {
@@ -120,5 +126,49 @@ describe("FavoriteItem", () => {
             instance.dataset.isbn,
             state.libraries
         );
+    });
+
+    test("onClick should prevent event and change location", () => {
+        // Arrange
+        const event = {
+            preventDefault: jest.fn(),
+        } as unknown as MouseEvent;
+        const orginalWindowLocation = window.location;
+
+        delete (window as any).location;
+        window.location = { ...orginalWindowLocation, href: "" } as any;
+
+        // Act
+        instance.testOnClick(event);
+
+        // Assert
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(window.location.href).toBe(`book?isbn=${instance.dataset.isbn}`);
+
+        window.location = orginalWindowLocation;
+    });
+
+    test("disconnectedCallback should remove event listeners", () => {
+        // Arrange
+        const removeEventListenerSpyButton = jest.spyOn(
+            HTMLButtonElement.prototype,
+            "removeEventListener"
+        );
+        const removeEventListenerSpyAnchor = jest.spyOn(
+            HTMLAnchorElement.prototype,
+            "removeEventListener"
+        );
+
+        // Act
+        instance.resetButton();
+        instance.disconnectedCallback();
+
+        // Assert
+        expect(removeEventListenerSpyButton).not.toHaveBeenCalled();
+        expect(removeEventListenerSpyAnchor).not.toHaveBeenCalled();
+
+        // Cleanup
+        removeEventListenerSpyButton.mockRestore();
+        removeEventListenerSpyAnchor.mockRestore();
     });
 });

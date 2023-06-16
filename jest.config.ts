@@ -12,11 +12,11 @@ export default {
     // testEnvironment: "jsdom",
     roots: ["<rootDir>"],
     collectCoverage: true, // 커버리지 데이터 수집 활성화
-    // collectCoverageFrom: [
-    //     "<rootDir>/app/scripts/**/*.{ts,tsx}",
-    //     "<rootDir>/server/**/*.{ts,tsx}",
-    //     "!<rootDir>/app/**/*.d.ts",
-    // ],
+    collectCoverageFrom: [
+        "<rootDir>/app/scripts/**/*.{ts,tsx}",
+        "<rootDir>/server/**/*.{ts,tsx}",
+        "!<rootDir>/app/**/*.d.ts",
+    ],
     coverageReporters: ["text"], // 커버리지 리포트 형식 지정 ["json", "lcov", "text", "clover"]
     coverageDirectory: "coverage", // 커버리지 리포트를 저장할 디렉토리 지정
     moduleNameMapper: {

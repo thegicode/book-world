@@ -1095,7 +1095,7 @@
       this.querySelector("h4").textContent = `${this.dataset.isbn}\uC758 \uCC45 \uC815\uBCF4\uB97C \uAC00\uC838\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.`;
     }
     onLibrary() {
-      const isbn = this.dataset.isbn || "";
+      const isbn = this.dataset.isbn;
       const libraryBookExist = this.querySelector("library-book-exist");
       if (libraryBookExist && this.libraryButton) {
         libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);

@@ -105,7 +105,7 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     private onLibrary() {
-        const isbn = this.dataset.isbn || "";
+        const isbn = this.dataset.isbn as string;
         const libraryBookExist =
             this.querySelector<LibraryBookExist>("library-book-exist");
         if (libraryBookExist && this.libraryButton) {
@@ -125,7 +125,7 @@ export default class FavoriteItem extends HTMLElement {
         delete this.dataset.loading;
     }
 
-    private onClick(event: MouseEvent) {
+    protected onClick(event: MouseEvent) {
         event.preventDefault();
         location.href = `book?isbn=${this.dataset.isbn}`;
     }
