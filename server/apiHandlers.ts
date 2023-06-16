@@ -113,20 +113,20 @@ export async function usageAnalysisList(req: Request, res: Response) {
         const keywordsItems = keywords.map(
             (item: { keyword: string }) => item.keyword
         );
-        const recBooksItems = recBooks.map(
-            (item: { book: string }) => item.book
-        );
-        const coLoanBooksItems = coLoanBooks.map(
-            (item: { book: string }) => item.book
-        );
+        // const recBooksItems = recBooks.map(
+        //     (item: { book: string }) => item.book
+        // );
+        // const coLoanBooksItems = coLoanBooks.map(
+        //     (item: { book: string }) => item.book
+        // );
 
         res.send({
             book,
             loanHistory: loanHistoryItems,
             loanGrps: loanGrpsItems,
             keywords: keywordsItems,
-            recBooks: recBooksItems,
-            coLoanBooks: coLoanBooksItems,
+            // recBooks: recBooksItems,
+            // coLoanBooks: coLoanBooksItems,
         });
     } catch (error) {
         console.error(error);

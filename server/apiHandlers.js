@@ -113,15 +113,11 @@ function usageAnalysisList(req, res) {
             const loanHistoryItems = loanHistory.map((item) => item.loan);
             const loanGrpsItems = loanGrps.map((item) => item.loanGrp);
             const keywordsItems = keywords.map((item) => item.keyword);
-            const recBooksItems = recBooks.map((item) => item.book);
-            const coLoanBooksItems = coLoanBooks.map((item) => item.book);
             res.send({
                 book,
                 loanHistory: loanHistoryItems,
                 loanGrps: loanGrpsItems,
                 keywords: keywordsItems,
-                recBooks: recBooksItems,
-                coLoanBooks: coLoanBooksItems,
             });
         }
         catch (error) {

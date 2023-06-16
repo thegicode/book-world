@@ -50,7 +50,7 @@ export default class Book extends HTMLElement {
                 publisher,
             },
             keywords,
-            recBooks,
+            // recBooks,
         } = this.data; // coLoanBooks, loanGrps,loanHistory,
 
         const bookNames = bookname
@@ -60,12 +60,12 @@ export default class Book extends HTMLElement {
         const keywordsString = keywords
             .map((item) => `<span>${item.word}</span>`)
             .join("");
-        const recBooksString = recBooks
-            .map(
-                ({ bookname, isbn13 }) =>
-                    `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`
-            )
-            .join("");
+        // const recBooksString = recBooks
+        //     .map(
+        //         ({ bookname, isbn13 }) =>
+        //             `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`
+        //     )
+        //     .join("");
 
         (this.querySelector(".bookname") as HTMLElement).innerHTML = bookNames;
         (this.querySelector(".authors") as HTMLElement).textContent = authors;
@@ -82,8 +82,8 @@ export default class Book extends HTMLElement {
             publisher;
         (this.querySelector(".keyword") as HTMLElement).innerHTML =
             keywordsString;
-        (this.querySelector(".recBooks") as HTMLElement).innerHTML =
-            recBooksString;
+        // (this.querySelector(".recBooks") as HTMLElement).innerHTML =
+        //     recBooksString;
 
         const bookImageElement = this.querySelector<BookImage>("book-image");
         if (bookImageElement) {

@@ -1094,13 +1094,11 @@
       this.querySelector("h4").textContent = `${this.dataset.isbn}\uC758 \uCC45 \uC815\uBCF4\uB97C \uAC00\uC838\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.`;
     }
     onLibrary() {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const isbn = this.dataset.isbn || "";
-        const libraryBookExist = this.querySelector("library-book-exist");
-        if (libraryBookExist) {
-          yield libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
-        }
-      });
+      const isbn = this.dataset.isbn || "";
+      const libraryBookExist = this.querySelector("library-book-exist");
+      if (libraryBookExist) {
+        libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+      }
     }
     loading() {
       this.dataset.loading = "true";

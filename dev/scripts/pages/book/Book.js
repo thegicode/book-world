@@ -37,7 +37,9 @@ export default class Book extends HTMLElement {
     render() {
         if (!this.data)
             return;
-        const { book: { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher, }, keywords, recBooks, } = this.data; // coLoanBooks, loanGrps,loanHistory,
+        const { book: { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher, }, keywords,
+        // recBooks,
+         } = this.data; // coLoanBooks, loanGrps,loanHistory,
         const bookNames = bookname
             .split(/[=/:]/)
             .map((item) => `<p>${item}</p>`)
@@ -45,9 +47,12 @@ export default class Book extends HTMLElement {
         const keywordsString = keywords
             .map((item) => `<span>${item.word}</span>`)
             .join("");
-        const recBooksString = recBooks
-            .map(({ bookname, isbn13 }) => `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`)
-            .join("");
+        // const recBooksString = recBooks
+        //     .map(
+        //         ({ bookname, isbn13 }) =>
+        //             `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`
+        //     )
+        //     .join("");
         this.querySelector(".bookname").innerHTML = bookNames;
         this.querySelector(".authors").textContent = authors;
         this.querySelector(".class_nm").textContent = class_nm;
@@ -63,8 +68,8 @@ export default class Book extends HTMLElement {
             publisher;
         this.querySelector(".keyword").innerHTML =
             keywordsString;
-        this.querySelector(".recBooks").innerHTML =
-            recBooksString;
+        // (this.querySelector(".recBooks") as HTMLElement).innerHTML =
+        //     recBooksString;
         const bookImageElement = this.querySelector("book-image");
         if (bookImageElement) {
             bookImageElement.data = {

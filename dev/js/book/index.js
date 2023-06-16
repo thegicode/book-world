@@ -836,10 +836,13 @@
     render() {
       if (!this.data)
         return;
-      const { book: { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher }, keywords, recBooks } = this.data;
+      const {
+        book: { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher },
+        keywords
+        // recBooks,
+      } = this.data;
       const bookNames = bookname.split(/[=/:]/).map((item) => `<p>${item}</p>`).join("");
       const keywordsString = keywords.map((item) => `<span>${item.word}</span>`).join("");
-      const recBooksString = recBooks.map(({ bookname: bookname2, isbn13: isbn132 }) => `<li><a href=book?isbn=${isbn132}>${bookname2}</a></li>`).join("");
       this.querySelector(".bookname").innerHTML = bookNames;
       this.querySelector(".authors").textContent = authors;
       this.querySelector(".class_nm").textContent = class_nm;
@@ -850,7 +853,6 @@
       this.querySelector(".publication_year").textContent = publication_year;
       this.querySelector(".publisher").textContent = publisher;
       this.querySelector(".keyword").innerHTML = keywordsString;
-      this.querySelector(".recBooks").innerHTML = recBooksString;
       const bookImageElement = this.querySelector("book-image");
       if (bookImageElement) {
         bookImageElement.data = {
