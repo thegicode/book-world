@@ -109,7 +109,7 @@ function usageAnalysisList(req, res) {
         });
         try {
             const data = yield fetchData(url);
-            const { book, loanHistory, loanGrps, keywords, recBooks, coLoanBooks } = data.response;
+            const { book, loanHistory, loanGrps, keywords, } = data.response;
             const loanHistoryItems = loanHistory.map((item) => item.loan);
             const loanGrpsItems = loanGrps.map((item) => item.loanGrp);
             const keywordsItems = keywords.map((item) => item.keyword);

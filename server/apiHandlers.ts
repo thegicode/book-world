@@ -101,8 +101,14 @@ export async function usageAnalysisList(req: Request, res: Response) {
     });
     try {
         const data = await fetchData(url);
-        const { book, loanHistory, loanGrps, keywords, recBooks, coLoanBooks } =
-            data.response;
+
+        const {
+            book,
+            loanHistory,
+            loanGrps,
+            keywords,
+            // recBooks, coLoanBooks
+        } = data.response;
 
         const loanHistoryItems = loanHistory.map(
             (item: { loan: string }) => item.loan
