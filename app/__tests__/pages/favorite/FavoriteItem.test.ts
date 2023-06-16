@@ -3,6 +3,8 @@
 
 import { readHtmlFile, getElementFromHtml } from "../../helpers";
 import { CustomFetch } from "../../../scripts/utils";
+import { state } from "../../../scripts/modules/model";
+import { LibraryBookExist } from "../../../scripts/components";
 import FavoriteItem from "../../../scripts/pages/favorite/FavoriteItem";
 
 jest.mock("../../../scripts/utils/CustomFetch");
@@ -13,6 +15,9 @@ class FavoriteItemForTest extends FavoriteItem {
     }
     testRender(data: IUsageAnalysisResult) {
         this.render(data);
+    }
+    getLibraryButton() {
+        return this.libraryButton;
     }
 }
 
@@ -65,12 +70,12 @@ describe("FavoriteItem", () => {
 
     afterEach(() => {
         document.body.removeChild(instance);
-        testCustomFetch.mockClear();
+        // testCustomFetch.mockClear();
         jest.clearAllMocks();
     });
 
     test("Should fetch data and render it", async () => {
-        testCustomFetch.mockResolvedValueOnce(mockData);
+        // testCustomFetch.mockResolvedValueOnce(mockData);
         await instance.testRender(mockData);
         expect(instance.dataset.loading).toBeUndefined();
     });
@@ -94,5 +99,26 @@ describe("FavoriteItem", () => {
         } finally {
             consoleErrorSpy.mockRestore();
         }
+    });
+
+    test("onLibrary should call onLibraryBookExist method of libraryBookExist", () => {
+        // Arrange
+        const mockOnLibraryBookExist = jest.fn();
+        const libraryBookExist =
+            instance.querySelector<LibraryBookExist>("library-book-exist");
+        if (libraryBookExist)
+            libraryBookExist.onLibraryBookExist = mockOnLibraryBookExist;
+        const libraryButton = instance.getLibraryButton();
+
+        // Act
+        libraryButton?.click();
+
+        // Assert
+        expect(mockOnLibraryBookExist).toHaveBeenCalled();
+        expect(mockOnLibraryBookExist).toHaveBeenCalledWith(
+            libraryButton,
+            instance.dataset.isbn,
+            state.libraries
+        );
     });
 });
