@@ -7,6 +7,7 @@ import { hasLibrary } from "../../../scripts/modules/model";
 import { readHtmlFile } from "../../helpers";
 
 import Library from "../../../scripts/pages/library/Library";
+// import LibraryItem from "../../../scripts/pages/library/LibraryItem";
 
 jest.mock("../../../scripts/utils/CustomFetch");
 jest.mock("../../../scripts/modules/model", () => ({
@@ -23,6 +24,9 @@ class LibraryForTest extends Library {
     testHandleDetailRegion(evt: ICustomEvent<{ detailRegionCode: string }>) {
         this.handleDetailRegion(evt);
     }
+    testShowMessage(type: string) {
+        this.showMessage(type);
+    }
 }
 
 describe("Library", () => {
@@ -31,28 +35,32 @@ describe("Library", () => {
     const testCustomFetch = CustomFetch.fetch as jest.Mock;
     let instance: LibraryForTest;
 
+    const libraryData = {
+        libraries: [
+            {
+                address: "서울특별시 행복구",
+                homepage: "http://www.happy.co.kr",
+                libCode: "111111",
+                libName: "행복",
+                telephone: "010-1111-11111",
+            },
+            {
+                address: "서울특별시 스마일구",
+                homepage: "http://www.smile.co.kr",
+                libCode: "222222",
+                libName: "스마일",
+                telephone: "010-2222-2222",
+            },
+        ],
+    };
+
     beforeEach(() => {
         const mockData = {
             pageNo: 1,
             pageSize: 20,
             numFound: 8,
             resultNum: 8,
-            libraries: [
-                {
-                    libCode: "123456",
-                    libName: "하늘 도관",
-                    address: "서울특별시 강동구",
-                    tel: "02-427-1234",
-                    fax: "02-427-5678 ㅇ",
-                    latitude: "37.5650504",
-                    longitude: "127.1738009",
-                    homepage: "http://www.site.co.kr",
-                    closed: "매주 화요일 / 법정공휴일(일요일 제외)",
-                    operatingTime:
-                        "평일 : 9시 ~ 22시 (어린이자료실 18시, 종합자료실 22시) / 주말  9시 ~17시",
-                    BookCount: "95464",
-                },
-            ],
+            ...libraryData,
         };
         testCustomFetch.mockResolvedValue(mockData);
         if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
@@ -134,26 +142,16 @@ describe("Library", () => {
         showMessageSpy.mockRestore();
     });
 
-    test("Should call hasLibrary", () => {
-        const libraryData = {
-            libraries: [
-                {
-                    address: "서울특별시 행복구",
-                    homepage: "http://www.happy.co.kr",
-                    libCode: "111111",
-                    libName: "행복",
-                    telephone: "010-1111-11111",
-                },
-                {
-                    address: "서울특별시 스마일구",
-                    homepage: "http://www.smile.co.kr",
-                    libCode: "222222",
-                    libName: "스마일",
-                    telephone: "010-2222-2222",
-                },
-            ],
-        };
+    test("render should skip a library when the template is not found", () => {
+        const form = document.querySelector("form");
+        if (form) form.innerHTML = "";
+        document.querySelector("#tp-item")?.remove();
 
+        instance.testRender(libraryData);
+        expect(form?.childElementCount).toBe(0);
+    });
+
+    test("render should call hasLibrary", () => {
         (hasLibrary as jest.Mock).mockImplementation(
             (libCode) => libCode === "111111"
         );
@@ -166,7 +164,16 @@ describe("Library", () => {
         (hasLibrary as jest.Mock).mockClear();
     });
 
-    test("handleDetailRegion method should call showMessage and fetchLibrarySearch", () => {
+    test("render should skip a message when the template is not found", () => {
+        const template = document.querySelector("#tp-null-template");
+
+        instance.testShowMessage("type");
+        const form = document.querySelector("form");
+
+        expect(form?.childElementCount).toBe(0);
+    });
+
+    test("handleDetailRegion should call showMessage and fetchLibrarySearch", () => {
         // Arrange
         const mockShowMessage = jest
             .spyOn(instance as any, "showMessage")

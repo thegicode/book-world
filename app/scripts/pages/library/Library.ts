@@ -82,7 +82,7 @@ export default class Library extends HTMLElement {
         }
     }
 
-    private showMessage(type: string) {
+    protected showMessage(type: string) {
         const template = document.querySelector(
             `#tp-${type}`
         ) as HTMLTemplateElement;
