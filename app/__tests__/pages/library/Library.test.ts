@@ -79,6 +79,22 @@ describe("Library", () => {
         jest.clearAllMocks();
     });
 
+    async function testFetchErrorHandling(error: Error, expectedError: Error) {
+        testCustomFetch.mockRejectedValue(error);
+        const consoleErrorSpy = jest.spyOn(console, "error");
+        consoleErrorSpy.mockImplementation(() => {});
+
+        try {
+            await instance.testFetchLibrarySearch(detailRegionCode);
+        } catch (actualError) {
+            expect(testCustomFetch).toHaveBeenCalled();
+            expect(consoleErrorSpy).toHaveBeenCalledWith(error);
+            expect(actualError).toEqual(expectedError);
+        } finally {
+            consoleErrorSpy.mockRestore();
+        }
+    }
+
     test("connectedCallback should add event listener", () => {
         const addSpy = jest.spyOn(CustomEventEmitter, "add");
 
@@ -112,24 +128,28 @@ describe("Library", () => {
     });
 
     test("fetchLibrarySearch handles fetch error correctly", async () => {
-        const mockError = new Error("Fail to get library search data.");
-        testCustomFetch.mockRejectedValue(new Error("Some fetch error"));
+        const fetchError = new Error("Some fetch error");
+        const expectedError = new Error("Fail to get library search data.");
+        await testFetchErrorHandling(fetchError, expectedError);
 
-        const consoleErrorSpy = jest.spyOn(console, "error");
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        consoleErrorSpy.mockImplementation(() => {});
+        // const mockError = new Error("Fail to get library search data.");
+        // testCustomFetch.mockRejectedValue(new Error("Some fetch error"));
 
-        try {
-            await instance.testFetchLibrarySearch(detailRegionCode);
-        } catch (error) {
-            expect(testCustomFetch).toHaveBeenCalled();
-            expect(consoleErrorSpy).toHaveBeenCalledWith(
-                new Error("Some fetch error")
-            );
-            expect(error).toEqual(mockError);
-        } finally {
-            consoleErrorSpy.mockRestore();
-        }
+        // const consoleErrorSpy = jest.spyOn(console, "error");
+        // // eslint-disable-next-line @typescript-eslint/no-empty-function
+        // consoleErrorSpy.mockImplementation(() => {});
+
+        // try {
+        //     await instance.testFetchLibrarySearch(detailRegionCode);
+        // } catch (error) {
+        //     expect(testCustomFetch).toHaveBeenCalled();
+        //     expect(consoleErrorSpy).toHaveBeenCalledWith(
+        //         new Error("Some fetch error")
+        //     );
+        //     expect(error).toEqual(mockError);
+        // } finally {
+        //     consoleErrorSpy.mockRestore();
+        // }
     });
 
     test("render should call showMessage with 'notFound' when libraries array is empty", () => {
