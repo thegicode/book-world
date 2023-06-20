@@ -3,12 +3,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CustomEventEmitter, CustomFetch } from "../../../scripts/utils";
 import { hasLibrary } from "../../../scripts/modules/model";
-// import LibraryItem from "../../../scripts/pages/library/LibraryItem";
 
-import {
-    readHtmlFile,
-    //getElementFromHtml
-} from "../../helpers";
+import { readHtmlFile } from "../../helpers";
 
 import Library from "../../../scripts/pages/library/Library";
 
@@ -16,11 +12,6 @@ jest.mock("../../../scripts/utils/CustomFetch");
 jest.mock("../../../scripts/modules/model", () => ({
     hasLibrary: jest.fn(),
 }));
-// jest.mock("../../../scripts/pages/library/LibraryItem", () => {
-//     return jest.fn().mockImplementation(() => {
-//         return { dataset: {} };
-//     });
-// });
 
 class LibraryForTest extends Library {
     async testFetchLibrarySearch(detailRegionCode: string) {
