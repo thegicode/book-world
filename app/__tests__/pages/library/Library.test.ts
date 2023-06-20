@@ -27,44 +27,42 @@ class LibraryForTest extends Library {
 
 describe("Library", () => {
     const CUSTOM_ELEMENT_NAME = "app-library";
-    const mockData = {
-        pageNo: 1,
-        pageSize: 20,
-        numFound: 8,
-        resultNum: 8,
-        libraries: [
-            {
-                libCode: "123456",
-                libName: "하늘 도관",
-                address: "서울특별시 강동구",
-                tel: "02-427-1234",
-                fax: "02-427-5678 ㅇ",
-                latitude: "37.5650504",
-                longitude: "127.1738009",
-                homepage: "http://www.site.co.kr",
-                closed: "매주 화요일 / 법정공휴일(일요일 제외)",
-                operatingTime:
-                    "평일 : 9시 ~ 22시 (어린이자료실 18시, 종합자료실 22시) / 주말  9시 ~17시",
-                BookCount: "95464",
-            },
-        ],
-    };
     const detailRegionCode = "12345";
     const testCustomFetch = CustomFetch.fetch as jest.Mock;
     let instance: LibraryForTest;
-    const libraryHtml = readHtmlFile("../../markup/library.html");
 
     beforeEach(() => {
+        const mockData = {
+            pageNo: 1,
+            pageSize: 20,
+            numFound: 8,
+            resultNum: 8,
+            libraries: [
+                {
+                    libCode: "123456",
+                    libName: "하늘 도관",
+                    address: "서울특별시 강동구",
+                    tel: "02-427-1234",
+                    fax: "02-427-5678 ㅇ",
+                    latitude: "37.5650504",
+                    longitude: "127.1738009",
+                    homepage: "http://www.site.co.kr",
+                    closed: "매주 화요일 / 법정공휴일(일요일 제외)",
+                    operatingTime:
+                        "평일 : 9시 ~ 22시 (어린이자료실 18시, 종합자료실 22시) / 주말  9시 ~17시",
+                    BookCount: "95464",
+                },
+            ],
+        };
         testCustomFetch.mockResolvedValue(mockData);
         if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
             customElements.define(CUSTOM_ELEMENT_NAME, LibraryForTest);
         }
 
-        instance = new LibraryForTest(); // consstructor
-        const libraryHtml = readHtmlFile("../../markup/library.html");
-        instance.innerHTML = libraryHtml;
+        instance = new LibraryForTest();
+        instance.innerHTML = readHtmlFile("../../markup/library.html");
 
-        document.body.appendChild(instance); // connectedCallback
+        document.body.appendChild(instance);
     });
 
     afterEach(() => {
@@ -99,12 +97,6 @@ describe("Library", () => {
     });
 
     test("fetchLibrarySearch should call fetch", async () => {
-        testCustomFetch.mockResolvedValue(mockData);
-
-        instance = new LibraryForTest();
-        instance.innerHTML = libraryHtml;
-        document.body.appendChild(instance);
-
         await instance.testFetchLibrarySearch(detailRegionCode);
         expect(CustomFetch.fetch).toHaveBeenCalledWith(
             `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`
@@ -176,7 +168,6 @@ describe("Library", () => {
 
     test("handleDetailRegion method should call showMessage and fetchLibrarySearch", () => {
         // Arrange
-
         const mockShowMessage = jest
             .spyOn(instance as any, "showMessage")
             .mockImplementation(() => {});
