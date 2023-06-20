@@ -3,14 +3,15 @@ import { hasLibrary } from "../../modules/model";
 import LibraryItem from "./LibraryItem";
 
 export default class Library extends HTMLElement {
-    private form: HTMLFormElement;
+    private form?: HTMLFormElement;
 
     constructor() {
         super();
-        this.form = this.querySelector("form") as HTMLFormElement;
     }
 
     connectedCallback() {
+        this.form = this.querySelector("form") as HTMLFormElement;
+
         CustomEventEmitter.add(
             "set-detail-region",
             this.handleDetailRegion.bind(this) as EventListener
@@ -24,7 +25,7 @@ export default class Library extends HTMLElement {
         );
     }
 
-    private async fetchLibrarySearch(detailRegionCode: string) {
+    protected async fetchLibrarySearch(detailRegionCode: string) {
         try {
             const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`;
             const data = await CustomFetch.fetch<ILibrarySearchByBookResult>(
@@ -37,7 +38,7 @@ export default class Library extends HTMLElement {
         }
     }
 
-    private render(data: ILibrarySearchByBookResult) {
+    protected render(data: ILibrarySearchByBookResult) {
         const {
             // pageNo, pageSize, numFound, resultNum,
             libraries,
@@ -68,8 +69,10 @@ export default class Library extends HTMLElement {
             new DocumentFragment()
         );
 
-        this.form.innerHTML = "";
-        this.form.appendChild(fragment);
+        if (this.form) {
+            this.form.innerHTML = "";
+            this.form.appendChild(fragment);
+        }
     }
 
     private showMessage(type: string) {
@@ -78,12 +81,15 @@ export default class Library extends HTMLElement {
         ).content.firstElementChild;
         if (template) {
             const element = template.cloneNode(true);
-            this.form.innerHTML = "";
-            this.form.appendChild(element);
+
+            if (this.form) {
+                this.form.innerHTML = "";
+                this.form.appendChild(element);
+            }
         }
     }
 
-    private handleDetailRegion(
+    protected handleDetailRegion(
         evt: ICustomEvent<{ detailRegionCode: string }>
     ) {
         this.showMessage("loading");

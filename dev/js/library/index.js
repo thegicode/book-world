@@ -715,9 +715,9 @@
   var Library = class extends HTMLElement {
     constructor() {
       super();
-      this.form = this.querySelector("form");
     }
     connectedCallback() {
+      this.form = this.querySelector("form");
       CustomEventEmitter_default.add("set-detail-region", this.handleDetailRegion.bind(this));
     }
     disconnectedCallback() {
@@ -758,15 +758,19 @@
         }
         return fragment2;
       }, new DocumentFragment());
-      this.form.innerHTML = "";
-      this.form.appendChild(fragment);
+      if (this.form) {
+        this.form.innerHTML = "";
+        this.form.appendChild(fragment);
+      }
     }
     showMessage(type) {
       const template = document.querySelector(`#tp-${type}`).content.firstElementChild;
       if (template) {
         const element = template.cloneNode(true);
-        this.form.innerHTML = "";
-        this.form.appendChild(element);
+        if (this.form) {
+          this.form.innerHTML = "";
+          this.form.appendChild(element);
+        }
       }
     }
     handleDetailRegion(evt) {
