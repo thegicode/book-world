@@ -715,18 +715,21 @@
   var Library = class extends HTMLElement {
     constructor() {
       super();
+      this.PAGE_SIZE = 20;
+      this.EVENT_NAME = "set-detail-region";
+      this.handleDetailRegion = this.handleDetailRegion.bind(this);
     }
     connectedCallback() {
       this.form = this.querySelector("form");
-      CustomEventEmitter_default.add("set-detail-region", this.handleDetailRegion.bind(this));
+      CustomEventEmitter_default.add(this.EVENT_NAME, this.handleDetailRegion);
     }
     disconnectedCallback() {
-      CustomEventEmitter_default.remove("set-detail-region", this.handleDetailRegion);
+      CustomEventEmitter_default.remove(this.EVENT_NAME, this.handleDetailRegion);
     }
     fetchLibrarySearch(detailRegionCode) {
       return __awaiter2(this, void 0, void 0, function* () {
+        const url = `/library-search?dtl_region=${detailRegionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
         try {
-          const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`;
           const data = yield CustomFetch_default.fetch(url);
           this.render(data);
         } catch (error) {
@@ -744,14 +747,14 @@
         this.showMessage("notFound");
         return;
       }
-      const template = document.querySelector("#tp-item").content.firstElementChild;
+      const template = document.querySelector("#tp-item");
       const fragment = libraries.reduce((fragment2, lib) => {
-        if (template) {
-          const libraryItem = template.cloneNode(true);
+        if (template === null || template === void 0 ? void 0 : template.content.firstElementChild) {
+          const libraryItem = template.content.firstElementChild.cloneNode(true);
           libraryItem.dataset.object = JSON.stringify(lib);
           if (hasLibrary(lib.libCode)) {
             libraryItem.dataset.has = "true";
-            fragment2.insertBefore(libraryItem, fragment2.firstChild);
+            fragment2.prepend(libraryItem);
           } else {
             fragment2.appendChild(libraryItem);
           }
@@ -764,13 +767,10 @@
       }
     }
     showMessage(type) {
-      const template = document.querySelector(`#tp-${type}`).content.firstElementChild;
-      if (template) {
-        const element = template.cloneNode(true);
-        if (this.form) {
-          this.form.innerHTML = "";
-          this.form.appendChild(element);
-        }
+      const template = document.querySelector(`#tp-${type}`);
+      if ((template === null || template === void 0 ? void 0 : template.content.firstElementChild) && this.form) {
+        this.form.innerHTML = "";
+        this.form.appendChild(template.content.firstElementChild.cloneNode(true));
       }
     }
     handleDetailRegion(evt) {
