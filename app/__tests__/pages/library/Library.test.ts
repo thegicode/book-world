@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../../type.d.ts" />
+
 import { CustomEventEmitter, CustomFetch } from "../../../scripts/utils";
 import { hasLibrary } from "../../../scripts/modules/model";
 
 import { readHtmlFile } from "../../helpers";
 
 import Library from "../../../scripts/pages/library/Library";
-// import LibraryItem from "../../../scripts/pages/library/LibraryItem";
 
 jest.mock("../../../scripts/utils/CustomFetch");
 jest.mock("../../../scripts/modules/model", () => ({

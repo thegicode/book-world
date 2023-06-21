@@ -857,11 +857,11 @@
       this.checkbox = null;
       this.libCode = "";
       this.libName = "";
-      this.checkbox = this.querySelector("[name=myLibrary]");
     }
     connectedCallback() {
       var _a;
       this.render();
+      this.checkbox = this.querySelector("[name=myLibrary]");
       (_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onChange.bind(this));
     }
     disconnectedCallback() {
@@ -869,7 +869,9 @@
       (_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onChange);
     }
     render() {
-      const data = JSON.parse(this.dataset.object || "");
+      if (this.dataset.object === void 0)
+        return;
+      const data = JSON.parse(this.dataset.object);
       const { libCode, libName } = data;
       Object.entries(data).forEach(([key, value]) => {
         const element = this.querySelector(`.${key}`);
