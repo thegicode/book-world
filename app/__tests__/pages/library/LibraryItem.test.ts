@@ -62,7 +62,7 @@ describe("LibraryItem", () => {
         document.body.appendChild(instance);
 
         expect(instance.getDatasetObejct()).toBeUndefined();
-        expect(document.querySelector(".libName")?.textContent).toBe("");
+        expect(instance.querySelector(".libName")?.textContent).toBe("");
     });
 
     describe("when LibraryItem has dataset.object", () => {
@@ -83,13 +83,13 @@ describe("LibraryItem", () => {
         });
 
         test("should render correctly", () => {
-            expect(document.querySelector(".libCode")?.textContent).toBe(
+            expect(instance.querySelector(".libCode")?.textContent).toBe(
                 mockData.libCode
             );
-            expect(document.querySelector(".libName")?.textContent).toBe(
+            expect(instance.querySelector(".libName")?.textContent).toBe(
                 mockData.libName
             );
-            expect(document.querySelector("input")?.checked).toBe(true);
+            expect(instance.querySelector("input")?.checked).toBe(true);
         });
 
         // test("should add event listener on connectedCallback'", () => {
