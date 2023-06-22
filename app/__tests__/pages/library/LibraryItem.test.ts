@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../type.d.ts" />
-import { readHtmlFile, getElementFromHtml } from "../../helpers";
 
+import { readHtmlFile, getElementFromHtml } from "../../helpers";
 import LibraryItem from "../../../scripts/pages/library/LibraryItem";
 import {
     addLibrary,
@@ -19,14 +19,14 @@ class LibraryItemForTest extends LibraryItem {
     testRender() {
         this.render;
     }
-    getDatasetObejct() {
+    getDatasetObject() {
         return this.dataset.object;
-    }
-    getCheckbox() {
-        return this.checkbox;
     }
     testOnChange(event: MouseEvent) {
         this.onChange(event);
+    }
+    getCheckbox() {
+        return this.checkbox;
     }
 }
 
@@ -46,7 +46,6 @@ describe("LibraryItem", () => {
         }
 
         instance = new LibraryItemForTest();
-
         if (element !== null) {
             instance.innerHTML = element.innerHTML;
         }
@@ -54,14 +53,11 @@ describe("LibraryItem", () => {
 
     afterEach(() => {
         instance.innerHTML = "";
-        document.body.removeChild(instance);
         jest.clearAllMocks();
     });
 
-    test("should .libName is empty when dataset.object = undefined", () => {
-        document.body.appendChild(instance);
-
-        expect(instance.getDatasetObejct()).toBeUndefined();
+    test("should be empty when dataset.object = undefined", () => {
+        expect(instance.getDatasetObject()).toBeUndefined();
         expect(instance.querySelector(".libName")?.textContent).toBe("");
     });
 
@@ -70,12 +66,12 @@ describe("LibraryItem", () => {
             libCode: "1234",
             libName: "Test Library",
         };
+        let clickEventWithCheckedTarget: MouseEvent;
 
         beforeEach(() => {
             instance.dataset.object = JSON.stringify(mockData);
             (hasLibrary as jest.Mock).mockReturnValue(true);
             instance.connectedCallback();
-            document.body.appendChild(instance);
         });
 
         afterEach(() => {
@@ -92,33 +88,57 @@ describe("LibraryItem", () => {
             expect(instance.querySelector("input")?.checked).toBe(true);
         });
 
-        // test("should add event listener on connectedCallback'", () => {
-        //     const addEventListenerInput = jest.spyOn(
-        //         HTMLInputElement.prototype,
-        //         "addEventListener"
-        //     );
-        //     instance.connectedCallback();
+        test("should not throw an error when input element is missing", () => {
+            instance.querySelector("input")?.remove();
+            expect(() => instance.connectedCallback()).not.toThrow();
+            expect(() => instance.disconnectedCallback()).not.toThrow();
+        });
 
-        //     expect(addEventListenerInput).toHaveBeenCalled();
+        test("should remove event listener when disconnected", () => {
+            const input = instance.getCheckbox() as HTMLInputElement;
+            const removeEventListenerSpy = jest.spyOn(
+                input,
+                "removeEventListener"
+            );
+            instance.disconnectedCallback();
+            expect(removeEventListenerSpy).toHaveBeenCalledWith(
+                "click",
+                expect.any(Function)
+            );
 
-        //     addEventListenerInput.mockRestore();
-        // });
+            removeEventListenerSpy.mockRestore();
+        });
 
         test("should add a library when checkbox is clicked", () => {
-            const event = {
+            clickEventWithCheckedTarget = {
                 target: { checked: true },
             } as unknown as MouseEvent;
 
-            instance.testOnChange(event);
+            instance.testOnChange(clickEventWithCheckedTarget);
 
             expect(addLibrary).toHaveBeenCalled();
         });
 
+        test("should not call addLibrary or removeLibrary if event target is null or undefined", () => {
+            clickEventWithCheckedTarget = new MouseEvent("click");
+
+            Object.defineProperty(clickEventWithCheckedTarget, "target", {
+                get() {
+                    return null;
+                },
+            });
+
+            instance.testOnChange(clickEventWithCheckedTarget);
+            expect(addLibrary).not.toHaveBeenCalled();
+            expect(removeLibrary).not.toHaveBeenCalled();
+        });
+
         test("should remove a library when checkbox is unchecked", () => {
-            const event = {
+            clickEventWithCheckedTarget = {
                 target: { checked: false },
             } as unknown as MouseEvent;
-            instance.testOnChange(event);
+
+            instance.testOnChange(clickEventWithCheckedTarget);
             expect(removeLibrary).toHaveBeenCalled();
         });
     });

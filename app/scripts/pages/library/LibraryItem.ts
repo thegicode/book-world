@@ -7,14 +7,15 @@ export default class LibraryItem extends HTMLElement {
 
     constructor() {
         super();
+        this.onChange = this.onChange.bind(this);
     }
 
     connectedCallback() {
-        this.render();
-
         this.checkbox =
             this.querySelector<HTMLInputElement>("[name=myLibrary]");
-        this.checkbox?.addEventListener("click", this.onChange.bind(this));
+
+        this.render();
+        this.checkbox?.addEventListener("click", this.onChange);
     }
 
     disconnectedCallback() {
@@ -22,7 +23,7 @@ export default class LibraryItem extends HTMLElement {
     }
 
     protected render(): void {
-        if (this.dataset.object === undefined) return;
+        if (this.dataset.object === undefined || !this.checkbox) return;
 
         const data = JSON.parse(this.dataset.object) as ILibrary;
         const { libCode, libName } = data;
@@ -45,6 +46,7 @@ export default class LibraryItem extends HTMLElement {
 
     protected onChange(event: MouseEvent): void {
         const target = event.target as HTMLInputElement;
+        if (!target) return;
         if (target.checked) {
             addLibrary(this.libCode, this.libName);
         } else {
