@@ -6,7 +6,6 @@ export default class LibraryRegion extends HTMLElement {
 
     constructor() {
         super();
-        // this.onChangeDetail = this.onChangeDetail.bind(this);
     }
 
     connectedCallback() {

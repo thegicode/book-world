@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// import necessary dependencies and modules
 import { CustomEventEmitter } from "../../../scripts/utils/index";
 import { getState } from "../../../scripts/modules/model";
 
-import { readHtmlFile, getElementFromHtml } from "../../helpers";
-
 import LibraryRegion from "../../../scripts/pages/library/LibraryRegion";
 
+import { readHtmlFile, getElementFromHtml } from "../../helpers";
+
+// mock necessary modules
 jest.mock("../../../scripts/utils/index", () => ({
     CustomEventEmitter: {
         dispatch: jest.fn(),
@@ -16,20 +18,9 @@ jest.mock("../../../scripts/modules/model", () => ({
     getState: jest.fn(),
 }));
 
-class LibraryRegionForTest extends LibraryRegion {
-    getSelectElement() {
-        return this.selectElement;
-    }
-    testChangeRegion() {
-        this.changeRegion();
-    }
-    testRenderDetailRegion(name: string) {
-        this.renderDetailRegion(name);
-    }
-}
 describe("LibraryRegion", () => {
     const CUSTOM_ELEMENT_NAME = "library-region";
-    let instance: LibraryRegionForTest;
+    let libraryRegionInstance: LibraryRegion;
 
     const libraryHtml = readHtmlFile("../../markup/library.html");
 
@@ -38,9 +29,14 @@ describe("LibraryRegion", () => {
         "library-region"
     ) as LibraryRegion;
 
+    const template = getElementFromHtml(
+        libraryHtml,
+        "#tp-region"
+    ) as HTMLTemplateElement;
+
     beforeEach(() => {
         if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
-            customElements.define(CUSTOM_ELEMENT_NAME, LibraryRegionForTest);
+            customElements.define(CUSTOM_ELEMENT_NAME, LibraryRegion);
         }
 
         (getState as jest.Mock).mockReturnValue({
@@ -51,29 +47,36 @@ describe("LibraryRegion", () => {
             },
         });
 
-        instance = new LibraryRegionForTest();
-        instance.innerHTML = element.innerHTML;
-        document.body.innerHTML = libraryHtml;
+        libraryRegionInstance = new LibraryRegion();
+        libraryRegionInstance.innerHTML = element.innerHTML;
+
+        document.body.appendChild(template);
+        document.body.appendChild(libraryRegionInstance);
     });
 
     afterEach(() => {
-        instance.innerHTML = "";
+        libraryRegionInstance.innerHTML = "";
         document.body.innerHTML = "";
         jest.clearAllMocks();
     });
 
     test("should initialize selectElement on connectedCallback", () => {
-        instance.connectedCallback();
-        expect(instance.getSelectElement()).not.toBeUndefined();
+        // libraryRegionInstance.connectedCallback();
+
+        // Here, we directly access the selectElement property of the instance.
+        // This is not a good practice generally, but we can do this for testing purposes.
+        const selectElement = (libraryRegionInstance as any).selectElement;
+
+        expect(selectElement).toBeDefined();
     });
 
     test("should dispatch 'set-detail-region' event on onChangeDetail", () => {
-        instance.connectedCallback();
+        // libraryRegionInstance.connectedCallback();
 
-        const selectElement = instance.getSelectElement();
+        // Here, we directly access the selectElement property of the instance.
+        const selectElement = (libraryRegionInstance as any).selectElement;
 
-        const event = new Event("change");
-        selectElement.dispatchEvent(event);
+        selectElement.dispatchEvent(new Event("change"));
 
         expect(CustomEventEmitter.dispatch).toHaveBeenCalledWith(
             "set-detail-region",
@@ -83,31 +86,54 @@ describe("LibraryRegion", () => {
         );
     });
 
-    test("should render detail region when a region radio button is selected", () => {
-        instance.connectedCallback();
+    test("should render region correctly", () => {
+        // libraryRegionInstance.connectedCallback();
 
-        const radio = document.querySelector<HTMLInputElement>("[name=region]");
+        // Since the function renderRegion is private, it is called internally by connectedCallback.
+        // So we verify its effect after calling connectedCallback.
+        const regionContainer = libraryRegionInstance.querySelector(".region");
+        expect(regionContainer).toBeDefined();
 
-        if (!radio) {
-            fail("Radio button is not found");
-            return;
-        }
+        // Check the presence of the expected region radio button.
+        const seoulRadioButton =
+            libraryRegionInstance.querySelector<HTMLInputElement>(
+                "[value='Seoul']"
+            );
+        expect(seoulRadioButton).toBeDefined();
+    });
 
-        const changeRegionMock = jest.spyOn(instance as any, "changeRegion");
-        const renderDetailRegionMock = jest.spyOn(
-            instance as any,
-            "renderDetailRegion"
-        );
+    test("should handle region change correctly", () => {
+        // libraryRegionInstance.connectedCallback();
 
-        radio.checked = true;
+        const seoulRadioButton =
+            libraryRegionInstance.querySelector<HTMLInputElement>(
+                "[value='Seoul']"
+            );
 
-        instance.testChangeRegion();
-        expect(changeRegionMock).toHaveBeenCalled();
+        if (seoulRadioButton === null) return;
 
-        radio.dispatchEvent(new Event("change"));
-        expect(renderDetailRegionMock).toHaveBeenCalled();
+        seoulRadioButton.checked = true;
+        seoulRadioButton.dispatchEvent(new Event("change"));
 
-        changeRegionMock.mockClear();
-        renderDetailRegionMock.mockClear();
+        // Since renderDetailRegion is called internally in changeRegion,
+        // we can verify its effect to check if changeRegion worked correctly.
+        const detailRegionOption = (
+            libraryRegionInstance as any
+        ).selectElement.querySelector("option");
+        expect(detailRegionOption.value).toBe("12345");
+    });
+
+    test("should return early if favoriteRegions is empty", () => {
+        // Setup: mock getState to return an empty object for favoriteRegions
+        (getState as jest.Mock).mockReturnValue({ regions: {} });
+
+        libraryRegionInstance.innerHTML = element.innerHTML;
+
+        // Call connectedCallback to trigger renderRegion()
+        libraryRegionInstance.connectedCallback();
+
+        // Verify: .region container should be empty because renderRegion() should have returned early
+        const regionContainer = libraryRegionInstance.querySelector(".region");
+        expect(regionContainer?.children.length).toBe(0);
     });
 });

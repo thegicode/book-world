@@ -9,7 +9,6 @@ export default class LibraryRegion extends HTMLElement {
                 detailRegionCode: value,
             });
         };
-        // this.onChangeDetail = this.onChangeDetail.bind(this);
     }
     connectedCallback() {
         this.selectElement = this.querySelector("select");
