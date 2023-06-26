@@ -783,21 +783,35 @@
   var LibraryRegion = class extends HTMLElement {
     constructor() {
       super();
-      this.selectElement = this.querySelector("select");
+      this.onChangeDetail = () => {
+        const { value } = this.selectElement;
+        CustomEventEmitter_default.dispatch("set-detail-region", {
+          detailRegionCode: value
+        });
+      };
     }
     connectedCallback() {
+      this.selectElement = this.querySelector("select");
       this.renderRegion();
-      this.selectElement.addEventListener("change", this.onChangeDetail.bind(this));
+      this.selectElement.addEventListener("change", this.onChangeDetail);
     }
     disconnectedCallback() {
       this.selectElement.removeEventListener("change", this.onChangeDetail);
     }
     renderRegion() {
       const favoriteRegions = getState().regions;
-      if (Object.values(favoriteRegions).length < 1)
+      if (Object.keys(favoriteRegions).length === 0)
         return;
-      const template = document.querySelector("#tp-region").content.firstElementChild;
       const container = this.querySelector(".region");
+      const fragment = this.getRegionElements(favoriteRegions);
+      container.appendChild(fragment);
+      const firstInput = container.querySelector("input");
+      firstInput.checked = true;
+      this.renderDetailRegion(firstInput.value);
+      this.changeRegion();
+    }
+    getRegionElements(favoriteRegions) {
+      const template = document.querySelector("#tp-region").content.firstElementChild;
       const fragment = new DocumentFragment();
       for (const regionName of Object.keys(favoriteRegions)) {
         const size = Object.keys(favoriteRegions[regionName]).length;
@@ -812,11 +826,7 @@
           fragment.appendChild(element);
         }
       }
-      container.appendChild(fragment);
-      const firstInput = container.querySelector("input");
-      firstInput.checked = true;
-      this.renderDetailRegion(firstInput.value);
-      this.changeRegion();
+      return fragment;
     }
     changeRegion() {
       const regionRadios = this.querySelectorAll("[name=region]");
@@ -841,12 +851,6 @@
       const firstInput = this.selectElement.querySelector("option");
       firstInput.selected = true;
       this.onChangeDetail();
-    }
-    onChangeDetail() {
-      const { value } = this.selectElement;
-      CustomEventEmitter_default.dispatch("set-detail-region", {
-        detailRegionCode: value
-      });
     }
   };
 
