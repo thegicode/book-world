@@ -2,7 +2,7 @@ import { CustomEventEmitter } from "../../utils/index";
 import { getState } from "../../modules/model";
 
 export default class LibraryRegion extends HTMLElement {
-    protected selectElement!: HTMLSelectElement;
+    private selectElement!: HTMLSelectElement;
 
     constructor() {
         super();
@@ -56,7 +56,7 @@ export default class LibraryRegion extends HTMLElement {
         return fragment;
     }
 
-    protected changeRegion() {
+    private changeRegion() {
         const regionRadios =
             this.querySelectorAll<HTMLInputElement>("[name=region]");
         regionRadios.forEach((radio) => {
@@ -69,7 +69,7 @@ export default class LibraryRegion extends HTMLElement {
         });
     }
 
-    protected renderDetailRegion(regionName: string) {
+    private renderDetailRegion(regionName: string) {
         this.selectElement.innerHTML = "";
         const detailRegionObject = getState().regions[regionName];
         for (const [key, value] of Object.entries(detailRegionObject)) {
