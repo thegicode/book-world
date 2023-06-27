@@ -130,9 +130,7 @@ export default class BookList extends HTMLElement {
 
         items.forEach((item, index) => {
             const template = (
-                document.querySelector(
-                    "[data-template=book-item]"
-                ) as HTMLTemplateElement
+                document.querySelector("#tp-book-item") as HTMLTemplateElement
             ).content.firstElementChild;
             if (!template) return;
             const el = template.cloneNode(true) as BookItem;
