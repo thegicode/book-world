@@ -1,17 +1,22 @@
 import { CustomEventEmitter } from "../../utils/index";
 
 export default class AppSearch extends HTMLElement {
+    private boundPopStateHandler: ((ev: PopStateEvent) => void) | null = null;
+
     constructor() {
         super();
     }
 
     connectedCallback() {
         this.renderBookList();
-        window.addEventListener("popstate", this.onPopState.bind(this));
+        this.boundPopStateHandler = this.onPopState.bind(this);
+        window.addEventListener("popstate", this.boundPopStateHandler);
     }
 
     disconnectedCallback() {
-        window.removeEventListener("popstate", this.onPopState);
+        if (this.boundPopStateHandler) {
+            window.removeEventListener("popstate", this.boundPopStateHandler);
+        }
     }
 
     private onPopState() {
@@ -21,6 +26,10 @@ export default class AppSearch extends HTMLElement {
     private renderBookList() {
         const params = new URLSearchParams(location.search);
         const keyword = params.get("keyword");
-        CustomEventEmitter.dispatch("search-page-init", { keyword });
+        if (keyword) {
+            CustomEventEmitter.dispatch("search-page-init", { keyword });
+        } else {
+            console.log("No keyword provided for search.");
+        }
     }
 }

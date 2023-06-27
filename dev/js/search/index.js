@@ -964,13 +964,17 @@
   var AppSearch = class extends HTMLElement {
     constructor() {
       super();
+      this.boundPopStateHandler = null;
     }
     connectedCallback() {
       this.renderBookList();
-      window.addEventListener("popstate", this.onPopState.bind(this));
+      this.boundPopStateHandler = this.onPopState.bind(this);
+      window.addEventListener("popstate", this.boundPopStateHandler);
     }
     disconnectedCallback() {
-      window.removeEventListener("popstate", this.onPopState);
+      if (this.boundPopStateHandler) {
+        window.removeEventListener("popstate", this.boundPopStateHandler);
+      }
     }
     onPopState() {
       this.renderBookList();
@@ -978,7 +982,11 @@
     renderBookList() {
       const params = new URLSearchParams(location.search);
       const keyword = params.get("keyword");
-      CustomEventEmitter_default.dispatch("search-page-init", { keyword });
+      if (keyword) {
+        CustomEventEmitter_default.dispatch("search-page-init", { keyword });
+      } else {
+        console.log("No keyword provided for search.");
+      }
     }
   };
 
