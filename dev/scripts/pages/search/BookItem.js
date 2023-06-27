@@ -4,7 +4,7 @@ export default class BookItem extends HTMLElement {
         super();
         this.boundClickLibraryHandler = null;
         this.boundClickLinkHandler = null;
-        this.render();
+        // this.render(); why?
     }
     connectedCallback() {
         this.render();

@@ -1162,7 +1162,6 @@
       super();
       this.boundClickLibraryHandler = null;
       this.boundClickLinkHandler = null;
-      this.render();
     }
     connectedCallback() {
       this.render();

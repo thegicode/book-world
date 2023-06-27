@@ -34,7 +34,7 @@ export default class BookItem extends HTMLElement {
     constructor() {
         super();
 
-        this.render();
+        // this.render(); why?
     }
 
     connectedCallback() {
