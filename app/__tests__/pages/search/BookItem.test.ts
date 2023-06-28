@@ -6,9 +6,7 @@ import {
     // BookImage,
     LibraryBookExist,
 } from "../../../scripts/components/index.js";
-
 import { readHtmlFile, getElementFromHtml } from "../../helpers";
-
 import BookItem from "../../../scripts/pages/search/BookItem";
 
 jest.mock("../../../scripts/modules/model", () => ({
@@ -39,23 +37,27 @@ describe("BookItem", () => {
         price: "10000",
     };
 
+    // const createBookItemInstance = () => {
+    //     const bookItemInstance = new BookItem();
+    //     bookItemInstance.bookData = mockData;
+    //     if (element !== null) {
+    //         bookItemInstance.innerHTML = element.innerHTML;
+    //     }
+    //     document.body.appendChild(bookItemInstance);
+    //     return bookItemInstance;
+    // };
+
     beforeEach(() => {
         if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
             customElements.define(CUSTOM_ELEMENT_NAME, BookItem);
         }
 
         bookItemInstance = new BookItem();
-
         bookItemInstance.bookData = mockData;
-
         if (element !== null) {
             bookItemInstance.innerHTML = element.innerHTML;
         }
-
-        // console.log(bookItemInstance.outerHTML);
-
-        // document.body.appendChild(template);
-        // document.body.appendChild(libraryRegionInstance);
+        document.body.appendChild(bookItemInstance);
     });
 
     afterEach(() => {
@@ -64,67 +66,49 @@ describe("BookItem", () => {
         jest.restoreAllMocks();
     });
 
-    test("should initialize libraryButton, anchorElement on connectedCallback", () => {
-        bookItemInstance.connectedCallback();
+    describe("Connected and disconnected life-cycle methods", () => {
+        test("should initialize libraryButton, anchorElement on connectedCallback", () => {
+            // bookItemInstance.connectedCallback();
+            const libraryButton = (bookItemInstance as any).libraryButton;
+            const anchorElement = (bookItemInstance as any).anchorElement;
 
-        const libraryButton = (bookItemInstance as any).libraryButton;
-        const anchorElement = (bookItemInstance as any).anchorElement;
+            expect(libraryButton).toBeDefined();
+            expect(libraryButton).toBeInstanceOf(HTMLButtonElement);
+            expect(anchorElement).toBeDefined();
+            expect(anchorElement).toBeInstanceOf(HTMLElement);
+        });
 
-        expect(libraryButton).toBeDefined();
-        expect(anchorElement).toBeDefined();
-    });
+        test("should removeEventListener when disconnected", () => {
+            const instance = bookItemInstance as any;
 
-    // test("should call handler if libraryButton, anchorElement trigger click", () => {
-    //     bookItemInstance.connectedCallback();
+            // instance.connectedCallback();
 
-    //     const libraryButton = (bookItemInstance as any).libraryButton;
-    //     const anchorElement = (bookItemInstance as any).anchorElement;
+            const libraryButton = instance.libraryButton;
+            const anchorElement = instance.anchorElement;
 
-    //     const addEventListenerSpy = jest.spyOn(
-    //         libraryButton,
-    //         "addEventListener"
-    //     );
-    //     const addEventListenerSpy2 = jest.spyOn(
-    //         anchorElement,
-    //         "addEventListener"
-    //     );
+            instance.boundClickLibraryHandler = jest.fn();
+            instance.boundClickLinkHandler = jest.fn();
 
-    //     bookItemInstance.connectedCallback();
+            const removeEventListenerSpy1 = jest.spyOn(
+                libraryButton,
+                "removeEventListener"
+            );
+            const removeEventListenerSpy2 = jest.spyOn(
+                anchorElement,
+                "removeEventListener"
+            );
 
-    //     expect(addEventListenerSpy).toHaveBeenCalled();
-    //     expect(addEventListenerSpy2).toHaveBeenCalled();
-    // });
+            instance.disconnectedCallback();
 
-    test("should removeEventListener when disconnedted", () => {
-        const instance = bookItemInstance as any;
-
-        instance.connectedCallback();
-
-        const libraryButton = instance.libraryButton;
-        const anchorElement = instance.anchorElement;
-
-        instance.boundClickLibraryHandler = jest.fn();
-        instance.boundClickLinkHandler = jest.fn();
-
-        const removeEventListenerSpy1 = jest.spyOn(
-            libraryButton,
-            "removeEventListener"
-        );
-        const removeEventListenerSpy2 = jest.spyOn(
-            anchorElement,
-            "removeEventListener"
-        );
-
-        instance.disconnectedCallback();
-
-        expect(removeEventListenerSpy1).toHaveBeenCalledWith(
-            "click",
-            instance.boundClickLibraryHandler
-        );
-        expect(removeEventListenerSpy2).toHaveBeenCalledWith(
-            "click",
-            instance.boundClickLinkHandler
-        );
+            expect(removeEventListenerSpy1).toHaveBeenCalledWith(
+                "click",
+                instance.boundClickLibraryHandler
+            );
+            expect(removeEventListenerSpy2).toHaveBeenCalledWith(
+                "click",
+                instance.boundClickLinkHandler
+            );
+        });
     });
 
     test("should call console.error if render with bookData is null", () => {
@@ -147,15 +131,16 @@ describe("BookItem", () => {
             bookItemInstance.querySelector<LibraryBookExist>(
                 "library-book-exist"
             );
-        const onLibraryBookExistSpy = jest.fn();
-
-        if (libraryBookExist) {
-            libraryBookExist.onLibraryBookExist = onLibraryBookExistSpy;
+        if (!libraryBookExist) {
+            throw new Error("LibraryBookExist element not found");
         }
+
+        const onLibraryBookExistSpy = jest.fn();
+        libraryBookExist.onLibraryBookExist = onLibraryBookExistSpy;
 
         instance.onClickLibraryButton();
 
-        expect(onLibraryBookExistSpy).toHaveBeenCalled();
+        expect(onLibraryBookExistSpy).toHaveBeenCalledTimes(1);
     });
 
     test("should set location href if trigger onClickLink", () => {
