@@ -994,26 +994,33 @@
   var InputSearch = class extends HTMLElement {
     constructor() {
       super();
-      this.form = this.querySelector("form");
-      this.input = this.querySelector("input");
+      this.form = null;
+      this.input = null;
+      this.onSubmit = (event) => {
+        event.preventDefault();
+        if (!this.input)
+          return;
+        const keyword = this.input.value;
+        this.input.value = "";
+        const url = new URL(window.location.href);
+        url.searchParams.set("keyword", keyword);
+        window.history.pushState({}, "", url.toString());
+        CustomEventEmitter_default.dispatch("search-page-init", { keyword });
+        this.input.focus();
+      };
+      this.initialize();
     }
     connectedCallback() {
-      this.form.addEventListener("submit", this.onSubmit.bind(this));
+      var _a;
+      (_a = this.form) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", this.onSubmit);
     }
     disconnectedCallback() {
-      this.form.removeEventListener("submit", this.onSubmit);
+      var _a;
+      (_a = this.form) === null || _a === void 0 ? void 0 : _a.removeEventListener("submit", this.onSubmit);
     }
-    onSubmit(event) {
-      event.preventDefault();
-      const keyword = this.input.value;
-      if (!keyword)
-        return;
-      this.input.value = "";
-      const url = new URL(window.location.href);
-      url.searchParams.set("keyword", keyword);
-      window.history.pushState({}, "", url);
-      CustomEventEmitter_default.dispatch("search-page-init", { keyword });
-      this.input.focus();
+    initialize() {
+      this.form = this.querySelector("form");
+      this.input = this.querySelector("input");
     }
   };
 
