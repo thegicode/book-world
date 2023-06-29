@@ -1101,7 +1101,7 @@
           this.render(data);
         } catch (error) {
           console.error(error);
-          throw new Error("Fail to get naver book.");
+          throw new Error(`Failed to get books with keyword ${this.keyword}.`);
         }
       });
     }
@@ -1135,24 +1135,30 @@
     }
     appendBookItems(items, prevLength) {
       const fragment = new DocumentFragment();
+      const template = document.querySelector("#tp-book-item");
+      if (!template)
+        return;
+      const el = template.content.firstElementChild;
+      if (!el)
+        return;
       items.forEach((item, index) => {
-        const template = document.querySelector("#tp-book-item").content.firstElementChild;
-        if (!template)
-          return;
-        const el = template.cloneNode(true);
-        el.bookData = item;
-        el.dataset.index = (prevLength + index).toString();
-        fragment.appendChild(el);
+        const cloned = el.cloneNode(true);
+        cloned.bookData = item;
+        cloned.dataset.index = (prevLength + index).toString();
+        fragment.appendChild(cloned);
       });
       this.books.appendChild(fragment);
     }
     showMessage(type) {
-      const template = document.querySelector(`#tp-${type}`).content.firstElementChild;
+      const template = document.querySelector(`#tp-${type}`);
       if (!template)
         return;
-      const el = template.cloneNode(true);
+      const el = template.content.firstElementChild;
+      if (!el)
+        return;
+      const cloned = el.cloneNode(true);
       this.books.innerHTML = "";
-      this.books.appendChild(el);
+      this.books.appendChild(cloned);
     }
   };
 
