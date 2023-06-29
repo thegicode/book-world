@@ -37,16 +37,6 @@ describe("BookItem", () => {
         price: "10000",
     };
 
-    // const createBookItemInstance = () => {
-    //     const bookItemInstance = new BookItem();
-    //     bookItemInstance.bookData = mockData;
-    //     if (element !== null) {
-    //         bookItemInstance.innerHTML = element.innerHTML;
-    //     }
-    //     document.body.appendChild(bookItemInstance);
-    //     return bookItemInstance;
-    // };
-
     beforeEach(() => {
         if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
             customElements.define(CUSTOM_ELEMENT_NAME, BookItem);
