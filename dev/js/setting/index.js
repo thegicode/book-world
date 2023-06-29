@@ -904,34 +904,41 @@
   };
 
   // dev/scripts/pages/setting/FavoriteRegions.js
+  var DETAIL_REGIONS_EVENT = "set-detail-regions";
   var FavoriteRegions = class extends HTMLElement {
     constructor() {
       super();
-      this.container = this.querySelector(".favorites");
+      this.container = null;
+      this.render = this.render.bind(this);
     }
     connectedCallback() {
+      this.container = this.querySelector(".favorites");
       this.render();
-      CustomEventEmitter_default.add("set-detail-regions", this.render.bind(this));
+      CustomEventEmitter_default.add(DETAIL_REGIONS_EVENT, this.render);
     }
     disconnectedCallback() {
-      CustomEventEmitter_default.remove("set-detail-regions", this.render);
+      CustomEventEmitter_default.remove(DETAIL_REGIONS_EVENT, this.render);
     }
     render() {
+      if (!this.container)
+        return;
       this.container.innerHTML = "";
       const { regions } = getState();
       for (const regionName in regions) {
-        const detaioRegions = Object.keys(regions[regionName]);
-        if (detaioRegions.length > 0) {
+        const detailRegions = Object.keys(regions[regionName]);
+        if (detailRegions.length > 0) {
           const titleElement = document.createElement("h3");
           titleElement.textContent = regionName;
           this.container.appendChild(titleElement);
-          this.renderDetail(detaioRegions);
+          this.renderDetail(detailRegions);
         }
       }
     }
-    renderDetail(detaioRegions) {
+    renderDetail(detailRegions) {
+      if (!this.container)
+        return;
       const fragment = new DocumentFragment();
-      detaioRegions.forEach((name) => {
+      detailRegions.forEach((name) => {
         const element = document.createElement("p");
         element.textContent = name;
         fragment.appendChild(element);
