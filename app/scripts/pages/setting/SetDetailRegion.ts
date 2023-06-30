@@ -6,6 +6,10 @@ import {
     removeDetailRegion,
 } from "../../modules/model";
 
+const FETCH_REGION_DATA_EVENT = "fetch-region-data";
+const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
+const SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
+
 export default class SetDetailRegion extends HTMLElement {
     private regionData: TotalRegions | null;
     private region: string;
@@ -14,22 +18,46 @@ export default class SetDetailRegion extends HTMLElement {
         super();
         this.regionData = null;
         this.region = "";
+
+        this.setRegionData = this.setRegionData.bind(this);
+        this.renderRegion = this.renderRegion.bind(this);
     }
 
     connectedCallback() {
-        CustomEventEmitter.add(
-            "fetch-region-data",
-            this.setRegionData.bind(this)
-        );
-        CustomEventEmitter.add(
-            "set-favorite-regions",
-            this.renderRegion.bind(this)
-        );
+        CustomEventEmitter.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
+        CustomEventEmitter.add(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
     }
 
     disconnectedCallback() {
-        CustomEventEmitter.remove("fetch-region-data", this.setRegionData);
-        CustomEventEmitter.remove("set-favorite-regions", this.renderRegion);
+        CustomEventEmitter.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
+        CustomEventEmitter.remove(
+            SET_FAVORITE_REGIONS_EVENT,
+            this.renderRegion
+        );
+    }
+
+    // selectElement, selectElements : 몇 개만 해보고 좀 더 고민해보기로. 바꾸는게 의미가 있는지 모르겠다.
+
+    private selectElement<T extends Element>(
+        selector: string,
+        scope?: "document" | "component"
+    ): T | null {
+        if (scope === "component") {
+            return this.querySelector(selector);
+        } else {
+            return document.querySelector(selector);
+        }
+    }
+
+    private selectElements(
+        selector: string,
+        scope?: "document" | "component"
+    ): NodeListOf<Element> {
+        if (scope === "component") {
+            return this.querySelectorAll(selector);
+        } else {
+            return document.querySelectorAll(selector);
+        }
     }
 
     private setRegionData(event: Event) {
@@ -43,10 +71,17 @@ export default class SetDetailRegion extends HTMLElement {
         if (favoriteRegions.length < 1) return;
 
         const fragment = new DocumentFragment();
-        const template = (
-            document.querySelector("#tp-favorite-region") as HTMLTemplateElement
-        ).content.firstElementChild;
-        const container = this.querySelector(".regions") as HTMLElement;
+
+        const template = this.selectElement<HTMLTemplateElement>(
+            "#tp-favorite-region"
+        )?.content.firstElementChild;
+
+        const container = this.selectElement<HTMLElement>(
+            ".regions",
+            "component"
+        );
+        if (!container) return;
+
         container.innerHTML = "";
         favoriteRegions.forEach((key) => {
             if (!template) return;
@@ -76,9 +111,9 @@ export default class SetDetailRegion extends HTMLElement {
         const regionObj = getState().regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
 
-        const template = (
-            document.querySelector("#tp-detail-region") as HTMLTemplateElement
-        ).content.firstElementChild;
+        const template =
+            this.selectElement<HTMLTemplateElement>("#tp-detail-region")
+                ?.content.firstElementChild;
         detailRegionsElement.innerHTML = "";
         const fragment = new DocumentFragment();
 
@@ -125,7 +160,8 @@ export default class SetDetailRegion extends HTMLElement {
         if (!getState().regions[region]) {
             addRegion(region);
         }
-        const checkboxes = document.querySelectorAll("[name=detailRegion]");
+        const checkboxes = this.selectElements("[name=detailRegion]");
+
         checkboxes.forEach((checkbox: Element) => {
             const inputCheckbox = checkbox as HTMLInputElement;
             inputCheckbox.addEventListener("change", () => {
@@ -138,7 +174,7 @@ export default class SetDetailRegion extends HTMLElement {
                 } else {
                     removeDetailRegion(region, label);
                 }
-                CustomEventEmitter.dispatch("set-detail-regions", {});
+                CustomEventEmitter.dispatch(SET_DETAIL_REGIONS_EVENT, {});
             });
         });
     }
