@@ -10,4 +10,4 @@ const destinationPath = path.join(rootPath, buildType);
 dotenv.config({ path: path.resolve(__dirname, envFile) });
 const { PORT } = process.env;
 
-export { isProduction, rootPath, destinationPath, PORT };
+export { buildType, isProduction, rootPath, destinationPath, PORT };

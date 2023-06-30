@@ -2,19 +2,17 @@ import { CustomEventEmitter } from "../../utils/index";
 import { getState } from "../../modules/model";
 
 export default class LibraryRegion extends HTMLElement {
-    private selectElement: HTMLSelectElement;
+    private selectElement!: HTMLSelectElement;
 
     constructor() {
         super();
-        this.selectElement = this.querySelector("select") as HTMLSelectElement;
     }
 
     connectedCallback() {
+        this.selectElement = this.querySelector("select") as HTMLSelectElement;
+
         this.renderRegion();
-        this.selectElement.addEventListener(
-            "change",
-            this.onChangeDetail.bind(this)
-        );
+        this.selectElement.addEventListener("change", this.onChangeDetail);
     }
 
     disconnectedCallback() {
@@ -24,12 +22,23 @@ export default class LibraryRegion extends HTMLElement {
     private renderRegion() {
         const favoriteRegions = getState().regions;
 
-        if (Object.values(favoriteRegions).length < 1) return;
+        if (Object.keys(favoriteRegions).length === 0) return;
 
+        const container = this.querySelector(".region") as HTMLElement;
+        const fragment = this.getRegionElements(favoriteRegions);
+        container.appendChild(fragment);
+
+        const firstInput = container.querySelector("input") as HTMLInputElement;
+        firstInput.checked = true;
+
+        this.renderDetailRegion(firstInput.value);
+        this.changeRegion();
+    }
+
+    private getRegionElements(favoriteRegions: IDetailRegionData) {
         const template = (
             document.querySelector("#tp-region") as HTMLTemplateElement
         ).content.firstElementChild;
-        const container = this.querySelector(".region") as HTMLElement;
 
         const fragment = new DocumentFragment();
         for (const regionName of Object.keys(favoriteRegions)) {
@@ -44,13 +53,7 @@ export default class LibraryRegion extends HTMLElement {
                 fragment.appendChild(element);
             }
         }
-        container.appendChild(fragment);
-
-        const firstInput = container.querySelector("input") as HTMLInputElement;
-        firstInput.checked = true;
-
-        this.renderDetailRegion(firstInput.value);
-        this.changeRegion();
+        return fragment;
     }
 
     private changeRegion() {
@@ -82,10 +85,10 @@ export default class LibraryRegion extends HTMLElement {
         this.onChangeDetail();
     }
 
-    private onChangeDetail() {
+    private onChangeDetail = () => {
         const { value } = this.selectElement;
         CustomEventEmitter.dispatch("set-detail-region", {
             detailRegionCode: value,
         });
-    }
+    };
 }

@@ -74,7 +74,6 @@ export default class Favorite extends HTMLElement {
         ).content.firstElementChild;
         if (template) {
             this.favoriteBooks.forEach((isbn) => {
-                if (typeof isbn !== "string") return; // TODO
                 const el = template.cloneNode(true) as HTMLElement;
                 el.dataset.isbn = isbn;
                 fragment.appendChild(el);

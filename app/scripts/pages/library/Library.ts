@@ -3,30 +3,33 @@ import { hasLibrary } from "../../modules/model";
 import LibraryItem from "./LibraryItem";
 
 export default class Library extends HTMLElement {
-    private form: HTMLFormElement;
+    private form?: HTMLFormElement;
+    private readonly PAGE_SIZE = 20;
+    private readonly EVENT_NAME = "set-detail-region";
 
     constructor() {
         super();
-        this.form = this.querySelector("form") as HTMLFormElement;
+        this.handleDetailRegion = this.handleDetailRegion.bind(this);
     }
 
     connectedCallback() {
+        this.form = this.querySelector("form") as HTMLFormElement;
         CustomEventEmitter.add(
-            "set-detail-region",
-            this.handleDetailRegion.bind(this) as EventListener
+            this.EVENT_NAME,
+            this.handleDetailRegion as EventListener
         );
     }
 
     disconnectedCallback() {
         CustomEventEmitter.remove(
-            "set-detail-region",
+            this.EVENT_NAME,
             this.handleDetailRegion as EventListener
         );
     }
 
-    private async fetchLibrarySearch(detailRegionCode: string) {
+    protected async fetchLibrarySearch(detailRegionCode: string) {
+        const url = `/library-search?dtl_region=${detailRegionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
         try {
-            const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`;
             const data = await CustomFetch.fetch<ILibrarySearchByBookResult>(
                 url
             );
@@ -37,7 +40,7 @@ export default class Library extends HTMLElement {
         }
     }
 
-    private render(data: ILibrarySearchByBookResult) {
+    protected render(data: ILibrarySearchByBookResult) {
         const {
             // pageNo, pageSize, numFound, resultNum,
             libraries,
@@ -48,17 +51,22 @@ export default class Library extends HTMLElement {
             return;
         }
 
-        const template = (
-            document.querySelector("#tp-item") as HTMLTemplateElement
-        ).content.firstElementChild;
+        const template = document.querySelector(
+            "#tp-item"
+        ) as HTMLTemplateElement;
         const fragment = libraries.reduce(
             (fragment: DocumentFragment, lib: ILibrary) => {
-                if (template) {
-                    const libraryItem = template.cloneNode(true) as LibraryItem;
+                if (template?.content.firstElementChild) {
+                    const libraryItem =
+                        template.content.firstElementChild.cloneNode(
+                            true
+                        ) as LibraryItem;
                     libraryItem.dataset.object = JSON.stringify(lib);
+
                     if (hasLibrary(lib.libCode)) {
                         libraryItem.dataset.has = "true";
-                        fragment.insertBefore(libraryItem, fragment.firstChild);
+                        fragment.prepend(libraryItem);
+                        // fragment.insertBefore(libraryItem, fragment.firstChild);
                     } else {
                         fragment.appendChild(libraryItem);
                     }
@@ -68,22 +76,25 @@ export default class Library extends HTMLElement {
             new DocumentFragment()
         );
 
-        this.form.innerHTML = "";
-        this.form.appendChild(fragment);
-    }
-
-    private showMessage(type: string) {
-        const template = (
-            document.querySelector(`#tp-${type}`) as HTMLTemplateElement
-        ).content.firstElementChild;
-        if (template) {
-            const element = template.cloneNode(true);
+        if (this.form) {
             this.form.innerHTML = "";
-            this.form.appendChild(element);
+            this.form.appendChild(fragment);
         }
     }
 
-    private handleDetailRegion(
+    protected showMessage(type: string) {
+        const template = document.querySelector(
+            `#tp-${type}`
+        ) as HTMLTemplateElement;
+        if (template?.content.firstElementChild && this.form) {
+            this.form.innerHTML = "";
+            this.form.appendChild(
+                template.content.firstElementChild.cloneNode(true)
+            );
+        }
+    }
+
+    protected handleDetailRegion(
         evt: ICustomEvent<{ detailRegionCode: string }>
     ) {
         this.showMessage("loading");

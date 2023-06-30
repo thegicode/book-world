@@ -12,18 +12,21 @@ import { hasLibrary } from "../../modules/model";
 export default class Library extends HTMLElement {
     constructor() {
         super();
-        this.form = this.querySelector("form");
+        this.PAGE_SIZE = 20;
+        this.EVENT_NAME = "set-detail-region";
+        this.handleDetailRegion = this.handleDetailRegion.bind(this);
     }
     connectedCallback() {
-        CustomEventEmitter.add("set-detail-region", this.handleDetailRegion.bind(this));
+        this.form = this.querySelector("form");
+        CustomEventEmitter.add(this.EVENT_NAME, this.handleDetailRegion);
     }
     disconnectedCallback() {
-        CustomEventEmitter.remove("set-detail-region", this.handleDetailRegion);
+        CustomEventEmitter.remove(this.EVENT_NAME, this.handleDetailRegion);
     }
     fetchLibrarySearch(detailRegionCode) {
         return __awaiter(this, void 0, void 0, function* () {
+            const url = `/library-search?dtl_region=${detailRegionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
             try {
-                const url = `/library-search?dtl_region=${detailRegionCode}&page=${1}&pageSize=${20}`;
                 const data = yield CustomFetch.fetch(url);
                 this.render(data);
             }
@@ -41,14 +44,15 @@ export default class Library extends HTMLElement {
             this.showMessage("notFound");
             return;
         }
-        const template = document.querySelector("#tp-item").content.firstElementChild;
+        const template = document.querySelector("#tp-item");
         const fragment = libraries.reduce((fragment, lib) => {
-            if (template) {
-                const libraryItem = template.cloneNode(true);
+            if (template === null || template === void 0 ? void 0 : template.content.firstElementChild) {
+                const libraryItem = template.content.firstElementChild.cloneNode(true);
                 libraryItem.dataset.object = JSON.stringify(lib);
                 if (hasLibrary(lib.libCode)) {
                     libraryItem.dataset.has = "true";
-                    fragment.insertBefore(libraryItem, fragment.firstChild);
+                    fragment.prepend(libraryItem);
+                    // fragment.insertBefore(libraryItem, fragment.firstChild);
                 }
                 else {
                     fragment.appendChild(libraryItem);
@@ -56,15 +60,16 @@ export default class Library extends HTMLElement {
             }
             return fragment;
         }, new DocumentFragment());
-        this.form.innerHTML = "";
-        this.form.appendChild(fragment);
+        if (this.form) {
+            this.form.innerHTML = "";
+            this.form.appendChild(fragment);
+        }
     }
     showMessage(type) {
-        const template = document.querySelector(`#tp-${type}`).content.firstElementChild;
-        if (template) {
-            const element = template.cloneNode(true);
+        const template = document.querySelector(`#tp-${type}`);
+        if ((template === null || template === void 0 ? void 0 : template.content.firstElementChild) && this.form) {
             this.form.innerHTML = "";
-            this.form.appendChild(element);
+            this.form.appendChild(template.content.firstElementChild.cloneNode(true));
         }
     }
     handleDetailRegion(evt) {

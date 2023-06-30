@@ -12,18 +12,19 @@ import { state } from "../../modules/model";
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super();
-        this.libraryButton = this.querySelector(".library-button");
-        this.anchorElement = this.querySelector("a");
     }
     connectedCallback() {
+        this.libraryButton = this.querySelector(".library-button");
+        this.anchorElement = this.querySelector("a");
         this.loading();
         this.fetchData(this.dataset.isbn);
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
         this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
     disconnectedCallback() {
-        this.libraryButton.removeEventListener("click", this.onLibrary);
-        this.anchorElement.removeEventListener("click", this.onClick);
+        var _a, _b;
+        (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
+        (_b = this.anchorElement) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onClick);
     }
     fetchData(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -82,9 +83,9 @@ export default class FavoriteItem extends HTMLElement {
         this.querySelector("h4").textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`;
     }
     onLibrary() {
-        const isbn = this.dataset.isbn || "";
+        const isbn = this.dataset.isbn;
         const libraryBookExist = this.querySelector("library-book-exist");
-        if (libraryBookExist) {
+        if (libraryBookExist && this.libraryButton) {
             libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
         }
     }

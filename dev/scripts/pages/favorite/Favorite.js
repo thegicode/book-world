@@ -1,6 +1,13 @@
 // import { CustomEventEmitter } from '../../utils/index.js'
 import { getState } from "../../modules/model";
 export default class Favorite extends HTMLElement {
+    constructor() {
+        super();
+        this.$booksEl = this.querySelector(".favorite-books");
+        // this.$countEl = this.querySelector('.count')
+        // this.updateCount = this.updateCount.bind(this)
+        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
+    }
     // $countEl
     // $observer
     // set count(value) {
@@ -11,13 +18,6 @@ export default class Favorite extends HTMLElement {
     // }
     get favoriteBooks() {
         return getState().favoriteBooks;
-    }
-    constructor() {
-        super();
-        this.$booksEl = this.querySelector(".favorite-books");
-        // this.$countEl = this.querySelector('.count')
-        // this.updateCount = this.updateCount.bind(this)
-        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
     }
     connectedCallback() {
         // 속성 변경을 감지하기 위해 MutationObserver를 사용합니다.
@@ -53,8 +53,6 @@ export default class Favorite extends HTMLElement {
         const template = document.querySelector("#tp-favorite-item").content.firstElementChild;
         if (template) {
             this.favoriteBooks.forEach((isbn) => {
-                if (typeof isbn !== "string")
-                    return; // TODO
                 const el = template.cloneNode(true);
                 el.dataset.isbn = isbn;
                 fragment.appendChild(el);

@@ -1,8 +1,8 @@
 import { CustomFetch } from "../utils/index";
 
 export default class LibraryBookExist extends HTMLElement {
-    private container: Element;
-    private itemTemplate: string;
+    protected container: Element;
+    protected itemTemplate: string;
 
     constructor() {
         super();
@@ -53,7 +53,7 @@ export default class LibraryBookExist extends HTMLElement {
         //     })
     }
 
-    private renderBookExist(
+    protected renderBookExist(
         data: IBookExist,
         libName: string,
         index: number
@@ -83,7 +83,7 @@ export default class LibraryBookExist extends HTMLElement {
         }
     }
 
-    private loading(size: number): void {
+    protected loading(size: number): void {
         let tp = "";
         while (size > 0) {
             tp += this.itemTemplate;
@@ -92,7 +92,7 @@ export default class LibraryBookExist extends HTMLElement {
         this.container.innerHTML = tp;
     }
 
-    private removeLoading(): void {
+    protected removeLoading(): void {
         const loadingItems = this.querySelectorAll(
             ".library-item[data-loading=true]"
         ) as NodeListOf<HTMLElement>;
@@ -101,7 +101,7 @@ export default class LibraryBookExist extends HTMLElement {
         });
     }
 
-    private template(): string {
+    protected template(): string {
         return `<li class="library-item" data-loading="true">
             <span class="name"></span>
             <span class="hasBook"></span>

@@ -17,6 +17,13 @@ const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, ".env.key") });
 const { LIBRARY_KEY, NAVER_CLIENT_ID, NAVER_SECRET_KEY } = process.env;
+const fetchData = (url, headers) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield fetch(url, { headers });
+    if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
+    }
+    return yield response.json();
+});
 function searchNaverBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { keyword, display, start } = req.query;
@@ -31,11 +38,7 @@ function searchNaverBook(req, res) {
         };
         const url = `https://openapi.naver.com/v1/search/book.json?${queryParams}`;
         try {
-            const response = yield fetch(url, { headers });
-            if (!response.ok) {
-                throw new Error(`Failed to get books from Naver: ${response.statusText}`);
-            }
-            const data = yield response.json();
+            const data = yield fetchData(url, headers);
             const { total, start, display, items } = data;
             res.send({ total, start, display, items });
         }
@@ -46,25 +49,20 @@ function searchNaverBook(req, res) {
     });
 }
 exports.searchNaverBook = searchNaverBook;
-const host = "http://data4library.kr/api";
-const authKey = `authKey=${LIBRARY_KEY}`;
-const formatType = "json";
+const buildLibraryApiUrl = (apiPath, params) => {
+    const queryParams = new URLSearchParams(Object.assign(Object.assign({}, params), { authKey: LIBRARY_KEY, format: "json" }));
+    return `http://data4library.kr/api/${apiPath}?${queryParams}`;
+};
 function librarySearch(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { dtl_region, page, pageSize } = req.query;
-        const queryParams = new URLSearchParams({
+        const url = buildLibraryApiUrl("libSrch", {
             dtl_region: dtl_region,
             pageNo: page,
             pageSize: pageSize,
-            format: formatType,
         });
-        const url = `${host}/libSrch?${authKey}&${queryParams}`;
         try {
-            const response = yield fetch(url);
-            if (!response.ok) {
-                throw new Error(`Failed to get library search data: ${response.statusText}`);
-            }
-            const data = yield response.json();
+            const data = yield fetchData(url);
             const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
             const formattedData = {
                 pageNo,
@@ -86,18 +84,12 @@ function bookExist(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const { isbn13, libCode } = req.query;
-        const queryParams = new URLSearchParams({
+        const url = buildLibraryApiUrl("bookExist", {
             isbn13: isbn13,
             libCode: libCode,
-            format: formatType,
         });
-        const url = `${host}/bookExist?${authKey}&${queryParams}`;
         try {
-            const response = yield fetch(url);
-            if (!response.ok) {
-                throw new Error(`Failed to check book exist data: ${response.statusText}`);
-            }
-            const data = yield response.json();
+            const data = yield fetchData(url);
             const result = (_a = data.response) === null || _a === void 0 ? void 0 : _a.result;
             res.send(result);
         }
@@ -111,31 +103,21 @@ exports.bookExist = bookExist;
 function usageAnalysisList(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { isbn13 } = req.query;
-        const params = new URLSearchParams({
+        const url = buildLibraryApiUrl("usageAnalysisList", {
             isbn13: isbn13,
             loaninfoYN: "Y",
-            format: formatType,
         });
-        const url = `${host}/usageAnalysisList?${authKey}&${params}`;
         try {
-            const response = yield fetch(url);
-            if (!response.ok) {
-                throw new Error(`Failed to get usage analysis list data: ${response.statusText} `);
-            }
-            const data = yield response.json();
-            const { book, loanHistory, loanGrps, keywords, recBooks, coLoanBooks } = data.response;
+            const data = yield fetchData(url);
+            const { book, loanHistory, loanGrps, keywords, } = data.response;
             const loanHistoryItems = loanHistory.map((item) => item.loan);
             const loanGrpsItems = loanGrps.map((item) => item.loanGrp);
             const keywordsItems = keywords.map((item) => item.keyword);
-            const recBooksItems = recBooks.map((item) => item.book);
-            const coLoanBooksItems = coLoanBooks.map((item) => item.book);
             res.send({
                 book,
                 loanHistory: loanHistoryItems,
                 loanGrps: loanGrpsItems,
                 keywords: keywordsItems,
-                recBooks: recBooksItems,
-                coLoanBooks: coLoanBooksItems,
             });
         }
         catch (error) {
@@ -148,19 +130,13 @@ exports.usageAnalysisList = usageAnalysisList;
 function librarySearchByBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { isbn, region, dtl_region } = req.query;
-        const params = new URLSearchParams({
+        const url = buildLibraryApiUrl("libSrchByBook", {
             isbn: isbn,
             region: region,
             dtl_region: dtl_region,
-            format: formatType,
         });
-        const url = `${host}/libSrchByBook?${authKey}&${params}`;
         try {
-            const response = yield fetch(url, { method: "GET" });
-            if (!response.ok) {
-                throw new Error(`Failed to get library data: ${response.statusText}`);
-            }
-            const data = yield response.json();
+            const data = yield fetchData(url, { method: "GET" });
             const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
             res.send({
                 pageNo,

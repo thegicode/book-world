@@ -7,19 +7,20 @@ import {
 } from "../../components/index";
 
 export default class FavoriteItem extends HTMLElement {
-    private libraryButton: HTMLButtonElement;
-    private anchorElement: HTMLAnchorElement;
-    private bookData: IUsageAnalysisResult | undefined;
+    protected libraryButton?: HTMLButtonElement;
+    protected anchorElement?: HTMLAnchorElement;
+    protected bookData: IUsageAnalysisResult | undefined;
 
     constructor() {
         super();
+    }
+
+    connectedCallback() {
         this.libraryButton = this.querySelector(
             ".library-button"
         ) as HTMLButtonElement;
         this.anchorElement = this.querySelector("a") as HTMLAnchorElement;
-    }
 
-    connectedCallback() {
         this.loading();
         this.fetchData(this.dataset.isbn as string);
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
@@ -27,11 +28,11 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.libraryButton.removeEventListener("click", this.onLibrary);
-        this.anchorElement.removeEventListener("click", this.onClick);
+        this.libraryButton?.removeEventListener("click", this.onLibrary);
+        this.anchorElement?.removeEventListener("click", this.onClick);
     }
 
-    private async fetchData(isbn: string) {
+    protected async fetchData(isbn: string) {
         const url = `/usage-analysis-list?isbn13=${isbn}`;
         try {
             const data = await CustomFetch.fetch<IUsageAnalysisResult>(url);
@@ -43,7 +44,7 @@ export default class FavoriteItem extends HTMLElement {
         }
     }
 
-    private render(data: IUsageAnalysisResult) {
+    protected render(data: IUsageAnalysisResult) {
         const {
             book,
             // loanHistory,
@@ -104,10 +105,10 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     private onLibrary() {
-        const isbn = this.dataset.isbn || "";
+        const isbn = this.dataset.isbn as string;
         const libraryBookExist =
             this.querySelector<LibraryBookExist>("library-book-exist");
-        if (libraryBookExist) {
+        if (libraryBookExist && this.libraryButton) {
             libraryBookExist.onLibraryBookExist(
                 this.libraryButton,
                 isbn,
@@ -124,7 +125,7 @@ export default class FavoriteItem extends HTMLElement {
         delete this.dataset.loading;
     }
 
-    private onClick(event: MouseEvent) {
+    protected onClick(event: MouseEvent) {
         event.preventDefault();
         location.href = `book?isbn=${this.dataset.isbn}`;
     }

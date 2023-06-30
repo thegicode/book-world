@@ -6,43 +6,87 @@ import {
 } from "../../components/index.js";
 
 export default class BookItem extends HTMLElement {
+    private static SELECTORS = {
+        title: ".title",
+        publisher: ".publisher",
+        author: ".author",
+        pubdate: ".pubdate",
+        isbn: ".isbn",
+        bookDescription: "book-description",
+        link: ".__link",
+        bookImage: "book-image",
+        libraryBookExist: "library-book-exist",
+        libraryButton: ".library-button",
+        bookSummary: ".book-summary",
+    };
+
     private libraryButton!: HTMLButtonElement;
     private anchorElement!: HTMLElement;
-    // index!: number;
     bookData!: ISearchBook;
+
+    private boundClickLibraryHandler:
+        | ((this: HTMLElement, ev: MouseEvent) => void)
+        | null = null;
+    private boundClickLinkHandler:
+        | ((this: HTMLElement, ev: MouseEvent) => void)
+        | null = null;
 
     constructor() {
         super();
-        this.render();
+
+        // this.render(); why?
     }
 
     connectedCallback() {
-        this.libraryButton = this.querySelector(
-            ".library-button"
-        ) as HTMLButtonElement;
-        this.anchorElement = this.querySelector(".book-summary") as HTMLElement;
-
         this.render();
+
+        this.libraryButton = this.querySelector(
+            BookItem.SELECTORS.libraryButton
+        ) as HTMLButtonElement;
+        this.anchorElement = this.querySelector(
+            BookItem.SELECTORS.bookSummary
+        ) as HTMLElement;
+
+        this.boundClickLibraryHandler = this.onClickLibraryButton.bind(this);
+        this.boundClickLinkHandler = this.onClickLink.bind(this);
 
         this.libraryButton.addEventListener(
             "click",
-            this.onClickLibraryButton.bind(this)
+            this.boundClickLibraryHandler
         );
         this.anchorElement.addEventListener(
             "click",
-            this.onClickLink.bind(this)
+            this.boundClickLinkHandler
         );
     }
 
     disconnectedCallback() {
-        this.libraryButton.removeEventListener(
-            "click",
-            this.onClickLibraryButton
-        );
-        this.anchorElement.removeEventListener("click", this.onClickLink);
+        if (this.boundClickLibraryHandler) {
+            this.libraryButton.removeEventListener(
+                "click",
+                this.boundClickLibraryHandler
+            );
+        }
+
+        if (this.boundClickLinkHandler) {
+            this.anchorElement.removeEventListener(
+                "click",
+                this.boundClickLinkHandler
+            );
+        }
     }
 
     private render() {
+        if (!this.bookData) {
+            console.error("Book data is not provided");
+            return;
+        }
+
+        const formattedData = this.getFormattedData(this.bookData);
+        this.updateDOMElements(formattedData);
+    }
+
+    private getFormattedData(bookData: ISearchBook) {
         const {
             author,
             description,
@@ -54,36 +98,65 @@ export default class BookItem extends HTMLElement {
             title,
             // discount,
             // price,
-        } = this.bookData;
+        } = bookData;
 
         const formattedPubdate = `${pubdate.substring(
             0,
             4
         )}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
 
-        const titleEl = this.querySelector(".title");
+        return {
+            author,
+            description,
+            image,
+            isbn,
+            link,
+            pubdate: formattedPubdate,
+            publisher,
+            title,
+        };
+    }
+
+    private updateDOMElements(
+        formattedData: ReturnType<typeof this.getFormattedData>
+    ) {
+        const {
+            author,
+            description,
+            image,
+            isbn,
+            link,
+            pubdate,
+            publisher,
+            title,
+        } = formattedData;
+
+        const selelctors = BookItem.SELECTORS;
+
+        const titleEl = this.querySelector(selelctors.title);
         if (titleEl) titleEl.textContent = title;
 
-        const pubEl = this.querySelector(".publisher");
+        const pubEl = this.querySelector(selelctors.publisher);
         if (pubEl) pubEl.textContent = publisher;
 
-        const authorEl = this.querySelector(".author");
+        const authorEl = this.querySelector(selelctors.author);
         if (authorEl) authorEl.textContent = author;
 
-        const pubdateEl = this.querySelector(".pubdate");
-        if (pubdateEl) pubdateEl.textContent = formattedPubdate;
+        const pubdateEl = this.querySelector(selelctors.pubdate);
+        if (pubdateEl) pubdateEl.textContent = pubdate;
 
-        const isbnEl = this.querySelector(".isbn");
+        const isbnEl = this.querySelector(selelctors.isbn);
         if (isbnEl) isbnEl.textContent = `isbn : ${isbn.split(" ").join(", ")}`;
 
-        const bookDespEl =
-            this.querySelector<BookDescription>("book-description");
+        const bookDespEl = this.querySelector<BookDescription>(
+            selelctors.bookDescription
+        );
         if (bookDespEl) bookDespEl.data = description;
 
-        const linkEl = this.querySelector(".__link") as HTMLAnchorElement;
+        const linkEl = this.querySelector(selelctors.link) as HTMLAnchorElement;
         if (linkEl) linkEl.href = link;
 
-        const bookImageEl = this.querySelector<BookImage>("book-image");
+        const bookImageEl = this.querySelector<BookImage>(selelctors.bookImage);
         if (bookImageEl)
             bookImageEl.dataset.object = JSON.stringify({
                 bookImageURL: image,
@@ -96,8 +169,9 @@ export default class BookItem extends HTMLElement {
 
     private onClickLibraryButton() {
         const isbn = this.dataset.isbn || "";
-        const libraryBookExist =
-            this.querySelector<LibraryBookExist>("library-book-exist");
+        const libraryBookExist = this.querySelector<LibraryBookExist>(
+            BookItem.SELECTORS.libraryBookExist
+        );
         if (libraryBookExist) {
             libraryBookExist.onLibraryBookExist(
                 this.libraryButton,
@@ -112,19 +186,3 @@ export default class BookItem extends HTMLElement {
         location.href = `book?isbn=${this.dataset.isbn}`;
     }
 }
-
-// const mm = (pubdate.length === 7) ? `0${pubdate.substring(4, 5)}` : pubdate.substring(4, 6)
-// const dd = pubdate.substring(pubdate.length - 2, pubdate.length)
-
-// const obj = {
-//     title: `${title}`,
-//     author: `${author}`,
-//     description: `${description}`,
-//     // price: `${Number(price).toLocaleString()}원`,
-//     publisher: `${publisher}`,
-//     pubdate: `${formattedPubdate}`,
-//     isbn: `isbn : ${isbn.split(' ').join(', ')}`
-// }
-// for (const [key, value] of Object.entries(obj)) {
-//     this.querySelector(`.${key}`).innerHTML = value
-// }

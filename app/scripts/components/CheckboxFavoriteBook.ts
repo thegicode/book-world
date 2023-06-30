@@ -2,12 +2,12 @@ import {
     addFavoriteBook,
     removeFavoriteBook,
     isFavoriteBook,
-} from "../modules/model.js";
-import { updateFavoriteBooksSize } from "../modules/events.js";
+} from "../modules/model";
+import { updateFavoriteBooksSize } from "../modules/events";
 
 export default class CheckboxFavoriteBook extends HTMLElement {
-    private inputElement: HTMLInputElement | null;
-    private isbn: string | null;
+    protected inputElement: HTMLInputElement | null;
+    protected isbn: string | null;
 
     constructor() {
         super();
@@ -17,18 +17,21 @@ export default class CheckboxFavoriteBook extends HTMLElement {
 
     connectedCallback(): void {
         const isbnElement = this.closest("[data-isbn]");
-        this.isbn = (
-            isbnElement as HTMLElement & { dataset: { isbn: string } }
-        ).dataset.isbn;
+        if (isbnElement) {
+            this.isbn = (
+                isbnElement as HTMLElement & { dataset: { isbn: string } }
+            ).dataset.isbn;
+        }
         this.render();
+
         this.inputElement?.addEventListener("change", this.onChange.bind(this));
     }
 
     disconnectedCallback(): void {
-        this.inputElement?.addEventListener("change", this.onChange);
+        this.inputElement?.removeEventListener("change", this.onChange);
     }
 
-    private render(): void {
+    protected render(): void {
         const isbn = this.isbn || "";
         const checked = isFavoriteBook(isbn) ? "checked" : "";
         this.innerHTML = `<label>
@@ -38,9 +41,10 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         this.inputElement = this.querySelector("input");
     }
 
-    private onChange(): void {
+    protected onChange(): void {
         const ISBN = this.isbn || "";
-        if (this.inputElement?.checked) {
+        if (!ISBN || !this.inputElement) return;
+        if (this.inputElement.checked) {
             addFavoriteBook(ISBN);
         } else {
             removeFavoriteBook(ISBN);

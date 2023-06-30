@@ -11,8 +11,10 @@ export default class LibrarySearchByBook extends HTMLElement {
         this.fetchList(isbn);
     }
 
-    private async fetchList(isbn: string): Promise<void> {
+    protected async fetchList(isbn: string): Promise<void> {
         const favoriteLibraries = getState().regions;
+        if (Object.entries(favoriteLibraries).length === 0) return;
+
         for (const regionName in favoriteLibraries) {
             const detailCodes = Object.values(favoriteLibraries[regionName]);
             if (detailCodes.length === 0) return;
@@ -23,7 +25,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    private async fetchLibrarySearchByBook(
+    protected async fetchLibrarySearchByBook(
         isbn: string,
         region: string,
         dtl_region: string
@@ -46,7 +48,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         }
     }
 
-    private render(
+    protected render(
         { libraries }: ILibrarySearchByBookResult,
         isbn: string
     ): void {
@@ -59,35 +61,50 @@ export default class LibrarySearchByBook extends HTMLElement {
         const fragment = new DocumentFragment();
 
         libraries.forEach(({ homepage, libCode, libName }) => {
-            const template = document.querySelector(
-                "#tp-librarySearchByBookItem"
-            ) as HTMLTemplateElement;
-            if (!template) return;
-
-            const cloned = template.content.firstElementChild?.cloneNode(
-                true
-            ) as HTMLElement;
-            const link = cloned.querySelector("a");
-            if (!link) return;
-
-            cloned.dataset.code = libCode;
-            link.textContent = libName;
-            link.href = homepage;
-
-            this.loanAvailable(
+            const element = this.createLibrarySearchResultItem(
                 isbn,
+                homepage,
                 libCode,
-                cloned.querySelector("p") as HTMLElement
-            );
-
-            fragment.appendChild(cloned);
+                libName
+            ) as HTMLElement;
+            if (element) {
+                fragment.appendChild(element);
+            }
         });
 
         listElement.appendChild(fragment);
         container.appendChild(listElement);
     }
 
-    private async loanAvailable(
+    protected createLibrarySearchResultItem(
+        isbn: string,
+        homepage: string,
+        libCode: string,
+        libName: string
+    ) {
+        const template = document.querySelector(
+            "#tp-librarySearchByBookItem"
+        ) as HTMLTemplateElement;
+        if (!template) return null;
+
+        const cloned = template.content.firstElementChild?.cloneNode(
+            true
+        ) as HTMLElement;
+        if (!cloned) return null;
+
+        const link = cloned.querySelector("a");
+        if (!link) return null;
+
+        cloned.dataset.code = libCode;
+        link.textContent = libName;
+        link.href = homepage;
+
+        this.loanAvailable(isbn, libCode, cloned);
+
+        return cloned;
+    }
+
+    protected async loanAvailable(
         isbn: string,
         libCode: string,
         el: HTMLElement
@@ -96,13 +113,13 @@ export default class LibrarySearchByBook extends HTMLElement {
         const element = el.querySelector(".loanAvailable");
         if (element) {
             element.textContent = isAvailable ? "대출 가능" : "대출 불가";
-            if (isAvailable && el.parentElement) {
-                el.parentElement.dataset.available = "true";
+            if (isAvailable) {
+                el.dataset.available = "true";
             }
         }
     }
 
-    private async fetchLoadnAvailabilty(
+    protected async fetchLoadnAvailabilty(
         isbn13: string,
         libCode: string
     ): Promise<boolean> {
@@ -111,7 +128,6 @@ export default class LibrarySearchByBook extends HTMLElement {
             libCode,
         });
         const url = `/book-exist?${searchParams}`;
-
         try {
             const data = await CustomFetch.fetch<IBookExist>(url, {
                 method: "GET",

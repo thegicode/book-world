@@ -1,7 +1,7 @@
 import { getState } from "../modules/model";
 
 export default class NavGnb extends HTMLElement {
-    private favoriteBooksSize: number;
+    protected favoriteBooksSize: number;
 
     constructor() {
         super();
@@ -18,11 +18,11 @@ export default class NavGnb extends HTMLElement {
         // CustomEventEmitter.remove('favorite-books-changed', this.updateFavoriteBooksSize)
     }
 
-    private getFavoriteBooksSize(): number {
+    protected getFavoriteBooksSize(): number {
         return getState().favoriteBooks.length;
     }
 
-    private render(): void {
+    protected render(): void {
         this.innerHTML = `
             <nav class="gnb">
                 <a class="gnb-item" href="./search">책 검색</a>
@@ -32,13 +32,13 @@ export default class NavGnb extends HTMLElement {
             </nav>`;
     }
 
-    private setSelectedMenu(): void {
+    protected setSelectedMenu(): void {
         const PATHS = ["/search", "/favorite", "/library", "/setting"];
         const idx = PATHS.indexOf(document.location.pathname);
         if (idx >= 0) this.querySelectorAll("a")[idx].ariaSelected = "true";
     }
 
-    // private updateFavoriteBooksSize(event: Event): void {
+    // protected updateFavoriteBooksSize(event: Event): void {
     //     const customEvent = event as CustomEvent<{ size: number }>
     //     const { size } = customEvent.detail
     //     this.querySelector('.size')!.textContent = String(size || this.getFavoriteBooksSize())

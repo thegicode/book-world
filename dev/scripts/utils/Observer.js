@@ -1,3 +1,4 @@
+import "intersection-observer";
 export default class Observer {
     constructor(target, callback) {
         this.target = target;

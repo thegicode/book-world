@@ -74,12 +74,15 @@ export default class BookList extends HTMLElement {
         const url = `/search-naver-book?keyword=${encodeURIComponent(
             this.keyword
         )}&display=${10}&start=${this.length + 1}`;
+
         try {
             const data = await CustomFetch.fetch<ISearchNaverBookResult>(url);
             this.render(data);
         } catch (error) {
             console.error(error);
-            throw new Error("Fail to get naver book.");
+            throw new Error(
+                `Failed to get books with keyword ${this.keyword}.`
+            );
         }
     }
 
@@ -89,7 +92,6 @@ export default class BookList extends HTMLElement {
 
         this.length += Number(display);
         this.updatePagingInfo({ total, display });
-
         this.pagingInfo.hidden = false;
 
         if (total === 0) {
@@ -117,6 +119,7 @@ export default class BookList extends HTMLElement {
             total: `${total.toLocaleString()}`,
             display: `${display}개씩`,
         };
+
         for (const [key, value] of Object.entries(obj)) {
             const element = this.pagingInfo.querySelector(
                 `.__${key}`
@@ -128,30 +131,36 @@ export default class BookList extends HTMLElement {
     private appendBookItems(items: ISearchBook[], prevLength: number): void {
         const fragment = new DocumentFragment();
 
+        const template = document.querySelector(
+            "#tp-book-item"
+        ) as HTMLTemplateElement;
+        if (!template) return;
+
+        const el = template.content.firstElementChild;
+        if (!el) return;
+
         items.forEach((item, index) => {
-            const template = (
-                document.querySelector(
-                    "[data-template=book-item]"
-                ) as HTMLTemplateElement
-            ).content.firstElementChild;
-            if (!template) return;
-            const el = template.cloneNode(true) as BookItem;
-            el.bookData = item;
-            el.dataset.index = (prevLength + index).toString();
-            fragment.appendChild(el);
+            const cloned = el.cloneNode(true) as BookItem;
+            cloned.bookData = item;
+            cloned.dataset.index = (prevLength + index).toString();
+            fragment.appendChild(cloned);
         });
 
         this.books.appendChild(fragment);
     }
 
     private showMessage(type: string) {
-        const template = (
-            document.querySelector(`#tp-${type}`) as HTMLTemplateElement
-        ).content.firstElementChild;
+        const template = document.querySelector(
+            `#tp-${type}`
+        ) as HTMLTemplateElement;
         if (!template) return;
-        const el = template.cloneNode(true);
+
+        const el = template.content.firstElementChild;
+        if (!el) return;
+
+        const cloned = el.cloneNode(true) as HTMLElement;
         this.books.innerHTML = "";
-        this.books.appendChild(el);
+        this.books.appendChild(cloned);
     }
 }
 

@@ -20,6 +20,8 @@ export default class LibrarySearchByBook extends HTMLElement {
     fetchList(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
             const favoriteLibraries = getState().regions;
+            if (Object.entries(favoriteLibraries).length === 0)
+                return;
             for (const regionName in favoriteLibraries) {
                 const detailCodes = Object.values(favoriteLibraries[regionName]);
                 if (detailCodes.length === 0)
@@ -58,22 +60,30 @@ export default class LibrarySearchByBook extends HTMLElement {
         const listElement = document.createElement("ul");
         const fragment = new DocumentFragment();
         libraries.forEach(({ homepage, libCode, libName }) => {
-            var _a;
-            const template = document.querySelector("#tp-librarySearchByBookItem");
-            if (!template)
-                return;
-            const cloned = (_a = template.content.firstElementChild) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
-            const link = cloned.querySelector("a");
-            if (!link)
-                return;
-            cloned.dataset.code = libCode;
-            link.textContent = libName;
-            link.href = homepage;
-            this.loanAvailable(isbn, libCode, cloned.querySelector("p"));
-            fragment.appendChild(cloned);
+            const element = this.createLibrarySearchResultItem(isbn, homepage, libCode, libName);
+            if (element) {
+                fragment.appendChild(element);
+            }
         });
         listElement.appendChild(fragment);
         container.appendChild(listElement);
+    }
+    createLibrarySearchResultItem(isbn, homepage, libCode, libName) {
+        var _a;
+        const template = document.querySelector("#tp-librarySearchByBookItem");
+        if (!template)
+            return null;
+        const cloned = (_a = template.content.firstElementChild) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
+        if (!cloned)
+            return null;
+        const link = cloned.querySelector("a");
+        if (!link)
+            return null;
+        cloned.dataset.code = libCode;
+        link.textContent = libName;
+        link.href = homepage;
+        this.loanAvailable(isbn, libCode, cloned);
+        return cloned;
     }
     loanAvailable(isbn, libCode, el) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -81,8 +91,8 @@ export default class LibrarySearchByBook extends HTMLElement {
             const element = el.querySelector(".loanAvailable");
             if (element) {
                 element.textContent = isAvailable ? "대출 가능" : "대출 불가";
-                if (isAvailable && el.parentElement) {
-                    el.parentElement.dataset.available = "true";
+                if (isAvailable) {
+                    el.dataset.available = "true";
                 }
             }
         });

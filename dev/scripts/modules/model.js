@@ -4,9 +4,9 @@ const cloneDeep = (obj) => {
 const initialState = {
     favoriteBooks: [],
     libraries: {},
-    regions: {}
+    regions: {},
 };
-const storageKey = 'BookWorld';
+const storageKey = "BookWorld";
 const setState = (newState) => {
     try {
         localStorage.setItem(storageKey, JSON.stringify(newState));
@@ -29,7 +29,7 @@ const getState = () => {
     }
     catch (error) {
         console.error(error);
-        throw new Error('Failed to get state from localStrage.');
+        throw new Error("Failed to get state from localStorage.");
     }
 };
 const state = getState();
@@ -74,5 +74,5 @@ const removeDetailRegion = (regionName, detailName) => {
     delete state.regions[regionName][detailName];
     setState(state);
 };
-export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion };
+export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, };
 //# sourceMappingURL=model.js.map

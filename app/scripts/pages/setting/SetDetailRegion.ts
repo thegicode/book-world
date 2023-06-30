@@ -4,7 +4,7 @@ import {
     addRegion,
     addDetailRegion,
     removeDetailRegion,
-} from "../../modules/model.js";
+} from "../../modules/model";
 
 export default class SetDetailRegion extends HTMLElement {
     private regionData: TotalRegions | null;
