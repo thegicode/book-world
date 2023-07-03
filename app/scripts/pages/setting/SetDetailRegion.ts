@@ -37,28 +37,26 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     // selectElement, selectElements : 몇 개만 해보고 좀 더 고민해보기로. 바꾸는게 의미가 있는지 모르겠다.
-
-    private selectElement<T extends Element>(
-        selector: string,
-        scope?: "document" | "component"
-    ): T | null {
-        if (scope === "component") {
-            return this.querySelector(selector);
-        } else {
-            return document.querySelector(selector);
-        }
-    }
-
-    private selectElements(
-        selector: string,
-        scope?: "document" | "component"
-    ): NodeListOf<Element> {
-        if (scope === "component") {
-            return this.querySelectorAll(selector);
-        } else {
-            return document.querySelectorAll(selector);
-        }
-    }
+    // private selectElement<T extends Element>(
+    //     selector: string,
+    //     scope?: "document" | "component"
+    // ): T | null {
+    //     if (scope === "component") {
+    //         return this.querySelector(selector);
+    //     } else {
+    //         return document.querySelector(selector);
+    //     }
+    // }
+    // private selectElements(
+    //     selector: string,
+    //     scope?: "document" | "component"
+    // ): NodeListOf<Element> {
+    //     if (scope === "component") {
+    //         return this.querySelectorAll(selector);
+    //     } else {
+    //         return document.querySelectorAll(selector);
+    //     }
+    // }
 
     private setRegionData(event: Event) {
         const customEvent = event as CustomEvent<{ regionData: TotalRegions }>;
@@ -70,10 +68,7 @@ export default class SetDetailRegion extends HTMLElement {
         const favoriteRegions = Object.keys(getState().regions);
         if (favoriteRegions.length < 1) return;
 
-        const container = this.selectElement<HTMLElement>(
-            ".regions",
-            "component"
-        );
+        const container = this.querySelector(".regions") as HTMLElement;
         if (!container) return;
 
         container.innerHTML = "";
@@ -86,8 +81,8 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     private createRegions(favoriteRegions: string[]) {
-        const template = this.selectElement<HTMLTemplateElement>(
-            "#tp-favorite-region"
+        const template = (
+            document.querySelector("#tp-favorite-region") as HTMLTemplateElement
         )?.content.firstElementChild;
         if (!template) return;
 
@@ -126,9 +121,9 @@ export default class SetDetailRegion extends HTMLElement {
         const regionObj = getState().regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
 
-        const template =
-            this.selectElement<HTMLTemplateElement>("#tp-detail-region")
-                ?.content.firstElementChild;
+        const template = (
+            document.querySelector("#tp-detail-region") as HTMLTemplateElement
+        )?.content.firstElementChild;
         if (!template) return;
 
         detailRegionsElement.innerHTML = "";
@@ -193,7 +188,7 @@ export default class SetDetailRegion extends HTMLElement {
         if (!getState().regions[region]) {
             addRegion(region);
         }
-        const checkboxes = this.selectElements("[name=detailRegion]");
+        const checkboxes = document.querySelectorAll("[name=detailRegion]");
 
         checkboxes.forEach((checkbox: Element) => {
             const inputCheckbox = checkbox as HTMLInputElement;
