@@ -809,31 +809,16 @@
       CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
       CustomEventEmitter_default.remove(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
     }
-    // selectElement, selectElements : 몇 개만 해보고 좀 더 고민해보기로. 바꾸는게 의미가 있는지 모르겠다.
-    selectElement(selector, scope) {
-      if (scope === "component") {
-        return this.querySelector(selector);
-      } else {
-        return document.querySelector(selector);
-      }
-    }
-    selectElements(selector, scope) {
-      if (scope === "component") {
-        return this.querySelectorAll(selector);
-      } else {
-        return document.querySelectorAll(selector);
-      }
-    }
     setRegionData(event) {
       const customEvent = event;
       this.regionData = customEvent.detail.regionData;
       this.renderRegion();
     }
     renderRegion() {
-      const favoriteRegions = Object.keys(getState().regions);
-      if (favoriteRegions.length < 1)
+      if (!getState().regions)
         return;
-      const container = this.selectElement(".regions", "component");
+      const favoriteRegions = Object.keys(getState().regions);
+      const container = this.querySelector(".regions");
       if (!container)
         return;
       container.innerHTML = "";
@@ -845,7 +830,7 @@
     }
     createRegions(favoriteRegions) {
       var _a;
-      const template = (_a = this.selectElement("#tp-favorite-region")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+      const template = (_a = document.querySelector("#tp-favorite-region")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
       if (!template)
         return;
       const fragment = new DocumentFragment();
@@ -878,7 +863,7 @@
         return;
       const regionObj = getState().regions[regionName];
       const regionCodes = regionObj ? Object.values(regionObj) : [];
-      const template = (_a = this.selectElement("#tp-detail-region")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+      const template = (_a = document.querySelector("#tp-detail-region")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
       if (!template)
         return;
       detailRegionsElement.innerHTML = "";
@@ -927,7 +912,7 @@
       if (!getState().regions[region]) {
         addRegion(region);
       }
-      const checkboxes = this.selectElements("[name=detailRegion]");
+      const checkboxes = document.querySelectorAll("[name=detailRegion]");
       checkboxes.forEach((checkbox) => {
         const inputCheckbox = checkbox;
         inputCheckbox.addEventListener("change", () => {

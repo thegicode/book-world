@@ -36,28 +36,6 @@ export default class SetDetailRegion extends HTMLElement {
         );
     }
 
-    // selectElement, selectElements : 몇 개만 해보고 좀 더 고민해보기로. 바꾸는게 의미가 있는지 모르겠다.
-    // private selectElement<T extends Element>(
-    //     selector: string,
-    //     scope?: "document" | "component"
-    // ): T | null {
-    //     if (scope === "component") {
-    //         return this.querySelector(selector);
-    //     } else {
-    //         return document.querySelector(selector);
-    //     }
-    // }
-    // private selectElements(
-    //     selector: string,
-    //     scope?: "document" | "component"
-    // ): NodeListOf<Element> {
-    //     if (scope === "component") {
-    //         return this.querySelectorAll(selector);
-    //     } else {
-    //         return document.querySelectorAll(selector);
-    //     }
-    // }
-
     private setRegionData(event: Event) {
         const customEvent = event as CustomEvent<{ regionData: TotalRegions }>;
         this.regionData = customEvent.detail.regionData;
@@ -65,8 +43,11 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     private renderRegion() {
+        // console.log("renderRegion", getState().regions);
+        if (!getState().regions) return;
+
         const favoriteRegions = Object.keys(getState().regions);
-        if (favoriteRegions.length < 1) return;
+        // if (favoriteRegions.length < 1) return;
 
         const container = this.querySelector(".regions") as HTMLElement;
         if (!container) return;
@@ -92,6 +73,7 @@ export default class SetDetailRegion extends HTMLElement {
             const spanElement = element.querySelector<HTMLElement>("span");
             if (!spanElement) return null;
             if (spanElement) spanElement.textContent = region;
+
             fragment.appendChild(element);
         });
         return fragment;
