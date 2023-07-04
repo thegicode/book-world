@@ -43,11 +43,8 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     private renderRegion() {
-        // console.log("renderRegion", getState().regions);
-        if (!getState().regions) return;
-
         const favoriteRegions = Object.keys(getState().regions);
-        // if (favoriteRegions.length < 1) return;
+        if (favoriteRegions.length < 1) return;
 
         const container = this.querySelector(".regions") as HTMLElement;
         if (!container) return;
@@ -71,7 +68,6 @@ export default class SetDetailRegion extends HTMLElement {
         favoriteRegions.forEach((region) => {
             const element = template.cloneNode(true) as HTMLElement;
             const spanElement = element.querySelector<HTMLElement>("span");
-            if (!spanElement) return null;
             if (spanElement) spanElement.textContent = region;
 
             fragment.appendChild(element);
@@ -81,15 +77,14 @@ export default class SetDetailRegion extends HTMLElement {
 
     private initializeFirstRegion(container: HTMLElement) {
         const firstInput = container.querySelector<HTMLInputElement>("input");
+        if (!firstInput) return;
 
-        if (firstInput) {
-            firstInput.checked = true;
-            const label =
-                (firstInput.nextElementSibling as HTMLElement).textContent ||
-                "";
-            this.renderDetailRegions(label);
-            this.changeRegion();
-        }
+        firstInput.checked = true;
+        const labelEl = firstInput.nextElementSibling as HTMLElement;
+        const label = labelEl?.textContent || "";
+
+        this.renderDetailRegions(label);
+        this.changeRegion();
     }
 
     private renderDetailRegions(regionName: string) {
@@ -156,9 +151,9 @@ export default class SetDetailRegion extends HTMLElement {
             const inputRadio = radio as HTMLInputElement;
             inputRadio.addEventListener("change", () => {
                 if (inputRadio.checked) {
-                    const label =
-                        (inputRadio.nextElementSibling as HTMLElement)
-                            .textContent || "";
+                    const labelElement =
+                        inputRadio.nextElementSibling as HTMLElement;
+                    const label = labelElement?.textContent || "";
                     this.renderDetailRegions(label);
                 }
             });
@@ -176,9 +171,9 @@ export default class SetDetailRegion extends HTMLElement {
             const inputCheckbox = checkbox as HTMLInputElement;
             inputCheckbox.addEventListener("change", () => {
                 const { value } = inputCheckbox;
-                const label =
-                    (inputCheckbox.nextElementSibling as HTMLElement)
-                        .textContent || "";
+                const labelElement =
+                    inputCheckbox.nextElementSibling as HTMLElement;
+                const label = labelElement?.textContent || "";
                 if (inputCheckbox.checked) {
                     addDetailRegion(region, label, value);
                 } else {

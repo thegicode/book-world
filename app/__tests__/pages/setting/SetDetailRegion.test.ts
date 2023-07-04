@@ -11,12 +11,7 @@ import SetDetailRegion from "../../../scripts/pages/setting/SetDetailRegion";
 
 jest.mock("../../../scripts/utils/index");
 jest.mock("../../../scripts/modules/model", () => ({
-    getState: () => ({
-        regions: {
-            서울: "11",
-            부산: "21",
-        },
-    }),
+    getState: jest.fn(),
     addRegion: jest.fn(),
     addDetailRegion: jest.fn(),
     removeDetailRegion: jest.fn(),
@@ -26,12 +21,23 @@ describe("SetDetailRegion", () => {
     const CUSTOM_ELEMENT_NAME = "set-detail-region";
     const MARKUP_FILE_PATH = "../../markup/setting.html";
 
-    let setDetailRegion: SetDetailRegion;
-    let instance: any;
-
     const FETCH_REGION_DATA_EVENT = "fetch-region-data";
     const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
     const SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
+
+    let setDetailRegion: SetDetailRegion;
+    let instance: any;
+
+    const mockGetState = getState as jest.MockedFunction<typeof getState>;
+
+    const mockRegions = {
+        서울: {
+            강동구: "11111",
+        },
+        경기: {
+            하남시: "22222",
+        },
+    };
 
     const mockRegionData = {
         region: {
@@ -65,6 +71,12 @@ describe("SetDetailRegion", () => {
         if (!customElements.get(CUSTOM_ELEMENT_NAME)) {
             customElements.define(CUSTOM_ELEMENT_NAME, SetDetailRegion);
         }
+
+        mockGetState.mockReturnValue({
+            favoriteBooks: [],
+            libraries: {},
+            regions: mockRegions,
+        });
 
         setDetailRegion = new SetDetailRegion();
         setDetailRegion.innerHTML = element.innerHTML;
@@ -143,103 +155,218 @@ describe("SetDetailRegion", () => {
     });
 
     describe("renderRegion", () => {
-        test("should render regions properly", () => {
-            const instance = setDetailRegion as any;
-            const mockCreateRegions = jest
-                .spyOn(instance, "createRegions")
-                .mockReturnValue(document.createElement("div"));
-            const mockInitializeFirstRegion = jest.spyOn(
+        let instance: any;
+        let mockInitializeFirstRegion: jest.SpyInstance;
+        let mockCreateRegions: jest.SpyInstance;
+
+        beforeEach(() => {
+            instance = setDetailRegion as any;
+            mockInitializeFirstRegion = jest.spyOn(
                 instance,
                 "initializeFirstRegion"
             );
+            mockCreateRegions = jest
+                .spyOn(instance, "createRegions")
+                .mockReturnValue(document.createElement("div"));
+        });
 
+        afterEach(() => {
+            mockInitializeFirstRegion.mockRestore();
+            mockCreateRegions.mockRestore();
+        });
+        test("should render regions properly", () => {
             instance.renderRegion(mockCreateRegions);
 
-            expect(mockCreateRegions).toHaveBeenCalledWith(["서울", "부산"]);
+            expect(mockCreateRegions).toHaveBeenCalledWith(
+                Object.keys(mockRegions)
+            );
             expect(mockInitializeFirstRegion).toHaveBeenCalled();
-
-            mockCreateRegions.mockRestore();
-            mockInitializeFirstRegion.mockRestore();
         });
 
-        // test("favoriteRegions.length < 1", () => {
-        //     const instance = setDetailRegion as any;
+        test("favoriteRegions.length < 1", () => {
+            mockGetState.mockReturnValue({
+                favoriteBooks: [],
+                libraries: {},
+                regions: {},
+            });
 
-        // const mockGetState = getState as jest.MockedFunction<
-        //     typeof getState
-        // >;
-        // mockGetState.mockReturnValue({
-        //     favoriteBooks: [],
-        //     libraries: {},
-        //     regions: {},
-        // });
+            instance.renderRegion();
 
-        //     const mockCreateRegions = jest
-        //         .spyOn(instance, "createRegions")
-        //         .mockReturnValue(document.createElement("div"));
-        //     const mockInitializeFirstRegion = jest.spyOn(
-        //         instance,
-        //         "initializeFirstRegion"
-        //     );
+            expect(mockCreateRegions).not.toHaveBeenCalled();
+            expect(mockInitializeFirstRegion).not.toHaveBeenCalled();
 
-        //     instance.renderRegion(mockCreateRegions);
+            mockGetState.mockRestore();
+        });
 
-        //     expect(mockCreateRegions).not.toHaveBeenCalled();
-        //     expect(mockInitializeFirstRegion).not.toHaveBeenCalled();
+        test("!container", () => {
+            instance.querySelector(".regions").remove();
+            instance.renderRegion();
 
-        //     mockCreateRegions.mockRestore();
-        //     mockInitializeFirstRegion.mockRestore();
-        // });
+            expect(mockCreateRegions).not.toHaveBeenCalled();
+            expect(mockInitializeFirstRegion).not.toHaveBeenCalled();
+        });
+
+        test("!regionElements", () => {
+            mockCreateRegions = jest
+                .spyOn(instance, "createRegions")
+                .mockReturnValue(null);
+
+            instance.renderRegion();
+
+            expect(mockInitializeFirstRegion).not.toHaveBeenCalled();
+        });
     });
 
-    test("should create regions properly when called createRegions", () => {
-        const instance = setDetailRegion as any;
+    describe("createRegions", () => {
+        let instance: any;
         const mockRegions = ["서울", "부산"];
 
-        const fragment = instance.createRegions(mockRegions);
-        const childNodes = fragment.childNodes;
-        expect(childNodes).toHaveLength(mockRegions.length);
-        childNodes.forEach((node: HTMLElement, index: number) => {
-            const spanElement = node.querySelector("span");
-            expect(spanElement?.textContent).toEqual(mockRegions[index]);
+        beforeEach(() => {
+            instance = setDetailRegion as any;
+        });
+
+        afterEach(() => {
+            //
+        });
+
+        test("should create regions properly when called createRegions", () => {
+            const fragment = instance.createRegions(mockRegions);
+
+            const childNodes = fragment.childNodes;
+            expect(childNodes).toHaveLength(mockRegions.length);
+            childNodes.forEach((node: HTMLElement, index: number) => {
+                const spanElement = node.querySelector("span");
+                expect(spanElement?.textContent).toEqual(mockRegions[index]);
+            });
+        });
+
+        test("!tempate", () => {
+            document.querySelector("#tp-favorite-region")?.remove();
+
+            const fragment = instance.createRegions(mockRegions);
+
+            expect(fragment).toBeUndefined();
         });
     });
 
-    test("should initialize the first region properly", () => {
-        const instance = setDetailRegion as any;
+    describe("initializeFirstRegion", () => {
+        let instance: any;
+        let mockRenderDetailRegions: jest.SpyInstance;
+        let mockChageRegion: jest.SpyInstance;
 
-        const mockRenderDetailRegions = jest.spyOn(
-            instance,
-            "renderDetailRegions"
-        );
-        const mockChageRegion = jest.spyOn(instance, "changeRegion");
+        beforeEach(() => {
+            instance = setDetailRegion as any;
 
-        instance.renderRegion();
+            mockRenderDetailRegions = jest.spyOn(
+                instance,
+                "renderDetailRegions"
+            );
+            mockChageRegion = jest.spyOn(instance, "changeRegion");
+        });
 
-        expect(instance.querySelector("input").checked).toBeTruthy();
-        expect(mockRenderDetailRegions).toHaveBeenCalledWith("서울");
-        expect(mockChageRegion).toHaveBeenCalled();
+        afterEach(() => {
+            mockRenderDetailRegions.mockRestore();
+            mockChageRegion.mockRestore();
+        });
 
-        mockRenderDetailRegions.mockRestore();
-        mockChageRegion.mockRestore();
+        test("should initialize the first region properly", () => {
+            instance.renderRegion();
+
+            expect(instance.querySelector("input").checked).toBeTruthy();
+            expect(mockRenderDetailRegions).toHaveBeenCalledWith("서울");
+            expect(mockChageRegion).toHaveBeenCalled();
+        });
+
+        test("labelEl.textContent = ''", () => {
+            const container = document.createElement("div");
+            const inputElement = document.createElement("input");
+            container.appendChild(inputElement);
+
+            instance.initializeFirstRegion(container);
+
+            expect(mockRenderDetailRegions).toHaveBeenCalledWith("");
+            expect(mockChageRegion).toHaveBeenCalled();
+        });
     });
 
-    test("renderDetailRegions should render detail regions properly", () => {
-        const instance = setDetailRegion as any;
-        const mockCreateDEtailReginElement = jest.spyOn(
-            instance,
-            "createDetailRegionElements"
-        );
-        const mockOnChangeDetail = jest.spyOn(instance, "onChangeDetail");
-        instance.regionData = mockRegionData;
+    describe("renderDetailRegions", () => {
+        let instance: any;
+        let mockCreateDEtailReginElement: jest.SpyInstance;
+        let mockOnChangeDetail: jest.SpyInstance;
+        const regionName = "서울";
 
-        instance.renderDetailRegions("서울");
+        beforeEach(() => {
+            instance = setDetailRegion as any;
+            instance.regionData = mockRegionData;
 
-        expect(mockCreateDEtailReginElement).toHaveBeenCalled();
-        expect(mockOnChangeDetail).toHaveBeenCalled();
+            mockCreateDEtailReginElement = jest.spyOn(
+                instance,
+                "createDetailRegionElements"
+            );
+            mockOnChangeDetail = jest.spyOn(instance, "onChangeDetail");
+        });
 
-        mockCreateDEtailReginElement.mockRestore();
-        mockCreateDEtailReginElement.mockRestore();
+        afterEach(() => {
+            mockCreateDEtailReginElement.mockRestore();
+            mockCreateDEtailReginElement.mockRestore();
+        });
+
+        test("renderDetailRegions should render detail regions properly", () => {
+            instance.renderDetailRegions(regionName);
+
+            expect(mockCreateDEtailReginElement).toHaveBeenCalled();
+            expect(mockOnChangeDetail).toHaveBeenCalled();
+        });
+
+        test("!detailRegionsElement", () => {
+            instance.querySelector(".detailRegions").remove();
+
+            instance.renderDetailRegions(regionName);
+
+            expect(mockCreateDEtailReginElement).not.toHaveBeenCalled();
+            expect(mockOnChangeDetail).not.toHaveBeenCalled();
+        });
+
+        test("regionObj is empty", () => {
+            mockGetState.mockReturnValue({
+                favoriteBooks: [],
+                libraries: {},
+                regions: {},
+            });
+
+            instance.renderDetailRegions(regionName);
+
+            const detailRegionData =
+                instance.regionData.detailRegion[regionName];
+
+            const template = (
+                document.querySelector(
+                    "#tp-detail-region"
+                ) as HTMLTemplateElement
+            )?.content.firstElementChild;
+
+            expect(mockCreateDEtailReginElement).toHaveBeenCalledWith(
+                detailRegionData,
+                template,
+                []
+            );
+        });
+
+        test("!template", () => {
+            document.querySelector("#tp-detail-region")?.remove();
+
+            instance.renderDetailRegions(regionName);
+
+            expect(mockCreateDEtailReginElement).not.toHaveBeenCalled();
+            expect(mockOnChangeDetail).not.toHaveBeenCalled();
+        });
+
+        test("!detailRegionData", () => {
+            instance.renderDetailRegions("정의되지 않은 지역");
+
+            expect(mockCreateDEtailReginElement).not.toHaveBeenCalled();
+            expect(mockOnChangeDetail).not.toHaveBeenCalled();
+        });
     });
 
     test("createDetailRegionElements should create detail region elements correctly", () => {
@@ -266,42 +393,65 @@ describe("SetDetailRegion", () => {
         });
     });
 
-    test("changeRegion: should add change event listener to radio buttons and call renderDetailRegions on change'", () => {
-        const instance = setDetailRegion as any;
+    describe("changeRegion", () => {
+        let instance: any;
+        let mockRenderDetailRegions: jest.SpyInstance;
 
-        instance.setRegionData(
-            new CustomEvent(FETCH_REGION_DATA_EVENT, {
-                detail: { regionData: mockRegionData },
-            })
-        );
+        beforeEach(() => {
+            instance = setDetailRegion as any;
 
-        const mockRenderDetailRegions = jest.spyOn(
-            instance,
-            "renderDetailRegions"
-        );
+            instance.setRegionData(
+                new CustomEvent(FETCH_REGION_DATA_EVENT, {
+                    detail: { regionData: mockRegionData },
+                })
+            );
 
-        instance.changeRegion();
+            mockRenderDetailRegions = jest.spyOn(
+                instance,
+                "renderDetailRegions"
+            );
+        });
 
-        const regionRadios = instance.querySelectorAll(
-            "[name=favorite-region]"
-        );
-        const radio1 = regionRadios[0];
-        radio1.dispatchEvent(new Event("change"));
-        expect(mockRenderDetailRegions).toHaveBeenCalledWith("서울");
+        afterEach(() => {
+            mockRenderDetailRegions.mockRestore();
+        });
 
-        mockRenderDetailRegions.mockRestore();
+        test("should add change event listener to radio buttons and call renderDetailRegions on change'", () => {
+            instance.changeRegion();
+
+            const regionRadios = instance.querySelectorAll(
+                "[name=favorite-region]"
+            );
+            const radio1 = regionRadios[0];
+            radio1.dispatchEvent(new Event("change"));
+            const label1 = Object.keys(mockRegions)[0];
+            expect(mockRenderDetailRegions).toHaveBeenCalledWith(label1);
+        });
+
+        test("should call renderDetailRegions with empty string when textContent is null", () => {
+            const radio = instance.querySelector("[name=favorite-region]");
+            const labelElement = radio.nextElementSibling as HTMLElement;
+            labelElement.remove();
+
+            instance.changeRegion();
+
+            radio.dispatchEvent(new Event("change"));
+
+            expect(mockRenderDetailRegions).toHaveBeenCalledWith("");
+        });
     });
 
     describe("onChangeDetail", () => {
         let instance: any;
+        const regionName = "서울";
 
         beforeEach(() => {
             instance = setDetailRegion as any;
         });
+
         test("should add change event listener to checkboxes and handle detail region change", () => {
             const customEventSpy = jest.spyOn(CustomEventEmitter, "dispatch");
-            const region = "서울";
-            instance.region = region;
+            instance.region = regionName;
 
             instance.setRegionData(
                 new CustomEvent(FETCH_REGION_DATA_EVENT, {
@@ -319,11 +469,15 @@ describe("SetDetailRegion", () => {
             const value = checkbox1.value;
 
             checkbox1.dispatchEvent(new Event("change"));
-            expect(removeDetailRegion).toHaveBeenCalledWith(region, label);
+            expect(removeDetailRegion).toHaveBeenCalledWith(regionName, label);
 
             checkbox1.checked = true;
             checkbox1.dispatchEvent(new Event("change"));
-            expect(addDetailRegion).toHaveBeenCalledWith(region, label, value);
+            expect(addDetailRegion).toHaveBeenCalledWith(
+                regionName,
+                label,
+                value
+            );
             expect(customEventSpy).toHaveBeenCalledWith(
                 SET_DETAIL_REGIONS_EVENT,
                 {}
@@ -331,6 +485,7 @@ describe("SetDetailRegion", () => {
 
             customEventSpy.mockRestore();
         });
+
         test("shoud call addRegion", () => {
             const region = "";
             instance.region = region;
@@ -338,6 +493,31 @@ describe("SetDetailRegion", () => {
             instance.onChangeDetail();
 
             expect(addRegion).toHaveBeenCalledWith(region);
+        });
+
+        test("label is null", () => {
+            const customEventSpy = jest.spyOn(CustomEventEmitter, "dispatch");
+            instance.region = regionName;
+
+            instance.setRegionData(
+                new CustomEvent(FETCH_REGION_DATA_EVENT, {
+                    detail: { regionData: mockRegionData },
+                })
+            );
+
+            instance.onChangeDetail();
+
+            const checkbox1 = instance.querySelectorAll(
+                "[name=detailRegion]"
+            )[0];
+            const labelElement = checkbox1.nextElementSibling as HTMLElement;
+            labelElement.remove();
+
+            checkbox1.dispatchEvent(new Event("change"));
+
+            expect(removeDetailRegion).toHaveBeenCalledWith(regionName, "");
+
+            customEventSpy.mockRestore();
         });
     });
 });

@@ -815,9 +815,9 @@
       this.renderRegion();
     }
     renderRegion() {
-      if (!getState().regions)
-        return;
       const favoriteRegions = Object.keys(getState().regions);
+      if (favoriteRegions.length < 1)
+        return;
       const container = this.querySelector(".regions");
       if (!container)
         return;
@@ -837,8 +837,6 @@
       favoriteRegions.forEach((region) => {
         const element = template.cloneNode(true);
         const spanElement = element.querySelector("span");
-        if (!spanElement)
-          return null;
         if (spanElement)
           spanElement.textContent = region;
         fragment.appendChild(element);
@@ -847,12 +845,13 @@
     }
     initializeFirstRegion(container) {
       const firstInput = container.querySelector("input");
-      if (firstInput) {
-        firstInput.checked = true;
-        const label = firstInput.nextElementSibling.textContent || "";
-        this.renderDetailRegions(label);
-        this.changeRegion();
-      }
+      if (!firstInput)
+        return;
+      firstInput.checked = true;
+      const labelEl = firstInput.nextElementSibling;
+      const label = (labelEl === null || labelEl === void 0 ? void 0 : labelEl.textContent) || "";
+      this.renderDetailRegions(label);
+      this.changeRegion();
     }
     renderDetailRegions(regionName) {
       var _a;
@@ -901,7 +900,8 @@
         const inputRadio = radio;
         inputRadio.addEventListener("change", () => {
           if (inputRadio.checked) {
-            const label = inputRadio.nextElementSibling.textContent || "";
+            const labelElement = inputRadio.nextElementSibling;
+            const label = (labelElement === null || labelElement === void 0 ? void 0 : labelElement.textContent) || "";
             this.renderDetailRegions(label);
           }
         });
@@ -917,7 +917,8 @@
         const inputCheckbox = checkbox;
         inputCheckbox.addEventListener("change", () => {
           const { value } = inputCheckbox;
-          const label = inputCheckbox.nextElementSibling.textContent || "";
+          const labelElement = inputCheckbox.nextElementSibling;
+          const label = (labelElement === null || labelElement === void 0 ? void 0 : labelElement.textContent) || "";
           if (inputCheckbox.checked) {
             addDetailRegion(region, label, value);
           } else {
