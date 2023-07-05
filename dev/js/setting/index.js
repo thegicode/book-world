@@ -724,21 +724,24 @@
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
+  var FETCH_REGION_DATA_EVENT = "fetch-region-data";
+  var SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
+  var REGION_JSON_URL = "../../../assets/json/region.json";
   var SetRegion = class extends HTMLElement {
     constructor() {
       super();
       this.regionData = null;
     }
     connectedCallback() {
-      this.fetchRegion();
+      this.initializeRegionDataAndRender();
     }
-    fetchRegion() {
+    initializeRegionDataAndRender() {
       return __awaiter2(this, void 0, void 0, function* () {
-        const url = "../../../assets/json/region.json";
         try {
-          this.regionData = yield CustomFetch_default.fetch(url);
-          this.render();
-          CustomEventEmitter_default.dispatch("fetch-region-data", {
+          this.regionData = yield this.fetchRegionData(REGION_JSON_URL);
+          this.renderRegion();
+          this.addCheckboxChangeListeners();
+          CustomEventEmitter_default.dispatch(FETCH_REGION_DATA_EVENT, {
             regionData: this.regionData
           });
         } catch (error) {
@@ -747,51 +750,64 @@
         }
       });
     }
-    render() {
+    fetchRegionData(url) {
+      return __awaiter2(this, void 0, void 0, function* () {
+        return yield CustomFetch_default.fetch(url);
+      });
+    }
+    renderRegion() {
+      const template = document.querySelector("#tp-region").content.firstElementChild;
+      if (!template)
+        return;
+      const regionElementsFragment = this.createRegionElementsFragment(template);
+      const container = this.querySelector(".regions");
+      container.appendChild(regionElementsFragment);
+    }
+    createRegionElementsFragment(template) {
       if (!this.regionData) {
         throw new Error("regionData is null.");
       }
-      const template = document.querySelector("#tp-region").content.firstElementChild;
-      const container = this.querySelector(".regions");
-      const regionData = this.regionData["region"];
       const fragment = new DocumentFragment();
-      const stateRegions = Object.keys(getState().regions);
+      const regionData = this.regionData["region"];
+      const favoriteRegions = Object.keys(getState().regions);
       for (const [key, value] of Object.entries(regionData)) {
-        if (!template)
-          return;
-        const element = template.cloneNode(true);
-        const checkbox = element.querySelector("input");
-        checkbox.value = value;
-        if (stateRegions.includes(key)) {
-          checkbox.checked = true;
-        }
-        const spanElement = element.querySelector("span");
-        if (spanElement)
-          spanElement.textContent = key;
-        fragment.appendChild(element);
+        const regionElement = this.createRegionElement(template, key, value, favoriteRegions);
+        fragment.appendChild(regionElement);
       }
-      container.appendChild(fragment);
-      this.changeRegion();
+      return fragment;
     }
-    changeRegion() {
+    createRegionElement(template, key, value, favoriteRegions) {
+      const regionElement = template.cloneNode(true);
+      const checkbox = regionElement.querySelector("input");
+      checkbox.value = value;
+      checkbox.checked = favoriteRegions.includes(key);
+      const spanElement = regionElement.querySelector("span");
+      if (spanElement)
+        spanElement.textContent = key;
+      return regionElement;
+    }
+    addCheckboxChangeListeners() {
       const checkboxes = this.querySelectorAll("[name=region]");
       checkboxes.forEach((checkbox) => {
-        checkbox.addEventListener("change", () => {
-          const key = checkbox.nextElementSibling.textContent || "";
-          if (checkbox.checked) {
-            addRegion(key);
-          } else {
-            removeRegion(key);
-          }
-          CustomEventEmitter_default.dispatch("set-favorite-regions", {});
-        });
+        checkbox.addEventListener("chanage", this.createCheckboxChangeListener(checkbox));
       });
+    }
+    createCheckboxChangeListener(checkbox) {
+      return () => {
+        const key = checkbox.nextElementSibling.textContent || "";
+        if (checkbox.checked) {
+          addRegion(key);
+        } else {
+          removeRegion(key);
+        }
+        CustomEventEmitter_default.dispatch(SET_FAVORITE_REGIONS_EVENT, {});
+      };
     }
   };
 
   // dev/scripts/pages/setting/SetDetailRegion.js
-  var FETCH_REGION_DATA_EVENT = "fetch-region-data";
-  var SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
+  var FETCH_REGION_DATA_EVENT2 = "fetch-region-data";
+  var SET_FAVORITE_REGIONS_EVENT2 = "set-favorite-regions";
   var SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
   var SetDetailRegion = class extends HTMLElement {
     constructor() {
@@ -802,12 +818,12 @@
       this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
-      CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
-      CustomEventEmitter_default.add(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
+      CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT2, this.setRegionData);
+      CustomEventEmitter_default.add(SET_FAVORITE_REGIONS_EVENT2, this.renderRegion);
     }
     disconnectedCallback() {
-      CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
-      CustomEventEmitter_default.remove(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
+      CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT2, this.setRegionData);
+      CustomEventEmitter_default.remove(SET_FAVORITE_REGIONS_EVENT2, this.renderRegion);
     }
     setRegionData(event) {
       const customEvent = event;

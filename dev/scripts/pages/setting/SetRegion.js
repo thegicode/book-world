@@ -9,21 +9,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { getState, addRegion, removeRegion } from "../../modules/model";
+const FETCH_REGION_DATA_EVENT = "fetch-region-data";
+const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
+const REGION_JSON_URL = "../../../assets/json/region.json";
 export default class SetRegion extends HTMLElement {
     constructor() {
         super();
         this.regionData = null;
     }
     connectedCallback() {
-        this.fetchRegion();
+        this.initializeRegionDataAndRender();
     }
-    fetchRegion() {
+    initializeRegionDataAndRender() {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = "../../../assets/json/region.json";
             try {
-                this.regionData = (yield CustomFetch.fetch(url));
-                this.render();
-                CustomEventEmitter.dispatch("fetch-region-data", {
+                this.regionData = yield this.fetchRegionData(REGION_JSON_URL);
+                this.renderRegion();
+                this.addCheckboxChangeListeners();
+                CustomEventEmitter.dispatch(FETCH_REGION_DATA_EVENT, {
                     regionData: this.regionData,
                 });
             }
@@ -33,47 +36,59 @@ export default class SetRegion extends HTMLElement {
             }
         });
     }
-    render() {
+    fetchRegionData(url) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield CustomFetch.fetch(url));
+        });
+    }
+    renderRegion() {
+        const template = document.querySelector("#tp-region").content.firstElementChild;
+        if (!template)
+            return;
+        const regionElementsFragment = this.createRegionElementsFragment(template);
+        const container = this.querySelector(".regions");
+        container.appendChild(regionElementsFragment);
+    }
+    createRegionElementsFragment(template) {
         if (!this.regionData) {
             throw new Error("regionData is null.");
         }
-        const template = document.querySelector("#tp-region").content.firstElementChild;
-        const container = this.querySelector(".regions");
-        const regionData = this.regionData["region"];
         const fragment = new DocumentFragment();
-        const stateRegions = Object.keys(getState().regions);
+        const regionData = this.regionData["region"];
+        const favoriteRegions = Object.keys(getState().regions);
         for (const [key, value] of Object.entries(regionData)) {
-            if (!template)
-                return;
-            const element = template.cloneNode(true);
-            const checkbox = element.querySelector("input");
-            checkbox.value = value;
-            if (stateRegions.includes(key)) {
-                checkbox.checked = true;
-            }
-            const spanElement = element.querySelector("span");
-            if (spanElement)
-                spanElement.textContent = key;
-            fragment.appendChild(element);
+            const regionElement = this.createRegionElement(template, key, value, favoriteRegions);
+            fragment.appendChild(regionElement);
         }
-        container.appendChild(fragment);
-        this.changeRegion();
+        return fragment;
     }
-    changeRegion() {
+    createRegionElement(template, key, value, favoriteRegions) {
+        const regionElement = template.cloneNode(true);
+        const checkbox = regionElement.querySelector("input");
+        checkbox.value = value;
+        checkbox.checked = favoriteRegions.includes(key);
+        const spanElement = regionElement.querySelector("span");
+        if (spanElement)
+            spanElement.textContent = key;
+        return regionElement;
+    }
+    addCheckboxChangeListeners() {
         const checkboxes = this.querySelectorAll("[name=region]");
         checkboxes.forEach((checkbox) => {
-            checkbox.addEventListener("change", () => {
-                const key = checkbox.nextElementSibling.textContent ||
-                    "";
-                if (checkbox.checked) {
-                    addRegion(key);
-                }
-                else {
-                    removeRegion(key);
-                }
-                CustomEventEmitter.dispatch("set-favorite-regions", {});
-            });
+            checkbox.addEventListener("chanage", this.createCheckboxChangeListener(checkbox));
         });
+    }
+    createCheckboxChangeListener(checkbox) {
+        return () => {
+            const key = checkbox.nextElementSibling.textContent || "";
+            if (checkbox.checked) {
+                addRegion(key);
+            }
+            else {
+                removeRegion(key);
+            }
+            CustomEventEmitter.dispatch(SET_FAVORITE_REGIONS_EVENT, {});
+        };
     }
 }
 //# sourceMappingURL=SetRegion.js.map
