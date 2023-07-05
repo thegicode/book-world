@@ -97,7 +97,7 @@ export default class SetRegion extends HTMLElement {
             this.querySelectorAll<HTMLInputElement>("[name=region]");
         checkboxes.forEach((checkbox) => {
             checkbox.addEventListener(
-                "chanage",
+                "change",
                 this.createCheckboxChangeListener(checkbox)
             );
         });
