@@ -4,6 +4,7 @@ import { getState, addRegion, removeRegion } from "../../modules/model";
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
 const REGION_JSON_URL = "../../../assets/json/region.json";
+const REGION_TEMPLATE_NAME = "#tp-region";
 
 export default class SetRegion extends HTMLElement {
     private regionData: TotalRegions | null;
@@ -38,9 +39,10 @@ export default class SetRegion extends HTMLElement {
     }
 
     private renderRegion() {
-        const template = (
-            document.querySelector("#tp-region") as HTMLTemplateElement
-        ).content.firstElementChild;
+        const templateElement = document.querySelector(
+            REGION_TEMPLATE_NAME
+        ) as HTMLTemplateElement;
+        const template = templateElement?.content.firstElementChild;
         if (!template) return;
 
         const regionElementsFragment =
@@ -105,8 +107,15 @@ export default class SetRegion extends HTMLElement {
 
     private createCheckboxChangeListener(checkbox: HTMLInputElement) {
         return () => {
-            const key =
-                (checkbox.nextElementSibling as HTMLElement).textContent || "";
+            const spanElement = checkbox.nextElementSibling as HTMLElement;
+            if (!spanElement || typeof spanElement.textContent !== "string") {
+                throw new Error(
+                    "Invalid checkbox element: No sibling element or missing text content."
+                );
+            }
+
+            const key = spanElement.textContent;
+
             if (checkbox.checked) {
                 addRegion(key);
             } else {

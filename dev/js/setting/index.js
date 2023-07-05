@@ -727,6 +727,7 @@
   var FETCH_REGION_DATA_EVENT = "fetch-region-data";
   var SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
   var REGION_JSON_URL = "../../../assets/json/region.json";
+  var REGION_TEMPLATE_NAME = "#tp-region";
   var SetRegion = class extends HTMLElement {
     constructor() {
       super();
@@ -756,7 +757,8 @@
       });
     }
     renderRegion() {
-      const template = document.querySelector("#tp-region").content.firstElementChild;
+      const templateElement = document.querySelector(REGION_TEMPLATE_NAME);
+      const template = templateElement === null || templateElement === void 0 ? void 0 : templateElement.content.firstElementChild;
       if (!template)
         return;
       const regionElementsFragment = this.createRegionElementsFragment(template);
@@ -794,7 +796,11 @@
     }
     createCheckboxChangeListener(checkbox) {
       return () => {
-        const key = checkbox.nextElementSibling.textContent || "";
+        const spanElement = checkbox.nextElementSibling;
+        if (!spanElement || typeof spanElement.textContent !== "string") {
+          throw new Error("Invalid checkbox element: No sibling element or missing text content.");
+        }
+        const key = spanElement.textContent;
         if (checkbox.checked) {
           addRegion(key);
         } else {
