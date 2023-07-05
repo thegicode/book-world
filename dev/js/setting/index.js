@@ -1024,36 +1024,48 @@
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
+  var LOCAL_STORAGE_NAME = "BookWorld";
+  var SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
   var SetStorage = class extends HTMLElement {
     constructor() {
       super();
-      this.storageButton = this.querySelector(".localStorage button");
-      this.resetButton = this.querySelector(".resetStorage button");
-    }
-    connectedCallback() {
-      this.storageButton.addEventListener("click", this.setLocalStorageToBase.bind(this));
-      this.resetButton.addEventListener("click", this.resetStorage.bind(this));
-    }
-    disconnectedCallback() {
-      this.storageButton.removeEventListener("click", this.setLocalStorageToBase);
-      this.resetButton.removeEventListener("click", this.resetStorage);
-    }
-    setLocalStorageToBase() {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const url = `../../../assets/json/storage-sample.json`;
+      this.storageButton = null;
+      this.resetButton = null;
+      this.setLocalStorageToBase = () => __awaiter3(this, void 0, void 0, function* () {
         try {
-          const data = yield CustomFetch_default.fetch(url);
+          const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
           setState(data);
           console.log("Saved local stronage by base data!");
-          location.reload();
+          this.updateAndReload();
         } catch (error) {
           console.error(error);
           throw new Error("Fail to get storage sample data.");
         }
       });
+      this.resetStorage = () => {
+        localStorage.removeItem(LOCAL_STORAGE_NAME);
+        this.updateAndReload();
+      };
     }
-    resetStorage() {
-      localStorage.removeItem("BookWorld");
+    connectedCallback() {
+      this.setSelectors();
+      this.addEventListeners();
+    }
+    setSelectors() {
+      this.storageButton = this.querySelector(".localStorage button");
+      this.resetButton = this.querySelector(".resetStorage button");
+    }
+    addEventListeners() {
+      var _a, _b;
+      (_a = this.storageButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.setLocalStorageToBase);
+      (_b = this.resetButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.resetStorage);
+    }
+    disconnectedCallback() {
+      var _a, _b;
+      (_a = this.storageButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.setLocalStorageToBase);
+      (_b = this.resetButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.resetStorage);
+    }
+    updateAndReload() {
       location.reload();
     }
   };

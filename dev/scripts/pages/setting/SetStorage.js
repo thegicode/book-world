@@ -10,39 +10,49 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { CustomFetch } from "../../utils/index";
 import { setState } from "../../modules/model";
 // import { updateFavoriteBooksSize } from "../../modules/events.js";
+const LOCAL_STORAGE_NAME = "BookWorld";
+const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
     constructor() {
         super();
-        this.storageButton = this.querySelector(".localStorage button");
-        this.resetButton = this.querySelector(".resetStorage button");
-    }
-    connectedCallback() {
-        this.storageButton.addEventListener("click", this.setLocalStorageToBase.bind(this));
-        this.resetButton.addEventListener("click", this.resetStorage.bind(this));
-    }
-    disconnectedCallback() {
-        this.storageButton.removeEventListener("click", this.setLocalStorageToBase);
-        this.resetButton.removeEventListener("click", this.resetStorage);
-    }
-    setLocalStorageToBase() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const url = `../../../assets/json/storage-sample.json`;
+        this.storageButton = null;
+        this.resetButton = null;
+        this.setLocalStorageToBase = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                const data = yield CustomFetch.fetch(url);
+                const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
                 setState(data);
                 console.log("Saved local stronage by base data!");
-                // CustomEventEmitter.dispatch('favorite-books-changed')
-                // updateFavoriteBooksSize();
-                location.reload();
+                this.updateAndReload();
             }
             catch (error) {
                 console.error(error);
                 throw new Error("Fail to get storage sample data.");
             }
         });
+        this.resetStorage = () => {
+            localStorage.removeItem(LOCAL_STORAGE_NAME);
+            this.updateAndReload();
+        };
     }
-    resetStorage() {
-        localStorage.removeItem("BookWorld");
+    connectedCallback() {
+        this.setSelectors();
+        this.addEventListeners();
+    }
+    setSelectors() {
+        this.storageButton = this.querySelector(".localStorage button");
+        this.resetButton = this.querySelector(".resetStorage button");
+    }
+    addEventListeners() {
+        var _a, _b;
+        (_a = this.storageButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.setLocalStorageToBase);
+        (_b = this.resetButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.resetStorage);
+    }
+    disconnectedCallback() {
+        var _a, _b;
+        (_a = this.storageButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.setLocalStorageToBase);
+        (_b = this.resetButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.resetStorage);
+    }
+    updateAndReload() {
         // CustomEventEmitter.dispatch('favorite-books-changed', { size : 0 })
         // updateFavoriteBooksSize(0);
         location.reload();

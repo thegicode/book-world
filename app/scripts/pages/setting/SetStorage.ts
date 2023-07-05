@@ -2,56 +2,65 @@ import { CustomFetch } from "../../utils/index";
 import { setState } from "../../modules/model";
 // import { updateFavoriteBooksSize } from "../../modules/events.js";
 
+const LOCAL_STORAGE_NAME = "BookWorld";
+const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
+
 export default class SetStorage extends HTMLElement {
-    private storageButton: HTMLButtonElement;
-    private resetButton: HTMLButtonElement;
+    private storageButton: HTMLElement | null = null;
+    private resetButton: HTMLElement | null = null;
 
     constructor() {
         super();
-        this.storageButton = this.querySelector(
-            ".localStorage button"
-        ) as HTMLButtonElement;
-        this.resetButton = this.querySelector(
-            ".resetStorage button"
-        ) as HTMLButtonElement;
     }
 
     connectedCallback() {
-        this.storageButton.addEventListener(
-            "click",
-            this.setLocalStorageToBase.bind(this)
-        );
-        this.resetButton.addEventListener(
-            "click",
-            this.resetStorage.bind(this)
-        );
+        this.setSelectors();
+        this.addEventListeners();
     }
 
-    disconnectedCallback() {
-        this.storageButton.removeEventListener(
+    private setSelectors() {
+        this.storageButton = this.querySelector(
+            ".localStorage button"
+        ) as HTMLElement;
+        this.resetButton = this.querySelector(
+            ".resetStorage button"
+        ) as HTMLElement;
+    }
+
+    private addEventListeners() {
+        this.storageButton?.addEventListener(
             "click",
             this.setLocalStorageToBase
         );
-        this.resetButton.removeEventListener("click", this.resetStorage);
+        this.resetButton?.addEventListener("click", this.resetStorage);
     }
 
-    private async setLocalStorageToBase() {
-        const url = `../../../assets/json/storage-sample.json`;
+    disconnectedCallback() {
+        this.storageButton?.removeEventListener(
+            "click",
+            this.setLocalStorageToBase
+        );
+        this.resetButton?.removeEventListener("click", this.resetStorage);
+    }
+
+    private setLocalStorageToBase = async () => {
         try {
-            const data = await CustomFetch.fetch<IStorageData>(url);
+            const data = await CustomFetch.fetch<IStorageData>(SAMPLE_JSON_URL);
             setState(data);
             console.log("Saved local stronage by base data!");
-            // CustomEventEmitter.dispatch('favorite-books-changed')
-            // updateFavoriteBooksSize();
-            location.reload();
+            this.updateAndReload();
         } catch (error) {
             console.error(error);
             throw new Error("Fail to get storage sample data.");
         }
-    }
+    };
 
-    private resetStorage() {
-        localStorage.removeItem("BookWorld");
+    private resetStorage = () => {
+        localStorage.removeItem(LOCAL_STORAGE_NAME);
+        this.updateAndReload();
+    };
+
+    private updateAndReload() {
         // CustomEventEmitter.dispatch('favorite-books-changed', { size : 0 })
         // updateFavoriteBooksSize(0);
         location.reload();
