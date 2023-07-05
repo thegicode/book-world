@@ -36,6 +36,7 @@ describe("SetStorage", () => {
     let setStorage: SetStorage;
     let instance: any;
     let originalLocation: Location;
+    let consoleLogSpy: jest.SpyInstance;
 
     const mockCustomFetch = CustomFetch as jest.Mocked<typeof CustomFetch>;
 
@@ -58,6 +59,8 @@ describe("SetStorage", () => {
 
         mockCustomFetch.fetch.mockResolvedValue(mockStorageData);
 
+        consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+
         setStorage = new SetStorage();
         setStorage.innerHTML = element.innerHTML;
 
@@ -75,6 +78,7 @@ describe("SetStorage", () => {
         jest.resetAllMocks();
 
         window.location = originalLocation;
+        consoleLogSpy.mockRestore();
     });
 
     describe("addEventListeners", () => {
