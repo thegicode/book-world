@@ -9,7 +9,7 @@
         "start-prod": "npm run build & NODE_ENV=production node server",
         "work": "concurrently \"npm:html-watch\" \"npm:css-dev\" \"npm:tsc\" \"npm:esbuild-dev\"",
         "build": "concurrently \"npm:html-prod\" \"npm:css-prod\" \"npm:esbuild-prod\"",
-        "tsc": "npx tsc -w & npx tsc --project ./server",
+        "tsc": "npx tsc -w & npx tsc --project ./server_scripts",
         "esbuild-dev": "esbuild dev/scripts/pages/**/index.js --outdir=dev/js --bundle --watch --sourcemap",
         "esbuild-prod": "esbuild dev/scripts/pages/**/index.js --outdir=prod/js --bundle --minify",
         "css-dev": "npx sass ./app/scss/:./dev/css/ --style=expanded --source-map --watch",

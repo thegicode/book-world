@@ -6,7 +6,8 @@
         "strict": true,
         "esModuleInterop": true,
         "removeComments": true,
-        "sourceMap": false
+        "sourceMap": false,
+        "outDir": "../server"
     },
     "include": ["*.ts"]
     // "exclude": ["node_modules", "**/*.test.ts"]
