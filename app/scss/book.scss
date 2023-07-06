@@ -114,14 +114,22 @@ app-book {
     .keyword {
         display: flex;
         flex-wrap: wrap;
-        span {
-            // display: inline-block;
+        a {
+            display: inline-flex;
             margin: 2px;
             padding: 5px 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
             background-color: #f8f8f8;
             font-size: 12px;
+            color: #525080;
+            text-decoration: none;
+
+            &:hover {
+                border-color: #bcc1d6;
+                background-color: #c5e6f3;
+                // text-decoration: underline;
+            }
         }
     }
 

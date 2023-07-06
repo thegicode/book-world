@@ -842,7 +842,10 @@
         // recBooks,
       } = this.data;
       const bookNames = bookname.split(/[=/:]/).map((item) => `<p>${item}</p>`).join("");
-      const keywordsString = keywords.map((item) => `<span>${item.word}</span>`).join("");
+      const keywordsString = keywords.map((item) => {
+        const url = encodeURI(item.word);
+        return `<a href="/search?keyword=${url}"><span>${item.word}</span></a>`;
+      }).join("");
       this.querySelector(".bookname").innerHTML = bookNames;
       this.querySelector(".authors").textContent = authors;
       this.querySelector(".class_nm").textContent = class_nm;

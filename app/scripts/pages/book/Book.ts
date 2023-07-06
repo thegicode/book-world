@@ -57,9 +57,14 @@ export default class Book extends HTMLElement {
             .split(/[=/:]/)
             .map((item) => `<p>${item}</p>`)
             .join("");
+
         const keywordsString = keywords
-            .map((item) => `<span>${item.word}</span>`)
+            .map((item) => {
+                const url = encodeURI(item.word);
+                return `<a href="/search?keyword=${url}"><span>${item.word}</span></a>`;
+            })
             .join("");
+
         // const recBooksString = recBooks
         //     .map(
         //         ({ bookname, isbn13 }) =>
