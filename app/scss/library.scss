@@ -27,8 +27,8 @@ library-region {
     padding: 10px 1rem;
     background-color: #f1fff4;
     .region {
-        h4 {
-            margin: 10px 0;
+        label {
+            margin-right: 5px;
         }
     }
     .detailRegion {
@@ -75,6 +75,9 @@ library-item {
             content: "⋅";
             display: inline-block;
             padding-right: 5px;
+        }
+        span:first-child {
+            margin-right: 5px;
         }
     }
 }

@@ -26,14 +26,6 @@
 -   test 추가
 -   접근성, lighthouse
 
-## Finish
-
--   23.03.17 : 책 이미지 단일 컴포넌트로 통일
--   23.03.17 : ESLint 추가
--   23.03.21 : typescript 적용 완료
--   23.03.22 : BookImage 오류 수정, 타입스크립트 모듈 추가
--   23.03.31 : 개발 환경 구현(bundle 추가, dev & prod 적용, build 리팩토링) 
-
 ## 참조
 
 -   도서관 공개 API : https://solomon.data4library.kr/

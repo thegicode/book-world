@@ -170,6 +170,10 @@ app-search {
             border: 1px solid #ddd;
             font-size: 12px;
             text-decoration: none;
+            color: #555;
+            &:hover {
+                background-color: rgba(10, 100, 200, 0.05);
+            }
         }
     }
 

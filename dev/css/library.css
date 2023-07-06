@@ -56,8 +56,8 @@ library-region {
   padding: 10px 1rem;
   background-color: #f1fff4;
 }
-library-region .region h4 {
-  margin: 10px 0;
+library-region .region label {
+  margin-right: 5px;
 }
 library-region .detailRegion {
   width: 100%;
@@ -101,6 +101,9 @@ library-item li:before {
   content: "⋅";
   display: inline-block;
   padding-right: 5px;
+}
+library-item li span:first-child {
+  margin-right: 5px;
 }
 
 .actions {
