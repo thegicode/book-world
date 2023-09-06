@@ -8,9 +8,10 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const config_1 = require("./config");
 const setupStaticRoutes = (app) => {
-    const routes = ["search", "favorite", "library", "book", "setting"];
+    const routes = ["", "search", "favorite", "library", "book", "setting"];
     routes.forEach((route) => {
         app.get(`/${route}`, (req, res) => {
+            route = route === "" ? "index" : route;
             const htmlPath = path_1.default.join(config_1.destinationPath, `/html/${route}.html`);
             fs_1.default.readFile(htmlPath, "utf8", (err, data) => {
                 if (err) {
