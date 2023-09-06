@@ -14,13 +14,14 @@ const fetchData = async (url: string, headers?: Record<string, string>) => {
     return await response.json();
 };
 
-// NAVER ; 키워드 검색
+// NAVER ; 키워드 검색, 책 검색
 export async function searchNaverBook(req: Request, res: Response) {
-    const { keyword, display, start } = req.query;
+    const { keyword, display, start, sort } = req.query;
     const queryParams = new URLSearchParams({
         query: keyword as string,
         display: display as string,
         start: start as string,
+        sort: sort as string,
     });
     const headers = {
         "X-Naver-Client-Id": NAVER_CLIENT_ID as string,

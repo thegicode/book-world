@@ -26,11 +26,12 @@ const fetchData = (url, headers) => __awaiter(void 0, void 0, void 0, function* 
 });
 function searchNaverBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { keyword, display, start } = req.query;
+        const { keyword, display, start, sort } = req.query;
         const queryParams = new URLSearchParams({
             query: keyword,
             display: display,
             start: start,
+            sort: sort,
         });
         const headers = {
             "X-Naver-Client-Id": NAVER_CLIENT_ID,

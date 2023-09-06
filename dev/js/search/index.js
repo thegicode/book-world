@@ -982,8 +982,11 @@
     renderBookList() {
       const params = new URLSearchParams(location.search);
       const keyword = params.get("keyword");
-      if (keyword) {
-        CustomEventEmitter_default.dispatch("search-page-init", { keyword });
+      const sort = params.get("sort");
+      const searchElement = document.querySelector("input-search input[type='search']");
+      if (keyword && sort) {
+        CustomEventEmitter_default.dispatch("search-page-init", { keyword, sort });
+        searchElement.value = keyword;
       } else {
         console.log("No keyword provided for search.");
       }
@@ -996,23 +999,34 @@
       super();
       this.form = null;
       this.input = null;
+      this.handleRadioChange = () => {
+        var _a;
+        const submitEvent = new Event("submit");
+        (_a = this.form) === null || _a === void 0 ? void 0 : _a.dispatchEvent(submitEvent);
+      };
       this.onSubmit = (event) => {
+        var _a;
         event.preventDefault();
         if (!this.input)
           return;
         const keyword = this.input.value;
-        this.input.value = "";
+        const sort = (_a = this.form) === null || _a === void 0 ? void 0 : _a.sort.value;
         const url = new URL(window.location.href);
         url.searchParams.set("keyword", keyword);
+        url.searchParams.set("sort", sort);
         window.history.pushState({}, "", url.toString());
-        CustomEventEmitter_default.dispatch("search-page-init", { keyword });
+        CustomEventEmitter_default.dispatch("search-page-init", { keyword, sort });
         this.input.focus();
       };
       this.initialize();
     }
     connectedCallback() {
-      var _a;
+      var _a, _b;
       (_a = this.form) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", this.onSubmit);
+      const radios = (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort;
+      radios.forEach((radio) => {
+        radio.addEventListener("change", this.handleRadioChange);
+      });
     }
     disconnectedCallback() {
       var _a;
@@ -1020,7 +1034,7 @@
     }
     initialize() {
       this.form = this.querySelector("form");
-      this.input = this.querySelector("input");
+      this.input = this.querySelector("input[type='search']");
     }
   };
 
@@ -1081,7 +1095,9 @@
     }
     onSearchPageInit(event) {
       const customEvent = event;
-      this.keyword = customEvent.detail.keyword;
+      const { keyword, sort } = customEvent.detail;
+      this.keyword = keyword;
+      this.sort = sort;
       this.length = 0;
       if (this.keyword) {
         this.handleKeywordPresent();
@@ -1100,11 +1116,12 @@
     }
     fetchSearchNaverBook() {
       return __awaiter3(this, void 0, void 0, function* () {
-        if (!this.keyword)
+        if (!this.keyword || !this.sort)
           return;
-        const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`;
+        const keyworkd = encodeURIComponent(this.keyword);
+        const searchUrl = `/search-naver-book?keyword=${keyworkd}&display=${10}&start=${this.length + 1}&sort=${this.sort}`;
         try {
-          const data = yield CustomFetch_default.fetch(url);
+          const data = yield CustomFetch_default.fetch(searchUrl);
           this.render(data);
         } catch (error) {
           console.error(error);

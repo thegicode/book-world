@@ -37,7 +37,9 @@ export default class BookList extends HTMLElement {
     }
     onSearchPageInit(event) {
         const customEvent = event;
-        this.keyword = customEvent.detail.keyword;
+        const { keyword, sort } = customEvent.detail;
+        this.keyword = keyword;
+        this.sort = sort;
         this.length = 0;
         if (this.keyword) {
             // onSubmit으로 들어온 경우와 브라우저
@@ -58,11 +60,12 @@ export default class BookList extends HTMLElement {
     }
     fetchSearchNaverBook() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.keyword)
+            if (!this.keyword || !this.sort)
                 return;
-            const url = `/search-naver-book?keyword=${encodeURIComponent(this.keyword)}&display=${10}&start=${this.length + 1}`;
+            const keyworkd = encodeURIComponent(this.keyword);
+            const searchUrl = `/search-naver-book?keyword=${keyworkd}&display=${10}&start=${this.length + 1}&sort=${this.sort}`;
             try {
-                const data = yield CustomFetch.fetch(url);
+                const data = yield CustomFetch.fetch(searchUrl);
                 this.render(data);
             }
             catch (error) {

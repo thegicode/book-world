@@ -25,15 +25,36 @@
             <app-search>
                 <header class="header">
                     <input-search class="input-search">
-                        <form>
-                            <input
-                                type="search"
-                                value=""
-                                title="책 키워드"
-                                placeholder="검색어를 입력하세요"
-                                required
-                            />
-                            <button type="submit">찾기</button>
+                        <form class="inputSearch-form">
+                            <div class="inputSearch-search">
+                                <input
+                                    type="search"
+                                    value=""
+                                    title="책 키워드"
+                                    placeholder="검색어를 입력하세요"
+                                    required
+                                />
+                                <button type="submit">찾기</button>
+                            </div>
+                            <div class="inputSearch-sort">
+                                <label>
+                                    <span>정확도순</span>
+                                    <input
+                                        type="radio"
+                                        name="sort"
+                                        value="sim"
+                                        checked
+                                    />
+                                </label>
+                                <label>
+                                    <span>최신순</span>
+                                    <input
+                                        type="radio"
+                                        name="sort"
+                                        value="date"
+                                    />
+                                </label>
+                            </div>
                         </form>
                     </input-search>
                 </header>
@@ -48,7 +69,9 @@
                         </div>
                     </div>
                     <div class="book-list">
-                        <div class="books"></div>
+                        <div class="books">
+                            <div class="message">책을 검색하세요.</div>
+                        </div>
                         <div class="observe"></div>
                     </div>
                 </book-list>

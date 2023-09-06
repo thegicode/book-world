@@ -6,6 +6,7 @@ export default class BookList extends HTMLElement {
     books!: HTMLElement;
     observer?: Observer;
     keyword?: string;
+    sort?: string;
     length!: number;
 
     constructor() {
@@ -43,8 +44,14 @@ export default class BookList extends HTMLElement {
     }
 
     private onSearchPageInit(event: Event): void {
-        const customEvent = event as CustomEvent<{ keyword: string }>;
-        this.keyword = customEvent.detail.keyword;
+        const customEvent = event as CustomEvent<{
+            keyword: string;
+            sort: string;
+        }>;
+        const { keyword, sort } = customEvent.detail;
+
+        this.keyword = keyword;
+        this.sort = sort;
         this.length = 0;
 
         if (this.keyword) {
@@ -69,14 +76,17 @@ export default class BookList extends HTMLElement {
     }
 
     private async fetchSearchNaverBook(): Promise<void> {
-        if (!this.keyword) return;
+        if (!this.keyword || !this.sort) return;
 
-        const url = `/search-naver-book?keyword=${encodeURIComponent(
-            this.keyword
-        )}&display=${10}&start=${this.length + 1}`;
+        const keyworkd = encodeURIComponent(this.keyword);
+        const searchUrl = `/search-naver-book?keyword=${keyworkd}&display=${10}&start=${
+            this.length + 1
+        }&sort=${this.sort}`;
 
         try {
-            const data = await CustomFetch.fetch<ISearchNaverBookResult>(url);
+            const data = await CustomFetch.fetch<ISearchNaverBookResult>(
+                searchUrl
+            );
             this.render(data);
         } catch (error) {
             console.error(error);
