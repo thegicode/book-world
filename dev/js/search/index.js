@@ -987,8 +987,6 @@
       if (keyword && sort) {
         CustomEventEmitter_default.dispatch("search-page-init", { keyword, sort });
         searchElement.value = keyword;
-      } else {
-        console.log("No keyword provided for search.");
       }
     }
   };

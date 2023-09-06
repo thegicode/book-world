@@ -34,8 +34,6 @@ export default class AppSearch extends HTMLElement {
         if (keyword && sort) {
             CustomEventEmitter.dispatch("search-page-init", { keyword, sort });
             searchElement.value = keyword;
-        } else {
-            console.log("No keyword provided for search.");
         }
     }
 }

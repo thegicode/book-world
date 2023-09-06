@@ -26,9 +26,6 @@ export default class AppSearch extends HTMLElement {
             CustomEventEmitter.dispatch("search-page-init", { keyword, sort });
             searchElement.value = keyword;
         }
-        else {
-            console.log("No keyword provided for search.");
-        }
     }
 }
 //# sourceMappingURL=AppSearch.js.map
