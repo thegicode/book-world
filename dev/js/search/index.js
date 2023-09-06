@@ -1011,12 +1011,14 @@
           return;
         const keyword = this.input.value;
         const sort = (_a = this.form) === null || _a === void 0 ? void 0 : _a.sort.value;
-        const url = new URL(window.location.href);
-        url.searchParams.set("keyword", keyword);
-        url.searchParams.set("sort", sort);
-        window.history.pushState({}, "", url.toString());
-        CustomEventEmitter_default.dispatch("search-page-init", { keyword, sort });
         this.input.focus();
+        if (keyword && sort) {
+          const url = new URL(window.location.href);
+          url.searchParams.set("keyword", keyword);
+          url.searchParams.set("sort", sort);
+          window.history.pushState({}, "", url.toString());
+          CustomEventEmitter_default.dispatch("search-page-init", { keyword, sort });
+        }
       };
       this.initialize();
     }
@@ -1120,6 +1122,7 @@
           return;
         const keyworkd = encodeURIComponent(this.keyword);
         const searchUrl = `/search-naver-book?keyword=${keyworkd}&display=${10}&start=${this.length + 1}&sort=${this.sort}`;
+        console.log("fetch-search: ", searchUrl);
         try {
           const data = yield CustomFetch_default.fetch(searchUrl);
           this.render(data);

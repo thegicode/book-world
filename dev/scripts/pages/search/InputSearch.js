@@ -16,12 +16,14 @@ export default class InputSearch extends HTMLElement {
                 return;
             const keyword = this.input.value;
             const sort = (_a = this.form) === null || _a === void 0 ? void 0 : _a.sort.value;
-            const url = new URL(window.location.href);
-            url.searchParams.set("keyword", keyword);
-            url.searchParams.set("sort", sort);
-            window.history.pushState({}, "", url.toString());
-            CustomEventEmitter.dispatch("search-page-init", { keyword, sort });
             this.input.focus();
+            if (keyword && sort) {
+                const url = new URL(window.location.href);
+                url.searchParams.set("keyword", keyword);
+                url.searchParams.set("sort", sort);
+                window.history.pushState({}, "", url.toString());
+                CustomEventEmitter.dispatch("search-page-init", { keyword, sort });
+            }
         };
         this.initialize();
     }

@@ -83,6 +83,8 @@ export default class BookList extends HTMLElement {
             this.length + 1
         }&sort=${this.sort}`;
 
+        console.log("fetch-search: ", searchUrl);
+
         try {
             const data = await CustomFetch.fetch<ISearchNaverBookResult>(
                 searchUrl

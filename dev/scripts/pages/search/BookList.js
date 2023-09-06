@@ -64,6 +64,7 @@ export default class BookList extends HTMLElement {
                 return;
             const keyworkd = encodeURIComponent(this.keyword);
             const searchUrl = `/search-naver-book?keyword=${keyworkd}&display=${10}&start=${this.length + 1}&sort=${this.sort}`;
+            console.log("fetch-search: ", searchUrl);
             try {
                 const data = yield CustomFetch.fetch(searchUrl);
                 this.render(data);
