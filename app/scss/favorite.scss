@@ -48,7 +48,7 @@ nav-gnb {
 .favorite-header {
     display: flex;
     padding: 0 1rem;
-    background: rgb(149 202 130 / 10%);
+    background: #f1fff4;
 }
 
 .favorite-category {
@@ -218,15 +218,15 @@ library-book-exist {
     .modal-container {
         padding: 1rem;
         border-radius: 10px;
-        background-color: #f2ffe2;
-        border: 1px solid #d4e7bd;
+        background-color: #f1fff4;
+        border: 1px solid #cce0d0;
 
         h3 {
             margin: 0;
             padding-bottom: 10px;
             border-bottom: 1px dashed #a1b886;
             font-size: 15px;
-            color: #5c8529;
+            color: #56755d;
         }
     }
     .category-list {
@@ -236,7 +236,7 @@ library-book-exist {
     .category-item {
         display: flex;
         box-sizing: border-box;
-        height: 28px;
+        padding: 3px 0;
         align-items: center;
         color: #333;
         .label {
@@ -244,18 +244,18 @@ library-book-exist {
         }
         button {
             margin-left: auto;
-            padding: 10px;
+            padding: 5px 8px;
             background-color: transparent;
+            font-size: 12px;
             color: #666;
             &:hover {
-                background-color: #e2f3ce;
+                background-color: #d7ecdc;
             }
         }
     }
     .category-add {
-        margin-bottom: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid #cdcccc;
+        padding: 10px 0;
+        border-top: 1px solid #dae3dc;
         label {
             margin-right: 5px;
         }
@@ -265,15 +265,16 @@ library-book-exist {
         }
         button {
             margin-left: auto;
-            padding: 10px;
+            padding: 5px 8px;
             background-color: transparent;
+            font-size: 12px;
             color: #666;
             &:hover {
-                background-color: #e2f3ce;
+                background-color: #d7ecdc;
             }
         }
     }
-    .modal-actions {
+    .modal-footer {
         display: flex;
         justify-content: space-between;
         margin: 0 -1rem -1rem -1rem;
@@ -281,7 +282,7 @@ library-book-exist {
             flex: 1;
             padding: 10px;
             border-radius: 0;
-            background-color: #e2f3ce;
+            background-color: #e5f3e8;
             font-size: 12px;
             color: #666;
             &:not(:first-child) {
