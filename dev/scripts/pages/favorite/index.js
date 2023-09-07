@@ -9,5 +9,5 @@ customElements.define("book-description", BookDescription);
 customElements.define("library-book-exist", LibraryBookExist);
 customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
 customElements.define("book-image", BookImage);
-customElements.define("modal-category", ModalCategory);
+customElements.define("popup-category", ModalCategory);
 //# sourceMappingURL=index.js.map

@@ -951,7 +951,7 @@
       super();
       this.booksElement = this.querySelector(".favorite-books");
       this.headerElement = this.querySelector(".favorite-header");
-      this.modalCateogy = document.querySelector(".modal-category");
+      this.modalCateogy = document.querySelector(".popup-category");
     }
     // $countEl
     // $observer
@@ -1220,6 +1220,6 @@
   customElements.define("library-book-exist", LibraryBookExist);
   customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
   customElements.define("book-image", BookImage);
-  customElements.define("modal-category", ModalCategory);
+  customElements.define("popup-category", ModalCategory);
 })();
 //# sourceMappingURL=index.js.map

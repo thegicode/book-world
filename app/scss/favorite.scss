@@ -209,13 +209,13 @@ library-book-exist {
     font-size: 1rem;
 }
 
-.modal-category {
+.popup-category {
     position: absolute;
     top: 5.3rem;
     right: 10px;
     z-index: 10;
 
-    .modal-container {
+    .popup-container {
         padding: 1rem;
         border-radius: 10px;
         background-color: #f1fff4;
@@ -274,7 +274,7 @@ library-book-exist {
             }
         }
     }
-    .modal-footer {
+    .popup-footer {
         display: flex;
         justify-content: space-between;
         margin: 0 -1rem -1rem -1rem;
