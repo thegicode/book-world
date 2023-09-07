@@ -1,4 +1,4 @@
-import { getState } from "../modules/model";
+import { state } from "../modules/model";
 
 export default class NavGnb extends HTMLElement {
     protected favoriteBooksSize: number;
@@ -8,21 +8,26 @@ export default class NavGnb extends HTMLElement {
         this.favoriteBooksSize = this.getFavoriteBooksSize();
     }
 
-    connectedCallback(): void {
+    connectedCallback() {
         this.render();
         this.setSelectedMenu();
-        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
     }
 
-    disconnectedCallback(): void {
-        // CustomEventEmitter.remove('favorite-books-changed', this.updateFavoriteBooksSize)
+    disconnectedCallback() {
+        //
     }
 
     protected getFavoriteBooksSize(): number {
-        return getState().favoriteBooks.length;
+        function getTotalItemCount(data: Record<string, string[]>) {
+            return Object.values(data).reduce(
+                (sum, currentArray: string[]) => sum + currentArray.length,
+                0
+            );
+        }
+        return getTotalItemCount(state.category);
     }
 
-    protected render(): void {
+    protected render() {
         this.innerHTML = `
             <nav class="gnb">
                 <a class="gnb-item" href="./search">책 검색</a>

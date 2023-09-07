@@ -49,15 +49,24 @@ nav-gnb {
     display: flex;
     padding: 0 1rem;
     background: #f1fff4;
+    &[hidden] {
+        display: none;
+    }
 }
 
 .favorite-category {
-    a {
+    button {
         display: inline-block;
         padding: 10px;
+        background-color: transparent;
         font-size: 14px;
         text-decoration: none;
-        color: #333;
+        color: #666;
+        &:hover,
+        &:active {
+            color: #333;
+            text-decoration: underline;
+        }
     }
 }
 

@@ -671,7 +671,10 @@
     disconnectedCallback() {
     }
     getFavoriteBooksSize() {
-      return getState().favoriteBooks.length;
+      function getTotalItemCount(data) {
+        return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      }
+      return getTotalItemCount(state.category);
     }
     render() {
       this.innerHTML = `

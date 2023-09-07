@@ -838,7 +838,10 @@
     disconnectedCallback() {
     }
     getFavoriteBooksSize() {
-      return getState().favoriteBooks.length;
+      function getTotalItemCount(data) {
+        return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      }
+      return getTotalItemCount(state.category);
     }
     render() {
       this.innerHTML = `
@@ -957,40 +960,51 @@
       this.booksElement = this.querySelector(".favorite-books");
       this.headerElement = this.querySelector(".favorite-header");
       this.modalCateogy = document.querySelector("overlay-category");
-    }
-    // $countEl
-    // $observer
-    // set count(value) {
-    //     this.setAttribute('count', value)
-    // }
-    // get count() {
-    //     return this.getAttribute('count')
-    // }
-    get favoriteBooks() {
-      return getState().favoriteBooks;
+      this.template = document.querySelector("#tp-favorite-item");
     }
     connectedCallback() {
-      this.header();
-      if (this.favoriteBooks.length === 0) {
+      if (Object.keys(state.category).length === 0) {
         this.renderMessage();
         return;
       }
-      this.render();
+      this.header();
+      const firstKey = Object.keys(state.category)[0];
+      this.render(firstKey);
     }
     disconnectedCallback() {
     }
-    // updateFavoriteBooksSize({ detail }) {
-    //     this.count = detail.count
-    // }
-    // updateCount() {
-    //     const count = this.count || this.favoriteBooks.length
-    //     this.$countEl.textContent = `${count}권`
-    // }
-    render() {
+    header() {
+      this.headerNav();
+      this.overlayCatalog();
+    }
+    headerNav() {
+      var _a;
       const fragment = new DocumentFragment();
-      const template = document.querySelector("#tp-favorite-item").content.firstElementChild;
+      Object.keys(state.category).forEach((category) => {
+        const el = document.createElement("button");
+        el.textContent = category;
+        el.addEventListener("click", () => {
+          this.render(category);
+        });
+        fragment.appendChild(el);
+      });
+      (_a = this.querySelector(".favorite-category")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
+      this.headerElement.hidden = false;
+    }
+    overlayCatalog() {
+      const modal = this.modalCateogy;
+      const changeButton = this.headerElement.querySelector(".favorite-changeButton");
+      changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
+        modal.hidden = Boolean(!modal.hidden);
+      });
+    }
+    render(key) {
+      var _a;
+      const fragment = new DocumentFragment();
+      const template = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+      this.booksElement.innerHTML = "";
       if (template) {
-        this.favoriteBooks.forEach((isbn) => {
+        state.category[key].forEach((isbn) => {
           const el = template.cloneNode(true);
           el.dataset.isbn = isbn;
           fragment.appendChild(el);
@@ -1005,18 +1019,6 @@
         element.textContent = "\uAD00\uC2EC\uCC45\uC744 \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.";
         this.booksElement.appendChild(element);
       }
-    }
-    // attributeChangedCallback(name, oldValue, newValue) {
-    //     if (name === 'count') {
-    //         this.updateCount()
-    //     }
-    // }
-    header() {
-      const modal = this.modalCateogy;
-      const changeButton = this.headerElement.querySelector(".favorite-changeButton");
-      changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
-        modal.hidden = Boolean(!modal.hidden);
-      });
     }
   };
 

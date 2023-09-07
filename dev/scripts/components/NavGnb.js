@@ -1,4 +1,4 @@
-import { getState } from "../modules/model";
+import { state } from "../modules/model";
 export default class NavGnb extends HTMLElement {
     constructor() {
         super();
@@ -7,13 +7,15 @@ export default class NavGnb extends HTMLElement {
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
-        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
     }
     disconnectedCallback() {
-        // CustomEventEmitter.remove('favorite-books-changed', this.updateFavoriteBooksSize)
+        //
     }
     getFavoriteBooksSize() {
-        return getState().favoriteBooks.length;
+        function getTotalItemCount(data) {
+            return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
+        }
+        return getTotalItemCount(state.category);
     }
     render() {
         this.innerHTML = `

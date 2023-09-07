@@ -1,27 +1,11 @@
 // import { CustomEventEmitter } from '../../utils/index.js'
-import { getState } from "../../modules/model";
+import { state } from "../../modules/model";
 
 export default class Favorite extends HTMLElement {
-    // static get observedAttributes() {
-    //     return ['count']
-    // }
-
     booksElement: HTMLElement;
     headerElement: HTMLElement;
     modalCateogy: HTMLElement;
-    // $countEl
-    // $observer
-
-    // set count(value) {
-    //     this.setAttribute('count', value)
-    // }
-    // get count() {
-    //     return this.getAttribute('count')
-    // }
-
-    get favoriteBooks() {
-        return getState().favoriteBooks;
-    }
+    template: HTMLTemplateElement | null;
 
     constructor() {
         super();
@@ -38,57 +22,61 @@ export default class Favorite extends HTMLElement {
             "overlay-category"
         ) as HTMLElement;
 
-        // this.$countEl = this.querySelector('.count')
-
-        // this.updateCount = this.updateCount.bind(this)
-        // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
+        this.template = document.querySelector("#tp-favorite-item");
     }
 
     connectedCallback() {
-        // 속성 변경을 감지하기 위해 MutationObserver를 사용합니다.
-        // this.$observer = new MutationObserver(this.updateCount)
-        // this.$observer = new MutationObserver(mutations => {
-        //     for (const mutation of mutations) {
-        //         if (mutation.attributeName === 'count') {
-        //             this.updateCount()
-        //         } else if (mutation.type ==='childList') {
-
-        //         }
-        //     }
-        // })
-        // this.$observer.observe(this, { attributes: true, childList: true, subtree: true })
-
-        // this.updateCount()
-
-        this.header();
-
-        if (this.favoriteBooks.length === 0) {
+        if (Object.keys(state.category).length === 0) {
             this.renderMessage();
             return;
         }
-        this.render();
+
+        this.header();
+
+        const firstKey = Object.keys(state.category)[0];
+        this.render(firstKey);
     }
 
     disconnectedCallback() {
-        // this.$observer.disconnect();
+        //
     }
 
-    // updateFavoriteBooksSize({ detail }) {
-    //     this.count = detail.count
-    // }
+    private header() {
+        this.headerNav();
+        this.overlayCatalog();
+    }
 
-    // updateCount() {
-    //     const count = this.count || this.favoriteBooks.length
-    //     this.$countEl.textContent = `${count}권`
-    // }
-
-    private render() {
+    private headerNav() {
         const fragment = new DocumentFragment();
-        const template = (
-            document.querySelector("#tp-favorite-item") as HTMLTemplateElement
-        ).content.firstElementChild;
+        Object.keys(state.category).forEach((category: string) => {
+            const el = document.createElement("button");
+            el.textContent = category;
+            el.addEventListener("click", () => {
+                this.render(category);
+            });
+            fragment.appendChild(el);
+        });
+        this.querySelector(".favorite-category")?.appendChild(fragment);
+
+        this.headerElement.hidden = false;
+    }
+
+    private overlayCatalog() {
+        const modal = this.modalCateogy;
+        const changeButton = this.headerElement.querySelector(
+            ".favorite-changeButton"
+        );
+        changeButton?.addEventListener("click", () => {
+            modal.hidden = Boolean(!modal.hidden);
+        });
+    }
+
+    private render(key: string) {
+        const fragment = new DocumentFragment();
+        const template = this.template?.content.firstElementChild;
+        this.booksElement.innerHTML = "";
         if (template) {
-            this.favoriteBooks.forEach((isbn) => {
+            state.category[key].forEach((isbn: string) => {
                 const el = template.cloneNode(true) as HTMLElement;
                 el.dataset.isbn = isbn;
                 fragment.appendChild(el);
@@ -107,22 +95,5 @@ export default class Favorite extends HTMLElement {
             element.textContent = "관심책을 등록해주세요.";
             this.booksElement.appendChild(element);
         }
-    }
-
-    // attributeChangedCallback(name, oldValue, newValue) {
-    //     if (name === 'count') {
-    //         this.updateCount()
-    //     }
-    // }
-
-    private header() {
-        const modal = this.modalCateogy;
-        const changeButton = this.headerElement.querySelector(
-            ".favorite-changeButton"
-        );
-
-        changeButton?.addEventListener("click", () => {
-            modal.hidden = Boolean(!modal.hidden);
-        });
     }
 }
