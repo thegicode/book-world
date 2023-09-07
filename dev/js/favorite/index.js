@@ -1140,7 +1140,7 @@
     }
   };
 
-  // dev/scripts/pages/favorite/ModalCategory.js
+  // dev/scripts/pages/favorite/PopupCategory.js
   var ModalCategory = class extends HTMLElement {
     constructor() {
       super();
