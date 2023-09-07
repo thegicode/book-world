@@ -5,7 +5,7 @@ export default class Favorite extends HTMLElement {
         super();
         this.booksElement = this.querySelector(".favorite-books");
         this.headerElement = this.querySelector(".favorite-header");
-        this.modalCateogy = document.querySelector(".popup-category");
+        this.modalCateogy = document.querySelector("overlay-category");
         // this.$countEl = this.querySelector('.count')
         // this.updateCount = this.updateCount.bind(this)
         // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))

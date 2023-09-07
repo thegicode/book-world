@@ -102,6 +102,12 @@ const hasCategory = (name: string): boolean => {
     return name in state.category;
 };
 
+const updateCategory = (name: string, newName: string) => {
+    state.category[newName] = state.category[name];
+    delete state.category[name];
+    setState(state);
+};
+
 const deleteCategory = (name: string) => {
     delete state.category[name];
     setState(state);
@@ -123,5 +129,6 @@ export {
     removeDetailRegion,
     addCategory,
     hasCategory,
+    updateCategory,
     deleteCategory,
 };

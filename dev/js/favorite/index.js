@@ -815,6 +815,11 @@
   var hasCategory = (name) => {
     return name in state.category;
   };
+  var updateCategory = (name, newName) => {
+    state.category[newName] = state.category[name];
+    delete state.category[name];
+    setState(state);
+  };
   var deleteCategory = (name) => {
     delete state.category[name];
     setState(state);
@@ -951,7 +956,7 @@
       super();
       this.booksElement = this.querySelector(".favorite-books");
       this.headerElement = this.querySelector(".favorite-header");
-      this.modalCateogy = document.querySelector(".popup-category");
+      this.modalCateogy = document.querySelector("overlay-category");
     }
     // $countEl
     // $observer
@@ -1140,8 +1145,8 @@
     }
   };
 
-  // dev/scripts/pages/favorite/PopupCategory.js
-  var ModalCategory = class extends HTMLElement {
+  // dev/scripts/pages/favorite/OvarlayCategory.js
+  var OverlayCategory = class extends HTMLElement {
     constructor() {
       super();
       this.handleClickAdd = () => {
@@ -1157,7 +1162,7 @@
           }
           addCategory(category);
           const cloned = this.createItem(category);
-          (_a = this.listElement) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
+          (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
           this.addInput.value = "";
         }
       };
@@ -1169,11 +1174,14 @@
         this.hidden = true;
       };
       this.form = this.querySelector("form");
-      this.listElement = this.querySelector(".category-list");
+      this.list = this.querySelector(".category-list");
       this.template = document.querySelector("#tp-category-item");
       this.addButton = this.querySelector(".addButton");
       this.addInput = this.querySelector("input[name='add']");
       this.closeButton = this.querySelector(".closeButton");
+    }
+    static get observedAttributes() {
+      return ["hidden"];
     }
     connectedCallback() {
       var _a, _b, _c;
@@ -1188,6 +1196,17 @@
       (_b = this.form) === null || _b === void 0 ? void 0 : _b.removeEventListener("submit", this.handleSubmit);
       (_c = this.closeButton) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.handleClose);
     }
+    attributeChangedCallback(name) {
+      if (name === "hidden" && !this.hasAttribute("hidden")) {
+        this.initial();
+      }
+    }
+    initial() {
+      if (this.list) {
+        this.list.innerHTML = "";
+        this.render();
+      }
+    }
     render() {
       var _a;
       const fragment = new DocumentFragment();
@@ -1195,16 +1214,21 @@
         const cloned = this.createItem(category);
         fragment.appendChild(cloned);
       });
-      (_a = this.listElement) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
+      (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
     }
     createItem(category) {
-      var _a, _b, _c;
+      var _a, _b, _c, _d;
       const cloned = (_b = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
-      const label = cloned.querySelector(".label");
-      if (label) {
-        label.textContent = category;
+      const input = cloned.querySelector("input[name='category']");
+      if (input) {
+        input.value = category;
       }
-      (_c = cloned.querySelector(".deleteButton")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
+      (_c = cloned.querySelector(".rename")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
+        if (input.value && category !== input.value) {
+          updateCategory(category, input.value);
+        }
+      });
+      (_d = cloned.querySelector(".delete")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => {
         cloned.remove();
         deleteCategory(category);
       });
@@ -1220,6 +1244,6 @@
   customElements.define("library-book-exist", LibraryBookExist);
   customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
   customElements.define("book-image", BookImage);
-  customElements.define("popup-category", ModalCategory);
+  customElements.define("overlay-category", OverlayCategory);
 })();
 //# sourceMappingURL=index.js.map

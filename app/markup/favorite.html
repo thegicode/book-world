@@ -38,19 +38,19 @@
             </app-favorite>
         </div>
 
-        <popup-category class="popup-category" hidden>
-            <form class="popup-container">
+        <overlay-category class="overlay-category" hidden>
+            <form class="overlay-container">
                 <h3>즐겨찾기 카테고리</h3>
                 <ul class="category-list"></ul>
                 <div class="category-add">
                     <label><input type="text" name="add" /></label>
                     <button type="button" class="addButton">추가</button>
                 </div>
-                <footer class="popup-footer">
+                <footer class="overlay-footer">
                     <button type="button" class="closeButton">닫기</button>
                 </footer>
             </form>
-        </popup-category>
+        </overlay-category>
 
         <template id="tp-favorite-item">
             <favorite-item>
@@ -95,8 +95,9 @@
 
         <template id="tp-category-item">
             <li class="category-item">
-                <span class="label"></span>
-                <button type="button" class="deleteButton">삭제</button>
+                <span class="label"><input type="text" name="category" /></span>
+                <button type="button" class="rename">이름 변경</button>
+                <button type="button" class="delete">삭제</button>
             </li>
         </template>
     </body>

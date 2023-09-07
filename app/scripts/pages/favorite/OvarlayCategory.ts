@@ -2,22 +2,27 @@ import {
     state,
     addCategory,
     hasCategory,
+    updateCategory,
     deleteCategory,
 } from "../../modules/model";
 
-export default class ModalCategory extends HTMLElement {
+export default class OverlayCategory extends HTMLElement {
     form: HTMLFormElement | null;
-    listElement: HTMLElement | null;
+    list: HTMLElement | null;
     template: HTMLTemplateElement | null;
     addButton: HTMLButtonElement | null;
     addInput: HTMLInputElement | null;
     closeButton: HTMLButtonElement | null;
 
+    static get observedAttributes() {
+        return ["hidden"];
+    }
+
     constructor() {
         super();
 
         this.form = this.querySelector("form");
-        this.listElement = this.querySelector(".category-list");
+        this.list = this.querySelector(".category-list");
         this.template = document.querySelector("#tp-category-item");
         this.addButton = this.querySelector(".addButton");
         this.addInput = this.querySelector("input[name='add']");
@@ -38,6 +43,19 @@ export default class ModalCategory extends HTMLElement {
         this.closeButton?.removeEventListener("click", this.handleClose);
     }
 
+    attributeChangedCallback(name: string) {
+        if (name === "hidden" && !this.hasAttribute("hidden")) {
+            this.initial();
+        }
+    }
+
+    private initial() {
+        if (this.list) {
+            this.list.innerHTML = "";
+            this.render();
+        }
+    }
+
     private render() {
         const fragment = new DocumentFragment();
         Object.keys(state.category).forEach((category) => {
@@ -45,7 +63,7 @@ export default class ModalCategory extends HTMLElement {
             fragment.appendChild(cloned);
         });
 
-        this.listElement?.appendChild(fragment);
+        this.list?.appendChild(fragment);
     }
 
     private createItem(category: string) {
@@ -53,12 +71,20 @@ export default class ModalCategory extends HTMLElement {
             true
         ) as HTMLElement;
 
-        const label = cloned.querySelector(".label");
-        if (label) {
-            label.textContent = category;
+        const input = cloned.querySelector(
+            "input[name='category']"
+        ) as HTMLInputElement;
+        if (input) {
+            input.value = category;
         }
 
-        cloned.querySelector(".deleteButton")?.addEventListener("click", () => {
+        cloned.querySelector(".rename")?.addEventListener("click", () => {
+            if (input.value && category !== input.value) {
+                updateCategory(category, input.value);
+            }
+        });
+
+        cloned.querySelector(".delete")?.addEventListener("click", () => {
             cloned.remove();
             deleteCategory(category);
         });
@@ -81,7 +107,7 @@ export default class ModalCategory extends HTMLElement {
             addCategory(category);
 
             const cloned = this.createItem(category);
-            this.listElement?.appendChild(cloned);
+            this.list?.appendChild(cloned);
 
             this.addInput.value = "";
         }

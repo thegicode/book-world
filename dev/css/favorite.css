@@ -316,84 +316,88 @@ library-book-exist {
   font-size: 1rem;
 }
 
-.popup-category {
+.overlay-category {
   position: absolute;
   top: 5.3rem;
   right: 10px;
   z-index: 10;
 }
-.popup-category .popup-container {
+.overlay-category .overlay-container {
   padding: 1rem;
   border-radius: 10px;
   background-color: #f1fff4;
   border: 1px solid #cce0d0;
 }
-.popup-category .popup-container h3 {
+.overlay-category .overlay-container h3 {
   margin: 0;
   padding-bottom: 10px;
   border-bottom: 1px dashed #a1b886;
   font-size: 15px;
   color: #56755d;
 }
-.popup-category .category-list {
+.overlay-category .category-list {
   padding: 0;
   list-style: none;
 }
-.popup-category .category-item {
+.overlay-category .category-item {
   display: flex;
   box-sizing: border-box;
   padding: 3px 0;
   align-items: center;
   color: #333;
 }
-.popup-category .category-item .label {
+.overlay-category .category-item input[name=category] {
+  padding: 6px 8px;
+  border: 1px solid #d7ecdc;
   font-size: 14px;
+  color: #666;
 }
-.popup-category .category-item button {
-  margin-left: auto;
+.overlay-category .category-item button {
+  margin-left: 5px;
   padding: 5px 8px;
   background-color: transparent;
   font-size: 12px;
   color: #666;
 }
-.popup-category .category-item button:hover {
+.overlay-category .category-item button:hover {
   background-color: #d7ecdc;
 }
-.popup-category .category-add {
+.overlay-category .category-add {
+  display: flex;
   padding: 10px 0;
   border-top: 1px solid #dae3dc;
 }
-.popup-category .category-add label {
+.overlay-category .category-add label {
   margin-right: 5px;
 }
-.popup-category .category-add input[type=text] {
+.overlay-category .category-add input[type=text] {
   padding: 5px;
-  border: 1px solid #ddd;
+  border: 1px solid #d7ecdc;
 }
-.popup-category .category-add button {
+.overlay-category .category-add button {
   margin-left: auto;
   padding: 5px 8px;
   background-color: transparent;
   font-size: 12px;
   color: #666;
 }
-.popup-category .category-add button:hover {
+.overlay-category .category-add button:hover {
   background-color: #d7ecdc;
 }
-.popup-category .popup-footer {
+.overlay-category .overlay-footer {
   display: flex;
   justify-content: space-between;
   margin: 0 -1rem -1rem -1rem;
 }
-.popup-category .popup-footer button {
+.overlay-category .overlay-footer button {
   flex: 1;
   padding: 10px;
   border-radius: 0;
-  background-color: #e5f3e8;
+  background-color: #d9f4df;
   font-size: 12px;
   color: #666;
 }
-.popup-category .popup-footer button:not(:first-child) {
+.overlay-category .overlay-footer button:not(:first-child) {
   border-left: 1px solid #ddd;
 }
 

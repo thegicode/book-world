@@ -82,9 +82,14 @@ const addCategory = (name) => {
 const hasCategory = (name) => {
     return name in state.category;
 };
+const updateCategory = (name, newName) => {
+    state.category[newName] = state.category[name];
+    delete state.category[name];
+    setState(state);
+};
 const deleteCategory = (name) => {
     delete state.category[name];
     setState(state);
 };
-export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, deleteCategory, };
+export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, updateCategory, deleteCategory, };
 //# sourceMappingURL=model.js.map

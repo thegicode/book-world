@@ -35,7 +35,7 @@ export default class Favorite extends HTMLElement {
         ) as HTMLElement;
 
         this.modalCateogy = document.querySelector(
-            ".popup-category"
+            "overlay-category"
         ) as HTMLElement;
 
         // this.$countEl = this.querySelector('.count')
