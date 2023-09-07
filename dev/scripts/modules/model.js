@@ -5,6 +5,7 @@ const initialState = {
     favoriteBooks: [],
     libraries: {},
     regions: {},
+    category: {},
 };
 const storageKey = "BookWorld";
 const setState = (newState) => {
@@ -74,5 +75,16 @@ const removeDetailRegion = (regionName, detailName) => {
     delete state.regions[regionName][detailName];
     setState(state);
 };
-export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, };
+const addCategory = (name) => {
+    state.category[name] = [];
+    setState(state);
+};
+const hasCategory = (name) => {
+    return name in state.category;
+};
+const deleteCategory = (name) => {
+    delete state.category[name];
+    setState(state);
+};
+export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, deleteCategory, };
 //# sourceMappingURL=model.js.map

@@ -769,7 +769,8 @@
   var initialState = {
     favoriteBooks: [],
     libraries: {},
-    regions: {}
+    regions: {},
+    category: {}
   };
   var storageKey = "BookWorld";
   var setState = (newState) => {
@@ -806,6 +807,17 @@
   };
   var isFavoriteBook = (isbn) => {
     return state.favoriteBooks.includes(isbn);
+  };
+  var addCategory = (name) => {
+    state.category[name] = [];
+    setState(state);
+  };
+  var hasCategory = (name) => {
+    return name in state.category;
+  };
+  var deleteCategory = (name) => {
+    delete state.category[name];
+    setState(state);
   };
 
   // dev/scripts/components/NavGnb.js
@@ -937,7 +949,9 @@
   var Favorite = class extends HTMLElement {
     constructor() {
       super();
-      this.$booksEl = this.querySelector(".favorite-books");
+      this.booksElement = this.querySelector(".favorite-books");
+      this.headerElement = this.querySelector(".favorite-header");
+      this.modalCateogy = document.querySelector(".modal-category");
     }
     // $countEl
     // $observer
@@ -951,6 +965,7 @@
       return getState().favoriteBooks;
     }
     connectedCallback() {
+      this.header();
       if (this.favoriteBooks.length === 0) {
         this.renderMessage();
         return;
@@ -976,15 +991,27 @@
           fragment.appendChild(el);
         });
       }
-      this.$booksEl.appendChild(fragment);
+      this.booksElement.appendChild(fragment);
     }
     renderMessage() {
       const template = document.querySelector("#tp-message").content.firstElementChild;
       if (template) {
         const element = template.cloneNode(true);
         element.textContent = "\uAD00\uC2EC\uCC45\uC744 \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.";
-        this.$booksEl.appendChild(element);
+        this.booksElement.appendChild(element);
       }
+    }
+    // attributeChangedCallback(name, oldValue, newValue) {
+    //     if (name === 'count') {
+    //         this.updateCount()
+    //     }
+    // }
+    header() {
+      const modal = this.modalCateogy;
+      const changeButton = this.headerElement.querySelector(".favorite-changeButton");
+      changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
+        modal.hidden = Boolean(!modal.hidden);
+      });
     }
   };
 
@@ -1113,6 +1140,78 @@
     }
   };
 
+  // dev/scripts/pages/favorite/ModalCategory.js
+  var ModalCategory = class extends HTMLElement {
+    constructor() {
+      super();
+      this.handleClickAdd = () => {
+        var _a;
+        if (!this.addInput)
+          return;
+        const category = this.addInput.value;
+        if (category) {
+          if (hasCategory(category)) {
+            alert("\uC911\uBCF5\uB41C \uC774\uB984\uC785\uB2C8\uB2E4.");
+            this.addInput.value = "";
+            return;
+          }
+          addCategory(category);
+          const cloned = this.createItem(category);
+          (_a = this.listElement) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
+          this.addInput.value = "";
+        }
+      };
+      this.handleSubmit = (event) => {
+        event.preventDefault();
+        this.handleClickAdd();
+      };
+      this.handleClose = () => {
+        this.hidden = true;
+      };
+      this.form = this.querySelector("form");
+      this.listElement = this.querySelector(".category-list");
+      this.template = document.querySelector("#tp-category-item");
+      this.addButton = this.querySelector(".addButton");
+      this.addInput = this.querySelector("input[name='add']");
+      this.closeButton = this.querySelector(".closeButton");
+    }
+    connectedCallback() {
+      var _a, _b, _c;
+      this.render();
+      (_a = this.addButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.handleClickAdd);
+      (_b = this.form) === null || _b === void 0 ? void 0 : _b.addEventListener("submit", this.handleSubmit);
+      (_c = this.closeButton) === null || _c === void 0 ? void 0 : _c.addEventListener("click", this.handleClose);
+    }
+    disconnectedCallback() {
+      var _a, _b, _c;
+      (_a = this.addButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.handleClickAdd);
+      (_b = this.form) === null || _b === void 0 ? void 0 : _b.removeEventListener("submit", this.handleSubmit);
+      (_c = this.closeButton) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.handleClose);
+    }
+    render() {
+      var _a;
+      const fragment = new DocumentFragment();
+      Object.keys(state.category).forEach((category) => {
+        const cloned = this.createItem(category);
+        fragment.appendChild(cloned);
+      });
+      (_a = this.listElement) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
+    }
+    createItem(category) {
+      var _a, _b, _c;
+      const cloned = (_b = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
+      const label = cloned.querySelector(".label");
+      if (label) {
+        label.textContent = category;
+      }
+      (_c = cloned.querySelector(".deleteButton")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
+        cloned.remove();
+        deleteCategory(category);
+      });
+      return cloned;
+    }
+  };
+
   // dev/scripts/pages/favorite/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-favorite", Favorite);
@@ -1121,5 +1220,6 @@
   customElements.define("library-book-exist", LibraryBookExist);
   customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
   customElements.define("book-image", BookImage);
+  customElements.define("modal-category", ModalCategory);
 })();
 //# sourceMappingURL=index.js.map

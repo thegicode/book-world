@@ -616,7 +616,8 @@
   var initialState = {
     favoriteBooks: [],
     libraries: {},
-    regions: {}
+    regions: {},
+    category: {}
   };
   var storageKey = "BookWorld";
   var setState = (newState) => {

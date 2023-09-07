@@ -6,7 +6,9 @@ export default class Favorite extends HTMLElement {
     //     return ['count']
     // }
 
-    $booksEl: HTMLElement;
+    booksElement: HTMLElement;
+    headerElement: HTMLElement;
+    modalCateogy: HTMLElement;
     // $countEl
     // $observer
 
@@ -24,7 +26,18 @@ export default class Favorite extends HTMLElement {
     constructor() {
         super();
 
-        this.$booksEl = this.querySelector(".favorite-books") as HTMLElement;
+        this.booksElement = this.querySelector(
+            ".favorite-books"
+        ) as HTMLElement;
+
+        this.headerElement = this.querySelector(
+            ".favorite-header"
+        ) as HTMLElement;
+
+        this.modalCateogy = document.querySelector(
+            ".modal-category"
+        ) as HTMLElement;
+
         // this.$countEl = this.querySelector('.count')
 
         // this.updateCount = this.updateCount.bind(this)
@@ -46,6 +59,8 @@ export default class Favorite extends HTMLElement {
         // this.$observer.observe(this, { attributes: true, childList: true, subtree: true })
 
         // this.updateCount()
+
+        this.header();
 
         if (this.favoriteBooks.length === 0) {
             this.renderMessage();
@@ -80,7 +95,7 @@ export default class Favorite extends HTMLElement {
             });
         }
 
-        this.$booksEl.appendChild(fragment);
+        this.booksElement.appendChild(fragment);
     }
 
     private renderMessage() {
@@ -90,7 +105,7 @@ export default class Favorite extends HTMLElement {
         if (template) {
             const element = template.cloneNode(true);
             element.textContent = "관심책을 등록해주세요.";
-            this.$booksEl.appendChild(element);
+            this.booksElement.appendChild(element);
         }
     }
 
@@ -99,4 +114,15 @@ export default class Favorite extends HTMLElement {
     //         this.updateCount()
     //     }
     // }
+
+    private header() {
+        const modal = this.modalCateogy;
+        const changeButton = this.headerElement.querySelector(
+            ".favorite-changeButton"
+        );
+
+        changeButton?.addEventListener("click", () => {
+            modal.hidden = Boolean(!modal.hidden);
+        });
+    }
 }

@@ -3,7 +3,9 @@ import { getState } from "../../modules/model";
 export default class Favorite extends HTMLElement {
     constructor() {
         super();
-        this.$booksEl = this.querySelector(".favorite-books");
+        this.booksElement = this.querySelector(".favorite-books");
+        this.headerElement = this.querySelector(".favorite-header");
+        this.modalCateogy = document.querySelector(".modal-category");
         // this.$countEl = this.querySelector('.count')
         // this.updateCount = this.updateCount.bind(this)
         // CustomEventEmitter.add('favorite-books-changed', this.updateFavoriteBooksSize.bind(this))
@@ -32,6 +34,7 @@ export default class Favorite extends HTMLElement {
         // })
         // this.$observer.observe(this, { attributes: true, childList: true, subtree: true })
         // this.updateCount()
+        this.header();
         if (this.favoriteBooks.length === 0) {
             this.renderMessage();
             return;
@@ -58,15 +61,27 @@ export default class Favorite extends HTMLElement {
                 fragment.appendChild(el);
             });
         }
-        this.$booksEl.appendChild(fragment);
+        this.booksElement.appendChild(fragment);
     }
     renderMessage() {
         const template = document.querySelector("#tp-message").content.firstElementChild;
         if (template) {
             const element = template.cloneNode(true);
             element.textContent = "관심책을 등록해주세요.";
-            this.$booksEl.appendChild(element);
+            this.booksElement.appendChild(element);
         }
+    }
+    // attributeChangedCallback(name, oldValue, newValue) {
+    //     if (name === 'count') {
+    //         this.updateCount()
+    //     }
+    // }
+    header() {
+        const modal = this.modalCateogy;
+        const changeButton = this.headerElement.querySelector(".favorite-changeButton");
+        changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
+            modal.hidden = Boolean(!modal.hidden);
+        });
     }
 }
 //# sourceMappingURL=Favorite.js.map

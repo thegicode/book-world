@@ -176,19 +176,39 @@ nav-gnb {
   font-size: 14px;
   color: #4f4f4f;
 }
-.favorite-header {
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
-}
 .favorite-books {
   overflow: auto;
   flex: 1;
   list-style: none;
-  padding: 10px 0;
 }
 .favorite-actions {
   padding: 0 1rem;
+}
+
+.favorite-header {
+  display: flex;
+  padding: 0 1rem;
+  background: rgba(149, 202, 130, 0.1);
+}
+
+.favorite-category a {
+  display: inline-block;
+  padding: 10px;
+  font-size: 14px;
+  text-decoration: none;
+  color: #333;
+}
+
+.favorite-changeButton {
+  margin-left: auto;
+  padding: 0 10px;
+  background-color: transparent;
+  font-size: 12px;
+  color: #666;
+}
+.favorite-changeButton:hover {
+  color: #333;
+  text-decoration: underline;
 }
 
 favorite-item {
@@ -294,6 +314,86 @@ library-book-exist {
   margin-top: 2rem;
   text-align: center;
   font-size: 1rem;
+}
+
+.modal-category {
+  position: absolute;
+  top: 5.3rem;
+  right: 10px;
+  z-index: 10;
+}
+.modal-category .modal-container {
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: #f2ffe2;
+  border: 1px solid #d4e7bd;
+}
+.modal-category .modal-container h3 {
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #a1b886;
+  font-size: 15px;
+  color: #5c8529;
+}
+.modal-category .category-list {
+  padding: 0;
+  list-style: none;
+}
+.modal-category .category-item {
+  display: flex;
+  box-sizing: border-box;
+  height: 28px;
+  align-items: center;
+  color: #333;
+}
+.modal-category .category-item .label {
+  font-size: 14px;
+}
+.modal-category .category-item button {
+  margin-left: auto;
+  padding: 10px;
+  background-color: transparent;
+  color: #666;
+}
+.modal-category .category-item button:hover {
+  background-color: #e2f3ce;
+}
+.modal-category .category-add {
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #cdcccc;
+}
+.modal-category .category-add label {
+  margin-right: 5px;
+}
+.modal-category .category-add input[type=text] {
+  padding: 5px;
+  border: 1px solid #ddd;
+}
+.modal-category .category-add button {
+  margin-left: auto;
+  padding: 10px;
+  background-color: transparent;
+  color: #666;
+}
+.modal-category .category-add button:hover {
+  background-color: #e2f3ce;
+}
+.modal-category .modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -1rem -1rem -1rem;
+}
+.modal-category .modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 0;
+  background-color: #e2f3ce;
+  font-size: 12px;
+  color: #666;
+}
+.modal-category .modal-actions button:not(:first-child) {
+  border-left: 1px solid #ddd;
 }
 
 /*# sourceMappingURL=favorite.css.map */

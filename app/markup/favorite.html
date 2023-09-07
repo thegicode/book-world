@@ -23,6 +23,12 @@
             <nav-gnb></nav-gnb>
 
             <app-favorite class="favorite">
+                <header class="favorite-header">
+                    <nav class="favorite-category">
+                        <a>기본 카테고리</a>
+                    </nav>
+                    <button class="favorite-changeButton">변경</button>
+                </header>
                 <div class="favorite-books">
                     <!-- <header class="favorite-header">
                 <h2>즐겨찾기</h2>
@@ -31,6 +37,20 @@
                 </div>
             </app-favorite>
         </div>
+
+        <modal-category class="modal-category" hidden>
+            <form class="modal-container">
+                <h3>즐겨찾기 카테고리</h3>
+                <ul class="category-list"></ul>
+                <div class="category-add">
+                    <label><input type="text" name="add" /></label>
+                    <button type="button" class="addButton">추가</button>
+                </div>
+                <footer class="modal-actions">
+                    <button type="button" class="closeButton">닫기</button>
+                </footer>
+            </form>
+        </modal-category>
 
         <template id="tp-favorite-item">
             <favorite-item>
@@ -71,6 +91,13 @@
 
         <template id="tp-message">
             <div class="favorite-message"></div>
+        </template>
+
+        <template id="tp-category-item">
+            <li class="category-item">
+                <span class="label"></span>
+                <button type="button" class="deleteButton">삭제</button>
+            </li>
         </template>
     </body>
 </html>

@@ -6,6 +6,7 @@ const initialState: IStorageData = {
     favoriteBooks: [],
     libraries: {},
     regions: {},
+    category: {},
 };
 
 const storageKey = "BookWorld";
@@ -92,6 +93,20 @@ const removeDetailRegion = (regionName: string, detailName: string): void => {
     setState(state);
 };
 
+const addCategory = (name: string): void => {
+    state.category[name] = [];
+    setState(state);
+};
+
+const hasCategory = (name: string): boolean => {
+    return name in state.category;
+};
+
+const deleteCategory = (name: string) => {
+    delete state.category[name];
+    setState(state);
+};
+
 export {
     state,
     setState,
@@ -106,4 +121,7 @@ export {
     removeRegion,
     addDetailRegion,
     removeDetailRegion,
+    addCategory,
+    hasCategory,
+    deleteCategory,
 };
