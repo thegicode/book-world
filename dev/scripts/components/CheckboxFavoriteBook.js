@@ -1,10 +1,32 @@
-import { addFavoriteBook, removeFavoriteBook, isFavoriteBook, } from "../modules/model";
+import { addFavoriteBook, removeFavoriteBook, isFavoriteBook, state, addBookInCategory, hasBookInCategory, removeBookInCategory, } from "../modules/model";
 import { updateFavoriteBooksSize } from "../modules/events";
 export default class CheckboxFavoriteBook extends HTMLElement {
     constructor() {
         super();
+        this.createCategoryElement = () => {
+            const ISBN = this.isbn || "";
+            const categoryElement = document.createElement("div");
+            categoryElement.className = "category";
+            Object.keys(state.category).forEach((category) => {
+                const button = document.createElement("button");
+                button.textContent = category;
+                if (hasBookInCategory(category, ISBN)) {
+                    button.dataset.has = "true";
+                }
+                button.addEventListener("click", () => {
+                    const hasBook = hasBookInCategory(category, ISBN);
+                    hasBook
+                        ? removeBookInCategory(category, ISBN)
+                        : addBookInCategory(category, ISBN);
+                    button.dataset.has = String(!hasBook);
+                });
+                categoryElement.appendChild(button);
+            });
+            return categoryElement;
+        };
         this.inputElement = null;
         this.isbn = null;
+        this.categoryElement = null;
     }
     connectedCallback() {
         var _a;
@@ -21,12 +43,14 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     }
     render() {
         const isbn = this.isbn || "";
+        this.categoryElement = this.createCategoryElement();
         const checked = isFavoriteBook(isbn) ? "checked" : "";
         this.innerHTML = `<label>
             <input type="checkbox" name="favorite" ${checked}>
             <span>관심책</span>
         </label>`;
         this.inputElement = this.querySelector("input");
+        this.appendChild(this.categoryElement);
     }
     onChange() {
         const ISBN = this.isbn || "";

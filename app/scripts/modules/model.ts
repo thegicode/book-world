@@ -113,6 +113,23 @@ const deleteCategory = (name: string) => {
     setState(state);
 };
 
+const addBookInCategory = (name: string, isbn: string) => {
+    state.category[name].push(isbn);
+    setState(state);
+};
+
+const hasBookInCategory = (name: string, isbn: string) => {
+    return state.category[name].includes(isbn);
+};
+
+const removeBookInCategory = (name: string, isbn: string) => {
+    const index = state.category[name].indexOf(isbn);
+    if (index !== -1) {
+        state.category[name].splice(index, 1);
+        setState(state);
+    }
+};
+
 export {
     state,
     setState,
@@ -131,4 +148,7 @@ export {
     hasCategory,
     updateCategory,
     deleteCategory,
+    addBookInCategory,
+    hasBookInCategory,
+    removeBookInCategory,
 };

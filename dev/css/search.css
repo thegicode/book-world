@@ -126,6 +126,9 @@ checkbox-favorite-book input:checked + span {
 checkbox-favorite-book input:focus-visible + span {
   outline: -webkit-focus-ring-color auto 1px;
 }
+checkbox-favorite-book .category button[data-has=true] {
+  color: red;
+}
 
 book-image {
   display: flex;

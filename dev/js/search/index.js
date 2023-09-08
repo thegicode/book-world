@@ -835,6 +835,20 @@
   var isFavoriteBook = (isbn) => {
     return state.favoriteBooks.includes(isbn);
   };
+  var addBookInCategory = (name, isbn) => {
+    state.category[name].push(isbn);
+    setState(state);
+  };
+  var hasBookInCategory = (name, isbn) => {
+    return state.category[name].includes(isbn);
+  };
+  var removeBookInCategory = (name, isbn) => {
+    const index = state.category[name].indexOf(isbn);
+    if (index !== -1) {
+      state.category[name].splice(index, 1);
+      setState(state);
+    }
+  };
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
@@ -881,8 +895,28 @@
   var CheckboxFavoriteBook = class extends HTMLElement {
     constructor() {
       super();
+      this.createCategoryElement = () => {
+        const ISBN = this.isbn || "";
+        const categoryElement = document.createElement("div");
+        categoryElement.className = "category";
+        Object.keys(state.category).forEach((category) => {
+          const button = document.createElement("button");
+          button.textContent = category;
+          if (hasBookInCategory(category, ISBN)) {
+            button.dataset.has = "true";
+          }
+          button.addEventListener("click", () => {
+            const hasBook = hasBookInCategory(category, ISBN);
+            hasBook ? removeBookInCategory(category, ISBN) : addBookInCategory(category, ISBN);
+            button.dataset.has = String(!hasBook);
+          });
+          categoryElement.appendChild(button);
+        });
+        return categoryElement;
+      };
       this.inputElement = null;
       this.isbn = null;
+      this.categoryElement = null;
     }
     connectedCallback() {
       var _a;
@@ -899,12 +933,14 @@
     }
     render() {
       const isbn = this.isbn || "";
+      this.categoryElement = this.createCategoryElement();
       const checked = isFavoriteBook(isbn) ? "checked" : "";
       this.innerHTML = `<label>
             <input type="checkbox" name="favorite" ${checked}>
             <span>\uAD00\uC2EC\uCC45</span>
         </label>`;
       this.inputElement = this.querySelector("input");
+      this.appendChild(this.categoryElement);
     }
     onChange() {
       const ISBN = this.isbn || "";

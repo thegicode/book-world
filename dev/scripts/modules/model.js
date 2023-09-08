@@ -91,5 +91,19 @@ const deleteCategory = (name) => {
     delete state.category[name];
     setState(state);
 };
-export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, updateCategory, deleteCategory, };
+const addBookInCategory = (name, isbn) => {
+    state.category[name].push(isbn);
+    setState(state);
+};
+const hasBookInCategory = (name, isbn) => {
+    return state.category[name].includes(isbn);
+};
+const removeBookInCategory = (name, isbn) => {
+    const index = state.category[name].indexOf(isbn);
+    if (index !== -1) {
+        state.category[name].splice(index, 1);
+        setState(state);
+    }
+};
+export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, updateCategory, deleteCategory, addBookInCategory, hasBookInCategory, removeBookInCategory, };
 //# sourceMappingURL=model.js.map
