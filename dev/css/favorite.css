@@ -215,7 +215,7 @@ nav-gnb {
   display: none;
 }
 
-.favorite-category button {
+.favorite-category a {
   display: inline-block;
   padding: 10px;
   background-color: transparent;
@@ -223,11 +223,11 @@ nav-gnb {
   text-decoration: none;
   color: #666;
 }
-.favorite-category button:hover, .favorite-category button:active {
+.favorite-category a:hover, .favorite-category a:active {
   color: #333;
   text-decoration: underline;
 }
-.favorite-category button[data-active=true] {
+.favorite-category a[data-active=true] {
   color: #209b3a;
 }
 

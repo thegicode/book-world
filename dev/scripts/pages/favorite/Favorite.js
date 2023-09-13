@@ -4,56 +4,22 @@ export default class Favorite extends HTMLElement {
     constructor() {
         super();
         this.booksElement = this.querySelector(".favorite-books");
-        this.headerElement = this.querySelector(".favorite-header");
-        this.modalCateogy = document.querySelector("overlay-category");
         this.template = document.querySelector("#tp-favorite-item");
-        this.currentNav = null;
+        const params = new URLSearchParams(location.search);
+        this.locationCategoryIndex = Number(params.get("category"));
     }
     connectedCallback() {
-        this.header();
         if (Object.keys(state.category).length === 0) {
             this.renderMessage();
             return;
         }
-        const firstKey = Object.keys(state.category)[0];
-        this.render(firstKey);
+        if (this.locationCategoryIndex === null)
+            return;
+        const key = Object.keys(state.category)[this.locationCategoryIndex];
+        this.render(key);
     }
     disconnectedCallback() {
         //
-    }
-    header() {
-        this.headerNav();
-        this.overlayCatalog();
-    }
-    headerNav() {
-        var _a;
-        const fragment = new DocumentFragment();
-        Object.keys(state.category).forEach((category, index) => {
-            const el = document.createElement("button");
-            el.textContent = category;
-            if (index === 0) {
-                el.dataset.active = "true";
-                this.currentNav = el;
-            }
-            el.addEventListener("click", () => {
-                this.render(category);
-                el.dataset.active = "true";
-                if (this.currentNav) {
-                    this.currentNav.dataset.active = "false";
-                    this.currentNav = el;
-                }
-            });
-            fragment.appendChild(el);
-        });
-        (_a = this.querySelector(".favorite-category")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
-        this.headerElement.hidden = false;
-    }
-    overlayCatalog() {
-        const modal = this.modalCateogy;
-        const changeButton = this.headerElement.querySelector(".favorite-changeButton");
-        changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
-            modal.hidden = Boolean(!modal.hidden);
-        });
     }
     render(key) {
         var _a;

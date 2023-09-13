@@ -968,55 +968,21 @@
     constructor() {
       super();
       this.booksElement = this.querySelector(".favorite-books");
-      this.headerElement = this.querySelector(".favorite-header");
-      this.modalCateogy = document.querySelector("overlay-category");
       this.template = document.querySelector("#tp-favorite-item");
-      this.currentNav = null;
+      const params = new URLSearchParams(location.search);
+      this.locationCategoryIndex = Number(params.get("category"));
     }
     connectedCallback() {
-      this.header();
       if (Object.keys(state.category).length === 0) {
         this.renderMessage();
         return;
       }
-      const firstKey = Object.keys(state.category)[0];
-      this.render(firstKey);
+      if (this.locationCategoryIndex === null)
+        return;
+      const key = Object.keys(state.category)[this.locationCategoryIndex];
+      this.render(key);
     }
     disconnectedCallback() {
-    }
-    header() {
-      this.headerNav();
-      this.overlayCatalog();
-    }
-    headerNav() {
-      var _a;
-      const fragment = new DocumentFragment();
-      Object.keys(state.category).forEach((category, index) => {
-        const el = document.createElement("button");
-        el.textContent = category;
-        if (index === 0) {
-          el.dataset.active = "true";
-          this.currentNav = el;
-        }
-        el.addEventListener("click", () => {
-          this.render(category);
-          el.dataset.active = "true";
-          if (this.currentNav) {
-            this.currentNav.dataset.active = "false";
-            this.currentNav = el;
-          }
-        });
-        fragment.appendChild(el);
-      });
-      (_a = this.querySelector(".favorite-category")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
-      this.headerElement.hidden = false;
-    }
-    overlayCatalog() {
-      const modal = this.modalCateogy;
-      const changeButton = this.headerElement.querySelector(".favorite-changeButton");
-      changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
-        modal.hidden = Boolean(!modal.hidden);
-      });
     }
     render(key) {
       var _a;
@@ -1039,6 +1005,59 @@
         element.textContent = "\uAD00\uC2EC\uCC45\uC744 \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.";
         this.booksElement.appendChild(element);
       }
+    }
+  };
+
+  // dev/scripts/pages/favorite/FavoriteNav.js
+  var FavoriteNav = class extends HTMLElement {
+    constructor() {
+      super();
+      this.nav = this.querySelector(".favorite-category");
+      this.overlayCategory = document.querySelector("overlay-category");
+      const params = new URLSearchParams(location.search);
+      this.locationCategoryIndex = Number(params.get("category"));
+    }
+    connectedCallback() {
+      if (this.locationCategoryIndex === null)
+        return;
+      this.render();
+      this.overlayCatalog();
+    }
+    render() {
+      if (!this.nav)
+        return;
+      this.nav.innerHTML = "";
+      const fragment = new DocumentFragment();
+      Object.keys(state.category).forEach((category, index) => {
+        const el = this.createItem(category, index);
+        fragment.appendChild(el);
+      });
+      this.nav.appendChild(fragment);
+      this.hidden = false;
+    }
+    createItem(category, index) {
+      const el = document.createElement("a");
+      el.textContent = category;
+      el.href = `?category=${index}`;
+      if (index === this.locationCategoryIndex) {
+        el.dataset.active = "true";
+      }
+      el.addEventListener("click", (event) => {
+        this.onChange(index, el, event);
+      });
+      return el;
+    }
+    onChange(index, el, event) {
+      event.preventDefault();
+      el.dataset.active = "true";
+      location.search = `category=${index}`;
+    }
+    overlayCatalog() {
+      const modal = this.overlayCategory;
+      const changeButton = this.querySelector(".favorite-changeButton");
+      changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
+        modal.hidden = Boolean(!modal.hidden);
+      });
     }
   };
 
@@ -1179,17 +1198,17 @@
         if (!this.addInput)
           return;
         const category = this.addInput.value;
-        if (category) {
-          if (hasCategory(category)) {
-            alert("\uC911\uBCF5\uB41C \uC774\uB984\uC785\uB2C8\uB2E4.");
-            this.addInput.value = "";
-            return;
-          }
-          addCategory(category);
-          const cloned = this.createItem(category);
-          (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
+        if (!category)
+          return;
+        if (hasCategory(category)) {
+          alert("\uC911\uBCF5\uB41C \uC774\uB984\uC785\uB2C8\uB2E4.");
           this.addInput.value = "";
+          return;
         }
+        addCategory(category);
+        const cloned = this.createItem(category);
+        (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
+        this.addInput.value = "";
       };
       this.handleSubmit = (event) => {
         event.preventDefault();
@@ -1264,6 +1283,7 @@
   // dev/scripts/pages/favorite/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-favorite", Favorite);
+  customElements.define("favorite-nav", FavoriteNav);
   customElements.define("favorite-item", FavoriteItem);
   customElements.define("book-description", BookDescription);
   customElements.define("library-book-exist", LibraryBookExist);

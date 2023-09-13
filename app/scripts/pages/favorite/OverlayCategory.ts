@@ -96,21 +96,20 @@ export default class OverlayCategory extends HTMLElement {
         if (!this.addInput) return;
 
         const category = this.addInput.value;
+        if (!category) return;
 
-        if (category) {
-            if (hasCategory(category)) {
-                alert("중복된 이름입니다.");
-                this.addInput.value = "";
-                return;
-            }
-
-            addCategory(category);
-
-            const cloned = this.createItem(category);
-            this.list?.appendChild(cloned);
-
+        if (hasCategory(category)) {
+            alert("중복된 이름입니다.");
             this.addInput.value = "";
+            return;
         }
+
+        addCategory(category);
+
+        const cloned = this.createItem(category);
+        this.list?.appendChild(cloned);
+
+        this.addInput.value = "";
     };
 
     private handleSubmit = (event: Event) => {
