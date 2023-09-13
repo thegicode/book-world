@@ -106,19 +106,19 @@ library-book-exist .library-item[data-loading=true]:before {
   content: " ";
 }
 
-checkbox-favorite-book label {
+checkbox-favorite-book .myCategory label {
   display: flex;
   align-items: center;
   position: relative;
 }
-checkbox-favorite-book input {
+checkbox-favorite-book .myCategory input {
   position: absolute;
   top: -1px;
   left: -1px;
   opacity: 0;
   z-index: -1;
 }
-checkbox-favorite-book span {
+checkbox-favorite-book .myCategory span {
   overflow: hidden;
   box-sizing: border-box;
   margin-left: 5px;
@@ -129,16 +129,34 @@ checkbox-favorite-book span {
   color: #666;
   cursor: pointer;
 }
-checkbox-favorite-book input:checked + span {
+checkbox-favorite-book .myCategory input:checked + span {
   border-color: #8c8c8c;
   background-color: #9172c9;
   color: #f0ffd2;
 }
-checkbox-favorite-book input:focus-visible + span {
+checkbox-favorite-book .myCategory input:focus-visible + span {
   outline: -webkit-focus-ring-color auto 1px;
 }
-checkbox-favorite-book .category button[data-has=true] {
-  color: red;
+checkbox-favorite-book h5 {
+  margin: 0;
+  padding: 5px 7px;
+  border-radius: 5px 5px 0 0;
+  background: #d2f0d2;
+  color: #6ca681;
+}
+checkbox-favorite-book .category {
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 0 0 5px 5px;
+  font-size: 12px;
+}
+checkbox-favorite-book .category label {
+  display: flex;
+  align-items: center;
+}
+checkbox-favorite-book .category span {
+  margin-left: 3px;
+  color: #666;
 }
 
 book-image {
@@ -208,6 +226,9 @@ nav-gnb {
 .favorite-category button:hover, .favorite-category button:active {
   color: #333;
   text-decoration: underline;
+}
+.favorite-category button[data-active=true] {
+  color: #209b3a;
 }
 
 .favorite-changeButton {

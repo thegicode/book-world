@@ -1,13 +1,10 @@
 import {
-    addFavoriteBook,
-    removeFavoriteBook,
-    isFavoriteBook,
     state,
     addBookInCategory,
     hasBookInCategory,
     removeBookInCategory,
 } from "../modules/model";
-import { updateFavoriteBooksSize } from "../modules/events";
+import { updateBookSizeInCategor } from "../modules/events";
 
 export default class CheckboxFavoriteBook extends HTMLElement {
     protected inputElement: HTMLInputElement | null;
@@ -21,7 +18,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         this.categoryElement = null;
     }
 
-    connectedCallback(): void {
+    connectedCallback() {
         const isbnElement = this.closest("[data-isbn]");
 
         if (isbnElement) {
@@ -30,37 +27,16 @@ export default class CheckboxFavoriteBook extends HTMLElement {
             ).dataset.isbn;
         }
         this.render();
-
-        this.inputElement?.addEventListener("change", this.onChange.bind(this));
     }
 
-    disconnectedCallback(): void {
-        this.inputElement?.removeEventListener("change", this.onChange);
-    }
+    // disconnectedCallback() {}
 
-    protected render(): void {
-        const isbn = this.isbn || "";
+    protected render() {
         this.categoryElement = this.createCategoryElement();
-        const checked = isFavoriteBook(isbn) ? "checked" : "";
-        this.innerHTML = `<label>
-            <input type="checkbox" name="favorite" ${checked}>
-            <span>관심책</span>
-        </label>`;
-        this.inputElement = this.querySelector("input");
+
+        this.innerHTML = `<h5>Category</h5>`;
 
         this.appendChild(this.categoryElement);
-    }
-
-    protected onChange(): void {
-        const ISBN = this.isbn || "";
-        if (!ISBN || !this.inputElement) return;
-        if (this.inputElement.checked) {
-            addFavoriteBook(ISBN);
-        } else {
-            removeFavoriteBook(ISBN);
-        }
-        // CustomEventEmitter.dispatch('favorite-books-changed')
-        updateFavoriteBooksSize();
     }
 
     private createCategoryElement = () => {
@@ -68,20 +44,35 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         const categoryElement = document.createElement("div");
         categoryElement.className = "category";
         Object.keys(state.category).forEach((category: string) => {
-            const button = document.createElement("button");
-            button.textContent = category;
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            const span = document.createElement("span");
+            span.textContent = category;
             if (hasBookInCategory(category, ISBN)) {
-                button.dataset.has = "true";
+                checkbox.checked = true;
             }
-            button.addEventListener("click", () => {
-                const hasBook = hasBookInCategory(category, ISBN);
-                hasBook
-                    ? removeBookInCategory(category, ISBN)
-                    : addBookInCategory(category, ISBN);
-                button.dataset.has = String(!hasBook);
-            });
-            categoryElement.appendChild(button);
+            checkbox.addEventListener("change", () =>
+                this.onChange(checkbox, category, ISBN)
+            );
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            categoryElement.appendChild(label);
         });
         return categoryElement;
     };
+
+    private onChange(
+        checkbox: HTMLInputElement,
+        category: string,
+        ISBN: string
+    ) {
+        const hasBook = hasBookInCategory(category, ISBN);
+        hasBook
+            ? removeBookInCategory(category, ISBN)
+            : addBookInCategory(category, ISBN);
+        checkbox.checked = !hasBook;
+        updateBookSizeInCategor();
+    }
 }

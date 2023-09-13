@@ -105,5 +105,11 @@ const removeBookInCategory = (name, isbn) => {
         setState(state);
     }
 };
-export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, updateCategory, deleteCategory, addBookInCategory, hasBookInCategory, removeBookInCategory, };
+const getBookSizeInCategory = () => {
+    function getTotalItemCount(data) {
+        return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
+    }
+    return getTotalItemCount(state.category);
+};
+export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, updateCategory, deleteCategory, addBookInCategory, hasBookInCategory, removeBookInCategory, getBookSizeInCategory, };
 //# sourceMappingURL=model.js.map

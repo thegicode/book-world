@@ -1,27 +1,17 @@
-import { state } from "../modules/model";
+import { getBookSizeInCategory } from "../modules/model";
 export default class NavGnb extends HTMLElement {
     constructor() {
         super();
-        this.favoriteBooksSize = this.getFavoriteBooksSize();
     }
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
     }
-    disconnectedCallback() {
-        //
-    }
-    getFavoriteBooksSize() {
-        function getTotalItemCount(data) {
-            return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
-        }
-        return getTotalItemCount(state.category);
-    }
     render() {
         this.innerHTML = `
             <nav class="gnb">
                 <a class="gnb-item" href="./search">책 검색</a>
-                <a class="gnb-item" href="./favorite">나의 책 (<span class="size">${this.favoriteBooksSize}</span>)</a>
+                <a class="gnb-item" href="./favorite">나의 책 (<span class="size">${getBookSizeInCategory()}</span>)</a>
                 <a class="gnb-item" href="./library">도서관 조회</a>
                 <a class="gnb-item" href="./setting">설정</a>
             </nav>`;

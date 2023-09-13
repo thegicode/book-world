@@ -43,6 +43,10 @@ interface IBookExist {
     loanAvailable: string;
 }
 
+interface ICategoryData {
+    [category: string]: string[];
+}
+
 interface IUsageAnalysisResult {
     book: IBook;
 }

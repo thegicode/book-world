@@ -1,9 +1,8 @@
-import { getState } from "./model";
+import { getBookSizeInCategory } from "./model";
 
-export const updateFavoriteBooksSize = (
-    size: number = getState().favoriteBooks.length
-): void => {
+export const updateBookSizeInCategor = () => {
     const navElement = document.querySelector("nav-gnb") as HTMLElement;
-    (navElement.querySelector(".size") as HTMLElement).textContent =
-        String(size);
+    (navElement.querySelector(".size") as HTMLElement).textContent = String(
+        getBookSizeInCategory()
+    );
 };

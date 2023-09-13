@@ -1,5 +1,5 @@
-import { addFavoriteBook, removeFavoriteBook, isFavoriteBook, state, addBookInCategory, hasBookInCategory, removeBookInCategory, } from "../modules/model";
-import { updateFavoriteBooksSize } from "../modules/events";
+import { state, addBookInCategory, hasBookInCategory, removeBookInCategory, } from "../modules/model";
+import { updateBookSizeInCategor } from "../modules/events";
 export default class CheckboxFavoriteBook extends HTMLElement {
     constructor() {
         super();
@@ -8,19 +8,18 @@ export default class CheckboxFavoriteBook extends HTMLElement {
             const categoryElement = document.createElement("div");
             categoryElement.className = "category";
             Object.keys(state.category).forEach((category) => {
-                const button = document.createElement("button");
-                button.textContent = category;
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                const span = document.createElement("span");
+                span.textContent = category;
                 if (hasBookInCategory(category, ISBN)) {
-                    button.dataset.has = "true";
+                    checkbox.checked = true;
                 }
-                button.addEventListener("click", () => {
-                    const hasBook = hasBookInCategory(category, ISBN);
-                    hasBook
-                        ? removeBookInCategory(category, ISBN)
-                        : addBookInCategory(category, ISBN);
-                    button.dataset.has = String(!hasBook);
-                });
-                categoryElement.appendChild(button);
+                checkbox.addEventListener("change", () => this.onChange(checkbox, category, ISBN));
+                label.appendChild(checkbox);
+                label.appendChild(span);
+                categoryElement.appendChild(label);
             });
             return categoryElement;
         };
@@ -29,41 +28,25 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         this.categoryElement = null;
     }
     connectedCallback() {
-        var _a;
         const isbnElement = this.closest("[data-isbn]");
         if (isbnElement) {
             this.isbn = isbnElement.dataset.isbn;
         }
         this.render();
-        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange.bind(this));
     }
-    disconnectedCallback() {
-        var _a;
-        (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.removeEventListener("change", this.onChange);
-    }
+    // disconnectedCallback() {}
     render() {
-        const isbn = this.isbn || "";
         this.categoryElement = this.createCategoryElement();
-        const checked = isFavoriteBook(isbn) ? "checked" : "";
-        this.innerHTML = `<label>
-            <input type="checkbox" name="favorite" ${checked}>
-            <span>관심책</span>
-        </label>`;
-        this.inputElement = this.querySelector("input");
+        this.innerHTML = `<h5>Category</h5>`;
         this.appendChild(this.categoryElement);
     }
-    onChange() {
-        const ISBN = this.isbn || "";
-        if (!ISBN || !this.inputElement)
-            return;
-        if (this.inputElement.checked) {
-            addFavoriteBook(ISBN);
-        }
-        else {
-            removeFavoriteBook(ISBN);
-        }
-        // CustomEventEmitter.dispatch('favorite-books-changed')
-        updateFavoriteBooksSize();
+    onChange(checkbox, category, ISBN) {
+        const hasBook = hasBookInCategory(category, ISBN);
+        hasBook
+            ? removeBookInCategory(category, ISBN)
+            : addBookInCategory(category, ISBN);
+        checkbox.checked = !hasBook;
+        updateBookSizeInCategor();
     }
 }
 //# sourceMappingURL=CheckboxFavoriteBook.js.map

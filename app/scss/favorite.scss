@@ -67,6 +67,9 @@ nav-gnb {
             color: #333;
             text-decoration: underline;
         }
+        &[data-active="true"] {
+            color: #209b3a;
+        }
     }
 }
 

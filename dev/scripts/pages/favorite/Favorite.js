@@ -7,13 +7,14 @@ export default class Favorite extends HTMLElement {
         this.headerElement = this.querySelector(".favorite-header");
         this.modalCateogy = document.querySelector("overlay-category");
         this.template = document.querySelector("#tp-favorite-item");
+        this.currentNav = null;
     }
     connectedCallback() {
+        this.header();
         if (Object.keys(state.category).length === 0) {
             this.renderMessage();
             return;
         }
-        this.header();
         const firstKey = Object.keys(state.category)[0];
         this.render(firstKey);
     }
@@ -27,11 +28,20 @@ export default class Favorite extends HTMLElement {
     headerNav() {
         var _a;
         const fragment = new DocumentFragment();
-        Object.keys(state.category).forEach((category) => {
+        Object.keys(state.category).forEach((category, index) => {
             const el = document.createElement("button");
             el.textContent = category;
+            if (index === 0) {
+                el.dataset.active = "true";
+                this.currentNav = el;
+            }
             el.addEventListener("click", () => {
                 this.render(category);
+                el.dataset.active = "true";
+                if (this.currentNav) {
+                    this.currentNav.dataset.active = "false";
+                    this.currentNav = el;
+                }
             });
             fragment.appendChild(el);
         });

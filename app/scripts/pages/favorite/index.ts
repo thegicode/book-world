@@ -8,7 +8,7 @@ import {
 
 import Favorite from "./Favorite";
 import FavoriteItem from "./FavoriteItem";
-import OverlayCategory from "./OvarlayCategory";
+import OverlayCategory from "./OverlayCategory";
 
 customElements.define("nav-gnb", NavGnb);
 customElements.define("app-favorite", Favorite);

@@ -821,20 +821,6 @@
     }
   };
   var state = getState();
-  var addFavoriteBook = (isbn) => {
-    state.favoriteBooks.push(isbn);
-    setState(state);
-  };
-  var removeFavoriteBook = (isbn) => {
-    const index = state.favoriteBooks.indexOf(isbn);
-    if (index !== -1) {
-      state.favoriteBooks.splice(index, 1);
-      setState(state);
-    }
-  };
-  var isFavoriteBook = (isbn) => {
-    return state.favoriteBooks.includes(isbn);
-  };
   var addBookInCategory = (name, isbn) => {
     state.category[name].push(isbn);
     setState(state);
@@ -849,30 +835,27 @@
       setState(state);
     }
   };
+  var getBookSizeInCategory = () => {
+    function getTotalItemCount(data) {
+      return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
+    }
+    return getTotalItemCount(state.category);
+  };
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
-      this.favoriteBooksSize = this.getFavoriteBooksSize();
     }
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
     }
-    disconnectedCallback() {
-    }
-    getFavoriteBooksSize() {
-      function getTotalItemCount(data) {
-        return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
-      }
-      return getTotalItemCount(state.category);
-    }
     render() {
       this.innerHTML = `
             <nav class="gnb">
                 <a class="gnb-item" href="./search">\uCC45 \uAC80\uC0C9</a>
-                <a class="gnb-item" href="./favorite">\uB098\uC758 \uCC45 (<span class="size">${this.favoriteBooksSize}</span>)</a>
+                <a class="gnb-item" href="./favorite">\uB098\uC758 \uCC45 (<span class="size">${getBookSizeInCategory()}</span>)</a>
                 <a class="gnb-item" href="./library">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
                 <a class="gnb-item" href="./setting">\uC124\uC815</a>
             </nav>`;
@@ -886,9 +869,9 @@
   };
 
   // dev/scripts/modules/events.js
-  var updateFavoriteBooksSize = (size = getState().favoriteBooks.length) => {
+  var updateBookSizeInCategor = () => {
     const navElement = document.querySelector("nav-gnb");
-    navElement.querySelector(".size").textContent = String(size);
+    navElement.querySelector(".size").textContent = String(getBookSizeInCategory());
   };
 
   // dev/scripts/components/CheckboxFavoriteBook.js
@@ -900,17 +883,18 @@
         const categoryElement = document.createElement("div");
         categoryElement.className = "category";
         Object.keys(state.category).forEach((category) => {
-          const button = document.createElement("button");
-          button.textContent = category;
+          const label = document.createElement("label");
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          const span = document.createElement("span");
+          span.textContent = category;
           if (hasBookInCategory(category, ISBN)) {
-            button.dataset.has = "true";
+            checkbox.checked = true;
           }
-          button.addEventListener("click", () => {
-            const hasBook = hasBookInCategory(category, ISBN);
-            hasBook ? removeBookInCategory(category, ISBN) : addBookInCategory(category, ISBN);
-            button.dataset.has = String(!hasBook);
-          });
-          categoryElement.appendChild(button);
+          checkbox.addEventListener("change", () => this.onChange(checkbox, category, ISBN));
+          label.appendChild(checkbox);
+          label.appendChild(span);
+          categoryElement.appendChild(label);
         });
         return categoryElement;
       };
@@ -919,39 +903,23 @@
       this.categoryElement = null;
     }
     connectedCallback() {
-      var _a;
       const isbnElement = this.closest("[data-isbn]");
       if (isbnElement) {
         this.isbn = isbnElement.dataset.isbn;
       }
       this.render();
-      (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.addEventListener("change", this.onChange.bind(this));
     }
-    disconnectedCallback() {
-      var _a;
-      (_a = this.inputElement) === null || _a === void 0 ? void 0 : _a.removeEventListener("change", this.onChange);
-    }
+    // disconnectedCallback() {}
     render() {
-      const isbn = this.isbn || "";
       this.categoryElement = this.createCategoryElement();
-      const checked = isFavoriteBook(isbn) ? "checked" : "";
-      this.innerHTML = `<label>
-            <input type="checkbox" name="favorite" ${checked}>
-            <span>\uAD00\uC2EC\uCC45</span>
-        </label>`;
-      this.inputElement = this.querySelector("input");
+      this.innerHTML = `<h5>Category</h5>`;
       this.appendChild(this.categoryElement);
     }
-    onChange() {
-      const ISBN = this.isbn || "";
-      if (!ISBN || !this.inputElement)
-        return;
-      if (this.inputElement.checked) {
-        addFavoriteBook(ISBN);
-      } else {
-        removeFavoriteBook(ISBN);
-      }
-      updateFavoriteBooksSize();
+    onChange(checkbox, category, ISBN) {
+      const hasBook = hasBookInCategory(category, ISBN);
+      hasBook ? removeBookInCategory(category, ISBN) : addBookInCategory(category, ISBN);
+      checkbox.checked = !hasBook;
+      updateBookSizeInCategor();
     }
   };
 

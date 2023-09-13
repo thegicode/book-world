@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomFetch } from "../../utils/index";
 import { setState } from "../../modules/model";
-// import { updateFavoriteBooksSize } from "../../modules/events.js";
+// import { updateBookSizeInCategor } from "../../modules/events.js";
 const LOCAL_STORAGE_NAME = "BookWorld";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
@@ -54,7 +54,7 @@ export default class SetStorage extends HTMLElement {
     }
     updateAndReload() {
         // CustomEventEmitter.dispatch('favorite-books-changed', { size : 0 })
-        // updateFavoriteBooksSize(0);
+        // updateBookSizeInCategor(0);
         location.reload();
     }
 }

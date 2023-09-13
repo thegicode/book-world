@@ -130,6 +130,16 @@ const removeBookInCategory = (name: string, isbn: string) => {
     }
 };
 
+const getBookSizeInCategory = () => {
+    function getTotalItemCount(data: ICategoryData) {
+        return Object.values(data).reduce(
+            (sum, currentArray: string[]) => sum + currentArray.length,
+            0
+        );
+    }
+    return getTotalItemCount(state.category);
+};
+
 export {
     state,
     setState,
@@ -151,4 +161,5 @@ export {
     addBookInCategory,
     hasBookInCategory,
     removeBookInCategory,
+    getBookSizeInCategory,
 };

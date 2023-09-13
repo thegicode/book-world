@@ -652,30 +652,27 @@
   var hasLibrary = (code) => {
     return code in state.libraries;
   };
+  var getBookSizeInCategory = () => {
+    function getTotalItemCount(data) {
+      return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
+    }
+    return getTotalItemCount(state.category);
+  };
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
-      this.favoriteBooksSize = this.getFavoriteBooksSize();
     }
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
     }
-    disconnectedCallback() {
-    }
-    getFavoriteBooksSize() {
-      function getTotalItemCount(data) {
-        return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
-      }
-      return getTotalItemCount(state.category);
-    }
     render() {
       this.innerHTML = `
             <nav class="gnb">
                 <a class="gnb-item" href="./search">\uCC45 \uAC80\uC0C9</a>
-                <a class="gnb-item" href="./favorite">\uB098\uC758 \uCC45 (<span class="size">${this.favoriteBooksSize}</span>)</a>
+                <a class="gnb-item" href="./favorite">\uB098\uC758 \uCC45 (<span class="size">${getBookSizeInCategory()}</span>)</a>
                 <a class="gnb-item" href="./library">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
                 <a class="gnb-item" href="./setting">\uC124\uC815</a>
             </nav>`;
