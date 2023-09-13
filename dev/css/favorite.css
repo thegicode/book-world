@@ -337,6 +337,10 @@ checkbox-favorite-book {
   width: 100%;
   margin-top: 5px;
 }
+.favorite-actions .library-button:disabled {
+  opacity: 0.5;
+  color: #999;
+}
 
 library-book-exist {
   margin: 0 1rem 1rem;

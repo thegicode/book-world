@@ -23,6 +23,7 @@ export default class FavoriteItem extends HTMLElement {
 
         this.loading();
         this.fetchData(this.dataset.isbn as string);
+
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
         this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
@@ -91,6 +92,10 @@ export default class FavoriteItem extends HTMLElement {
                 bookImageURL,
                 bookname,
             };
+        }
+
+        if (this.libraryButton && Object.keys(state.libraries).length === 0) {
+            this.libraryButton.disabled = true;
         }
 
         this.removeLoading();

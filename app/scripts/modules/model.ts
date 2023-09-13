@@ -38,23 +38,6 @@ const getState = (): IStorageData => {
 
 const state: IStorageData = getState();
 
-const addFavoriteBook = (isbn: string): void => {
-    state.favoriteBooks.push(isbn);
-    setState(state);
-};
-
-const removeFavoriteBook = (isbn: string): void => {
-    const index = state.favoriteBooks.indexOf(isbn);
-    if (index !== -1) {
-        state.favoriteBooks.splice(index, 1);
-        setState(state);
-    }
-};
-
-const isFavoriteBook = (isbn: string): boolean => {
-    return state.favoriteBooks.includes(isbn);
-};
-
 const addLibrary = (code: string, name: string): void => {
     state.libraries[code] = name;
     setState(state);
@@ -144,9 +127,6 @@ export {
     state,
     setState,
     getState,
-    addFavoriteBook,
-    removeFavoriteBook,
-    isFavoriteBook,
     addLibrary,
     removeLibrary,
     hasLibrary,

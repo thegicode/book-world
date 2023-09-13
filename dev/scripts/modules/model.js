@@ -34,20 +34,6 @@ const getState = () => {
     }
 };
 const state = getState();
-const addFavoriteBook = (isbn) => {
-    state.favoriteBooks.push(isbn);
-    setState(state);
-};
-const removeFavoriteBook = (isbn) => {
-    const index = state.favoriteBooks.indexOf(isbn);
-    if (index !== -1) {
-        state.favoriteBooks.splice(index, 1);
-        setState(state);
-    }
-};
-const isFavoriteBook = (isbn) => {
-    return state.favoriteBooks.includes(isbn);
-};
 const addLibrary = (code, name) => {
     state.libraries[code] = name;
     setState(state);
@@ -111,5 +97,5 @@ const getBookSizeInCategory = () => {
     }
     return getTotalItemCount(state.category);
 };
-export { state, setState, getState, addFavoriteBook, removeFavoriteBook, isFavoriteBook, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, updateCategory, deleteCategory, addBookInCategory, hasBookInCategory, removeBookInCategory, getBookSizeInCategory, };
+export { state, setState, getState, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, updateCategory, deleteCategory, addBookInCategory, hasBookInCategory, removeBookInCategory, getBookSizeInCategory, };
 //# sourceMappingURL=model.js.map

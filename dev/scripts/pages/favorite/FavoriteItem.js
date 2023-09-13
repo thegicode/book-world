@@ -75,6 +75,9 @@ export default class FavoriteItem extends HTMLElement {
                 bookname,
             };
         }
+        if (this.libraryButton && Object.keys(state.libraries).length === 0) {
+            this.libraryButton.disabled = true;
+        }
         this.removeLoading();
     }
     errorRender() {

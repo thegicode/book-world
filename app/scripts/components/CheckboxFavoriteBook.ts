@@ -7,72 +7,86 @@ import {
 import { updateBookSizeInCategor } from "../modules/events";
 
 export default class CheckboxFavoriteBook extends HTMLElement {
-    protected inputElement: HTMLInputElement | null;
     protected isbn: string | null;
-    categoryElement: HTMLElement | null;
 
     constructor() {
         super();
-        this.inputElement = null;
-        this.isbn = null;
-        this.categoryElement = null;
+
+        this.isbn = this.getISBN();
     }
 
     connectedCallback() {
-        const isbnElement = this.closest("[data-isbn]");
-
-        if (isbnElement) {
-            this.isbn = (
-                isbnElement as HTMLElement & { dataset: { isbn: string } }
-            ).dataset.isbn;
-        }
         this.render();
     }
 
-    // disconnectedCallback() {}
-
     protected render() {
-        this.categoryElement = this.createCategoryElement();
+        const container = this.createContainer();
 
         this.innerHTML = `<h5>Category</h5>`;
-
-        this.appendChild(this.categoryElement);
+        this.appendChild(container);
     }
 
-    private createCategoryElement = () => {
-        const ISBN = this.isbn || "";
-        const categoryElement = document.createElement("div");
-        categoryElement.className = "category";
-        Object.keys(state.category).forEach((category: string) => {
-            const label = document.createElement("label");
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            const span = document.createElement("span");
-            span.textContent = category;
-            if (hasBookInCategory(category, ISBN)) {
-                checkbox.checked = true;
-            }
-            checkbox.addEventListener("change", () =>
-                this.onChange(checkbox, category, ISBN)
-            );
+    private getISBN(): string | null {
+        const isbnElement = this.closest("[data-isbn]") as HTMLElement;
+        return isbnElement && isbnElement.dataset.isbn
+            ? isbnElement.dataset.isbn
+            : null;
+    }
 
-            label.appendChild(checkbox);
-            label.appendChild(span);
-            categoryElement.appendChild(label);
-        });
-        return categoryElement;
+    private createContainer() {
+        const container = document.createElement("div");
+        container.className = "category";
+        Object.keys(state.category).forEach((category: string) =>
+            this.createCategoryItem(container, category, this.isbn || "")
+        );
+        return container;
+    }
+
+    private createCategoryItem = (
+        container: HTMLElement,
+        category: string,
+        ISBN: string
+    ) => {
+        const label = document.createElement("label");
+        const checkbox = this.createCheckbox(category, ISBN);
+        const span = document.createElement("span");
+        span.textContent = category;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+
+        container.appendChild(label);
+        return container;
     };
+
+    private createCheckbox(category: string, ISBN: string) {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        if (hasBookInCategory(category, ISBN)) {
+            checkbox.checked = true;
+        }
+
+        checkbox.addEventListener("change", () =>
+            this.onChange(checkbox, category, ISBN)
+        );
+
+        return checkbox;
+    }
 
     private onChange(
         checkbox: HTMLInputElement,
         category: string,
         ISBN: string
     ) {
-        const hasBook = hasBookInCategory(category, ISBN);
-        hasBook
-            ? removeBookInCategory(category, ISBN)
-            : addBookInCategory(category, ISBN);
-        checkbox.checked = !hasBook;
+        const isBookInCategory = hasBookInCategory(category, ISBN);
+
+        if (isBookInCategory) {
+            removeBookInCategory(category, ISBN);
+        } else {
+            addBookInCategory(category, ISBN);
+        }
+
+        checkbox.checked = !isBookInCategory;
         updateBookSizeInCategor();
     }
 }
