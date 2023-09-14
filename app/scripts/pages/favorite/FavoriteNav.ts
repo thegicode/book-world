@@ -60,27 +60,7 @@ export default class FavoriteNav extends HTMLElement {
         );
     }
 
-    onCategoryAdded(event: ICustomEvent<{ category: string }>) {
-        const { category } = event.detail;
-        const index = Object.keys(state.category).length - 1;
-
-        const element = this.createItem(category, index);
-        this.nav?.appendChild(element);
-    }
-
-    onCategoryRenamed(event: ICustomEvent<{ value: string }>) {
-        if (!this.nav) return;
-        const { value } = event.detail;
-        const index = Object.keys(state.category).indexOf(value);
-        this.nav.querySelectorAll("a")[index].textContent = value;
-    }
-
-    onCategoryDeleted(event: ICustomEvent<{ index: number }>) {
-        const { index } = event.detail;
-        this.nav?.querySelectorAll("a")[index].remove();
-    }
-
-    public render() {
+    private render() {
         if (!this.nav) return;
         this.nav.innerHTML = "";
 
@@ -132,5 +112,25 @@ export default class FavoriteNav extends HTMLElement {
         changeButton?.addEventListener("click", () => {
             modal.hidden = Boolean(!modal.hidden);
         });
+    }
+
+    private onCategoryAdded(event: ICustomEvent<{ category: string }>) {
+        const { category } = event.detail;
+        const index = Object.keys(state.category).length - 1;
+
+        const element = this.createItem(category, index);
+        this.nav?.appendChild(element);
+    }
+
+    private onCategoryRenamed(event: ICustomEvent<{ value: string }>) {
+        if (!this.nav) return;
+        const { value } = event.detail;
+        const index = Object.keys(state.category).indexOf(value);
+        this.nav.querySelectorAll("a")[index].textContent = value;
+    }
+
+    private onCategoryDeleted(event: ICustomEvent<{ index: number }>) {
+        const { index } = event.detail;
+        this.nav?.querySelectorAll("a")[index].remove();
     }
 }

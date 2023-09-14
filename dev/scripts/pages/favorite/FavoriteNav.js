@@ -23,25 +23,6 @@ export default class FavoriteNav extends HTMLElement {
         CustomEventEmitter.remove("categoryRenamed", this.onCategoryRenamed);
         CustomEventEmitter.remove("categoryDeleted", this.onCategoryDeleted);
     }
-    onCategoryAdded(event) {
-        var _a;
-        const { category } = event.detail;
-        const index = Object.keys(state.category).length - 1;
-        const element = this.createItem(category, index);
-        (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
-    }
-    onCategoryRenamed(event) {
-        if (!this.nav)
-            return;
-        const { value } = event.detail;
-        const index = Object.keys(state.category).indexOf(value);
-        this.nav.querySelectorAll("a")[index].textContent = value;
-    }
-    onCategoryDeleted(event) {
-        var _a;
-        const { index } = event.detail;
-        (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a")[index].remove();
-    }
     render() {
         if (!this.nav)
             return;
@@ -81,6 +62,25 @@ export default class FavoriteNav extends HTMLElement {
         changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
             modal.hidden = Boolean(!modal.hidden);
         });
+    }
+    onCategoryAdded(event) {
+        var _a;
+        const { category } = event.detail;
+        const index = Object.keys(state.category).length - 1;
+        const element = this.createItem(category, index);
+        (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
+    }
+    onCategoryRenamed(event) {
+        if (!this.nav)
+            return;
+        const { value } = event.detail;
+        const index = Object.keys(state.category).indexOf(value);
+        this.nav.querySelectorAll("a")[index].textContent = value;
+    }
+    onCategoryDeleted(event) {
+        var _a;
+        const { index } = event.detail;
+        (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a")[index].remove();
     }
 }
 //# sourceMappingURL=FavoriteNav.js.map
