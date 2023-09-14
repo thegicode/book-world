@@ -84,7 +84,7 @@ export default class FavoriteNav extends HTMLElement {
     private createItem(category: string) {
         const el = document.createElement("a") as HTMLAnchorElement;
         el.textContent = category;
-        el.href = this.getUrl(category);
+        el.href = `?${this.getUrl(category)}`;
 
         if (category === this.locationCategory) {
             el.dataset.active = "true";
