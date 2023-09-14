@@ -1,17 +1,46 @@
 import { state } from "../../modules/model";
+import { CustomEventEmitter } from "../../utils";
 export default class FavoriteNav extends HTMLElement {
     constructor() {
         super();
         this.nav = this.querySelector(".favorite-category");
         this.overlayCategory = document.querySelector("overlay-category");
         const params = new URLSearchParams(location.search);
-        this.locationCategoryIndex = Number(params.get("category"));
+        this.locationCategory = params.get("category");
+        this.onCategoryAdded = this.onCategoryAdded.bind(this);
+        this.onCategoryRenamed = this.onCategoryRenamed.bind(this);
+        this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
     }
     connectedCallback() {
-        if (this.locationCategoryIndex === null)
-            return;
         this.render();
         this.overlayCatalog();
+        CustomEventEmitter.add("categoryAdded", this.onCategoryAdded);
+        CustomEventEmitter.add("categoryRenamed", this.onCategoryRenamed);
+        CustomEventEmitter.add("categoryDeleted", this.onCategoryDeleted);
+    }
+    disconnectedCallback() {
+        CustomEventEmitter.remove("categoryAdded", this.onCategoryAdded);
+        CustomEventEmitter.remove("categoryRenamed", this.onCategoryRenamed);
+        CustomEventEmitter.remove("categoryDeleted", this.onCategoryDeleted);
+    }
+    onCategoryAdded(event) {
+        var _a;
+        const { category } = event.detail;
+        const index = Object.keys(state.category).length - 1;
+        const element = this.createItem(category, index);
+        (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
+    }
+    onCategoryRenamed(event) {
+        if (!this.nav)
+            return;
+        const { value } = event.detail;
+        const index = Object.keys(state.category).indexOf(value);
+        this.nav.querySelectorAll("a")[index].textContent = value;
+    }
+    onCategoryDeleted(event) {
+        var _a;
+        const { index } = event.detail;
+        (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a")[index].remove();
     }
     render() {
         if (!this.nav)
@@ -28,19 +57,23 @@ export default class FavoriteNav extends HTMLElement {
     createItem(category, index) {
         const el = document.createElement("a");
         el.textContent = category;
-        el.href = `?category=${index}`;
-        if (index === this.locationCategoryIndex) {
+        el.href = this.getUrl(category);
+        if (category === this.locationCategory) {
             el.dataset.active = "true";
         }
         el.addEventListener("click", (event) => {
-            this.onChange(index, el, event);
+            this.onChange(category, index, el, event);
         });
         return el;
     }
-    onChange(index, el, event) {
+    onChange(category, el, event) {
         event.preventDefault();
         el.dataset.active = "true";
-        location.search = `category=${index}`;
+        location.search = this.getUrl(category);
+    }
+    getUrl(category) {
+        const categoryStr = encodeURIComponent(category);
+        return `category=${categoryStr}`;
     }
     overlayCatalog() {
         const modal = this.overlayCategory;

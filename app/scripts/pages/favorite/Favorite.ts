@@ -1,10 +1,9 @@
-// import { CustomEventEmitter } from '../../utils/index.js'
 import { state } from "../../modules/model";
 
 export default class Favorite extends HTMLElement {
     booksElement: HTMLElement;
     template: HTMLTemplateElement | null;
-    locationCategoryIndex: number | null;
+    locationCategory: string | null;
 
     constructor() {
         super();
@@ -16,7 +15,7 @@ export default class Favorite extends HTMLElement {
         this.template = document.querySelector("#tp-favorite-item");
 
         const params = new URLSearchParams(location.search);
-        this.locationCategoryIndex = Number(params.get("category"));
+        this.locationCategory = params.get("category");
     }
 
     connectedCallback() {
@@ -25,8 +24,7 @@ export default class Favorite extends HTMLElement {
             return;
         }
 
-        if (this.locationCategoryIndex === null) return;
-        const key = Object.keys(state.category)[this.locationCategoryIndex];
+        const key = this.locationCategory || Object.keys(state.category)[0];
         this.render(key);
     }
 

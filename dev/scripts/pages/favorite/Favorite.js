@@ -1,4 +1,3 @@
-// import { CustomEventEmitter } from '../../utils/index.js'
 import { state } from "../../modules/model";
 export default class Favorite extends HTMLElement {
     constructor() {
@@ -6,16 +5,14 @@ export default class Favorite extends HTMLElement {
         this.booksElement = this.querySelector(".favorite-books");
         this.template = document.querySelector("#tp-favorite-item");
         const params = new URLSearchParams(location.search);
-        this.locationCategoryIndex = Number(params.get("category"));
+        this.locationCategory = params.get("category");
     }
     connectedCallback() {
         if (Object.keys(state.category).length === 0) {
             this.renderMessage();
             return;
         }
-        if (this.locationCategoryIndex === null)
-            return;
-        const key = Object.keys(state.category)[this.locationCategoryIndex];
+        const key = this.locationCategory || Object.keys(state.category)[0];
         this.render(key);
     }
     disconnectedCallback() {

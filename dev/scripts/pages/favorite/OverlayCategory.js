@@ -1,4 +1,5 @@
 import { state, addCategory, hasCategory, updateCategory, deleteCategory, } from "../../modules/model";
+import { CustomEventEmitter } from "../../utils";
 export default class OverlayCategory extends HTMLElement {
     constructor() {
         super();
@@ -18,6 +19,9 @@ export default class OverlayCategory extends HTMLElement {
             const cloned = this.createItem(category);
             (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
             this.addInput.value = "";
+            CustomEventEmitter.dispatch("categoryAdded", {
+                category,
+            });
         };
         this.handleSubmit = (event) => {
             event.preventDefault();
@@ -77,13 +81,21 @@ export default class OverlayCategory extends HTMLElement {
             input.value = category;
         }
         (_c = cloned.querySelector(".rename")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
-            if (input.value && category !== input.value) {
-                updateCategory(category, input.value);
+            const value = input.value;
+            if (value && category !== value) {
+                updateCategory(category, value);
+                CustomEventEmitter.dispatch("categoryRenamed", {
+                    value,
+                });
             }
         });
         (_d = cloned.querySelector(".delete")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => {
+            const index = Object.keys(state.category).indexOf(category);
             cloned.remove();
             deleteCategory(category);
+            CustomEventEmitter.dispatch("categoryDeleted", {
+                index,
+            });
         });
         return cloned;
     }

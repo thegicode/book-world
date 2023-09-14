@@ -970,16 +970,14 @@
       this.booksElement = this.querySelector(".favorite-books");
       this.template = document.querySelector("#tp-favorite-item");
       const params = new URLSearchParams(location.search);
-      this.locationCategoryIndex = Number(params.get("category"));
+      this.locationCategory = params.get("category");
     }
     connectedCallback() {
       if (Object.keys(state.category).length === 0) {
         this.renderMessage();
         return;
       }
-      if (this.locationCategoryIndex === null)
-        return;
-      const key = Object.keys(state.category)[this.locationCategoryIndex];
+      const key = this.locationCategory || Object.keys(state.category)[0];
       this.render(key);
     }
     disconnectedCallback() {
@@ -1015,13 +1013,41 @@
       this.nav = this.querySelector(".favorite-category");
       this.overlayCategory = document.querySelector("overlay-category");
       const params = new URLSearchParams(location.search);
-      this.locationCategoryIndex = Number(params.get("category"));
+      this.locationCategory = params.get("category");
+      this.onCategoryAdded = this.onCategoryAdded.bind(this);
+      this.onCategoryRenamed = this.onCategoryRenamed.bind(this);
+      this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
     }
     connectedCallback() {
-      if (this.locationCategoryIndex === null)
-        return;
       this.render();
       this.overlayCatalog();
+      CustomEventEmitter_default.add("categoryAdded", this.onCategoryAdded);
+      CustomEventEmitter_default.add("categoryRenamed", this.onCategoryRenamed);
+      CustomEventEmitter_default.add("categoryDeleted", this.onCategoryDeleted);
+    }
+    disconnectedCallback() {
+      CustomEventEmitter_default.remove("categoryAdded", this.onCategoryAdded);
+      CustomEventEmitter_default.remove("categoryRenamed", this.onCategoryRenamed);
+      CustomEventEmitter_default.remove("categoryDeleted", this.onCategoryDeleted);
+    }
+    onCategoryAdded(event) {
+      var _a;
+      const { category } = event.detail;
+      const index = Object.keys(state.category).length - 1;
+      const element = this.createItem(category, index);
+      (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
+    }
+    onCategoryRenamed(event) {
+      if (!this.nav)
+        return;
+      const { value } = event.detail;
+      const index = Object.keys(state.category).indexOf(value);
+      this.nav.querySelectorAll("a")[index].textContent = value;
+    }
+    onCategoryDeleted(event) {
+      var _a;
+      const { index } = event.detail;
+      (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a")[index].remove();
     }
     render() {
       if (!this.nav)
@@ -1038,19 +1064,23 @@
     createItem(category, index) {
       const el = document.createElement("a");
       el.textContent = category;
-      el.href = `?category=${index}`;
-      if (index === this.locationCategoryIndex) {
+      el.href = this.getUrl(category);
+      if (category === this.locationCategory) {
         el.dataset.active = "true";
       }
       el.addEventListener("click", (event) => {
-        this.onChange(index, el, event);
+        this.onChange(category, index, el, event);
       });
       return el;
     }
-    onChange(index, el, event) {
+    onChange(category, el, event) {
       event.preventDefault();
       el.dataset.active = "true";
-      location.search = `category=${index}`;
+      location.search = this.getUrl(category);
+    }
+    getUrl(category) {
+      const categoryStr = encodeURIComponent(category);
+      return `category=${categoryStr}`;
     }
     overlayCatalog() {
       const modal = this.overlayCategory;
@@ -1209,6 +1239,9 @@
         const cloned = this.createItem(category);
         (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
         this.addInput.value = "";
+        CustomEventEmitter_default.dispatch("categoryAdded", {
+          category
+        });
       };
       this.handleSubmit = (event) => {
         event.preventDefault();
@@ -1268,13 +1301,21 @@
         input.value = category;
       }
       (_c = cloned.querySelector(".rename")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
-        if (input.value && category !== input.value) {
-          updateCategory(category, input.value);
+        const value = input.value;
+        if (value && category !== value) {
+          updateCategory(category, value);
+          CustomEventEmitter_default.dispatch("categoryRenamed", {
+            value
+          });
         }
       });
       (_d = cloned.querySelector(".delete")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => {
+        const index = Object.keys(state.category).indexOf(category);
         cloned.remove();
         deleteCategory(category);
+        CustomEventEmitter_default.dispatch("categoryDeleted", {
+          index
+        });
       });
       return cloned;
     }
