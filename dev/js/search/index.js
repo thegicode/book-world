@@ -794,7 +794,6 @@
     return JSON.parse(JSON.stringify(obj));
   };
   var initialState = {
-    favoriteBooks: [],
     libraries: {},
     regions: {},
     category: {}

@@ -3,7 +3,6 @@ const cloneDeep = <T>(obj: T): T => {
 };
 
 const initialState: IStorageData = {
-    favoriteBooks: [],
     libraries: {},
     regions: {},
     category: {},

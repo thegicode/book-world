@@ -85,7 +85,6 @@ interface TotalRegions {
 }
 
 interface IStorageData {
-    favoriteBooks: string[];
     libraries: Record<string, string>;
     regions: Record<string, Record<string, string>>;
     category: Recodr<string, string[]>;
