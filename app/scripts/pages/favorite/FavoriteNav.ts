@@ -24,15 +24,6 @@ export default class FavoriteNav extends HTMLElement {
     }
 
     connectedCallback() {
-        if (this.locationCategory === null) {
-            this.locationCategory = Object.keys(state.category)[0];
-            const url = this.getUrl(this.locationCategory);
-            location.search = url;
-        }
-
-        this.render();
-        this.overlayCatalog();
-
         CustomEventEmitter.add(
             "categoryAdded",
             this.onCategoryAdded as EventListener
@@ -47,6 +38,15 @@ export default class FavoriteNav extends HTMLElement {
             "categoryDeleted",
             this.onCategoryDeleted as EventListener
         );
+
+        if (this.locationCategory === null) {
+            this.locationCategory = Object.keys(state.category)[0];
+            const url = this.getUrl(this.locationCategory);
+            location.search = url;
+        }
+
+        this.render();
+        this.overlayCatalog();
     }
 
     disconnectedCallback() {

@@ -77,7 +77,7 @@ const deleteCategory = (name) => {
     setState(state);
 };
 const addBookInCategory = (name, isbn) => {
-    state.category[name].push(isbn);
+    state.category[name].unshift(isbn);
     setState(state);
 };
 const hasBookInCategory = (name, isbn) => {

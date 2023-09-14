@@ -22,6 +22,7 @@ export default class FavoriteItem extends HTMLElement {
         this.anchorElement = this.querySelector("a") as HTMLAnchorElement;
 
         this.loading();
+
         this.fetchData(this.dataset.isbn as string);
 
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));

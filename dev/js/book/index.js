@@ -641,7 +641,7 @@
   };
   var state = getState();
   var addBookInCategory = (name, isbn) => {
-    state.category[name].push(isbn);
+    state.category[name].unshift(isbn);
     setState(state);
   };
   var hasBookInCategory = (name, isbn) => {

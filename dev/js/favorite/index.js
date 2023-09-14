@@ -810,7 +810,7 @@
     setState(state);
   };
   var addBookInCategory = (name, isbn) => {
-    state.category[name].push(isbn);
+    state.category[name].unshift(isbn);
     setState(state);
   };
   var hasBookInCategory = (name, isbn) => {
@@ -1018,6 +1018,9 @@
       this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
     }
     connectedCallback() {
+      CustomEventEmitter_default.add("categoryAdded", this.onCategoryAdded);
+      CustomEventEmitter_default.add("categoryRenamed", this.onCategoryRenamed);
+      CustomEventEmitter_default.add("categoryDeleted", this.onCategoryDeleted);
       if (this.locationCategory === null) {
         this.locationCategory = Object.keys(state.category)[0];
         const url = this.getUrl(this.locationCategory);
@@ -1025,9 +1028,6 @@
       }
       this.render();
       this.overlayCatalog();
-      CustomEventEmitter_default.add("categoryAdded", this.onCategoryAdded);
-      CustomEventEmitter_default.add("categoryRenamed", this.onCategoryRenamed);
-      CustomEventEmitter_default.add("categoryDeleted", this.onCategoryDeleted);
     }
     disconnectedCallback() {
       CustomEventEmitter_default.remove("categoryAdded", this.onCategoryAdded);

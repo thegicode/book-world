@@ -12,6 +12,9 @@ export default class FavoriteNav extends HTMLElement {
         this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
     }
     connectedCallback() {
+        CustomEventEmitter.add("categoryAdded", this.onCategoryAdded);
+        CustomEventEmitter.add("categoryRenamed", this.onCategoryRenamed);
+        CustomEventEmitter.add("categoryDeleted", this.onCategoryDeleted);
         if (this.locationCategory === null) {
             this.locationCategory = Object.keys(state.category)[0];
             const url = this.getUrl(this.locationCategory);
@@ -19,9 +22,6 @@ export default class FavoriteNav extends HTMLElement {
         }
         this.render();
         this.overlayCatalog();
-        CustomEventEmitter.add("categoryAdded", this.onCategoryAdded);
-        CustomEventEmitter.add("categoryRenamed", this.onCategoryRenamed);
-        CustomEventEmitter.add("categoryDeleted", this.onCategoryDeleted);
     }
     disconnectedCallback() {
         CustomEventEmitter.remove("categoryAdded", this.onCategoryAdded);
