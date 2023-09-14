@@ -1019,6 +1019,11 @@
       this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
     }
     connectedCallback() {
+      if (this.locationCategory === null) {
+        this.locationCategory = Object.keys(state.category)[0];
+        const url = this.getUrl(this.locationCategory);
+        location.search = url;
+      }
       this.render();
       this.overlayCatalog();
       CustomEventEmitter_default.add("categoryAdded", this.onCategoryAdded);
@@ -1035,14 +1040,14 @@
         return;
       this.nav.innerHTML = "";
       const fragment = new DocumentFragment();
-      Object.keys(state.category).forEach((category, index) => {
-        const el = this.createItem(category, index);
+      Object.keys(state.category).forEach((category) => {
+        const el = this.createItem(category);
         fragment.appendChild(el);
       });
       this.nav.appendChild(fragment);
       this.hidden = false;
     }
-    createItem(category, index) {
+    createItem(category) {
       const el = document.createElement("a");
       el.textContent = category;
       el.href = this.getUrl(category);
@@ -1050,7 +1055,7 @@
         el.dataset.active = "true";
       }
       el.addEventListener("click", (event) => {
-        this.onChange(category, index, el, event);
+        this.onChange(category, el, event);
       });
       return el;
     }
@@ -1073,8 +1078,7 @@
     onCategoryAdded(event) {
       var _a;
       const { category } = event.detail;
-      const index = Object.keys(state.category).length - 1;
-      const element = this.createItem(category, index);
+      const element = this.createItem(category);
       (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
     }
     onCategoryRenamed(event) {

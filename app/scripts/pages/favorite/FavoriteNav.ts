@@ -24,6 +24,12 @@ export default class FavoriteNav extends HTMLElement {
     }
 
     connectedCallback() {
+        if (this.locationCategory === null) {
+            this.locationCategory = Object.keys(state.category)[0];
+            const url = this.getUrl(this.locationCategory);
+            location.search = url;
+        }
+
         this.render();
         this.overlayCatalog();
 
@@ -65,19 +71,17 @@ export default class FavoriteNav extends HTMLElement {
         this.nav.innerHTML = "";
 
         const fragment = new DocumentFragment();
-        Object.keys(state.category).forEach(
-            (category: string, index: number) => {
-                const el = this.createItem(category, index);
-                fragment.appendChild(el);
-            }
-        );
+        Object.keys(state.category).forEach((category: string) => {
+            const el = this.createItem(category);
+            fragment.appendChild(el);
+        });
 
         this.nav.appendChild(fragment);
 
         this.hidden = false;
     }
 
-    private createItem(category: string, index: number) {
+    private createItem(category: string) {
         const el = document.createElement("a") as HTMLAnchorElement;
         el.textContent = category;
         el.href = this.getUrl(category);
@@ -87,7 +91,7 @@ export default class FavoriteNav extends HTMLElement {
         }
 
         el.addEventListener("click", (event) => {
-            this.onChange(category, index, el, event);
+            this.onChange(category, el, event);
         });
 
         return el;
@@ -116,9 +120,9 @@ export default class FavoriteNav extends HTMLElement {
 
     private onCategoryAdded(event: ICustomEvent<{ category: string }>) {
         const { category } = event.detail;
-        const index = Object.keys(state.category).length - 1;
+        // const index = Object.keys(state.category).length - 1;
 
-        const element = this.createItem(category, index);
+        const element = this.createItem(category);
         this.nav?.appendChild(element);
     }
 
