@@ -1067,7 +1067,7 @@
       el.textContent = category;
       el.href = `?${this.getUrl(category)}`;
       if (category === this.category) {
-        el.dataset.active = "true";
+        el.ariaSelected = "true";
       }
       el.addEventListener("click", (event) => {
         this.onChange(category, el, event);
@@ -1076,7 +1076,7 @@
     }
     onChange(category, el, event) {
       event.preventDefault();
-      el.dataset.active = "true";
+      el.ariaSelected = "true";
       location.search = this.getUrl(category);
       this.category = category;
     }

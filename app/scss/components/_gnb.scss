@@ -3,10 +3,12 @@
     justify-content: space-evenly;
     background-color: #37824a;
     &-item {
+        flex: 1;
         padding: 12px 0;
         text-decoration: none;
         color: #fff;
         font-size: 14px;
+        text-align: center;
         &:hover,
         &[aria-selected="true"] {
             text-decoration: underline;

@@ -67,7 +67,7 @@ nav-gnb {
             color: #333;
             text-decoration: underline;
         }
-        &[data-active="true"] {
+        &[aria-selected="true"] {
             color: #209b3a;
         }
     }

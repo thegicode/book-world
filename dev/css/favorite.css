@@ -33,10 +33,12 @@ button:disabled {
   background-color: #37824a;
 }
 .gnb-item {
+  flex: 1;
   padding: 12px 0;
   text-decoration: none;
   color: #fff;
   font-size: 14px;
+  text-align: center;
 }
 .gnb-item:hover, .gnb-item[aria-selected=true] {
   text-decoration: underline;
@@ -227,7 +229,7 @@ nav-gnb {
   color: #333;
   text-decoration: underline;
 }
-.favorite-category a[data-active=true] {
+.favorite-category a[aria-selected=true] {
   color: #209b3a;
 }
 
