@@ -996,7 +996,7 @@
     renderBookList() {
       const params = new URLSearchParams(location.search);
       const keyword = params.get("keyword");
-      const sort = params.get("sort");
+      const sort = params.get("sort") || "sim";
       const searchElement = document.querySelector("input-search input[type='search']");
       if (keyword && sort) {
         CustomEventEmitter_default.dispatch("search-page-init", { keyword, sort });
