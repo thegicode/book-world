@@ -36,7 +36,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     private createContainer() {
         const container = document.createElement("div");
         container.className = "category";
-        Object.keys(state.category).forEach((category: string) =>
+        state.categorySort.forEach((category: string) =>
             this.createCategoryItem(container, category, this.isbn || "")
         );
         return container;

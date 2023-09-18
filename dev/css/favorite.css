@@ -372,15 +372,18 @@ library-book-exist {
   color: #56755d;
 }
 .overlay-category .category-list {
-  padding: 0;
+  margin: 0;
+  padding: 10px 0;
   list-style: none;
 }
 .overlay-category .category-item {
   display: flex;
-  box-sizing: border-box;
-  padding: 3px 0;
   align-items: center;
+  box-sizing: border-box;
+  padding: 10px 0;
+  background-color: #f1fff4;
   color: #333;
+  transition: all 0.3s ease;
 }
 .overlay-category .category-item input[name=category] {
   padding: 6px 8px;
@@ -388,15 +391,36 @@ library-book-exist {
   font-size: 14px;
   color: #666;
 }
-.overlay-category .category-item button {
+.overlay-category .category-item .label ~ button {
   margin-left: 5px;
-  padding: 5px 8px;
+  padding: 5px 10px;
+  border: solid 1px transparent;
+  color: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
   background-color: transparent;
-  font-size: 12px;
-  color: #666;
 }
-.overlay-category .category-item button:hover {
-  background-color: #d7ecdc;
+.overlay-category .category-item .label ~ button:hover {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+.overlay-category .category-item .dragger {
+  height: var(--height);
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 1.5rem;
+  color: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+.overlay-category .category-item[data-drag=dragenter] {
+  padding-top: 2rem;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+.overlay-category .category-item[data-drag=dragleave] {
+  background-color: transparent;
+}
+.overlay-category .category-item[draggable=true] {
+  opacity: 0.5;
 }
 .overlay-category .category-add {
   display: flex;

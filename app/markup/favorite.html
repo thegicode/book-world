@@ -92,7 +92,8 @@
         </template>
 
         <template id="tp-category-item">
-            <li class="category-item" draggable="true">
+            <li class="category-item" draggable="false">
+                <button type="button" class="dragger" tabindex="-1">=</button>
                 <span class="label"><input type="text" name="category" /></span>
                 <button type="button" class="rename">이름 변경</button>
                 <button type="button" class="delete">삭제</button>

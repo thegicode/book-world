@@ -5,6 +5,7 @@ const initialState = {
     libraries: {},
     regions: {},
     category: {},
+    categorySort: [],
 };
 const storageKey = "BookWorld";
 const setState = (newState) => {
@@ -62,18 +63,31 @@ const removeDetailRegion = (regionName, detailName) => {
 };
 const addCategory = (name) => {
     state.category[name] = [];
+    state.categorySort.push(name);
     setState(state);
 };
 const hasCategory = (name) => {
     return name in state.category;
 };
-const updateCategory = (name, newName) => {
+const renameCategory = (name, newName) => {
+    const index = state.categorySort.indexOf(name);
+    state.categorySort[index] = newName;
     state.category[newName] = state.category[name];
     delete state.category[name];
     setState(state);
 };
 const deleteCategory = (name) => {
+    state.categorySort = state.categorySort.filter((item) => item !== name);
     delete state.category[name];
+    setState(state);
+};
+const changeCategory = (draggedKey, targetKey) => {
+    const draggedIndex = state.categorySort.indexOf(draggedKey);
+    const targetIndex = state.categorySort.indexOf(targetKey);
+    const sortData = [...state.categorySort];
+    sortData[targetIndex] = draggedKey;
+    sortData[draggedIndex] = targetKey;
+    state.categorySort = sortData;
     setState(state);
 };
 const addBookInCategory = (name, isbn) => {
@@ -96,5 +110,5 @@ const getBookSizeInCategory = () => {
     }
     return getTotalItemCount(state.category);
 };
-export { state, setState, getState, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, updateCategory, deleteCategory, addBookInCategory, hasBookInCategory, removeBookInCategory, getBookSizeInCategory, };
+export { state, setState, getState, addLibrary, removeLibrary, hasLibrary, addRegion, removeRegion, addDetailRegion, removeDetailRegion, addCategory, hasCategory, renameCategory, deleteCategory, changeCategory, addBookInCategory, hasBookInCategory, removeBookInCategory, getBookSizeInCategory, };
 //# sourceMappingURL=model.js.map

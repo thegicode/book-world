@@ -246,30 +246,57 @@ library-book-exist {
         }
     }
     .category-list {
-        padding: 0;
+        margin: 0;
+        padding: 10px 0;
         list-style: none;
     }
     .category-item {
         display: flex;
-        box-sizing: border-box;
-        padding: 3px 0;
         align-items: center;
+        box-sizing: border-box;
+        padding: 10px 0;
+        background-color: #f1fff4;
         color: #333;
+        transition: all 0.3s ease;
         input[name="category"] {
             padding: 6px 8px;
             border: 1px solid #d7ecdc;
             font-size: 14px;
             color: #666;
         }
-        button {
+        .label ~ button {
             margin-left: 5px;
-            padding: 5px 8px;
+            padding: 5px 10px;
+            border: solid 1px transparent;
+            color: rgba(0, 0, 0, 0.5);
+            border-radius: 3px;
             background-color: transparent;
-            font-size: 12px;
-            color: #666;
             &:hover {
-                background-color: #d7ecdc;
+                border-color: rgba(0, 0, 0, 0.1);
             }
+        }
+        .dragger {
+            height: var(--height);
+            border: none;
+            background-color: rgba(0, 0, 0, 0);
+            font-size: 1.5rem;
+            color: rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+        &[data-drag="dragenter"] {
+            padding-top: 2rem;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        &[data-drag="dragleave"] {
+            background-color: transparent;
+        }
+        // &[data-drag="drop"] {
+        //     background-color: transparent;
+        // }
+        &[draggable="true"] {
+            opacity: 0.5;
         }
     }
     .category-add {

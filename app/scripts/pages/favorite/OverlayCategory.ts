@@ -2,8 +2,9 @@ import {
     state,
     addCategory,
     hasCategory,
-    updateCategory,
+    renameCategory,
     deleteCategory,
+    changeCategory,
 } from "../../modules/model";
 import { CustomEventEmitter } from "../../utils";
 
@@ -14,6 +15,7 @@ export default class OverlayCategory extends HTMLElement {
     addButton: HTMLButtonElement | null;
     addInput: HTMLInputElement | null;
     closeButton: HTMLButtonElement | null;
+    draggedItem: HTMLLIElement | null = null;
 
     static get observedAttributes() {
         return ["hidden"];
@@ -28,6 +30,7 @@ export default class OverlayCategory extends HTMLElement {
         this.addButton = this.querySelector(".addButton");
         this.addInput = this.querySelector("input[name='add']");
         this.closeButton = this.querySelector(".closeButton");
+        this.draggedItem = null;
     }
 
     connectedCallback() {
@@ -58,19 +61,24 @@ export default class OverlayCategory extends HTMLElement {
     }
 
     private render() {
+        if (!this.list) return;
+
         const fragment = new DocumentFragment();
-        Object.keys(state.category).forEach((category) => {
-            const cloned = this.createItem(category);
+        state.categorySort.forEach((category, index) => {
+            const cloned = this.createItem(category, index);
             fragment.appendChild(cloned);
         });
 
-        this.list?.appendChild(fragment);
+        this.list.appendChild(fragment);
     }
 
-    private createItem(category: string) {
+    private createItem(category: string, index: number) {
         const cloned = this.template?.content.firstElementChild?.cloneNode(
             true
-        ) as HTMLElement;
+        ) as HTMLLIElement;
+
+        cloned.dataset.index = index.toString();
+        cloned.dataset.category = category;
 
         const input = cloned.querySelector(
             "input[name='category']"
@@ -82,16 +90,17 @@ export default class OverlayCategory extends HTMLElement {
         cloned.querySelector(".rename")?.addEventListener("click", () => {
             const value = input.value;
             if (value && category !== value) {
-                updateCategory(category, value);
+                renameCategory(category, value);
 
                 CustomEventEmitter.dispatch("categoryRenamed", {
+                    category,
                     value,
                 });
             }
         });
 
         cloned.querySelector(".delete")?.addEventListener("click", () => {
-            const index = Object.keys(state.category).indexOf(category);
+            const index = state.categorySort.indexOf(category);
 
             cloned.remove();
             deleteCategory(category);
@@ -101,7 +110,63 @@ export default class OverlayCategory extends HTMLElement {
             });
         });
 
+        this.changeItem(cloned);
+
         return cloned;
+    }
+
+    private changeItem(cloned: HTMLLIElement) {
+        const dragggerButton = cloned.querySelector(
+            ".dragger"
+        ) as HTMLButtonElement;
+        dragggerButton.addEventListener("mousedown", () => {
+            cloned.draggable = true;
+        });
+        dragggerButton.addEventListener("mouseup", () => {
+            cloned.removeAttribute("draggable");
+        });
+
+        cloned.addEventListener("dragstart", () => {
+            this.draggedItem = cloned as HTMLLIElement;
+            cloned.draggable = true;
+        });
+
+        cloned.addEventListener("dragend", () => {
+            if (this.draggedItem === cloned) {
+                this.draggedItem = null;
+                cloned.removeAttribute("draggable");
+            }
+        });
+
+        cloned.addEventListener("dragover", (event: DragEvent) => {
+            event.preventDefault();
+        });
+
+        cloned.addEventListener("dragenter", () => {
+            if (this.draggedItem === cloned) return;
+            cloned.dataset.drag = "dragenter";
+        });
+
+        // cloned.addEventListener("dragleave", () => {
+        //     if (this.draggedItem === cloned) return;
+        // });
+
+        cloned.addEventListener("drop", () => {
+            if (!this.draggedItem || !this.list) return;
+
+            this.list.insertBefore(this.draggedItem, cloned);
+            const draggedKey = this.draggedItem.dataset.category;
+            const targetKey = cloned.dataset.category;
+            if (draggedKey && targetKey) {
+                changeCategory(draggedKey, targetKey);
+
+                CustomEventEmitter.dispatch("categoryChanged", {
+                    draggedKey,
+                    targetKey,
+                });
+            }
+            delete cloned.dataset.drag;
+        });
     }
 
     private handleClickAdd = () => {
@@ -118,7 +183,8 @@ export default class OverlayCategory extends HTMLElement {
 
         addCategory(category);
 
-        const cloned = this.createItem(category);
+        const index = state.categorySort.length;
+        const cloned = this.createItem(category, index);
         this.list?.appendChild(cloned);
 
         this.addInput.value = "";

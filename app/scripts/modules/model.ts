@@ -6,6 +6,7 @@ const initialState: IStorageData = {
     libraries: {},
     regions: {},
     category: {},
+    categorySort: [],
 };
 
 const storageKey = "BookWorld";
@@ -77,6 +78,7 @@ const removeDetailRegion = (regionName: string, detailName: string): void => {
 
 const addCategory = (name: string): void => {
     state.category[name] = [];
+    state.categorySort.push(name);
     setState(state);
 };
 
@@ -84,14 +86,32 @@ const hasCategory = (name: string): boolean => {
     return name in state.category;
 };
 
-const updateCategory = (name: string, newName: string) => {
+const renameCategory = (name: string, newName: string) => {
+    const index = state.categorySort.indexOf(name);
+    state.categorySort[index] = newName;
+
     state.category[newName] = state.category[name];
     delete state.category[name];
+
     setState(state);
 };
 
 const deleteCategory = (name: string) => {
+    state.categorySort = state.categorySort.filter((item) => item !== name);
+
     delete state.category[name];
+    setState(state);
+};
+
+const changeCategory = (draggedKey: string, targetKey: string) => {
+    const draggedIndex = state.categorySort.indexOf(draggedKey);
+    const targetIndex = state.categorySort.indexOf(targetKey);
+    const sortData = [...state.categorySort];
+    sortData[targetIndex] = draggedKey;
+    sortData[draggedIndex] = targetKey;
+
+    state.categorySort = sortData;
+
     setState(state);
 };
 
@@ -135,8 +155,9 @@ export {
     removeDetailRegion,
     addCategory,
     hasCategory,
-    updateCategory,
+    renameCategory,
     deleteCategory,
+    changeCategory,
     addBookInCategory,
     hasBookInCategory,
     removeBookInCategory,

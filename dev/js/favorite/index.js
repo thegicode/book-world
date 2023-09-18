@@ -769,7 +769,8 @@
   var initialState = {
     libraries: {},
     regions: {},
-    category: {}
+    category: {},
+    categorySort: []
   };
   var storageKey = "BookWorld";
   var setState = (newState) => {
@@ -795,18 +796,31 @@
   var state = getState();
   var addCategory = (name) => {
     state.category[name] = [];
+    state.categorySort.push(name);
     setState(state);
   };
   var hasCategory = (name) => {
     return name in state.category;
   };
-  var updateCategory = (name, newName) => {
+  var renameCategory = (name, newName) => {
+    const index = state.categorySort.indexOf(name);
+    state.categorySort[index] = newName;
     state.category[newName] = state.category[name];
     delete state.category[name];
     setState(state);
   };
   var deleteCategory = (name) => {
+    state.categorySort = state.categorySort.filter((item) => item !== name);
     delete state.category[name];
+    setState(state);
+  };
+  var changeCategory = (draggedKey, targetKey) => {
+    const draggedIndex = state.categorySort.indexOf(draggedKey);
+    const targetIndex = state.categorySort.indexOf(targetKey);
+    const sortData = [...state.categorySort];
+    sortData[targetIndex] = draggedKey;
+    sortData[draggedIndex] = targetKey;
+    state.categorySort = sortData;
     setState(state);
   };
   var addBookInCategory = (name, isbn) => {
@@ -893,7 +907,7 @@
     createContainer() {
       const container = document.createElement("div");
       container.className = "category";
-      Object.keys(state.category).forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      state.categorySort.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
       return container;
     }
     createCheckbox(category, ISBN) {
@@ -972,11 +986,11 @@
       this.locationCategory = params.get("category");
     }
     connectedCallback() {
-      if (Object.keys(state.category).length === 0) {
+      if (state.categorySort.length === 0) {
         this.renderMessage();
         return;
       }
-      const key = this.locationCategory || Object.keys(state.category)[0];
+      const key = this.locationCategory || state.categorySort[0];
       this.render(key);
     }
     disconnectedCallback() {
@@ -1012,18 +1026,20 @@
       this.nav = this.querySelector(".favorite-category");
       this.overlayCategory = document.querySelector("overlay-category");
       const params = new URLSearchParams(location.search);
-      this.locationCategory = params.get("category");
+      this.category = params.get("category");
       this.onCategoryAdded = this.onCategoryAdded.bind(this);
       this.onCategoryRenamed = this.onCategoryRenamed.bind(this);
       this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
+      this.onCategoryChanged = this.onCategoryChanged.bind(this);
     }
     connectedCallback() {
       CustomEventEmitter_default.add("categoryAdded", this.onCategoryAdded);
       CustomEventEmitter_default.add("categoryRenamed", this.onCategoryRenamed);
       CustomEventEmitter_default.add("categoryDeleted", this.onCategoryDeleted);
-      if (this.locationCategory === null) {
-        this.locationCategory = Object.keys(state.category)[0];
-        const url = this.getUrl(this.locationCategory);
+      CustomEventEmitter_default.add("categoryChanged", this.onCategoryChanged);
+      if (this.category === null) {
+        this.category = state.categorySort[0];
+        const url = this.getUrl(this.category);
         location.search = url;
       }
       this.render();
@@ -1039,7 +1055,7 @@
         return;
       this.nav.innerHTML = "";
       const fragment = new DocumentFragment();
-      Object.keys(state.category).forEach((category) => {
+      state.categorySort.forEach((category) => {
         const el = this.createItem(category);
         fragment.appendChild(el);
       });
@@ -1050,7 +1066,7 @@
       const el = document.createElement("a");
       el.textContent = category;
       el.href = `?${this.getUrl(category)}`;
-      if (category === this.locationCategory) {
+      if (category === this.category) {
         el.dataset.active = "true";
       }
       el.addEventListener("click", (event) => {
@@ -1062,6 +1078,7 @@
       event.preventDefault();
       el.dataset.active = "true";
       location.search = this.getUrl(category);
+      this.category = category;
     }
     getUrl(category) {
       const categoryStr = encodeURIComponent(category);
@@ -1083,14 +1100,30 @@
     onCategoryRenamed(event) {
       if (!this.nav)
         return;
-      const { value } = event.detail;
-      const index = Object.keys(state.category).indexOf(value);
+      const { category, value } = event.detail;
+      const index = state.categorySort.indexOf(value);
       this.nav.querySelectorAll("a")[index].textContent = value;
+      if (this.category === category) {
+        location.search = this.getUrl(value);
+      }
     }
     onCategoryDeleted(event) {
       var _a;
       const { index } = event.detail;
       (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a")[index].remove();
+    }
+    onCategoryChanged(event) {
+      var _a;
+      const { draggedKey, targetKey } = event.detail;
+      const draggedIndex = state.categorySort.indexOf(draggedKey);
+      const targetIndex = state.categorySort.indexOf(targetKey);
+      const navLinks = (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a");
+      if (navLinks) {
+        const targetEl = navLinks[targetIndex].cloneNode(true);
+        const draggedEl = navLinks[draggedIndex].cloneNode(true);
+        navLinks[draggedIndex].replaceWith(targetEl);
+        navLinks[targetIndex].replaceWith(draggedEl);
+      }
     }
   };
 
@@ -1226,6 +1259,7 @@
   var OverlayCategory = class extends HTMLElement {
     constructor() {
       super();
+      this.draggedItem = null;
       this.handleClickAdd = () => {
         var _a;
         if (!this.addInput)
@@ -1239,7 +1273,8 @@
           return;
         }
         addCategory(category);
-        const cloned = this.createItem(category);
+        const index = state.categorySort.length;
+        const cloned = this.createItem(category, index);
         (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
         this.addInput.value = "";
         CustomEventEmitter_default.dispatch("categoryAdded", {
@@ -1259,6 +1294,7 @@
       this.addButton = this.querySelector(".addButton");
       this.addInput = this.querySelector("input[name='add']");
       this.closeButton = this.querySelector(".closeButton");
+      this.draggedItem = null;
     }
     static get observedAttributes() {
       return ["hidden"];
@@ -1288,17 +1324,20 @@
       }
     }
     render() {
-      var _a;
+      if (!this.list)
+        return;
       const fragment = new DocumentFragment();
-      Object.keys(state.category).forEach((category) => {
-        const cloned = this.createItem(category);
+      state.categorySort.forEach((category, index) => {
+        const cloned = this.createItem(category, index);
         fragment.appendChild(cloned);
       });
-      (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
+      this.list.appendChild(fragment);
     }
-    createItem(category) {
+    createItem(category, index) {
       var _a, _b, _c, _d;
       const cloned = (_b = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
+      cloned.dataset.index = index.toString();
+      cloned.dataset.category = category;
       const input = cloned.querySelector("input[name='category']");
       if (input) {
         input.value = category;
@@ -1306,21 +1345,65 @@
       (_c = cloned.querySelector(".rename")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
         const value = input.value;
         if (value && category !== value) {
-          updateCategory(category, value);
+          renameCategory(category, value);
           CustomEventEmitter_default.dispatch("categoryRenamed", {
+            category,
             value
           });
         }
       });
       (_d = cloned.querySelector(".delete")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => {
-        const index = Object.keys(state.category).indexOf(category);
+        const index2 = state.categorySort.indexOf(category);
         cloned.remove();
         deleteCategory(category);
         CustomEventEmitter_default.dispatch("categoryDeleted", {
-          index
+          index: index2
         });
       });
+      this.changeItem(cloned);
       return cloned;
+    }
+    changeItem(cloned) {
+      const dragggerButton = cloned.querySelector(".dragger");
+      dragggerButton.addEventListener("mousedown", () => {
+        cloned.draggable = true;
+      });
+      dragggerButton.addEventListener("mouseup", () => {
+        cloned.removeAttribute("draggable");
+      });
+      cloned.addEventListener("dragstart", () => {
+        this.draggedItem = cloned;
+        cloned.draggable = true;
+      });
+      cloned.addEventListener("dragend", () => {
+        if (this.draggedItem === cloned) {
+          this.draggedItem = null;
+          cloned.removeAttribute("draggable");
+        }
+      });
+      cloned.addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
+      cloned.addEventListener("dragenter", () => {
+        if (this.draggedItem === cloned)
+          return;
+        cloned.dataset.drag = "dragenter";
+      });
+      cloned.addEventListener("drop", () => {
+        if (!this.draggedItem || !this.list)
+          return;
+        this.list.insertBefore(this.draggedItem, cloned);
+        const draggedKey = this.draggedItem.dataset.category;
+        const targetKey = cloned.dataset.category;
+        if (draggedKey && targetKey) {
+          changeCategory(draggedKey, targetKey);
+          CustomEventEmitter_default.dispatch("categoryChanged", {
+            draggedKey,
+            targetKey
+          });
+        }
+        delete cloned.dataset.drag;
+      });
     }
   };
 

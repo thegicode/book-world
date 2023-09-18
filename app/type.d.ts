@@ -87,7 +87,8 @@ interface TotalRegions {
 interface IStorageData {
     libraries: Record<string, string>;
     regions: Record<string, Record<string, string>>;
-    category: Recodr<string, string[]>;
+    category: Record<string, string[]>;
+    categorySort: string[];
 }
 
 interface IBookImageData {

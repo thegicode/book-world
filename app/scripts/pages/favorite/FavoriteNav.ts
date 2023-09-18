@@ -4,7 +4,7 @@ import { CustomEventEmitter } from "../../utils";
 export default class FavoriteNav extends HTMLElement {
     nav: HTMLElement | null;
     overlayCategory: HTMLElement;
-    locationCategory: string | null;
+    category: string | null;
 
     constructor() {
         super();
@@ -16,11 +16,12 @@ export default class FavoriteNav extends HTMLElement {
         ) as HTMLElement;
 
         const params = new URLSearchParams(location.search);
-        this.locationCategory = params.get("category");
+        this.category = params.get("category");
 
         this.onCategoryAdded = this.onCategoryAdded.bind(this);
         this.onCategoryRenamed = this.onCategoryRenamed.bind(this);
         this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
+        this.onCategoryChanged = this.onCategoryChanged.bind(this);
     }
 
     connectedCallback() {
@@ -39,9 +40,14 @@ export default class FavoriteNav extends HTMLElement {
             this.onCategoryDeleted as EventListener
         );
 
-        if (this.locationCategory === null) {
-            this.locationCategory = Object.keys(state.category)[0];
-            const url = this.getUrl(this.locationCategory);
+        CustomEventEmitter.add(
+            "categoryChanged",
+            this.onCategoryChanged as EventListener
+        );
+
+        if (this.category === null) {
+            this.category = state.categorySort[0];
+            const url = this.getUrl(this.category);
             location.search = url;
         }
 
@@ -71,7 +77,7 @@ export default class FavoriteNav extends HTMLElement {
         this.nav.innerHTML = "";
 
         const fragment = new DocumentFragment();
-        Object.keys(state.category).forEach((category: string) => {
+        state.categorySort.forEach((category: string) => {
             const el = this.createItem(category);
             fragment.appendChild(el);
         });
@@ -86,7 +92,7 @@ export default class FavoriteNav extends HTMLElement {
         el.textContent = category;
         el.href = `?${this.getUrl(category)}`;
 
-        if (category === this.locationCategory) {
+        if (category === this.category) {
             el.dataset.active = "true";
         }
 
@@ -103,6 +109,7 @@ export default class FavoriteNav extends HTMLElement {
         el.dataset.active = "true";
 
         location.search = this.getUrl(category);
+        this.category = category;
     }
 
     private getUrl(category: string) {
@@ -120,21 +127,44 @@ export default class FavoriteNav extends HTMLElement {
 
     private onCategoryAdded(event: ICustomEvent<{ category: string }>) {
         const { category } = event.detail;
-        // const index = Object.keys(state.category).length - 1;
 
         const element = this.createItem(category);
         this.nav?.appendChild(element);
     }
 
-    private onCategoryRenamed(event: ICustomEvent<{ value: string }>) {
+    private onCategoryRenamed(
+        event: ICustomEvent<{ category: string; value: string }>
+    ) {
         if (!this.nav) return;
-        const { value } = event.detail;
-        const index = Object.keys(state.category).indexOf(value);
+        const { category, value } = event.detail;
+        const index = state.categorySort.indexOf(value);
         this.nav.querySelectorAll("a")[index].textContent = value;
+
+        if (this.category === category) {
+            location.search = this.getUrl(value);
+        }
     }
 
     private onCategoryDeleted(event: ICustomEvent<{ index: number }>) {
         const { index } = event.detail;
         this.nav?.querySelectorAll("a")[index].remove();
+    }
+
+    private onCategoryChanged(
+        event: ICustomEvent<{ draggedKey: string; targetKey: string }>
+    ) {
+        const { draggedKey, targetKey } = event.detail;
+
+        const draggedIndex = state.categorySort.indexOf(draggedKey);
+        const targetIndex = state.categorySort.indexOf(targetKey);
+
+        const navLinks = this.nav?.querySelectorAll("a");
+        if (navLinks) {
+            const targetEl = navLinks[targetIndex].cloneNode(true);
+            const draggedEl = navLinks[draggedIndex].cloneNode(true);
+
+            navLinks[draggedIndex].replaceWith(targetEl);
+            navLinks[targetIndex].replaceWith(draggedEl);
+        }
     }
 }

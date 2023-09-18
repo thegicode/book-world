@@ -8,11 +8,11 @@ export default class Favorite extends HTMLElement {
         this.locationCategory = params.get("category");
     }
     connectedCallback() {
-        if (Object.keys(state.category).length === 0) {
+        if (state.categorySort.length === 0) {
             this.renderMessage();
             return;
         }
-        const key = this.locationCategory || Object.keys(state.category)[0];
+        const key = this.locationCategory || state.categorySort[0];
         this.render(key);
     }
     disconnectedCallback() {
