@@ -747,15 +747,15 @@
     }
     renderBookExist(data, libName, index) {
       const { hasBook, loanAvailable } = data;
-      const _hasBook = hasBook === "Y" ? "\uC18C\uC7A5, " : "\uBBF8\uC18C\uC7A5";
+      const _hasBook = hasBook === "Y" ? "\uC18C\uC7A5" : "\uBBF8\uC18C\uC7A5";
       let _loanAvailable = "";
       if (hasBook === "Y") {
-        _loanAvailable = loanAvailable === "Y" ? "\uB300\uCD9C\uAC00\uB2A5" : "\uB300\uCD9C\uBD88\uAC00";
+        _loanAvailable = loanAvailable === "Y" ? "| \uB300\uCD9C\uAC00\uB2A5" : "| \uB300\uCD9C\uBD88\uAC00";
       }
       const el = this.querySelectorAll(".library-item")[index];
       const elName = el.querySelector(".name");
       if (elName) {
-        elName.textContent = `\u263C ${libName} : `;
+        elName.textContent = `\u2219 ${libName} : `;
       }
       const elHasBook = el.querySelector(".hasBook");
       if (elHasBook) {

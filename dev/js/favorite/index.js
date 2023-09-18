@@ -720,15 +720,15 @@
     }
     renderBookExist(data, libName, index) {
       const { hasBook, loanAvailable } = data;
-      const _hasBook = hasBook === "Y" ? "\uC18C\uC7A5, " : "\uBBF8\uC18C\uC7A5";
+      const _hasBook = hasBook === "Y" ? "\uC18C\uC7A5" : "\uBBF8\uC18C\uC7A5";
       let _loanAvailable = "";
       if (hasBook === "Y") {
-        _loanAvailable = loanAvailable === "Y" ? "\uB300\uCD9C\uAC00\uB2A5" : "\uB300\uCD9C\uBD88\uAC00";
+        _loanAvailable = loanAvailable === "Y" ? "| \uB300\uCD9C\uAC00\uB2A5" : "| \uB300\uCD9C\uBD88\uAC00";
       }
       const el = this.querySelectorAll(".library-item")[index];
       const elName = el.querySelector(".name");
       if (elName) {
-        elName.textContent = `\u263C ${libName} : `;
+        elName.textContent = `\u2219 ${libName} : `;
       }
       const elHasBook = el.querySelector(".hasBook");
       if (elHasBook) {
@@ -987,7 +987,7 @@
     }
     connectedCallback() {
       if (state.categorySort.length === 0) {
-        this.renderMessage();
+        this.renderMessage("\uAD00\uC2EC \uCE74\uD14C\uACE0\uB9AC\uB97C \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.");
         return;
       }
       const key = this.locationCategory || state.categorySort[0];
@@ -1001,7 +1001,12 @@
       const template = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
       this.booksElement.innerHTML = "";
       if (template) {
-        state.category[key].forEach((isbn) => {
+        const data = state.category[key];
+        if (data.length === 0) {
+          this.renderMessage("\uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
+          return;
+        }
+        data.forEach((isbn) => {
           const el = template.cloneNode(true);
           el.dataset.isbn = isbn;
           fragment.appendChild(el);
@@ -1009,11 +1014,11 @@
       }
       this.booksElement.appendChild(fragment);
     }
-    renderMessage() {
+    renderMessage(message) {
       const template = document.querySelector("#tp-message").content.firstElementChild;
       if (template) {
         const element = template.cloneNode(true);
-        element.textContent = "\uAD00\uC2EC\uCC45\uC744 \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.";
+        element.textContent = message;
         this.booksElement.appendChild(element);
       }
     }
@@ -1160,17 +1165,22 @@
       super();
     }
     connectedCallback() {
+      var _a;
       this.libraryButton = this.querySelector(".library-button");
+      this.hideButton = this.querySelector(".hide-button");
+      this.libraryBookExist = this.querySelector("library-book-exist");
       this.anchorElement = this.querySelector("a");
       this.loading();
       this.fetchData(this.dataset.isbn);
       this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
+      (_a = this.hideButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onHideLibrary.bind(this));
       this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
     disconnectedCallback() {
-      var _a, _b;
+      var _a, _b, _c;
       (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
-      (_b = this.anchorElement) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onClick);
+      (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
+      (_c = this.anchorElement) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.onClick);
     }
     fetchData(isbn) {
       return __awaiter3(this, void 0, void 0, function* () {
@@ -1210,7 +1220,12 @@
       this.bookData = data;
       this.querySelector(".bookname").textContent = bookname;
       this.querySelector(".authors").textContent = authors;
-      this.querySelector(".class_nm").textContent = class_nm;
+      const classNm = this.querySelector(".class_nm");
+      if (class_nm === " >  > ") {
+        classNm.remove();
+      } else {
+        classNm.textContent = class_nm;
+      }
       this.querySelector(".isbn13").textContent = isbn13;
       this.querySelector(".loanCnt").textContent = loanCnt.toLocaleString();
       this.querySelector(".publication_year").textContent = publication_year;
@@ -1227,20 +1242,38 @@
         };
       }
       if (this.libraryButton && Object.keys(state.libraries).length === 0) {
-        this.libraryButton.disabled = true;
+        this.libraryButton.hidden = true;
       }
       this.removeLoading();
     }
     errorRender() {
       this.removeLoading();
       this.dataset.fail = "true";
-      this.querySelector("h4").textContent = `${this.dataset.isbn}\uC758 \uCC45 \uC815\uBCF4\uB97C \uAC00\uC838\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.`;
+      this.querySelector("h4").textContent = `ISBN : ${this.dataset.isbn}`;
+      this.querySelector(".authors").textContent = "\uC815\uBCF4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.";
     }
     onLibrary() {
       const isbn = this.dataset.isbn;
-      const libraryBookExist = this.querySelector("library-book-exist");
-      if (libraryBookExist && this.libraryButton) {
-        libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+      if (this.libraryBookExist && this.libraryButton) {
+        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+        if (this.libraryButton) {
+          this.libraryButton.hidden = true;
+        }
+        if (this.hideButton) {
+          this.hideButton.hidden = false;
+        }
+      }
+    }
+    onHideLibrary() {
+      var _a;
+      const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
+      list.innerHTML = "";
+      if (this.libraryButton) {
+        this.libraryButton.disabled = false;
+        this.libraryButton.hidden = false;
+      }
+      if (this.hideButton) {
+        this.hideButton.hidden = true;
       }
     }
     loading() {

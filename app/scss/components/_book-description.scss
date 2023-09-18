@@ -1,11 +1,10 @@
-
 book-description {
     display: flex;
     flex-direction: column;
     .description {
         margin: 0;
         font-size: 14px;
-        line-height: 1.5;    
+        line-height: 1.5;
         &:empty {
             margin: 0;
         }
@@ -20,7 +19,6 @@ book-description {
     .more-description-button {
         width: auto;
         margin-left: auto;
-        margin-bottom: 10px;
         padding: 5px 10px;
         border-radius: 5px;
         border: 1px solid #e7e7e7;
@@ -33,6 +31,5 @@ book-description {
         &[aria-hidden="true"] {
             display: none;
         }
-
     }
 }

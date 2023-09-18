@@ -59,17 +59,17 @@ export default class LibraryBookExist extends HTMLElement {
         index: number
     ): void {
         const { hasBook, loanAvailable } = data;
-        const _hasBook: "소장, " | "미소장" =
-            hasBook === "Y" ? "소장, " : "미소장";
+        const _hasBook = hasBook === "Y" ? "소장" : "미소장";
         let _loanAvailable = "";
         if (hasBook === "Y") {
-            _loanAvailable = loanAvailable === "Y" ? "대출가능" : "대출불가";
+            _loanAvailable =
+                loanAvailable === "Y" ? "| 대출가능" : "| 대출불가";
         }
         const el = this.querySelectorAll(".library-item")[index] as HTMLElement;
 
         const elName = el.querySelector(".name") as HTMLElement;
         if (elName) {
-            elName.textContent = `☼ ${libName} : `;
+            elName.textContent = `∙ ${libName} : `;
         }
         const elHasBook = el.querySelector(".hasBook") as HTMLElement;
         if (elHasBook) {

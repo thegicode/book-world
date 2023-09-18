@@ -20,7 +20,7 @@ export default class Favorite extends HTMLElement {
 
     connectedCallback() {
         if (state.categorySort.length === 0) {
-            this.renderMessage();
+            this.renderMessage("관심 카테고리를 등록해주세요.");
             return;
         }
 
@@ -37,7 +37,14 @@ export default class Favorite extends HTMLElement {
         const template = this.template?.content.firstElementChild;
         this.booksElement.innerHTML = "";
         if (template) {
-            state.category[key].forEach((isbn: string) => {
+            const data = state.category[key];
+
+            if (data.length === 0) {
+                this.renderMessage("관심책이 없습니다.");
+                return;
+            }
+
+            data.forEach((isbn: string) => {
                 const el = template.cloneNode(true) as HTMLElement;
                 el.dataset.isbn = isbn;
                 fragment.appendChild(el);
@@ -47,13 +54,13 @@ export default class Favorite extends HTMLElement {
         this.booksElement.appendChild(fragment);
     }
 
-    private renderMessage() {
+    private renderMessage(message: string) {
         const template = (
             document.querySelector("#tp-message") as HTMLTemplateElement
         ).content.firstElementChild;
         if (template) {
             const element = template.cloneNode(true);
-            element.textContent = "관심책을 등록해주세요.";
+            element.textContent = message;
             this.booksElement.appendChild(element);
         }
     }

@@ -67,7 +67,6 @@ book-description .description[data-ellipsis=true] {
 book-description .more-description-button {
   width: auto;
   margin-left: auto;
-  margin-bottom: 10px;
   padding: 5px 10px;
   border-radius: 5px;
   border: 1px solid #e7e7e7;
@@ -84,15 +83,15 @@ book-description .more-description-button[aria-hidden=true] {
 
 library-book-exist .library-list {
   list-style: none;
-  margin: 1rem 0 0;
+  margin: 5px 0 0;
   padding: 0;
   border-radius: 7px;
 }
 library-book-exist .library-item {
   display: flex;
-  margin: 5px 0;
-  padding: 0 5px;
-  font-size: 14px;
+  padding: 5px 0;
+  font-size: 12px;
+  color: #666;
 }
 library-book-exist .library-item span {
   margin-right: 5px;
@@ -267,14 +266,23 @@ favorite-item[data-loading=true]::after {
   color: yellowgreen;
   background-color: #fffff5;
 }
-favorite-item[data-fail=true] .book-image {
-  background-color: rgba(0, 0, 0, 0.05);
+favorite-item[data-fail=true] book-image {
+  width: 100px;
+  height: 100px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.02);
 }
-favorite-item[data-fail=true] .book-image img {
+favorite-item[data-fail=true] book-image img {
   display: none;
 }
-favorite-item[data-fail=true] .book-info p {
-  opacity: 0;
+favorite-item[data-fail=true] .book-info .bookname {
+  font-size: 14px;
+}
+favorite-item[data-fail=true] .book-info .authors ~ p {
+  display: none;
+}
+favorite-item[data-fail=true] book-description {
+  display: none;
 }
 favorite-item .book-summary {
   position: relative;
@@ -286,11 +294,7 @@ favorite-item .book-summary a {
   text-decoration: none;
 }
 favorite-item book-description {
-  margin: 0 1rem 1rem;
-}
-favorite-item book-image[data-fail=true] .book-image {
-  width: 120px;
-  height: 180px;
+  margin: 0 1rem;
 }
 favorite-item book-image .thumb {
   width: 120px;
@@ -315,6 +319,12 @@ favorite-item .book-info .bookname {
   font-size: 1rem;
   color: #34934a;
 }
+favorite-item .book-info .isbn13,
+favorite-item .book-info .publisher,
+favorite-item .book-info .publication_year,
+favorite-item .book-info .loanCnt {
+  margin-left: 5px;
+}
 
 checkbox-favorite-book {
   position: absolute;
@@ -326,22 +336,14 @@ checkbox-favorite-book {
   width: 100%;
   padding: 7px 10px;
   border-radius: 5px;
-  border: 1px solid #eff2e5;
+  border: 1px solid transparent;
   background-color: transparent;
   font-size: 12px;
   text-decoration: none;
   color: #37824a;
 }
 .favorite-actions button:hover {
-  background-color: #fcfff2;
-}
-.favorite-actions .library-button {
-  width: 100%;
-  margin-top: 5px;
-}
-.favorite-actions .library-button:disabled {
-  opacity: 0.5;
-  color: #999;
+  border-color: #eff2e5;
 }
 
 library-book-exist {
@@ -349,7 +351,7 @@ library-book-exist {
 }
 
 .favorite-message {
-  margin-top: 2rem;
+  margin-top: 3rem;
   text-align: center;
   font-size: 1rem;
 }

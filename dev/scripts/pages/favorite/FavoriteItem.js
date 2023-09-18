@@ -14,17 +14,22 @@ export default class FavoriteItem extends HTMLElement {
         super();
     }
     connectedCallback() {
+        var _a;
         this.libraryButton = this.querySelector(".library-button");
+        this.hideButton = this.querySelector(".hide-button");
+        this.libraryBookExist = this.querySelector("library-book-exist");
         this.anchorElement = this.querySelector("a");
         this.loading();
         this.fetchData(this.dataset.isbn);
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
+        (_a = this.hideButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onHideLibrary.bind(this));
         this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
     disconnectedCallback() {
-        var _a, _b;
+        var _a, _b, _c;
         (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
-        (_b = this.anchorElement) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onClick);
+        (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
+        (_c = this.anchorElement) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.onClick);
     }
     fetchData(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -56,7 +61,13 @@ export default class FavoriteItem extends HTMLElement {
         this.bookData = data;
         this.querySelector(".bookname").textContent = bookname;
         this.querySelector(".authors").textContent = authors;
-        this.querySelector(".class_nm").textContent = class_nm;
+        const classNm = this.querySelector(".class_nm");
+        if (class_nm === " >  > ") {
+            classNm.remove();
+        }
+        else {
+            classNm.textContent = class_nm;
+        }
         this.querySelector(".isbn13").textContent = isbn13;
         this.querySelector(".loanCnt").textContent =
             loanCnt.toLocaleString();
@@ -76,20 +87,39 @@ export default class FavoriteItem extends HTMLElement {
             };
         }
         if (this.libraryButton && Object.keys(state.libraries).length === 0) {
-            this.libraryButton.disabled = true;
+            this.libraryButton.hidden = true;
         }
         this.removeLoading();
     }
     errorRender() {
         this.removeLoading();
         this.dataset.fail = "true";
-        this.querySelector("h4").textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`;
+        this.querySelector("h4").textContent = `ISBN : ${this.dataset.isbn}`;
+        this.querySelector(".authors").textContent =
+            "정보가 없습니다.";
     }
     onLibrary() {
         const isbn = this.dataset.isbn;
-        const libraryBookExist = this.querySelector("library-book-exist");
-        if (libraryBookExist && this.libraryButton) {
-            libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+        if (this.libraryBookExist && this.libraryButton) {
+            this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+            if (this.libraryButton) {
+                this.libraryButton.hidden = true;
+            }
+            if (this.hideButton) {
+                this.hideButton.hidden = false;
+            }
+        }
+    }
+    onHideLibrary() {
+        var _a;
+        const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
+        list.innerHTML = "";
+        if (this.libraryButton) {
+            this.libraryButton.disabled = false;
+            this.libraryButton.hidden = false;
+        }
+        if (this.hideButton) {
+            this.hideButton.hidden = true;
         }
     }
     loading() {

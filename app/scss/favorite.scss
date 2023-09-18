@@ -126,14 +126,25 @@ favorite-item {
         }
     }
     &[data-fail="true"] {
-        .book-image {
-            background-color: rgba(0, 0, 0, 0.05);
+        book-image {
+            width: 100px;
+            height: 100px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            background-color: rgba(0, 0, 0, 0.02);
             img {
                 display: none;
             }
         }
-        .book-info p {
-            opacity: 0;
+        .book-info {
+            .bookname {
+                font-size: 14px;
+            }
+            .authors ~ p {
+                display: none;
+            }
+        }
+        book-description {
+            display: none;
         }
     }
 
@@ -147,16 +158,10 @@ favorite-item {
         }
     }
     book-description {
-        margin: 0 1rem 1rem;
+        margin: 0 1rem;
     }
 
     book-image {
-        &[data-fail="true"] {
-            .book-image {
-                width: 120px;
-                height: 180px;
-            }
-        }
         .thumb {
             width: 120px;
         }
@@ -181,6 +186,12 @@ favorite-item {
             font-size: 1rem;
             color: #34934a;
         }
+        .isbn13,
+        .publisher,
+        .publication_year,
+        .loanCnt {
+            margin-left: 5px;
+        }
     }
 }
 
@@ -196,21 +207,13 @@ checkbox-favorite-book {
         // display: inline-block;
         padding: 7px 10px;
         border-radius: 5px;
-        border: 1px solid #eff2e5;
+        border: 1px solid transparent;
         background-color: transparent;
         font-size: 12px;
         text-decoration: none;
         color: #37824a;
         &:hover {
-            background-color: #fcfff2;
-        }
-    }
-    .library-button {
-        width: 100%;
-        margin-top: 5px;
-        &:disabled {
-            opacity: 0.5;
-            color: #999;
+            border-color: #eff2e5;
         }
     }
 }
@@ -220,7 +223,7 @@ library-book-exist {
 }
 
 .favorite-message {
-    margin-top: 2rem;
+    margin-top: 3rem;
     text-align: center;
     font-size: 1rem;
 }

@@ -10,6 +10,8 @@ export default class FavoriteItem extends HTMLElement {
     protected libraryButton?: HTMLButtonElement;
     protected anchorElement?: HTMLAnchorElement;
     protected bookData: IUsageAnalysisResult | undefined;
+    hideButton?: HTMLButtonElement | null;
+    libraryBookExist?: LibraryBookExist | null;
 
     constructor() {
         super();
@@ -19,6 +21,8 @@ export default class FavoriteItem extends HTMLElement {
         this.libraryButton = this.querySelector(
             ".library-button"
         ) as HTMLButtonElement;
+        this.hideButton = this.querySelector(".hide-button");
+        this.libraryBookExist = this.querySelector("library-book-exist");
         this.anchorElement = this.querySelector("a") as HTMLAnchorElement;
 
         this.loading();
@@ -26,11 +30,16 @@ export default class FavoriteItem extends HTMLElement {
         this.fetchData(this.dataset.isbn as string);
 
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
+        this.hideButton?.addEventListener(
+            "click",
+            this.onHideLibrary.bind(this)
+        );
         this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
 
     disconnectedCallback() {
         this.libraryButton?.removeEventListener("click", this.onLibrary);
+        this.hideButton?.removeEventListener("click", this.onHideLibrary);
         this.anchorElement?.removeEventListener("click", this.onClick);
     }
 
@@ -74,7 +83,14 @@ export default class FavoriteItem extends HTMLElement {
 
         (this.querySelector(".bookname") as HTMLElement).textContent = bookname;
         (this.querySelector(".authors") as HTMLElement).textContent = authors;
-        (this.querySelector(".class_nm") as HTMLElement).textContent = class_nm;
+
+        const classNm = this.querySelector(".class_nm") as HTMLElement;
+        if (class_nm === " >  > ") {
+            classNm.remove();
+        } else {
+            classNm.textContent = class_nm;
+        }
+
         (this.querySelector(".isbn13") as HTMLElement).textContent = isbn13;
         (this.querySelector(".loanCnt") as HTMLElement).textContent =
             loanCnt.toLocaleString();
@@ -96,7 +112,7 @@ export default class FavoriteItem extends HTMLElement {
         }
 
         if (this.libraryButton && Object.keys(state.libraries).length === 0) {
-            this.libraryButton.disabled = true;
+            this.libraryButton.hidden = true;
         }
 
         this.removeLoading();
@@ -107,19 +123,41 @@ export default class FavoriteItem extends HTMLElement {
         this.dataset.fail = "true";
         (
             this.querySelector("h4") as HTMLElement
-        ).textContent = `${this.dataset.isbn}의 책 정보를 가져올 수 없습니다.`;
+        ).textContent = `ISBN : ${this.dataset.isbn}`;
+        (this.querySelector(".authors") as HTMLElement).textContent =
+            "정보가 없습니다.";
     }
 
     private onLibrary() {
         const isbn = this.dataset.isbn as string;
-        const libraryBookExist =
-            this.querySelector<LibraryBookExist>("library-book-exist");
-        if (libraryBookExist && this.libraryButton) {
-            libraryBookExist.onLibraryBookExist(
+        if (this.libraryBookExist && this.libraryButton) {
+            this.libraryBookExist.onLibraryBookExist(
                 this.libraryButton,
                 isbn,
                 state.libraries
             );
+            if (this.libraryButton) {
+                this.libraryButton.hidden = true;
+            }
+            if (this.hideButton) {
+                this.hideButton.hidden = false;
+            }
+        }
+    }
+
+    onHideLibrary() {
+        const list = this.libraryBookExist?.querySelector(
+            "ul"
+        ) as HTMLUListElement;
+        list.innerHTML = "";
+
+        if (this.libraryButton) {
+            this.libraryButton.disabled = false;
+            this.libraryButton.hidden = false;
+        }
+
+        if (this.hideButton) {
+            this.hideButton.hidden = true;
         }
     }
 
