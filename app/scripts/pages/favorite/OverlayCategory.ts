@@ -12,6 +12,7 @@ export default class OverlayCategory extends HTMLElement {
     form: HTMLFormElement | null;
     list: HTMLElement | null;
     template: HTMLTemplateElement | null;
+    renameButton: HTMLButtonElement | null;
     addButton: HTMLButtonElement | null;
     addInput: HTMLInputElement | null;
     closeButton: HTMLButtonElement | null;
@@ -27,10 +28,13 @@ export default class OverlayCategory extends HTMLElement {
         this.form = this.querySelector("form");
         this.list = this.querySelector(".category-list");
         this.template = document.querySelector("#tp-category-item");
+        this.renameButton = this.querySelector(".rename");
         this.addButton = this.querySelector(".addButton");
         this.addInput = this.querySelector("input[name='add']");
         this.closeButton = this.querySelector(".closeButton");
         this.draggedItem = null;
+
+        this.handleRename = this.handleRename.bind(this);
     }
 
     connectedCallback() {
@@ -87,32 +91,59 @@ export default class OverlayCategory extends HTMLElement {
             input.value = category;
         }
 
-        cloned.querySelector(".rename")?.addEventListener("click", () => {
-            const value = input.value;
-            if (value && category !== value) {
-                renameCategory(category, value);
-
-                CustomEventEmitter.dispatch("categoryRenamed", {
-                    category,
-                    value,
-                });
-            }
-        });
-
-        cloned.querySelector(".delete")?.addEventListener("click", () => {
-            const index = state.categorySort.indexOf(category);
-
-            cloned.remove();
-            deleteCategory(category);
-
-            CustomEventEmitter.dispatch("categoryDeleted", {
-                index,
-            });
-        });
+        this.handleItemEvent(cloned, input, category);
 
         this.changeItem(cloned);
 
         return cloned;
+    }
+
+    private handleItemEvent(
+        cloned: HTMLLIElement,
+        input: HTMLInputElement,
+        category: string
+    ) {
+        cloned
+            .querySelector(".renameButton")
+            ?.addEventListener("click", () =>
+                this.handleRename(input, category)
+            );
+
+        cloned
+            .querySelector(".deleteButton")
+            ?.addEventListener("click", () =>
+                this.handleDelete(cloned, category)
+            );
+
+        cloned.addEventListener("keydown", (event: KeyboardEvent) => {
+            const input = event.target as HTMLInputElement;
+            if (event.key === "Enter" && input.name === "category") {
+                this.handleRename(input, category);
+            }
+        });
+    }
+
+    private handleRename(input: HTMLInputElement, category: string) {
+        const value = input.value;
+        if (!value || category === value) return;
+
+        renameCategory(category, value);
+
+        CustomEventEmitter.dispatch("categoryRenamed", {
+            category,
+            value,
+        });
+    }
+
+    private handleDelete(cloned: HTMLLIElement, category: string) {
+        const index = state.categorySort.indexOf(category);
+
+        cloned.remove();
+        deleteCategory(category);
+
+        CustomEventEmitter.dispatch("categoryDeleted", {
+            index,
+        });
     }
 
     private changeItem(cloned: HTMLLIElement) {

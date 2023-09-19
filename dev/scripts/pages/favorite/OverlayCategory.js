@@ -35,10 +35,12 @@ export default class OverlayCategory extends HTMLElement {
         this.form = this.querySelector("form");
         this.list = this.querySelector(".category-list");
         this.template = document.querySelector("#tp-category-item");
+        this.renameButton = this.querySelector(".rename");
         this.addButton = this.querySelector(".addButton");
         this.addInput = this.querySelector("input[name='add']");
         this.closeButton = this.querySelector(".closeButton");
         this.draggedItem = null;
+        this.handleRename = this.handleRename.bind(this);
     }
     static get observedAttributes() {
         return ["hidden"];
@@ -78,7 +80,7 @@ export default class OverlayCategory extends HTMLElement {
         this.list.appendChild(fragment);
     }
     createItem(category, index) {
-        var _a, _b, _c, _d;
+        var _a, _b;
         const cloned = (_b = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
         cloned.dataset.index = index.toString();
         cloned.dataset.category = category;
@@ -86,26 +88,40 @@ export default class OverlayCategory extends HTMLElement {
         if (input) {
             input.value = category;
         }
-        (_c = cloned.querySelector(".rename")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
-            const value = input.value;
-            if (value && category !== value) {
-                renameCategory(category, value);
-                CustomEventEmitter.dispatch("categoryRenamed", {
-                    category,
-                    value,
-                });
-            }
-        });
-        (_d = cloned.querySelector(".delete")) === null || _d === void 0 ? void 0 : _d.addEventListener("click", () => {
-            const index = state.categorySort.indexOf(category);
-            cloned.remove();
-            deleteCategory(category);
-            CustomEventEmitter.dispatch("categoryDeleted", {
-                index,
-            });
-        });
+        this.handleItemEvent(cloned, input, category);
         this.changeItem(cloned);
         return cloned;
+    }
+    handleItemEvent(cloned, input, category) {
+        var _a, _b;
+        (_a = cloned
+            .querySelector(".renameButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => this.handleRename(input, category));
+        (_b = cloned
+            .querySelector(".deleteButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => this.handleDelete(cloned, category));
+        cloned.addEventListener("keydown", (event) => {
+            const input = event.target;
+            if (event.key === "Enter" && input.name === "category") {
+                this.handleRename(input, category);
+            }
+        });
+    }
+    handleRename(input, category) {
+        const value = input.value;
+        if (!value || category === value)
+            return;
+        renameCategory(category, value);
+        CustomEventEmitter.dispatch("categoryRenamed", {
+            category,
+            value,
+        });
+    }
+    handleDelete(cloned, category) {
+        const index = state.categorySort.indexOf(category);
+        cloned.remove();
+        deleteCategory(category);
+        CustomEventEmitter.dispatch("categoryDeleted", {
+            index,
+        });
     }
     changeItem(cloned) {
         const dragggerButton = cloned.querySelector(".dragger");
