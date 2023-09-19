@@ -170,7 +170,8 @@ app-book {
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: #fffff5;
+    z-index: 10;
+    background-color: #fff;
     font-size: 1.5rem;
-    color: yellowgreen;
+    color: #666;
 }

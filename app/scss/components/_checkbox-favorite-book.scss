@@ -4,13 +4,15 @@ checkbox-favorite-book {
     right: 0;
 
     .category-button {
+        position: relative;
+        z-index: 1;
         width: 100%;
         margin: 0;
         padding: 5px 7px;
         border-radius: 5px;
-        border: 1px solid #385c38;
-        background: #368336;
-        color: #e4e4e4;
+        border: 1px solid #325c5d;
+        background: #417f80;
+        color: #efefef;
         font-size: 12px;
     }
 
@@ -18,13 +20,14 @@ checkbox-favorite-book {
         display: block;
         box-sizing: border-box;
         margin-bottom: -5px;
+        padding-bottom: 5px;
         border: 1px solid #b5b5b5;
         border-radius: 5px 5px 0 0;
         background-color: #dfdfdf;
         font-size: 12px;
+        transition: all 0.3s ease;
         &[hidden] {
-            // display: none;
-            visibility: hidden;
+            opacity: 0;
         }
 
         label {
