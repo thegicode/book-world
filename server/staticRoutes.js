@@ -8,7 +8,15 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const config_1 = require("./config");
 const setupStaticRoutes = (app) => {
-    const routes = ["", "search", "favorite", "library", "book", "setting"];
+    const routes = [
+        "",
+        "search",
+        "favorite",
+        "library",
+        "book",
+        "popular",
+        "setting",
+    ];
     routes.forEach((route) => {
         app.get(`/${route}`, (req, res) => {
             route = route === "" ? "index" : route;

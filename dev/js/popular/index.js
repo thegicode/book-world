@@ -641,20 +641,6 @@
     }
   };
   var state = getState();
-  var addBookInCategory = (name, isbn) => {
-    state.category[name].unshift(isbn);
-    setState(state);
-  };
-  var hasBookInCategory = (name, isbn) => {
-    return state.category[name].includes(isbn);
-  };
-  var removeBookInCategory = (name, isbn) => {
-    const index = state.category[name].indexOf(isbn);
-    if (index !== -1) {
-      state.category[name].splice(index, 1);
-      setState(state);
-    }
-  };
   var getBookSizeInCategory = () => {
     function getTotalItemCount(data) {
       return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
@@ -695,130 +681,7 @@
     }
   };
 
-  // dev/scripts/modules/events.js
-  var updateBookSizeInCategor = () => {
-    const navElement = document.querySelector("nav-gnb");
-    navElement.querySelector(".size").textContent = String(getBookSizeInCategory());
-  };
-
-  // dev/scripts/components/CheckboxFavoriteBook.js
-  var CheckboxFavoriteBook = class extends HTMLElement {
-    constructor() {
-      super();
-      this.createCategoryItem = (container, category, ISBN) => {
-        const label = document.createElement("label");
-        const checkbox = this.createCheckbox(category, ISBN);
-        const span = document.createElement("span");
-        span.textContent = category;
-        label.appendChild(checkbox);
-        label.appendChild(span);
-        container.appendChild(label);
-        return container;
-      };
-      this.isbn = this.getISBN();
-      this.button = null;
-      this.onClickCategory = this.onClickCategory.bind(this);
-    }
-    connectedCallback() {
-      this.render();
-    }
-    render() {
-      var _a;
-      const button = this.createButton();
-      const container = this.createContainer();
-      this.button = button;
-      this.appendChild(container);
-      this.appendChild(button);
-      (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
-    }
-    createButton() {
-      const button = document.createElement("button");
-      button.className = "category-button";
-      button.textContent = "Category";
-      return button;
-    }
-    onClickCategory() {
-      const el = this.querySelector(".category");
-      el.hidden = !el.hidden;
-    }
-    getISBN() {
-      const isbnElement = this.closest("[data-isbn]");
-      return isbnElement && isbnElement.dataset.isbn ? isbnElement.dataset.isbn : null;
-    }
-    createContainer() {
-      const container = document.createElement("div");
-      container.className = "category";
-      container.hidden = true;
-      state.categorySort.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
-      return container;
-    }
-    createCheckbox(category, ISBN) {
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      if (hasBookInCategory(category, ISBN)) {
-        checkbox.checked = true;
-      }
-      checkbox.addEventListener("change", () => this.onChange(checkbox, category, ISBN));
-      return checkbox;
-    }
-    onChange(checkbox, category, ISBN) {
-      const isBookInCategory = hasBookInCategory(category, ISBN);
-      if (isBookInCategory) {
-        removeBookInCategory(category, ISBN);
-      } else {
-        addBookInCategory(category, ISBN);
-      }
-      checkbox.checked = !isBookInCategory;
-      updateBookSizeInCategor();
-    }
-  };
-
-  // dev/scripts/components/BookImage.js
-  var BookImage = class extends HTMLElement {
-    constructor() {
-      super();
-    }
-    // 즐겨찾기, 상세
-    set data(objectData) {
-      this.dataset.object = JSON.stringify(objectData);
-      const imgElement = this.querySelector("img");
-      if (imgElement && imgElement.getAttribute("src") === "") {
-        this.render();
-      }
-    }
-    connectedCallback() {
-      this.render();
-    }
-    // search : dataset
-    render() {
-      const data = this.dataset.object ? JSON.parse(this.dataset.object) : null;
-      let imageSrc = "";
-      let imageAlt = "";
-      if (data) {
-        const { bookImageURL, bookname } = data;
-        imageSrc = bookImageURL;
-        imageAlt = bookname;
-      }
-      this.innerHTML = `
-            <div class="book-image">
-                <img class="thumb" src="${imageSrc}" alt="${imageAlt}"></img>
-            </div>`;
-      const imgElement = this.querySelector("img");
-      if (imgElement && imgElement.getAttribute("src")) {
-        this.handleError(imgElement);
-      }
-    }
-    handleError(imgElement) {
-      if (imgElement) {
-        imgElement.onerror = () => {
-          this.dataset.fail = "true";
-          imgElement.remove();
-        };
-      }
-    }
-  };
-
-  // dev/scripts/pages/book/Book.js
+  // dev/scripts/pages/popular/Popular.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve) {
@@ -846,213 +709,41 @@
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  var Book = class extends HTMLElement {
+  var Popular = class extends HTMLElement {
     constructor() {
       super();
-      this.loadingElement = null;
-      this.data = null;
     }
     connectedCallback() {
-      this.loadingElement = this.querySelector(".loading");
-      const isbn = new URLSearchParams(location.search).get("isbn");
-      this.dataset.isbn = isbn;
-      this.fetchUsageAnalysisList(isbn);
+      this.fetch();
     }
-    fetchUsageAnalysisList(isbn) {
+    // disconnectedCallback() {}
+    fetch() {
       return __awaiter2(this, void 0, void 0, function* () {
-        try {
-          const data = yield CustomFetch_default.fetch(`/usage-analysis-list?isbn13=${isbn}`);
-          this.data = data;
-          this.render();
-        } catch (error) {
-          this.renderError();
-          console.error(error);
-          throw new Error(`Fail to get usage analysis list.`);
-        }
-      });
-    }
-    render() {
-      if (!this.data)
-        return;
-      const {
-        book: { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher },
-        keywords
-        // recBooks,
-      } = this.data;
-      const bookNames = bookname.split(/[=/:]/).map((item) => `<p>${item}</p>`).join("");
-      const keywordsString = keywords.map((item) => {
-        const url = encodeURI(item.word);
-        return `<a href="/search?keyword=${url}"><span>${item.word}</span></a>`;
-      }).join("");
-      this.querySelector(".bookname").innerHTML = bookNames;
-      this.querySelector(".authors").textContent = authors;
-      this.querySelector(".class_nm").textContent = class_nm;
-      this.querySelector(".class_no").textContent = class_no;
-      this.querySelector(".description").textContent = description;
-      this.querySelector(".isbn13").textContent = isbn13;
-      this.querySelector(".loanCnt").textContent = loanCnt.toLocaleString();
-      this.querySelector(".publication_year").textContent = publication_year;
-      this.querySelector(".publisher").textContent = publisher;
-      this.querySelector(".keyword").innerHTML = keywordsString;
-      const bookImageElement = this.querySelector("book-image");
-      if (bookImageElement) {
-        bookImageElement.data = {
-          bookImageURL,
-          bookname
-        };
-      }
-      if (this.loadingElement) {
-        this.loadingElement.remove();
-        this.loadingElement = null;
-      }
-    }
-    renderError() {
-      if (this.loadingElement)
-        this.loadingElement.textContent = "\uC815\uBCF4\uB97C \uAC00\uC838\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.";
-    }
-  };
-
-  // dev/scripts/pages/book/LibrarySearchByBook.js
-  var __awaiter3 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
-  var LibrarySearchByBook = class extends HTMLElement {
-    constructor() {
-      super();
-    }
-    connectedCallback() {
-      const isbn = new URLSearchParams(location.search).get("isbn");
-      this.fetchList(isbn);
-    }
-    fetchList(isbn) {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const favoriteLibraries = getState().regions;
-        if (Object.entries(favoriteLibraries).length === 0)
-          return;
-        for (const regionName in favoriteLibraries) {
-          const detailCodes = Object.values(favoriteLibraries[regionName]);
-          if (detailCodes.length === 0)
-            return;
-          const regionCode = detailCodes[0].slice(0, 2);
-          detailCodes.forEach((detailCode) => {
-            this.fetchLibrarySearchByBook(isbn, regionCode, detailCode);
-          });
-        }
-      });
-    }
-    fetchLibrarySearchByBook(isbn, region, dtl_region) {
-      return __awaiter3(this, void 0, void 0, function* () {
         const searchParams = new URLSearchParams({
-          isbn,
-          region,
-          dtl_region
+          startDt: "2022-01-01",
+          endDt: "2022-03-31",
+          gender: "1",
+          age: "20",
+          region: "11;31",
+          addCode: "0",
+          kdc: "6",
+          pageNo: "1",
+          pageSize: "10"
         });
-        const url = `/library-search-by-book?${searchParams}`;
+        const url = `/popular-book?${searchParams}`;
         try {
           const data = yield CustomFetch_default.fetch(url);
-          this.render(data, isbn);
+          console.log(data);
         } catch (error) {
           console.error(error);
           throw new Error(`Fail to get library search by book.`);
         }
       });
     }
-    render({ libraries }, isbn) {
-      if (libraries.length < 1)
-        return;
-      const container = document.querySelector(".library-search-by-book");
-      if (!container)
-        return;
-      const listElement = document.createElement("ul");
-      const fragment = new DocumentFragment();
-      libraries.forEach(({ homepage, libCode, libName }) => {
-        const element = this.createLibrarySearchResultItem(isbn, homepage, libCode, libName);
-        if (element) {
-          fragment.appendChild(element);
-        }
-      });
-      listElement.appendChild(fragment);
-      container.appendChild(listElement);
-    }
-    createLibrarySearchResultItem(isbn, homepage, libCode, libName) {
-      var _a;
-      const template = document.querySelector("#tp-librarySearchByBookItem");
-      if (!template)
-        return null;
-      const cloned = (_a = template.content.firstElementChild) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
-      if (!cloned)
-        return null;
-      const link = cloned.querySelector("a");
-      if (!link)
-        return null;
-      cloned.dataset.code = libCode;
-      link.textContent = libName;
-      link.href = homepage;
-      this.loanAvailable(isbn, libCode, cloned);
-      return cloned;
-    }
-    loanAvailable(isbn, libCode, el) {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const isAvailable = yield this.fetchLoadnAvailabilty(isbn, libCode);
-        const element = el.querySelector(".loanAvailable");
-        if (element) {
-          element.textContent = isAvailable ? "\uB300\uCD9C \uAC00\uB2A5" : "\uB300\uCD9C \uBD88\uAC00";
-          if (isAvailable) {
-            el.dataset.available = "true";
-          }
-        }
-      });
-    }
-    fetchLoadnAvailabilty(isbn13, libCode) {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const searchParams = new URLSearchParams({
-          isbn13,
-          libCode
-        });
-        const url = `/book-exist?${searchParams}`;
-        try {
-          const data = yield CustomFetch_default.fetch(url, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-          });
-          return data.loanAvailable === "Y";
-        } catch (error) {
-          console.error(error);
-          throw new Error(`Fail to get book exist.`);
-        }
-      });
-    }
   };
 
-  // dev/scripts/pages/book/index.js
+  // dev/scripts/pages/popular/index.js
   customElements.define("nav-gnb", NavGnb);
-  customElements.define("app-book", Book);
-  customElements.define("library-search-by-book", LibrarySearchByBook);
-  customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
-  customElements.define("book-image", BookImage);
+  customElements.define("app-popular", Popular);
 })();
 //# sourceMappingURL=index.js.map

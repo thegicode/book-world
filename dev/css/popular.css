@@ -1,0 +1,39 @@
+html {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+}
+
+button {
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+}
+button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.gnb {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #37824a;
+}
+.gnb-item {
+  flex: auto;
+  padding: 12px 0;
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+}
+.gnb-item:hover, .gnb-item[aria-selected=true] {
+  text-decoration: underline;
+  color: #ffffb1;
+}
+
+/*# sourceMappingURL=popular.css.map */

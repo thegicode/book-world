@@ -103,3 +103,25 @@ interface ICustomEvent<T> extends Event {
 interface ICustomEventDetail {
     [key: string]: unknown;
 }
+
+interface IPopularBook {
+    addition_symbol: string;
+    authors: string;
+    bookDtlUrl: string;
+    bookImageURL: string;
+    bookname: string;
+    class_nm: string;
+    class_no: string;
+    isbn13: string;
+    loan_count: string;
+    no: number;
+    publication_year: string;
+    publisher: string;
+    ranking: string;
+    vol: string;
+}
+
+interface IPopularBookResponse {
+    resultNum: number;
+    data: IPopularBook[];
+}

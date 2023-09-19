@@ -36,7 +36,7 @@ button:disabled {
   background-color: #37824a;
 }
 .gnb-item {
-  flex: 1;
+  flex: auto;
   padding: 12px 0;
   text-decoration: none;
   color: #fff;

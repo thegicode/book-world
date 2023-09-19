@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
 import path from "path";
 import dotenv from "dotenv";
@@ -144,14 +145,25 @@ export async function usageAnalysisList(req: Request, res: Response) {
 // 도서 소장 도서관 조회
 export async function librarySearchByBook(req: Request, res: Response) {
     const { isbn, region, dtl_region } = req.query;
+
+    if (
+        typeof isbn !== "string" ||
+        typeof region !== "string" ||
+        typeof dtl_region !== "string"
+    ) {
+        return res.status(400).send("Invalid or missing query parameters.");
+    }
+
     const url = buildLibraryApiUrl("libSrchByBook", {
-        isbn: isbn as string,
-        region: region as string,
-        dtl_region: dtl_region as string,
+        isbn,
+        region,
+        dtl_region,
     });
+
     try {
         const data = await fetchData(url, { method: "GET" });
         const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
+
         res.send({
             pageNo,
             pageSize,
@@ -159,6 +171,59 @@ export async function librarySearchByBook(req: Request, res: Response) {
             resultNum,
             libraries: libs.map((item: { lib: string }) => item.lib),
         });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Failed to get library data");
+    }
+}
+
+// 인기 대출 도서 조회
+// api/loanItemSrch?authKey=[발급받은키]&startDt=2022-01-01&endDt=2022-03-31& gender=1&age=20&region=11;31&addCode=0&kdc=6&pageNo=1&pageSize=10
+export async function loanItemSrch(req: Request, res: Response) {
+    console.log("loanItemSrch");
+    const {
+        startDt,
+        endDt,
+        gender,
+        age,
+        region,
+        addCode,
+        kdc,
+        pageNo,
+        pageSize,
+    } = req.query;
+
+    if (
+        typeof startDt !== "string" ||
+        typeof endDt !== "string" ||
+        typeof gender !== "string" ||
+        typeof age !== "string" ||
+        typeof region !== "string" ||
+        typeof addCode !== "string" ||
+        typeof kdc !== "string" ||
+        typeof pageNo !== "string" ||
+        typeof pageSize !== "string"
+    ) {
+        return res.status(400).send("Invalid or missing query parameters.");
+    }
+
+    const url = buildLibraryApiUrl("loanItemSrch", {
+        startDt,
+        endDt,
+        gender,
+        age,
+        region,
+        addCode,
+        kdc,
+        pageNo,
+        pageSize,
+    });
+
+    try {
+        const data = await fetchData(url, { method: "GET" });
+        const { resultNum, docs } = data.response;
+        const docs2 = docs.map((item: any) => item.doc);
+        res.send({ resultNum, data: docs2 });
     } catch (error) {
         console.error(error);
         res.status(500).send("Failed to get library data");

@@ -4,7 +4,15 @@ import { Application } from "express";
 import { destinationPath } from "./config";
 
 export const setupStaticRoutes = (app: Application) => {
-    const routes = ["", "search", "favorite", "library", "book", "setting"];
+    const routes = [
+        "",
+        "search",
+        "favorite",
+        "library",
+        "book",
+        "popular",
+        "setting",
+    ];
     routes.forEach((route) => {
         app.get(`/${route}`, (req, res) => {
             route = route === "" ? "index" : route;

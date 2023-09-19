@@ -1,7 +1,6 @@
-
 export default class AppSetting extends HTMLElement {
     constructor() {
-        super()
+        super();
     }
 
     // connectedCallback() {
@@ -9,5 +8,4 @@ export default class AppSetting extends HTMLElement {
 
     // disconnectedCallback() {
     // }
-
 }

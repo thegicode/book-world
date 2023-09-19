@@ -674,11 +674,18 @@
                 <a class="gnb-item" href="./search">\uCC45 \uAC80\uC0C9</a>
                 <a class="gnb-item" href="./favorite">\uB098\uC758 \uCC45 (<span class="size">${getBookSizeInCategory()}</span>)</a>
                 <a class="gnb-item" href="./library">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
+                <a class="gnb-item" href="./popular">\uC778\uAE30\uB300\uCD9C\uB3C4\uC11C</a>
                 <a class="gnb-item" href="./setting">\uC124\uC815</a>
             </nav>`;
     }
     setSelectedMenu() {
-      const PATHS = ["/search", "/favorite", "/library", "/setting"];
+      const PATHS = [
+        "/search",
+        "/favorite",
+        "/library",
+        "/popular",
+        "/setting"
+      ];
       const idx = PATHS.indexOf(document.location.pathname);
       if (idx >= 0)
         this.querySelectorAll("a")[idx].ariaSelected = "true";

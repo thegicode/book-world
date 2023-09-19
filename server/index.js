@@ -15,5 +15,5 @@ app.use(express_1.default.static(config_1.destinationPath));
 app.listen(config_1.PORT, () => {
     console.log(`Start : http://localhost:${config_1.PORT}`);
 });
-(0, apiRoutes_1.setupApiRoutes)(app);
+(0, apiRoutes_1.setApiRoutes)(app);
 (0, staticRoutes_1.setupStaticRoutes)(app);

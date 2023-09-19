@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.librarySearchByBook = exports.usageAnalysisList = exports.bookExist = exports.librarySearch = exports.searchNaverBook = void 0;
+exports.loanItemSrch = exports.librarySearchByBook = exports.usageAnalysisList = exports.bookExist = exports.librarySearch = exports.searchNaverBook = void 0;
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, ".env.key") });
@@ -131,10 +131,15 @@ exports.usageAnalysisList = usageAnalysisList;
 function librarySearchByBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { isbn, region, dtl_region } = req.query;
+        if (typeof isbn !== "string" ||
+            typeof region !== "string" ||
+            typeof dtl_region !== "string") {
+            return res.status(400).send("Invalid or missing query parameters.");
+        }
         const url = buildLibraryApiUrl("libSrchByBook", {
-            isbn: isbn,
-            region: region,
-            dtl_region: dtl_region,
+            isbn,
+            region,
+            dtl_region,
         });
         try {
             const data = yield fetchData(url, { method: "GET" });
@@ -154,3 +159,42 @@ function librarySearchByBook(req, res) {
     });
 }
 exports.librarySearchByBook = librarySearchByBook;
+function loanItemSrch(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("loanItemSrch");
+        const { startDt, endDt, gender, age, region, addCode, kdc, pageNo, pageSize, } = req.query;
+        if (typeof startDt !== "string" ||
+            typeof endDt !== "string" ||
+            typeof gender !== "string" ||
+            typeof age !== "string" ||
+            typeof region !== "string" ||
+            typeof addCode !== "string" ||
+            typeof kdc !== "string" ||
+            typeof pageNo !== "string" ||
+            typeof pageSize !== "string") {
+            return res.status(400).send("Invalid or missing query parameters.");
+        }
+        const url = buildLibraryApiUrl("loanItemSrch", {
+            startDt,
+            endDt,
+            gender,
+            age,
+            region,
+            addCode,
+            kdc,
+            pageNo,
+            pageSize,
+        });
+        try {
+            const data = yield fetchData(url, { method: "GET" });
+            const { resultNum, docs } = data.response;
+            const docs2 = docs.map((item) => item.doc);
+            res.send({ resultNum, data: docs2 });
+        }
+        catch (error) {
+            console.error(error);
+            res.status(500).send("Failed to get library data");
+        }
+    });
+}
+exports.loanItemSrch = loanItemSrch;
