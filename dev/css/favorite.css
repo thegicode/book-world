@@ -10,10 +10,13 @@ body {
 }
 
 button {
+  border-radius: 7px;
+  border: none;
   cursor: pointer;
 }
 button:disabled {
   pointer-events: none;
+  opacity: 0.5;
 }
 
 @keyframes pulse {
@@ -107,53 +110,46 @@ library-book-exist .library-item[data-loading=true]:before {
   content: " ";
 }
 
-checkbox-favorite-book .myCategory label {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-checkbox-favorite-book .myCategory input {
+checkbox-favorite-book {
   position: absolute;
-  top: -1px;
-  left: -1px;
-  opacity: 0;
-  z-index: -1;
+  top: 1rem;
+  left: 1rem;
+  background-color: #dfdfdf;
 }
-checkbox-favorite-book .myCategory span {
-  overflow: hidden;
-  box-sizing: border-box;
-  margin-left: 5px;
-  padding: 5px 15px;
-  border-radius: 15px;
-  border: 1px solid #ddd;
-  font-size: 12px;
-  color: #666;
-  cursor: pointer;
-}
-checkbox-favorite-book .myCategory input:checked + span {
-  border-color: #8c8c8c;
-  background-color: #9172c9;
-  color: #f0ffd2;
-}
-checkbox-favorite-book .myCategory input:focus-visible + span {
-  outline: -webkit-focus-ring-color auto 1px;
-}
-checkbox-favorite-book h5 {
+checkbox-favorite-book .category-button {
+  width: 100%;
   margin: 0;
   padding: 5px 7px;
   border-radius: 5px 5px 0 0;
-  background: #d2f0d2;
-  color: #6ca681;
+  border: 1px solid #385c38;
+  background: #368336;
+  color: #e4e4e4;
+  font-size: 12px;
+  text-align: left;
 }
 checkbox-favorite-book .category {
-  padding: 5px;
-  border: 1px solid #ddd;
+  display: block;
+  box-sizing: border-box;
+  border: 1px solid #b5b5b5;
+  border-top: none;
   border-radius: 0 0 5px 5px;
   font-size: 12px;
+  transition: all 0.3s ease;
+}
+checkbox-favorite-book .category[hidden] {
+  opacity: 0;
+  height: 0;
 }
 checkbox-favorite-book .category label {
   display: flex;
   align-items: center;
+  padding: 0 15px 0 5px;
+}
+checkbox-favorite-book .category label:first-child {
+  padding-top: 8px;
+}
+checkbox-favorite-book .category label:last-child {
+  padding-bottom: 8px;
 }
 checkbox-favorite-book .category span {
   margin-left: 3px;
@@ -170,14 +166,6 @@ book-image[data-fail=true] .book-image {
 }
 book-image .thumb {
   border: 1px solid #e8e8e8;
-}
-
-button {
-  border-radius: 7px;
-  border: none;
-}
-button:disabled {
-  opacity: 0.5;
 }
 
 .root {
@@ -324,12 +312,6 @@ favorite-item .book-info .publisher,
 favorite-item .book-info .publication_year,
 favorite-item .book-info .loanCnt {
   margin-left: 5px;
-}
-
-checkbox-favorite-book {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
 }
 
 .favorite-actions button {

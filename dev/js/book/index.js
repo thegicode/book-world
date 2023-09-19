@@ -709,14 +709,29 @@
         return container;
       };
       this.isbn = this.getISBN();
+      this.button = null;
+      this.onClickCategory = this.onClickCategory.bind(this);
     }
     connectedCallback() {
       this.render();
     }
     render() {
+      var _a;
       const container = this.createContainer();
-      this.innerHTML = `<h5>Category</h5>`;
+      this.createButton();
       this.appendChild(container);
+      (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
+    }
+    createButton() {
+      const button = document.createElement("button");
+      button.className = "category-button";
+      button.textContent = "Category";
+      this.button = button;
+      this.appendChild(button);
+    }
+    onClickCategory() {
+      const el = this.querySelector(".category");
+      el.hidden = !el.hidden;
     }
     getISBN() {
       const isbnElement = this.closest("[data-isbn]");
@@ -725,6 +740,7 @@
     createContainer() {
       const container = document.createElement("div");
       container.className = "category";
+      container.hidden = true;
       state.categorySort.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
       return container;
     }

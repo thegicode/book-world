@@ -8,11 +8,15 @@ import { updateBookSizeInCategor } from "../modules/events";
 
 export default class CheckboxFavoriteBook extends HTMLElement {
     protected isbn: string | null;
+    button: HTMLButtonElement | null;
 
     constructor() {
         super();
 
         this.isbn = this.getISBN();
+        this.button = null;
+
+        this.onClickCategory = this.onClickCategory.bind(this);
     }
 
     connectedCallback() {
@@ -22,8 +26,23 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     protected render() {
         const container = this.createContainer();
 
-        this.innerHTML = `<h5>Category</h5>`;
+        this.createButton();
         this.appendChild(container);
+
+        this.button?.addEventListener("click", this.onClickCategory);
+    }
+
+    createButton() {
+        const button = document.createElement("button");
+        button.className = "category-button";
+        button.textContent = "Category";
+        this.button = button;
+        this.appendChild(button);
+    }
+
+    onClickCategory() {
+        const el = this.querySelector(".category") as HTMLElement;
+        el.hidden = !el.hidden;
     }
 
     private getISBN(): string | null {
@@ -36,6 +55,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     private createContainer() {
         const container = document.createElement("div");
         container.className = "category";
+        container.hidden = true;
         state.categorySort.forEach((category: string) =>
             this.createCategoryItem(container, category, this.isbn || "")
         );

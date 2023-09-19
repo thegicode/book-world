@@ -9,10 +9,13 @@ body {
 }
 
 button {
+  border-radius: 7px;
+  border: none;
   cursor: pointer;
 }
 button:disabled {
   pointer-events: none;
+  opacity: 0.5;
 }
 
 .gnb {

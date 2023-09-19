@@ -3,19 +3,8 @@
 @import "./components/_gnb.scss";
 @import "./components/_book-description.scss";
 @import "./components/_library-book-exist.scss";
-@import "./components/checkbox-favorite-book.scss";
-@import "./components/book-image.scss";
-
-button {
-    border-radius: 7px;
-    border: none;
-    // background-color: #f8f8f8;
-    // padding: 7px 1rem;
-    // color: #333;
-    &:disabled {
-        opacity: 0.5;
-    }
-}
+@import "./components/_checkbox-favorite-book.scss";
+@import "./components/_book-image.scss";
 
 .root {
     display: flex;
@@ -193,12 +182,6 @@ favorite-item {
             margin-left: 5px;
         }
     }
-}
-
-checkbox-favorite-book {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
 }
 
 .favorite-actions {
