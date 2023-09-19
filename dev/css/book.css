@@ -65,33 +65,31 @@ library-book-exist .library-item[data-loading=true]:before {
 
 checkbox-favorite-book {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background-color: #dfdfdf;
+  bottom: 0;
+  right: 0;
 }
 checkbox-favorite-book .category-button {
   width: 100%;
   margin: 0;
   padding: 5px 7px;
-  border-radius: 5px 5px 0 0;
+  border-radius: 5px;
   border: 1px solid #385c38;
   background: #368336;
   color: #e4e4e4;
   font-size: 12px;
-  text-align: left;
+  text-align: right;
 }
 checkbox-favorite-book .category {
   display: block;
   box-sizing: border-box;
+  margin-bottom: -5px;
   border: 1px solid #b5b5b5;
-  border-top: none;
-  border-radius: 0 0 5px 5px;
+  border-radius: 5px 5px 0 0;
+  background-color: #dfdfdf;
   font-size: 12px;
-  transition: all 0.3s ease;
 }
 checkbox-favorite-book .category[hidden] {
-  opacity: 0;
-  height: 0;
+  visibility: hidden;
 }
 checkbox-favorite-book .category label {
   display: flex;
@@ -156,6 +154,9 @@ app-book .bookname p {
 app-book .bookname p:first-child {
   font-size: 1.7rem;
 }
+app-book .book-image-container {
+  position: relative;
+}
 app-book book-image[data-fail=true] .book-image {
   width: 200px;
   height: 200px;
@@ -177,15 +178,6 @@ app-book .cols .col:nth-child(even) {
 }
 app-book .description {
   line-height: 1.7;
-}
-app-book .actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-app-book checkbox-favorite-book {
-  left: initial;
-  right: 1rem;
 }
 app-book .library-search-by-book ul {
   padding: 0;

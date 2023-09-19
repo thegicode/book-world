@@ -112,33 +112,31 @@ library-book-exist .library-item[data-loading=true]:before {
 
 checkbox-favorite-book {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background-color: #dfdfdf;
+  bottom: 0;
+  right: 0;
 }
 checkbox-favorite-book .category-button {
   width: 100%;
   margin: 0;
   padding: 5px 7px;
-  border-radius: 5px 5px 0 0;
+  border-radius: 5px;
   border: 1px solid #385c38;
   background: #368336;
   color: #e4e4e4;
   font-size: 12px;
-  text-align: left;
+  text-align: right;
 }
 checkbox-favorite-book .category {
   display: block;
   box-sizing: border-box;
+  margin-bottom: -5px;
   border: 1px solid #b5b5b5;
-  border-top: none;
-  border-radius: 0 0 5px 5px;
+  border-radius: 5px 5px 0 0;
+  background-color: #dfdfdf;
   font-size: 12px;
-  transition: all 0.3s ease;
 }
 checkbox-favorite-book .category[hidden] {
-  opacity: 0;
-  height: 0;
+  visibility: hidden;
 }
 checkbox-favorite-book .category label {
   display: flex;
@@ -192,6 +190,7 @@ nav-gnb {
   list-style: none;
 }
 .favorite-actions {
+  margin-top: 5px;
   padding: 0 1rem;
 }
 
@@ -256,7 +255,7 @@ favorite-item[data-loading=true]::after {
 }
 favorite-item[data-fail=true] book-image {
   width: 100px;
-  height: 100px;
+  height: 120px;
   border: 1px solid rgba(0, 0, 0, 0.05);
   background-color: rgba(0, 0, 0, 0.02);
 }
@@ -274,7 +273,7 @@ favorite-item[data-fail=true] book-description {
 }
 favorite-item .book-summary {
   position: relative;
-  padding: 1rem 1rem 7px;
+  margin: 1rem 1rem 7px;
 }
 favorite-item .book-summary a {
   display: flex;
@@ -347,15 +346,15 @@ library-book-exist {
 .overlay-category .overlay-container {
   padding: 1rem;
   border-radius: 10px;
-  background-color: #f1fff4;
-  border: 1px solid #cce0d0;
+  background-color: #fcffe1;
+  border: 1px solid #d9dea4;
 }
 .overlay-category .overlay-container h3 {
   margin: 0;
-  padding-bottom: 10px;
+  padding-bottom: 7px;
   border-bottom: 1px dashed #a1b886;
-  font-size: 15px;
-  color: #56755d;
+  font-size: 14px;
+  color: #848484;
 }
 .overlay-category .category-list {
   margin: 0;
@@ -366,14 +365,13 @@ library-book-exist {
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  padding: 10px 0;
-  background-color: #f1fff4;
+  padding: 3px 0;
   color: #333;
   transition: all 0.3s ease;
 }
 .overlay-category .category-item input[name=category] {
   padding: 6px 8px;
-  border: 1px solid #d7ecdc;
+  border: 1px solid #e7e7e7;
   font-size: 14px;
   color: #666;
 }
@@ -384,6 +382,7 @@ library-book-exist {
   color: rgba(0, 0, 0, 0.5);
   border-radius: 3px;
   background-color: transparent;
+  font-size: 12px;
 }
 .overlay-category .category-item .label ~ button:hover {
   border-color: rgba(0, 0, 0, 0.1);
@@ -410,25 +409,31 @@ library-book-exist {
 }
 .overlay-category .category-add {
   display: flex;
+  gap: 10px;
   padding: 10px 0;
   border-top: 1px solid #dae3dc;
 }
 .overlay-category .category-add label {
+  flex: 1;
   margin-right: 5px;
 }
 .overlay-category .category-add input[type=text] {
+  width: 100%;
+  box-sizing: border-box;
   padding: 5px;
-  border: 1px solid #d7ecdc;
+  border: 1px solid #e7e7e7;
 }
 .overlay-category .category-add button {
   margin-left: auto;
-  padding: 5px 8px;
+  padding: 5px 10px;
+  border: solid 1px transparent;
+  color: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
   background-color: transparent;
   font-size: 12px;
-  color: #666;
 }
 .overlay-category .category-add button:hover {
-  background-color: #d7ecdc;
+  border-color: rgba(0, 0, 0, 0.1);
 }
 .overlay-category .overlay-footer {
   display: flex;
@@ -439,7 +444,7 @@ library-book-exist {
   flex: 1;
   padding: 10px;
   border-radius: 0;
-  background-color: #d9f4df;
+  background-color: #e8e8c5;
   font-size: 12px;
   color: #666;
 }

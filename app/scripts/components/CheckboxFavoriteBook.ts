@@ -24,10 +24,13 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     }
 
     protected render() {
+        const button = this.createButton();
         const container = this.createContainer();
 
-        this.createButton();
+        this.button = button;
+
         this.appendChild(container);
+        this.appendChild(button);
 
         this.button?.addEventListener("click", this.onClickCategory);
     }
@@ -36,8 +39,7 @@ export default class CheckboxFavoriteBook extends HTMLElement {
         const button = document.createElement("button");
         button.className = "category-button";
         button.textContent = "Category";
-        this.button = button;
-        this.appendChild(button);
+        return button;
     }
 
     onClickCategory() {

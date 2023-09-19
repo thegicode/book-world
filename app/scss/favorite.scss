@@ -30,6 +30,7 @@ nav-gnb {
         list-style: none;
     }
     &-actions {
+        margin-top: 5px;
         padding: 0 1rem;
     }
 }
@@ -117,7 +118,7 @@ favorite-item {
     &[data-fail="true"] {
         book-image {
             width: 100px;
-            height: 100px;
+            height: 120px;
             border: 1px solid rgba(0, 0, 0, 0.05);
             background-color: rgba(0, 0, 0, 0.02);
             img {
@@ -139,7 +140,7 @@ favorite-item {
 
     .book-summary {
         position: relative;
-        padding: 1rem 1rem 7px;
+        margin: 1rem 1rem 7px;
         a {
             display: flex;
             gap: 1rem;
@@ -220,15 +221,15 @@ library-book-exist {
     .overlay-container {
         padding: 1rem;
         border-radius: 10px;
-        background-color: #f1fff4;
-        border: 1px solid #cce0d0;
+        background-color: #fcffe1;
+        border: 1px solid #d9dea4;
 
         h3 {
             margin: 0;
-            padding-bottom: 10px;
+            padding-bottom: 7px;
             border-bottom: 1px dashed #a1b886;
-            font-size: 15px;
-            color: #56755d;
+            font-size: 14px;
+            color: #848484;
         }
     }
     .category-list {
@@ -240,13 +241,13 @@ library-book-exist {
         display: flex;
         align-items: center;
         box-sizing: border-box;
-        padding: 10px 0;
-        background-color: #f1fff4;
+        padding: 3px 0;
+        // background-color: #f1fff4;
         color: #333;
         transition: all 0.3s ease;
         input[name="category"] {
             padding: 6px 8px;
-            border: 1px solid #d7ecdc;
+            border: 1px solid #e7e7e7;
             font-size: 14px;
             color: #666;
         }
@@ -257,6 +258,7 @@ library-book-exist {
             color: rgba(0, 0, 0, 0.5);
             border-radius: 3px;
             background-color: transparent;
+            font-size: 12px;
             &:hover {
                 border-color: rgba(0, 0, 0, 0.1);
             }
@@ -287,23 +289,29 @@ library-book-exist {
     }
     .category-add {
         display: flex;
+        gap: 10px;
         padding: 10px 0;
         border-top: 1px solid #dae3dc;
         label {
+            flex: 1;
             margin-right: 5px;
         }
         input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
             padding: 5px;
-            border: 1px solid #d7ecdc;
+            border: 1px solid #e7e7e7;
         }
         button {
             margin-left: auto;
-            padding: 5px 8px;
+            padding: 5px 10px;
+            border: solid 1px transparent;
+            color: rgba(0, 0, 0, 0.5);
+            border-radius: 3px;
             background-color: transparent;
             font-size: 12px;
-            color: #666;
             &:hover {
-                background-color: #d7ecdc;
+                border-color: rgba(0, 0, 0, 0.1);
             }
         }
     }
@@ -315,7 +323,7 @@ library-book-exist {
             flex: 1;
             padding: 10px;
             border-radius: 0;
-            background-color: #d9f4df;
+            background-color: #e8e8c5;
             font-size: 12px;
             color: #666;
             &:not(:first-child) {

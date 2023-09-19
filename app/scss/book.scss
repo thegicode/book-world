@@ -48,8 +48,9 @@ app-book {
         }
     }
 
-    // .authors {
-    // }
+    .book-image-container {
+        position: relative;
+    }
 
     book-image {
         &[data-fail="true"] {
@@ -77,17 +78,6 @@ app-book {
     }
     .description {
         line-height: 1.7;
-    }
-
-    .actions {
-        display: flex;
-        justify-content: center;
-        margin-top: 10px;
-    }
-
-    checkbox-favorite-book {
-        left: initial;
-        right: 1rem;
     }
 
     .library-search-by-book {

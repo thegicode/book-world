@@ -22,17 +22,18 @@ export default class CheckboxFavoriteBook extends HTMLElement {
     }
     render() {
         var _a;
+        const button = this.createButton();
         const container = this.createContainer();
-        this.createButton();
+        this.button = button;
         this.appendChild(container);
+        this.appendChild(button);
         (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
     }
     createButton() {
         const button = document.createElement("button");
         button.className = "category-button";
         button.textContent = "Category";
-        this.button = button;
-        this.appendChild(button);
+        return button;
     }
     onClickCategory() {
         const el = this.querySelector(".category");
