@@ -24,8 +24,12 @@
 
             <app-popular class="popular">
                 <popular-header>
-                    <h4>검색 조건</h4>
-                    <form class="filter-form">
+                    <button type="button" class="filterButton">
+                        검색 조건
+                    </button>
+
+                    <form class="filter-form" hidden>
+                        <!-- <h4>검색 조건</h4> -->
                         <fieldset class="dataSource">
                             <legend class="title">데이터 제공 방식</legend>
                             <div class="options">
@@ -132,6 +136,100 @@
                                         type="checkbox"
                                         name="gender"
                                         value="2"
+                                    />
+                                    <span class="label">미상</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <fieldset class="age">
+                            <legend class="title">연령</legend>
+                            <div class="options">
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="age"
+                                        value="A"
+                                        checked
+                                    />
+                                    <span class="label">전체</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="0"
+                                    />
+                                    <span class="label">영유아(0~5세)</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="6"
+                                    />
+                                    <span class="label">유아(6~7세)</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="8"
+                                    />
+                                    <span class="label">초등(8~13세)</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="14"
+                                    />
+                                    <span class="label">청소년(14~19세)</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="20"
+                                    />
+                                    <span class="label">20대</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="30"
+                                    />
+                                    <span class="label">30대</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="40"
+                                    />
+                                    <span class="label">40대</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="50"
+                                    />
+                                    <span class="label">50대</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="60"
+                                    />
+                                    <span class="label">60대</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="age"
+                                        value="-1"
                                     />
                                     <span class="label">미상</span>
                                 </label>

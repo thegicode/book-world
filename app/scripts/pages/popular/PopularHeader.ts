@@ -16,6 +16,11 @@ export default class PopularHeader extends HTMLElement {
 
         this.handleLoanDuration();
 
+        this.querySelector(".filterButton")?.addEventListener("click", () => {
+            if (!this.form) return;
+            this.form.hidden = !this.form.hidden;
+        });
+
         this.form.addEventListener("change", (event) => {
             this.handleChange(event);
         });
@@ -36,6 +41,9 @@ export default class PopularHeader extends HTMLElement {
             case "gender":
                 this.handleGender(target);
                 break;
+            case "age":
+                this.handleAge(target);
+                break;
         }
     }
 
@@ -51,6 +59,24 @@ export default class PopularHeader extends HTMLElement {
         if (target.value === "A") {
             const els = this.querySelectorAll<HTMLInputElement>(
                 "input[type='checkbox'][name='gender']"
+            );
+
+            els.forEach((item) => (item.checked = false));
+        }
+    }
+
+    handleAge(target: HTMLInputElement) {
+        if (!(target.value === "A")) {
+            const elA = this.querySelector(
+                "input[name='age'][value='A']"
+            ) as HTMLInputElement;
+
+            elA.checked = false;
+        }
+
+        if (target.value === "A") {
+            const els = this.querySelectorAll<HTMLInputElement>(
+                "input[type='checkbox'][name='age']"
             );
 
             els.forEach((item) => (item.checked = false));

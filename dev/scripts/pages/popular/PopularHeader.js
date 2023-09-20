@@ -6,9 +6,15 @@ export default class PopularHeader extends HTMLElement {
         this.endDateInput = this.querySelector("input[name='endDate']");
     }
     connectedCallback() {
+        var _a;
         if (!this.form)
             return;
         this.handleLoanDuration();
+        (_a = this.querySelector(".filterButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+            if (!this.form)
+                return;
+            this.form.hidden = !this.form.hidden;
+        });
         this.form.addEventListener("change", (event) => {
             this.handleChange(event);
         });
@@ -24,6 +30,9 @@ export default class PopularHeader extends HTMLElement {
             case "gender":
                 this.handleGender(target);
                 break;
+            case "age":
+                this.handleAge(target);
+                break;
         }
     }
     handleGender(target) {
@@ -33,6 +42,16 @@ export default class PopularHeader extends HTMLElement {
         }
         if (target.value === "A") {
             const els = this.querySelectorAll("input[type='checkbox'][name='gender']");
+            els.forEach((item) => (item.checked = false));
+        }
+    }
+    handleAge(target) {
+        if (!(target.value === "A")) {
+            const elA = this.querySelector("input[name='age'][value='A']");
+            elA.checked = false;
+        }
+        if (target.value === "A") {
+            const els = this.querySelectorAll("input[type='checkbox'][name='age']");
             els.forEach((item) => (item.checked = false));
         }
     }
