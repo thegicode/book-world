@@ -18,6 +18,12 @@ export default class PopularHeader extends HTMLElement {
                 case "age":
                     this.handleAge(target);
                     break;
+                case "local":
+                    this.handleLocal(target);
+                    break;
+                case "local-detail":
+                    this.handleLocalDetail(target);
+                    break;
             }
         };
         this.onReset = () => {
@@ -38,6 +44,8 @@ export default class PopularHeader extends HTMLElement {
         this.filterButton = this.querySelector(".filterButton");
         this.startDateInput = this.querySelector("input[name='startDate']");
         this.endDateInput = this.querySelector("input[name='endDate']");
+        this.localDetail = this.querySelector("[name='local-detail']");
+        this.detailRegion = this.querySelector(".detailRegion");
     }
     connectedCallback() {
         var _a;
@@ -77,6 +85,29 @@ export default class PopularHeader extends HTMLElement {
             const els = this.querySelectorAll("input[type='checkbox'][name='age']");
             els.forEach((item) => (item.checked = false));
         }
+    }
+    handleLocal(target) {
+        const elA = this.querySelector("input[name='local'][value='A']");
+        const els = this.querySelectorAll("input[type='checkbox'][name='local']");
+        if (!(target.value === "A")) {
+            elA.checked = false;
+        }
+        if (target.value === "A") {
+            els.forEach((item) => (item.checked = false));
+        }
+        const checkedEls = Array.from(this.querySelectorAll('[name="local"]:checked')).filter((el) => el.value !== "A");
+        if (this.localDetail && this.detailRegion) {
+            const isOnly = checkedEls.length === 1;
+            this.localDetail.disabled = !isOnly;
+            if (this.localDetail.checked) {
+                this.detailRegion.hidden = !isOnly;
+            }
+        }
+    }
+    handleLocalDetail(target) {
+        if (!this.detailRegion)
+            return;
+        this.detailRegion.hidden = !target.checked;
     }
     handleLoanDuration(event) {
         var _a;

@@ -56,6 +56,9 @@ button:disabled {
   color: #efefef;
   font-size: 11px;
 }
+.popular input[type=date] {
+  color: #666;
+}
 
 .filter-form {
   padding: 0 1rem;
@@ -82,7 +85,7 @@ button:disabled {
   margin: 3px 0;
 }
 .filter-form .label {
-  margin: 3px 1rem 0 3px;
+  margin: 0 1rem 0 3px;
 }
 .filter-form .dateRange {
   margin-top: 10px;
@@ -97,7 +100,7 @@ button:disabled {
   flex: auto;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #cbdad7;
+  border: 1px solid #dbe8e6;
   background-color: #f0fdfb;
   font-size: 14px;
   color: #666;
@@ -105,6 +108,26 @@ button:disabled {
 .filter-actions button:hover {
   background-color: #dffff9;
   border-color: #b1d4ce;
+}
+
+.local {
+  position: relative;
+}
+
+.local-detail {
+  position: absolute;
+  right: -2px;
+  top: -25px;
+  border-radius: 5px 5px 0 0;
+  padding: 5px;
+  background: #eee;
+  font-size: 12px;
+}
+.local-detail .label {
+  margin-left: 3px;
+}
+.local-detail input:disabled + .label {
+  opacity: 0.3;
 }
 
 /*# sourceMappingURL=popular.css.map */
