@@ -236,12 +236,12 @@
                             </div>
                         </fieldset>
 
-                        <fieldset class="local">
+                        <fieldset class="region">
                             <legend class="title">지역</legend>
-                            <label class="local-detail">
+                            <label class="region-detail">
                                 <input
                                     type="checkbox"
-                                    name="local-detail"
+                                    name="region-detail"
                                     disabled
                                 />
                                 <span class="label">세부지역</span>
@@ -250,7 +250,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="local"
+                                        name="region"
                                         value="A"
                                         checked
                                     />
@@ -259,7 +259,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="11"
                                     />
                                     <span class="label">서울</span>
@@ -267,7 +267,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="21"
                                     />
                                     <span class="label">부산</span>
@@ -275,7 +275,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="22"
                                     />
                                     <span class="label">대구</span>
@@ -283,7 +283,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="23"
                                     />
                                     <span class="label">인천</span>
@@ -291,7 +291,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="24"
                                     />
                                     <span class="label">광주</span>
@@ -299,7 +299,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="25"
                                     />
                                     <span class="label">대전</span>
@@ -307,7 +307,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="26"
                                     />
                                     <span class="label">울산</span>
@@ -315,7 +315,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="29"
                                     />
                                     <span class="label">세종</span>
@@ -323,7 +323,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="31"
                                     />
                                     <span class="label">경기</span>
@@ -331,7 +331,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="32"
                                     />
                                     <span class="label">강원</span>
@@ -339,7 +339,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="33"
                                     />
                                     <span class="label">충북</span>
@@ -347,7 +347,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="34"
                                     />
                                     <span class="label">충남</span>
@@ -355,7 +355,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="35"
                                     />
                                     <span class="label">전북</span>
@@ -363,7 +363,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="36"
                                     />
                                     <span class="label">전남</span>
@@ -371,7 +371,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="37"
                                     />
                                     <span class="label">경북</span>
@@ -379,7 +379,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="38"
                                     />
                                     <span class="label">경남</span>
@@ -387,20 +387,20 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="local"
+                                        name="region"
                                         value="39"
                                     />
                                     <span class="label">제주</span>
                                 </label>
                             </div>
                         </fieldset>
-                        <fieldset class="detailRegion" hidden>
+                        <fieldset class="subRegion" hidden>
                             <legend class="title">세부지역</legend>
                             <div class="options">
                                 <label>
                                     <input
                                         type="radio"
-                                        name="detailRegion"
+                                        name="subRegion"
                                         value="A"
                                         checked
                                     />
@@ -409,7 +409,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="detailRegion"
+                                        name="subRegion"
                                         value="1123"
                                     />
                                     <span class="label">강남구</span>
@@ -417,7 +417,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="detailRegion"
+                                        name="subRegion"
                                         value="1123"
                                     />
                                     <span class="label">강남구</span>
@@ -432,14 +432,5 @@
                 </popular-header>
             </app-popular>
         </div>
-
-        <!-- <template id="tp-category-item">
-            <li class="category-item" draggable="false">
-                <button type="button" class="dragger" tabindex="-1">=</button>
-                <span class="label"><input type="text" name="category" /></span>
-                <button type="button" class="renameButton">이름 변경</button>
-                <button type="button" class="deleteButton">삭제</button>
-            </li>
-        </template> -->
     </body>
 </html>

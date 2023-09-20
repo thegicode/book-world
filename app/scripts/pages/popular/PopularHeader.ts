@@ -3,8 +3,8 @@ export default class PopularHeader extends HTMLElement {
     filterButton: HTMLButtonElement | null;
     startDateInput: HTMLInputElement | null;
     endDateInput: HTMLInputElement | null;
-    localDetail: HTMLInputElement | null;
-    detailRegion: HTMLInputElement | null;
+    regionDetail: HTMLInputElement | null;
+    subRegion: HTMLInputElement | null;
 
     constructor() {
         super();
@@ -13,8 +13,8 @@ export default class PopularHeader extends HTMLElement {
         this.filterButton = this.querySelector(".filterButton");
         this.startDateInput = this.querySelector("input[name='startDate']");
         this.endDateInput = this.querySelector("input[name='endDate']");
-        this.localDetail = this.querySelector("[name='local-detail']");
-        this.detailRegion = this.querySelector(".detailRegion");
+        this.regionDetail = this.querySelector("[name='region-detail']");
+        this.subRegion = this.querySelector(".subRegion");
     }
 
     connectedCallback() {
@@ -64,11 +64,11 @@ export default class PopularHeader extends HTMLElement {
             case "age":
                 this.handleAge(target);
                 break;
-            case "local":
-                this.handleLocal(target);
+            case "region":
+                this.handleRegion(target);
                 break;
-            case "local-detail":
-                this.handleLocalDetail(target);
+            case "region-detail":
+                this.handleRegionDetail(target);
                 break;
         }
     };
@@ -109,13 +109,13 @@ export default class PopularHeader extends HTMLElement {
         }
     }
 
-    handleLocal(target: HTMLInputElement) {
+    handleRegion(target: HTMLInputElement) {
         const elA = this.querySelector(
-            "input[name='local'][value='A']"
+            "input[name='region'][value='A']"
         ) as HTMLInputElement;
 
         const els = this.querySelectorAll<HTMLInputElement>(
-            "input[type='checkbox'][name='local']"
+            "input[type='checkbox'][name='region']"
         );
 
         if (!(target.value === "A")) {
@@ -127,21 +127,21 @@ export default class PopularHeader extends HTMLElement {
         }
 
         const checkedEls = Array.from(
-            this.querySelectorAll<HTMLInputElement>('[name="local"]:checked')
+            this.querySelectorAll<HTMLInputElement>('[name="region"]:checked')
         ).filter((el) => el.value !== "A");
 
-        if (this.localDetail && this.detailRegion) {
+        if (this.regionDetail && this.subRegion) {
             const isOnly = checkedEls.length === 1;
-            this.localDetail.disabled = !isOnly;
-            if (this.localDetail.checked) {
-                this.detailRegion.hidden = !isOnly;
+            this.regionDetail.disabled = !isOnly;
+            if (this.regionDetail.checked) {
+                this.subRegion.hidden = !isOnly;
             }
         }
     }
 
-    handleLocalDetail(target: HTMLInputElement) {
-        if (!this.detailRegion) return;
-        this.detailRegion.hidden = !target.checked;
+    handleRegionDetail(target: HTMLInputElement) {
+        if (!this.subRegion) return;
+        this.subRegion.hidden = !target.checked;
     }
 
     handleLoanDuration(event?: Event) {
