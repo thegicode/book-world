@@ -1,5 +1,6 @@
 export default class PopularHeader extends HTMLElement {
     form: HTMLFormElement | null;
+    filterButton: HTMLButtonElement | null;
     startDateInput: HTMLInputElement | null;
     endDateInput: HTMLInputElement | null;
 
@@ -7,6 +8,7 @@ export default class PopularHeader extends HTMLElement {
         super();
 
         this.form = this.querySelector("form");
+        this.filterButton = this.querySelector(".filterButton");
         this.startDateInput = this.querySelector("input[name='startDate']");
         this.endDateInput = this.querySelector("input[name='endDate']");
     }
@@ -14,24 +16,38 @@ export default class PopularHeader extends HTMLElement {
     connectedCallback() {
         if (!this.form) return;
 
-        this.handleLoanDuration();
+        this.initialLoanDuration();
 
-        this.querySelector(".filterButton")?.addEventListener("click", () => {
-            if (!this.form) return;
-            this.form.hidden = !this.form.hidden;
-        });
+        this.filterButton?.addEventListener("click", this.onClickFilterButton);
 
-        this.form.addEventListener("change", (event) => {
-            this.handleChange(event);
-        });
+        this.form.addEventListener("change", this.onChange);
 
-        this.form.addEventListener("submit", (event) =>
-            this.handleSumbit(event)
-        );
-        this.form.addEventListener("reset", () => this.handleReset());
+        this.form.addEventListener("reset", this.onReset);
+
+        this.form.addEventListener("submit", this.onSumbit);
     }
 
-    handleChange(event: Event) {
+    disconnectedCallback() {
+        if (!this.form) return;
+
+        this.filterButton?.removeEventListener(
+            "click",
+            this.onClickFilterButton
+        );
+
+        this.form.removeEventListener("change", this.onChange);
+
+        this.form.removeEventListener("reset", this.onReset);
+
+        this.form.removeEventListener("submit", this.onSumbit);
+    }
+
+    onClickFilterButton = () => {
+        if (!this.form) return;
+        this.form.hidden = !this.form.hidden;
+    };
+
+    onChange = (event: Event) => {
         const target = event.target as HTMLInputElement;
 
         switch (target.name) {
@@ -45,7 +61,7 @@ export default class PopularHeader extends HTMLElement {
                 this.handleAge(target);
                 break;
         }
-    }
+    };
 
     handleGender(target: HTMLInputElement) {
         if (!(target.value === "A")) {
@@ -91,40 +107,36 @@ export default class PopularHeader extends HTMLElement {
         const { currentDate, currentYear, currentMonth, currentDay } =
             this.getCurrentDates();
 
-        if (!event) {
-            this.initialLoanDuration();
-        } else {
-            const target = event?.target as HTMLInputElement;
+        const target = event?.target as HTMLInputElement;
 
-            switch (target?.value) {
-                case "year":
-                    this.initialLoanDuration();
-                    break;
-                case "month": {
-                    this.startDateInput.value = `${currentYear}-${currentMonth}-01`;
-                    this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
-                    break;
-                }
-                case "week": {
-                    const startOfWeek = new Date(currentDate);
-                    startOfWeek.setDate(
-                        currentDate.getDate() - currentDate.getDay()
-                    );
-                    const startWeekYear = startOfWeek.getFullYear();
-                    const startWeekMonth = String(
-                        startOfWeek.getMonth() + 1
-                    ).padStart(2, "0");
-                    const startWeekDay = String(startOfWeek.getDate()).padStart(
-                        2,
-                        "0"
-                    );
-                    this.startDateInput.value = `${startWeekYear}-${startWeekMonth}-${startWeekDay}`;
-                    this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
-                    break;
-                }
-                case "custom":
-                    break;
+        switch (target?.value) {
+            case "year":
+                this.initialLoanDuration();
+                break;
+            case "month": {
+                this.startDateInput.value = `${currentYear}-${currentMonth}-01`;
+                this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
+                break;
             }
+            case "week": {
+                const startOfWeek = new Date(currentDate);
+                startOfWeek.setDate(
+                    currentDate.getDate() - currentDate.getDay()
+                );
+                const startWeekYear = startOfWeek.getFullYear();
+                const startWeekMonth = String(
+                    startOfWeek.getMonth() + 1
+                ).padStart(2, "0");
+                const startWeekDay = String(startOfWeek.getDate()).padStart(
+                    2,
+                    "0"
+                );
+                this.startDateInput.value = `${startWeekYear}-${startWeekMonth}-${startWeekDay}`;
+                this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
+                break;
+            }
+            case "custom":
+                break;
         }
 
         this.querySelector(".dateRange")?.addEventListener("click", () => {
@@ -162,13 +174,13 @@ export default class PopularHeader extends HTMLElement {
         this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;
     }
 
-    handleReset() {
+    onReset = () => {
         setTimeout(() => {
             this.initialLoanDuration();
         }, 100);
-    }
+    };
 
-    handleSumbit(event: Event) {
+    onSumbit = (event: Event) => {
         event.preventDefault();
         if (!this.form) return;
 
@@ -177,5 +189,5 @@ export default class PopularHeader extends HTMLElement {
         for (const pair of (formData as any).entries()) {
             console.log(pair[0] + ", " + pair[1]);
         }
-    }
+    };
 }

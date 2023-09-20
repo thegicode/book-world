@@ -1,7 +1,41 @@
 export default class PopularHeader extends HTMLElement {
     constructor() {
         super();
+        this.onClickFilterButton = () => {
+            if (!this.form)
+                return;
+            this.form.hidden = !this.form.hidden;
+        };
+        this.onChange = (event) => {
+            const target = event.target;
+            switch (target.name) {
+                case "loanDuration":
+                    this.handleLoanDuration(event);
+                    break;
+                case "gender":
+                    this.handleGender(target);
+                    break;
+                case "age":
+                    this.handleAge(target);
+                    break;
+            }
+        };
+        this.onReset = () => {
+            setTimeout(() => {
+                this.initialLoanDuration();
+            }, 100);
+        };
+        this.onSumbit = (event) => {
+            event.preventDefault();
+            if (!this.form)
+                return;
+            const formData = new FormData(this.form);
+            for (const pair of formData.entries()) {
+                console.log(pair[0] + ", " + pair[1]);
+            }
+        };
         this.form = this.querySelector("form");
+        this.filterButton = this.querySelector(".filterButton");
         this.startDateInput = this.querySelector("input[name='startDate']");
         this.endDateInput = this.querySelector("input[name='endDate']");
     }
@@ -9,31 +43,20 @@ export default class PopularHeader extends HTMLElement {
         var _a;
         if (!this.form)
             return;
-        this.handleLoanDuration();
-        (_a = this.querySelector(".filterButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-            if (!this.form)
-                return;
-            this.form.hidden = !this.form.hidden;
-        });
-        this.form.addEventListener("change", (event) => {
-            this.handleChange(event);
-        });
-        this.form.addEventListener("submit", (event) => this.handleSumbit(event));
-        this.form.addEventListener("reset", () => this.handleReset());
+        this.initialLoanDuration();
+        (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickFilterButton);
+        this.form.addEventListener("change", this.onChange);
+        this.form.addEventListener("reset", this.onReset);
+        this.form.addEventListener("submit", this.onSumbit);
     }
-    handleChange(event) {
-        const target = event.target;
-        switch (target.name) {
-            case "loanDuration":
-                this.handleLoanDuration(event);
-                break;
-            case "gender":
-                this.handleGender(target);
-                break;
-            case "age":
-                this.handleAge(target);
-                break;
-        }
+    disconnectedCallback() {
+        var _a;
+        if (!this.form)
+            return;
+        (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onClickFilterButton);
+        this.form.removeEventListener("change", this.onChange);
+        this.form.removeEventListener("reset", this.onReset);
+        this.form.removeEventListener("submit", this.onSumbit);
     }
     handleGender(target) {
         if (!(target.value === "A")) {
@@ -61,33 +84,28 @@ export default class PopularHeader extends HTMLElement {
             return;
         }
         const { currentDate, currentYear, currentMonth, currentDay } = this.getCurrentDates();
-        if (!event) {
-            this.initialLoanDuration();
-        }
-        else {
-            const target = event === null || event === void 0 ? void 0 : event.target;
-            switch (target === null || target === void 0 ? void 0 : target.value) {
-                case "year":
-                    this.initialLoanDuration();
-                    break;
-                case "month": {
-                    this.startDateInput.value = `${currentYear}-${currentMonth}-01`;
-                    this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
-                    break;
-                }
-                case "week": {
-                    const startOfWeek = new Date(currentDate);
-                    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
-                    const startWeekYear = startOfWeek.getFullYear();
-                    const startWeekMonth = String(startOfWeek.getMonth() + 1).padStart(2, "0");
-                    const startWeekDay = String(startOfWeek.getDate()).padStart(2, "0");
-                    this.startDateInput.value = `${startWeekYear}-${startWeekMonth}-${startWeekDay}`;
-                    this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
-                    break;
-                }
-                case "custom":
-                    break;
+        const target = event === null || event === void 0 ? void 0 : event.target;
+        switch (target === null || target === void 0 ? void 0 : target.value) {
+            case "year":
+                this.initialLoanDuration();
+                break;
+            case "month": {
+                this.startDateInput.value = `${currentYear}-${currentMonth}-01`;
+                this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
+                break;
             }
+            case "week": {
+                const startOfWeek = new Date(currentDate);
+                startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+                const startWeekYear = startOfWeek.getFullYear();
+                const startWeekMonth = String(startOfWeek.getMonth() + 1).padStart(2, "0");
+                const startWeekDay = String(startOfWeek.getDate()).padStart(2, "0");
+                this.startDateInput.value = `${startWeekYear}-${startWeekMonth}-${startWeekDay}`;
+                this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
+                break;
+            }
+            case "custom":
+                break;
         }
         (_a = this.querySelector(".dateRange")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
             const customDateInput = this.querySelector("input[name='loanDuration'][value='custom']");
@@ -112,20 +130,6 @@ export default class PopularHeader extends HTMLElement {
         const { currentDate, currentMonth, currentDay } = this.getCurrentDates();
         this.startDateInput.value = `${currentDate.getFullYear()}-01-01`;
         this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;
-    }
-    handleReset() {
-        setTimeout(() => {
-            this.initialLoanDuration();
-        }, 100);
-    }
-    handleSumbit(event) {
-        event.preventDefault();
-        if (!this.form)
-            return;
-        const formData = new FormData(this.form);
-        for (const pair of formData.entries()) {
-            console.log(pair[0] + ", " + pair[1]);
-        }
     }
 }
 //# sourceMappingURL=PopularHeader.js.map
