@@ -21,8 +21,17 @@ export default class PopularHeader extends HTMLElement {
                 case "region":
                     this.handleRegion(target);
                     break;
-                case "region-detail":
-                    this.handleRegionDetail(target);
+                case "detailRegion":
+                    this.handleDetailRegion(target);
+                    break;
+                case "addCode":
+                    this.handleAddCode(target);
+                    break;
+                case "subject":
+                    this.handleSubject(target);
+                    break;
+                case "detailSubject":
+                    this.handleDetailSubject(target);
                     break;
             }
         };
@@ -44,8 +53,10 @@ export default class PopularHeader extends HTMLElement {
         this.filterButton = this.querySelector(".filterButton");
         this.startDateInput = this.querySelector("input[name='startDate']");
         this.endDateInput = this.querySelector("input[name='endDate']");
-        this.regionDetail = this.querySelector("[name='region-detail']");
+        this.detailRegion = this.querySelector("[name='detailRegion']");
         this.subRegion = this.querySelector(".subRegion");
+        this.detailSubject = this.querySelector("[name='detailSubject']");
+        this.subSubject = this.querySelector(".subSubject");
     }
     connectedCallback() {
         var _a;
@@ -96,18 +107,51 @@ export default class PopularHeader extends HTMLElement {
             els.forEach((item) => (item.checked = false));
         }
         const checkedEls = Array.from(this.querySelectorAll('[name="region"]:checked')).filter((el) => el.value !== "A");
-        if (this.regionDetail && this.subRegion) {
+        if (this.detailRegion && this.subRegion) {
             const isOnly = checkedEls.length === 1;
-            this.regionDetail.disabled = !isOnly;
-            if (this.regionDetail.checked) {
+            this.detailRegion.disabled = !isOnly;
+            if (this.detailRegion.checked) {
                 this.subRegion.hidden = !isOnly;
             }
         }
     }
-    handleRegionDetail(target) {
+    handleDetailRegion(target) {
         if (!this.subRegion)
             return;
         this.subRegion.hidden = !target.checked;
+    }
+    handleAddCode(target) {
+        if (!(target.value === "A")) {
+            const elA = this.querySelector("input[name='addCode'][value='A']");
+            elA.checked = false;
+        }
+        if (target.value === "A") {
+            const els = this.querySelectorAll("input[type='checkbox'][name='addCode']");
+            els.forEach((item) => (item.checked = false));
+        }
+    }
+    handleSubject(target) {
+        const elA = this.querySelector("input[name='subject'][value='A']");
+        const els = this.querySelectorAll("input[type='checkbox'][name='subject']");
+        if (!(target.value === "A")) {
+            elA.checked = false;
+        }
+        if (target.value === "A") {
+            els.forEach((item) => (item.checked = false));
+        }
+        const checkedEls = Array.from(this.querySelectorAll('[name="subject"]:checked')).filter((el) => el.value !== "A");
+        if (this.detailSubject && this.subSubject) {
+            const isOnly = checkedEls.length === 1;
+            this.detailSubject.disabled = !isOnly;
+            if (this.detailSubject.checked) {
+                this.subSubject.hidden = !isOnly;
+            }
+        }
+    }
+    handleDetailSubject(target) {
+        if (!this.subSubject)
+            return;
+        this.subSubject.hidden = !target.checked;
     }
     handleLoanDuration(event) {
         var _a;

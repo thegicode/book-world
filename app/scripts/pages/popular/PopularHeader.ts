@@ -3,8 +3,10 @@ export default class PopularHeader extends HTMLElement {
     filterButton: HTMLButtonElement | null;
     startDateInput: HTMLInputElement | null;
     endDateInput: HTMLInputElement | null;
-    regionDetail: HTMLInputElement | null;
+    detailRegion: HTMLInputElement | null;
     subRegion: HTMLInputElement | null;
+    detailSubject: HTMLInputElement | null;
+    subSubject: HTMLInputElement | null;
 
     constructor() {
         super();
@@ -13,8 +15,10 @@ export default class PopularHeader extends HTMLElement {
         this.filterButton = this.querySelector(".filterButton");
         this.startDateInput = this.querySelector("input[name='startDate']");
         this.endDateInput = this.querySelector("input[name='endDate']");
-        this.regionDetail = this.querySelector("[name='region-detail']");
+        this.detailRegion = this.querySelector("[name='detailRegion']");
         this.subRegion = this.querySelector(".subRegion");
+        this.detailSubject = this.querySelector("[name='detailSubject']");
+        this.subSubject = this.querySelector(".subSubject");
     }
 
     connectedCallback() {
@@ -67,8 +71,17 @@ export default class PopularHeader extends HTMLElement {
             case "region":
                 this.handleRegion(target);
                 break;
-            case "region-detail":
-                this.handleRegionDetail(target);
+            case "detailRegion":
+                this.handleDetailRegion(target);
+                break;
+            case "addCode":
+                this.handleAddCode(target);
+                break;
+            case "subject":
+                this.handleSubject(target);
+                break;
+            case "detailSubject":
+                this.handleDetailSubject(target);
                 break;
         }
     };
@@ -130,18 +143,71 @@ export default class PopularHeader extends HTMLElement {
             this.querySelectorAll<HTMLInputElement>('[name="region"]:checked')
         ).filter((el) => el.value !== "A");
 
-        if (this.regionDetail && this.subRegion) {
+        if (this.detailRegion && this.subRegion) {
             const isOnly = checkedEls.length === 1;
-            this.regionDetail.disabled = !isOnly;
-            if (this.regionDetail.checked) {
+            this.detailRegion.disabled = !isOnly;
+            if (this.detailRegion.checked) {
                 this.subRegion.hidden = !isOnly;
             }
         }
     }
 
-    handleRegionDetail(target: HTMLInputElement) {
+    handleDetailRegion(target: HTMLInputElement) {
         if (!this.subRegion) return;
         this.subRegion.hidden = !target.checked;
+    }
+
+    handleAddCode(target: HTMLInputElement) {
+        if (!(target.value === "A")) {
+            const elA = this.querySelector(
+                "input[name='addCode'][value='A']"
+            ) as HTMLInputElement;
+
+            elA.checked = false;
+        }
+
+        if (target.value === "A") {
+            const els = this.querySelectorAll<HTMLInputElement>(
+                "input[type='checkbox'][name='addCode']"
+            );
+
+            els.forEach((item) => (item.checked = false));
+        }
+    }
+
+    handleSubject(target: HTMLInputElement) {
+        const elA = this.querySelector(
+            "input[name='subject'][value='A']"
+        ) as HTMLInputElement;
+
+        const els = this.querySelectorAll<HTMLInputElement>(
+            "input[type='checkbox'][name='subject']"
+        );
+
+        if (!(target.value === "A")) {
+            elA.checked = false;
+        }
+
+        if (target.value === "A") {
+            els.forEach((item) => (item.checked = false));
+        }
+
+        const checkedEls = Array.from(
+            this.querySelectorAll<HTMLInputElement>('[name="subject"]:checked')
+        ).filter((el) => el.value !== "A");
+
+        if (this.detailSubject && this.subSubject) {
+            const isOnly = checkedEls.length === 1;
+            this.detailSubject.disabled = !isOnly;
+            if (this.detailSubject.checked) {
+                this.subSubject.hidden = !isOnly;
+            }
+        }
+    }
+
+    handleDetailSubject(target: HTMLInputElement) {
+        if (!this.subSubject) return;
+        this.subSubject.hidden = !target.checked;
     }
 
     handleLoanDuration(event?: Event) {
