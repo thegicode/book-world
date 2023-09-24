@@ -1,6 +1,10 @@
+import { CustomEventEmitter } from "../../utils";
+import { getCurrentDates } from "../../utils/utils";
+
 export default class PopularHeader extends HTMLElement {
     form: HTMLFormElement | null;
     filterButton: HTMLButtonElement | null;
+    closeButton: HTMLButtonElement | null;
     startDateInput: HTMLInputElement | null;
     endDateInput: HTMLInputElement | null;
     detailRegion: HTMLInputElement | null;
@@ -13,8 +17,9 @@ export default class PopularHeader extends HTMLElement {
 
         this.form = this.querySelector("form");
         this.filterButton = this.querySelector(".filterButton");
-        this.startDateInput = this.querySelector("input[name='startDate']");
-        this.endDateInput = this.querySelector("input[name='endDate']");
+        this.closeButton = this.querySelector(".closeButton");
+        this.startDateInput = this.querySelector("input[name='startDt']");
+        this.endDateInput = this.querySelector("input[name='endDt']");
         this.detailRegion = this.querySelector("[name='detailRegion']");
         this.subRegion = this.querySelector(".subRegion");
         this.detailSubject = this.querySelector("[name='detailSubject']");
@@ -27,6 +32,7 @@ export default class PopularHeader extends HTMLElement {
         this.initialLoanDuration();
 
         this.filterButton?.addEventListener("click", this.onClickFilterButton);
+        this.closeButton?.addEventListener("click", this.closeForm);
 
         this.form.addEventListener("change", this.onChange);
 
@@ -53,6 +59,11 @@ export default class PopularHeader extends HTMLElement {
     onClickFilterButton = () => {
         if (!this.form) return;
         this.form.hidden = !this.form.hidden;
+    };
+
+    closeForm = () => {
+        if (!this.form) return;
+        this.form.hidden = true;
     };
 
     onChange = (event: Event) => {
@@ -216,7 +227,7 @@ export default class PopularHeader extends HTMLElement {
         }
 
         const { currentDate, currentYear, currentMonth, currentDay } =
-            this.getCurrentDates();
+            getCurrentDates();
 
         const target = event?.target as HTMLInputElement;
 
@@ -258,28 +269,10 @@ export default class PopularHeader extends HTMLElement {
         });
     }
 
-    getCurrentDates() {
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = String(currentDate.getMonth() + 1).padStart(
-            2,
-            "0"
-        );
-        const currentDay = String(currentDate.getDate()).padStart(2, "0");
-
-        return {
-            currentDate,
-            currentYear,
-            currentMonth,
-            currentDay,
-        };
-    }
-
     initialLoanDuration() {
         if (!this.startDateInput || !this.endDateInput) return;
 
-        const { currentDate, currentMonth, currentDay } =
-            this.getCurrentDates();
+        const { currentDate, currentMonth, currentDay } = getCurrentDates();
 
         this.startDateInput.value = `${currentDate.getFullYear()}-01-01`;
         this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;
@@ -297,8 +290,28 @@ export default class PopularHeader extends HTMLElement {
 
         const formData = new FormData(this.form);
 
-        for (const pair of (formData as any).entries()) {
-            console.log(pair[0] + ", " + pair[1]);
+        const params: Partial<IPopularFetchParams> = {};
+
+        for (const [key, value] of formData.entries()) {
+            if (
+                key === "dataSource" ||
+                key === "loanDuration" ||
+                key === "subKdc" ||
+                key === "subRegion"
+            )
+                continue;
+
+            if (typeof value === "string") {
+                const value2 = value === "A" ? "" : value;
+                params[key as keyof IPopularFetchParams] = value2;
+                params["pageNo"] = "1";
+            }
         }
+
+        CustomEventEmitter.dispatch("requestPopular", {
+            params,
+        });
+
+        this.closeForm();
     };
 }

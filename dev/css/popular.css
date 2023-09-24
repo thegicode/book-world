@@ -42,9 +42,14 @@ button:disabled {
   height: 100%;
 }
 
+nav-gnb {
+  flex: none;
+}
+
 .popular {
-  overflow: auto;
-  padding-bottom: 1rem;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
 }
 .popular .filterButton {
   position: absolute;
@@ -60,12 +65,27 @@ button:disabled {
   color: #666;
 }
 
+popular-header {
+  flex: none;
+}
+
 .filter-form {
-  padding: 0 1rem;
+  overflow: auto;
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 65px;
+  z-index: 10;
+  box-sizing: border-box;
+  height: 80%;
+  padding: 1rem;
+  border-radius: 5px;
+  border: 2px solid #464646;
+  background: #fff;
   color: #666;
 }
 .filter-form fieldset {
-  margin: 1rem 0 0;
+  margin-bottom: 1rem;
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #ddd;
@@ -132,6 +152,73 @@ button:disabled {
 .detailRegion input:disabled + .label,
 .detailSubject input:disabled + .label {
   opacity: 0.3;
+}
+
+.popular-body {
+  flex: 1;
+  overflow: auto;
+}
+.popular-body .popular-loading {
+  display: none;
+}
+.popular-body[data-loading=true] {
+  position: relative;
+}
+.popular-body[data-loading=true] .popular-loading {
+  display: flex;
+}
+
+.popular-list {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.popular-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.popular-item .thumb {
+  position: relative;
+}
+.popular-item .bookImage {
+  width: 120px;
+  border: 1px solid #dedede;
+}
+.popular-item .ranking {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: #607678;
+  font-size: 11px;
+  color: #fff;
+  text-align: center;
+  line-height: 20px;
+}
+.popular-item .book-info {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.popular-item .book-info li {
+  margin-bottom: 6px;
+}
+
+.popular-loading {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
 }
 
 /*# sourceMappingURL=popular.css.map */

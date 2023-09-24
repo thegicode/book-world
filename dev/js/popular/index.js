@@ -681,6 +681,20 @@
     }
   };
 
+  // dev/scripts/utils/utils.js
+  function getCurrentDates() {
+    const currentDate = /* @__PURE__ */ new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const currentDay = String(currentDate.getDate()).padStart(2, "0");
+    return {
+      currentDate,
+      currentYear,
+      currentMonth,
+      currentDay
+    };
+  }
+
   // dev/scripts/pages/popular/Popular.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
@@ -712,33 +726,109 @@
   var Popular = class extends HTMLElement {
     constructor() {
       super();
+      this.itemTemplate = document.querySelector("#tp-popular-item");
+      this.body = this.querySelector(".popular-body");
+      this.list = this.querySelector(".popular-list");
+      this.loading = document.querySelector(".popular-loading");
+      this.onRequestPopular = this.onRequestPopular.bind(this);
     }
     connectedCallback() {
-      this.fetch();
+      const { currentYear, currentMonth, currentDay } = getCurrentDates();
+      const params = {
+        startDt: "2022-01-01",
+        endDt: `${currentYear}-${currentMonth}-${currentDay}`,
+        gender: "A",
+        age: "20",
+        region: "11;31",
+        addCode: "0",
+        kdc: "6",
+        pageNo: "1",
+        pageSize: "10"
+      };
+      this.fetch(params);
+      CustomEventEmitter_default.add("requestPopular", this.onRequestPopular);
     }
-    // disconnectedCallback() {}
-    fetch() {
+    disconnectedCallback() {
+      CustomEventEmitter_default.remove("requestPopular", this.onRequestPopular);
+    }
+    onRequestPopular(event) {
+      const { params } = event.detail;
+      this.fetch(params);
+    }
+    fetch(params) {
       return __awaiter2(this, void 0, void 0, function* () {
-        const searchParams = new URLSearchParams({
-          startDt: "2022-01-01",
-          endDt: "2022-03-31",
-          gender: "1",
-          age: "20",
-          region: "11;31",
-          addCode: "0",
-          kdc: "6",
-          pageNo: "1",
-          pageSize: "10"
-        });
+        if (this.body) {
+          this.body.dataset.loading = "true";
+        }
+        const searchParams = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== void 0).map(([key, value]) => [key, String(value)]));
         const url = `/popular-book?${searchParams}`;
         try {
           const data = yield CustomFetch_default.fetch(url);
-          console.log(data);
+          this.render(data);
         } catch (error) {
           console.error(error);
           throw new Error(`Fail to get library search by book.`);
         }
       });
+    }
+    render({ data, resultNum }) {
+      console.log("resultNum", resultNum);
+      if (!this.list)
+        return;
+      this.list.innerHTML = "";
+      const fragment = new DocumentFragment();
+      data.map((item) => {
+        const cloned = this.createItem(item);
+        cloned && fragment.appendChild(cloned);
+      });
+      this.list.appendChild(fragment);
+      if (this.body) {
+        this.body.dataset.loading = "false";
+      }
+    }
+    createItem(item) {
+      var _a, _b;
+      const {
+        // addition_symbol,
+        authors,
+        bookDtlUrl,
+        bookImageURL,
+        bookname,
+        class_nm,
+        // class_no,
+        isbn13,
+        loan_count,
+        no,
+        publication_year,
+        publisher,
+        ranking
+        // vol,
+      } = item;
+      const cloned = (_b = (_a = this.itemTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
+      if (!cloned)
+        return null;
+      const bookNameEl = cloned.querySelector(".bookname");
+      const rankingEl = cloned.querySelector(".ranking");
+      const authorsEl = cloned.querySelector(".authors");
+      const publicationYeaEl = cloned.querySelector(".publication_year");
+      const publisherEl = cloned.querySelector(".publisher");
+      const classEl = cloned.querySelector(".class_nm");
+      const isbnEl = cloned.querySelector(".isbn13");
+      const loanCountEl = cloned.querySelector(".loan_count");
+      const bookDtlUrlEl = cloned.querySelector(".bookDtlUrl");
+      const imageEl = cloned.querySelector(".bookImage");
+      cloned.dataset.index = no.toString();
+      bookNameEl.textContent = bookname;
+      rankingEl.textContent = ranking;
+      authorsEl.textContent = authors;
+      publicationYeaEl.textContent = publication_year;
+      publisherEl.textContent = publisher;
+      classEl.textContent = class_nm;
+      isbnEl.textContent = isbn13;
+      loanCountEl.textContent = loan_count;
+      bookDtlUrlEl.href = bookDtlUrl;
+      imageEl.src = bookImageURL;
+      return cloned;
     }
   };
 
@@ -750,6 +840,11 @@
         if (!this.form)
           return;
         this.form.hidden = !this.form.hidden;
+      };
+      this.closeForm = () => {
+        if (!this.form)
+          return;
+        this.form.hidden = true;
       };
       this.onChange = (event) => {
         const target = event.target;
@@ -790,25 +885,38 @@
         if (!this.form)
           return;
         const formData = new FormData(this.form);
-        for (const pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
+        const params = {};
+        for (const [key, value] of formData.entries()) {
+          if (key === "dataSource" || key === "loanDuration" || key === "subKdc" || key === "subRegion")
+            continue;
+          if (typeof value === "string") {
+            const value2 = value === "A" ? "" : value;
+            params[key] = value2;
+            params["pageNo"] = "1";
+          }
         }
+        CustomEventEmitter_default.dispatch("requestPopular", {
+          params
+        });
+        this.closeForm();
       };
       this.form = this.querySelector("form");
       this.filterButton = this.querySelector(".filterButton");
-      this.startDateInput = this.querySelector("input[name='startDate']");
-      this.endDateInput = this.querySelector("input[name='endDate']");
+      this.closeButton = this.querySelector(".closeButton");
+      this.startDateInput = this.querySelector("input[name='startDt']");
+      this.endDateInput = this.querySelector("input[name='endDt']");
       this.detailRegion = this.querySelector("[name='detailRegion']");
       this.subRegion = this.querySelector(".subRegion");
       this.detailSubject = this.querySelector("[name='detailSubject']");
       this.subSubject = this.querySelector(".subSubject");
     }
     connectedCallback() {
-      var _a;
+      var _a, _b;
       if (!this.form)
         return;
       this.initialLoanDuration();
       (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickFilterButton);
+      (_b = this.closeButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.closeForm);
       this.form.addEventListener("change", this.onChange);
       this.form.addEventListener("reset", this.onReset);
       this.form.addEventListener("submit", this.onSumbit);
@@ -903,7 +1011,7 @@
       if (!this.startDateInput || !this.endDateInput) {
         return;
       }
-      const { currentDate, currentYear, currentMonth, currentDay } = this.getCurrentDates();
+      const { currentDate, currentYear, currentMonth, currentDay } = getCurrentDates();
       const target = event === null || event === void 0 ? void 0 : event.target;
       switch (target === null || target === void 0 ? void 0 : target.value) {
         case "year":
@@ -932,22 +1040,10 @@
         customDateInput.checked = true;
       });
     }
-    getCurrentDates() {
-      const currentDate = /* @__PURE__ */ new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0");
-      const currentDay = String(currentDate.getDate()).padStart(2, "0");
-      return {
-        currentDate,
-        currentYear,
-        currentMonth,
-        currentDay
-      };
-    }
     initialLoanDuration() {
       if (!this.startDateInput || !this.endDateInput)
         return;
-      const { currentDate, currentMonth, currentDay } = this.getCurrentDates();
+      const { currentDate, currentMonth, currentDay } = getCurrentDates();
       this.startDateInput.value = `${currentDate.getFullYear()}-01-01`;
       this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;
     }

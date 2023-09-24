@@ -125,3 +125,15 @@ interface IPopularBookResponse {
     resultNum: number;
     data: IPopularBook[];
 }
+
+interface IPopularFetchParams {
+    startDt: string;
+    endDt: string;
+    gender?: string;
+    age?: string;
+    region?: string;
+    addCode?: string;
+    kdc?: string;
+    pageNo?: string;
+    pageSize: string;
+}

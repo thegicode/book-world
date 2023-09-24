@@ -1,3 +1,5 @@
+import { CustomEventEmitter } from "../../utils";
+import { getCurrentDates } from "../../utils/utils";
 export default class PopularHeader extends HTMLElement {
     constructor() {
         super();
@@ -5,6 +7,11 @@ export default class PopularHeader extends HTMLElement {
             if (!this.form)
                 return;
             this.form.hidden = !this.form.hidden;
+        };
+        this.closeForm = () => {
+            if (!this.form)
+                return;
+            this.form.hidden = true;
         };
         this.onChange = (event) => {
             const target = event.target;
@@ -45,25 +52,41 @@ export default class PopularHeader extends HTMLElement {
             if (!this.form)
                 return;
             const formData = new FormData(this.form);
-            for (const pair of formData.entries()) {
-                console.log(pair[0] + ", " + pair[1]);
+            const params = {};
+            for (const [key, value] of formData.entries()) {
+                if (key === "dataSource" ||
+                    key === "loanDuration" ||
+                    key === "subKdc" ||
+                    key === "subRegion")
+                    continue;
+                if (typeof value === "string") {
+                    const value2 = value === "A" ? "" : value;
+                    params[key] = value2;
+                    params["pageNo"] = "1";
+                }
             }
+            CustomEventEmitter.dispatch("requestPopular", {
+                params,
+            });
+            this.closeForm();
         };
         this.form = this.querySelector("form");
         this.filterButton = this.querySelector(".filterButton");
-        this.startDateInput = this.querySelector("input[name='startDate']");
-        this.endDateInput = this.querySelector("input[name='endDate']");
+        this.closeButton = this.querySelector(".closeButton");
+        this.startDateInput = this.querySelector("input[name='startDt']");
+        this.endDateInput = this.querySelector("input[name='endDt']");
         this.detailRegion = this.querySelector("[name='detailRegion']");
         this.subRegion = this.querySelector(".subRegion");
         this.detailSubject = this.querySelector("[name='detailSubject']");
         this.subSubject = this.querySelector(".subSubject");
     }
     connectedCallback() {
-        var _a;
+        var _a, _b;
         if (!this.form)
             return;
         this.initialLoanDuration();
         (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickFilterButton);
+        (_b = this.closeButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.closeForm);
         this.form.addEventListener("change", this.onChange);
         this.form.addEventListener("reset", this.onReset);
         this.form.addEventListener("submit", this.onSumbit);
@@ -158,7 +181,7 @@ export default class PopularHeader extends HTMLElement {
         if (!this.startDateInput || !this.endDateInput) {
             return;
         }
-        const { currentDate, currentYear, currentMonth, currentDay } = this.getCurrentDates();
+        const { currentDate, currentYear, currentMonth, currentDay } = getCurrentDates();
         const target = event === null || event === void 0 ? void 0 : event.target;
         switch (target === null || target === void 0 ? void 0 : target.value) {
             case "year":
@@ -187,22 +210,10 @@ export default class PopularHeader extends HTMLElement {
             customDateInput.checked = true;
         });
     }
-    getCurrentDates() {
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0");
-        const currentDay = String(currentDate.getDate()).padStart(2, "0");
-        return {
-            currentDate,
-            currentYear,
-            currentMonth,
-            currentDay,
-        };
-    }
     initialLoanDuration() {
         if (!this.startDateInput || !this.endDateInput)
             return;
-        const { currentDate, currentMonth, currentDay } = this.getCurrentDates();
+        const { currentDate, currentMonth, currentDay } = getCurrentDates();
         this.startDateInput.value = `${currentDate.getFullYear()}-01-01`;
         this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;
     }

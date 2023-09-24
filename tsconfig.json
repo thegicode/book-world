@@ -2,7 +2,7 @@
     "compileOnSave": true,
     "compilerOptions": {
         "target": "es6",
-        "lib": ["ES6", "ESNext", "DOM"],
+        "lib": ["ES6", "ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
         "module": "ESNext",
         "strict": true,
         "esModuleInterop": true,

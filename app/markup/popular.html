@@ -28,7 +28,7 @@
                         검색 조건
                     </button>
 
-                    <form class="filter-form">
+                    <form class="filter-form" hidden>
                         <!-- <h4>검색 조건</h4> -->
                         <fieldset class="dataSource">
                             <legend class="title">데이터 제공 방식</legend>
@@ -97,9 +97,9 @@
                                     <span class="label">기간설정</span>
                                 </label>
                                 <div class="dateRange">
-                                    <input type="date" name="startDate" />
+                                    <input type="date" name="startDt" />
                                     ~
-                                    <input type="date" name="endDate" />
+                                    <input type="date" name="endDt" />
                                 </div>
                             </div>
                         </fieldset>
@@ -516,7 +516,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="subject"
+                                        name="kdc"
                                         value="A"
                                         checked
                                     />
@@ -525,7 +525,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="0"
                                     />
                                     <span class="label">총류</span>
@@ -533,7 +533,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="1"
                                     />
                                     <span class="label">철학</span>
@@ -541,7 +541,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="2"
                                     />
                                     <span class="label">종교</span>
@@ -549,7 +549,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="3"
                                     />
                                     <span class="label">사회과학</span>
@@ -557,7 +557,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="4"
                                     />
                                     <span class="label">자연과학</span>
@@ -565,7 +565,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="5"
                                     />
                                     <span class="label">기술과학</span>
@@ -573,7 +573,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="6"
                                     />
                                     <span class="label">예술</span>
@@ -581,7 +581,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="7"
                                     />
                                     <span class="label">언어</span>
@@ -589,7 +589,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="8"
                                     />
                                     <span class="label">문학</span>
@@ -597,7 +597,7 @@
                                 <label>
                                     <input
                                         type="checkbox"
-                                        name="subject"
+                                        name="kdc"
                                         value="9"
                                     />
                                     <span class="label">역사</span>
@@ -610,7 +610,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="subSubject"
+                                        name="subKdc"
                                         value="A"
                                         checked
                                     />
@@ -619,7 +619,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="subSubject"
+                                        name="subKdc"
                                         value="1123"
                                     />
                                     <span class="label">총류</span>
@@ -627,7 +627,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="subSubject"
+                                        name="subKdc"
                                         value="1123"
                                     />
                                     <span class="label">도서학</span>
@@ -640,7 +640,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="size"
+                                        name="pageSize"
                                         value="200"
                                         checked
                                     />
@@ -649,7 +649,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="size"
+                                        name="pageSize"
                                         value="500"
                                     />
                                     <span class="label">500건</span>
@@ -657,7 +657,7 @@
                                 <label>
                                     <input
                                         type="radio"
-                                        name="size"
+                                        name="pageSize"
                                         value="1000"
                                     />
                                     <span class="label">1000건</span>
@@ -666,12 +666,49 @@
                         </fieldset>
 
                         <div class="filter-actions">
+                            <button type="button" class="closeButton">
+                                닫기
+                            </button>
                             <button type="reset">리셋</button>
                             <button type="submit">확인</button>
                         </div>
                     </form>
                 </popular-header>
+                <main class="popular-body">
+                    <ul class="popular-list"></ul>
+                    <div class="popular-loading">Loading...</div>
+                </main>
             </app-popular>
         </div>
+
+        <template id="tp-popular-item">
+            <li class="popular-item">
+                <div class="thumb">
+                    <img src="" alt="" class="bookImage" />
+                    <span class="ranking"></span>
+                </div>
+                <ul class="book-info">
+                    <!-- <li class="ranking"></li> -->
+                    <li class="bookname"></li>
+                    <li class="authors"></li>
+                    <li class="publicationYear">
+                        출판년도 : <span class="publication_year"></span>
+                    </li>
+                    <li class="publisherCompany">
+                        출판사 : <span class="publisher"></span>
+                    </li>
+                    <li class="class_nm"></li>
+                    <li class="isbn">ISBN13 : <span class="isbn13"></span></li>
+                    <li class="loanCount">
+                        대출 : <span class="loan_count"></span>
+                    </li>
+                    <li>
+                        <a href="" class="bookDtlUrl" target="_blank"
+                            >도서 상세조회(정보나루)</a
+                        >
+                    </li>
+                </ul>
+            </li>
+        </template>
     </body>
 </html>
