@@ -20,15 +20,15 @@ export default class Popular extends HTMLElement {
     connectedCallback() {
         const { currentYear, currentMonth, currentDay } = getCurrentDates();
         const params = {
-            startDt: "2022-01-01",
+            startDt: "2023-01-01",
             endDt: `${currentYear}-${currentMonth}-${currentDay}`,
-            gender: "A",
-            age: "20",
-            region: "11;31",
-            addCode: "0",
-            kdc: "6",
+            gender: "",
+            age: "",
+            region: "",
+            addCode: "",
+            kdc: "",
             pageNo: "1",
-            pageSize: "10",
+            pageSize: "20",
         };
         this.fetch(params);
 

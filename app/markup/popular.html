@@ -507,7 +507,7 @@
                             <label class="detailSubject">
                                 <input
                                     type="checkbox"
-                                    name="detailSubject"
+                                    name="detailKdc"
                                     disabled
                                 />
                                 <span class="label">세부주제</span>
@@ -641,8 +641,16 @@
                                     <input
                                         type="radio"
                                         name="pageSize"
-                                        value="200"
+                                        value="20"
                                         checked
+                                    />
+                                    <span class="label">20건</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="pageSize"
+                                        value="200"
                                     />
                                     <span class="label">200건</span>
                                 </label>
@@ -675,6 +683,7 @@
                     </form>
                 </popular-header>
                 <main class="popular-body">
+                    <nav class="popular-list-nav"></nav>
                     <ul class="popular-list"></ul>
                     <div class="popular-loading">Loading...</div>
                 </main>

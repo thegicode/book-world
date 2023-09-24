@@ -22,7 +22,7 @@ export default class PopularHeader extends HTMLElement {
         this.endDateInput = this.querySelector("input[name='endDt']");
         this.detailRegion = this.querySelector("[name='detailRegion']");
         this.subRegion = this.querySelector(".subRegion");
-        this.detailSubject = this.querySelector("[name='detailSubject']");
+        this.detailSubject = this.querySelector("[name='detailKdc']");
         this.subSubject = this.querySelector(".subSubject");
     }
 
@@ -88,10 +88,10 @@ export default class PopularHeader extends HTMLElement {
             case "addCode":
                 this.handleAddCode(target);
                 break;
-            case "subject":
+            case "kdc":
                 this.handleSubject(target);
                 break;
-            case "detailSubject":
+            case "detailKdc":
                 this.handleDetailSubject(target);
                 break;
         }
@@ -188,11 +188,11 @@ export default class PopularHeader extends HTMLElement {
 
     handleSubject(target: HTMLInputElement) {
         const elA = this.querySelector(
-            "input[name='subject'][value='A']"
+            "input[name='kdc'][value='A']"
         ) as HTMLInputElement;
 
         const els = this.querySelectorAll<HTMLInputElement>(
-            "input[type='checkbox'][name='subject']"
+            "input[type='checkbox'][name='kdc']"
         );
 
         if (!(target.value === "A")) {
@@ -204,7 +204,7 @@ export default class PopularHeader extends HTMLElement {
         }
 
         const checkedEls = Array.from(
-            this.querySelectorAll<HTMLInputElement>('[name="subject"]:checked')
+            this.querySelectorAll<HTMLInputElement>('[name="kdc"]:checked')
         ).filter((el) => el.value !== "A");
 
         if (this.detailSubject && this.subSubject) {
@@ -291,20 +291,20 @@ export default class PopularHeader extends HTMLElement {
         const formData = new FormData(this.form);
 
         const params: Partial<IPopularFetchParams> = {};
+        const skipKeys = ["dataSource", "loanDuration", "subKdc", "subRegion"];
+        params["pageNo"] = "1";
 
         for (const [key, value] of formData.entries()) {
-            if (
-                key === "dataSource" ||
-                key === "loanDuration" ||
-                key === "subKdc" ||
-                key === "subRegion"
-            )
-                continue;
+            if (skipKeys.includes(key) || typeof value !== "string") continue;
 
-            if (typeof value === "string") {
-                const value2 = value === "A" ? "" : value;
-                params[key as keyof IPopularFetchParams] = value2;
-                params["pageNo"] = "1";
+            const paramKey = key as keyof IPopularFetchParams;
+
+            if (value === "A") {
+                params[paramKey] = "";
+            } else if (params[paramKey]) {
+                params[paramKey] += `;${value}`;
+            } else {
+                params[paramKey] = value;
             }
         }
 

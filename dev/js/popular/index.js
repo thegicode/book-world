@@ -735,15 +735,15 @@
     connectedCallback() {
       const { currentYear, currentMonth, currentDay } = getCurrentDates();
       const params = {
-        startDt: "2022-01-01",
+        startDt: "2023-01-01",
         endDt: `${currentYear}-${currentMonth}-${currentDay}`,
-        gender: "A",
-        age: "20",
-        region: "11;31",
-        addCode: "0",
-        kdc: "6",
+        gender: "",
+        age: "",
+        region: "",
+        addCode: "",
+        kdc: "",
         pageNo: "1",
-        pageSize: "10"
+        pageSize: "20"
       };
       this.fetch(params);
       CustomEventEmitter_default.add("requestPopular", this.onRequestPopular);
@@ -867,10 +867,10 @@
           case "addCode":
             this.handleAddCode(target);
             break;
-          case "subject":
+          case "kdc":
             this.handleSubject(target);
             break;
-          case "detailSubject":
+          case "detailKdc":
             this.handleDetailSubject(target);
             break;
         }
@@ -886,13 +886,18 @@
           return;
         const formData = new FormData(this.form);
         const params = {};
+        const skipKeys = ["dataSource", "loanDuration", "subKdc", "subRegion"];
+        params["pageNo"] = "1";
         for (const [key, value] of formData.entries()) {
-          if (key === "dataSource" || key === "loanDuration" || key === "subKdc" || key === "subRegion")
+          if (skipKeys.includes(key) || typeof value !== "string")
             continue;
-          if (typeof value === "string") {
-            const value2 = value === "A" ? "" : value;
-            params[key] = value2;
-            params["pageNo"] = "1";
+          const paramKey = key;
+          if (value === "A") {
+            params[paramKey] = "";
+          } else if (params[paramKey]) {
+            params[paramKey] += `;${value}`;
+          } else {
+            params[paramKey] = value;
           }
         }
         CustomEventEmitter_default.dispatch("requestPopular", {
@@ -907,7 +912,7 @@
       this.endDateInput = this.querySelector("input[name='endDt']");
       this.detailRegion = this.querySelector("[name='detailRegion']");
       this.subRegion = this.querySelector(".subRegion");
-      this.detailSubject = this.querySelector("[name='detailSubject']");
+      this.detailSubject = this.querySelector("[name='detailKdc']");
       this.subSubject = this.querySelector(".subSubject");
     }
     connectedCallback() {
@@ -984,15 +989,15 @@
       }
     }
     handleSubject(target) {
-      const elA = this.querySelector("input[name='subject'][value='A']");
-      const els = this.querySelectorAll("input[type='checkbox'][name='subject']");
+      const elA = this.querySelector("input[name='kdc'][value='A']");
+      const els = this.querySelectorAll("input[type='checkbox'][name='kdc']");
       if (!(target.value === "A")) {
         elA.checked = false;
       }
       if (target.value === "A") {
         els.forEach((item) => item.checked = false);
       }
-      const checkedEls = Array.from(this.querySelectorAll('[name="subject"]:checked')).filter((el) => el.value !== "A");
+      const checkedEls = Array.from(this.querySelectorAll('[name="kdc"]:checked')).filter((el) => el.value !== "A");
       if (this.detailSubject && this.subSubject) {
         const isOnly = checkedEls.length === 1;
         this.detailSubject.disabled = !isOnly;
