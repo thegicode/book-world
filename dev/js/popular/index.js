@@ -757,8 +757,9 @@
     }
     fetch(params) {
       return __awaiter2(this, void 0, void 0, function* () {
-        if (this.body) {
+        if (this.body && this.list) {
           this.body.dataset.loading = "true";
+          this.list.innerHTML = "";
         }
         const searchParams = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== void 0).map(([key, value]) => [key, String(value)]));
         const url = `/popular-book?${searchParams}`;
@@ -775,7 +776,6 @@
       console.log("resultNum", resultNum);
       if (!this.list)
         return;
-      this.list.innerHTML = "";
       const fragment = new DocumentFragment();
       data.map((item) => {
         const cloned = this.createItem(item);

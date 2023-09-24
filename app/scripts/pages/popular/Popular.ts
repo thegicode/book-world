@@ -51,8 +51,9 @@ export default class Popular extends HTMLElement {
     }
 
     async fetch(params: IPopularFetchParams): Promise<void> {
-        if (this.body) {
+        if (this.body && this.list) {
             this.body.dataset.loading = "true";
+            this.list.innerHTML = "";
         }
 
         const searchParams = new URLSearchParams(
@@ -75,7 +76,6 @@ export default class Popular extends HTMLElement {
     render({ data, resultNum }: IPopularBookResponse) {
         console.log("resultNum", resultNum);
         if (!this.list) return;
-        this.list.innerHTML = "";
 
         const fragment = new DocumentFragment();
 
