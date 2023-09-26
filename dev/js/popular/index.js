@@ -860,20 +860,15 @@
         this.form.hidden = true;
       };
       this.onRenderPageNav = (event) => {
-        const { pageSize } = event.detail;
         if (!this.pageNav)
           return;
+        const { pageSize } = event.detail;
+        this.pageSize = pageSize;
         this.pageNav.innerHTML = "";
         const fragment = new DocumentFragment();
-        const navSize = 5;
+        const navSize = 3;
         for (let i = 0; i < navSize; i++) {
-          const el = document.createElement("button");
-          el.type = "button";
-          el.value = i.toString();
-          el.textContent = `${pageSize * i + 1} ~ ${pageSize * (i + 1)}`;
-          if (i === 0)
-            el.ariaSelected = "true";
-          el.addEventListener("click", this.onClickPageNav);
+          const el = this.createNavItem(i);
           fragment.appendChild(el);
         }
         this.pageNav.appendChild(fragment);
@@ -889,6 +884,10 @@
           targeted.ariaSelected = "false";
         }
         target.ariaSelected = "true";
+        if (this.pageNav.lastChild === target) {
+          const el = this.createNavItem(Number(target.value) + 1);
+          this.pageNav.appendChild(el);
+        }
         CustomEventEmitter_default.dispatch("clickPageNav", {
           pageIndex: Number(target.value) + 1
         });
@@ -967,6 +966,7 @@
       this.detailSubject = this.querySelector("[name='detailKdc']");
       this.subSubject = this.querySelector(".subSubject");
       this.pageNav = this.querySelector(".page-nav");
+      this.pageSize = null;
       this.onRenderPageNav = this.onRenderPageNav.bind(this);
       this.onClickPageNav = this.onClickPageNav.bind(this);
     }
@@ -991,6 +991,19 @@
       this.form.removeEventListener("reset", this.onReset);
       this.form.removeEventListener("submit", this.onSumbit);
       CustomEventEmitter_default.remove("renderPageNav", this.onRenderPageNav);
+    }
+    createNavItem(index) {
+      if (!this.pageSize)
+        return;
+      const pageSize = this.pageSize;
+      const el = document.createElement("button");
+      el.type = "button";
+      el.value = index.toString();
+      el.textContent = `${pageSize * index + 1} ~ ${pageSize * (index + 1)}`;
+      if (index === 0)
+        el.ariaSelected = "true";
+      el.addEventListener("click", this.onClickPageNav);
+      return el;
     }
     handleGender(target) {
       if (!(target.value === "A")) {

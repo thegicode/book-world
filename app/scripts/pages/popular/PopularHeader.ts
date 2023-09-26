@@ -12,6 +12,7 @@ export default class PopularHeader extends HTMLElement {
     detailSubject: HTMLInputElement | null;
     subSubject: HTMLInputElement | null;
     pageNav: HTMLElement | null;
+    pageSize: number | null;
 
     constructor() {
         super();
@@ -26,6 +27,7 @@ export default class PopularHeader extends HTMLElement {
         this.detailSubject = this.querySelector("[name='detailKdc']");
         this.subSubject = this.querySelector(".subSubject");
         this.pageNav = this.querySelector(".page-nav");
+        this.pageSize = null;
 
         this.onRenderPageNav = this.onRenderPageNav.bind(this);
         this.onClickPageNav = this.onClickPageNav.bind(this);
@@ -77,24 +79,17 @@ export default class PopularHeader extends HTMLElement {
     };
 
     onRenderPageNav = (event: ICustomEvent<{ pageSize: number }>) => {
-        const { pageSize } = event.detail;
-
         if (!this.pageNav) return;
+
+        const { pageSize } = event.detail;
+        this.pageSize = pageSize;
 
         this.pageNav.innerHTML = "";
 
         const fragment = new DocumentFragment();
-        const navSize = 5;
+        const navSize = 3;
         for (let i = 0; i < navSize; i++) {
-            const el = document.createElement("button");
-            el.type = "button";
-            el.value = i.toString();
-            el.textContent = `${pageSize * i + 1} ~ ${pageSize * (i + 1)}`;
-
-            if (i === 0) el.ariaSelected = "true";
-
-            el.addEventListener("click", this.onClickPageNav);
-
+            const el = this.createNavItem(i) as HTMLButtonElement;
             fragment.appendChild(el);
         }
 
@@ -103,6 +98,21 @@ export default class PopularHeader extends HTMLElement {
 
         this.insertBefore(this.pageNav, this.filterButton);
     };
+
+    createNavItem(index: number) {
+        if (!this.pageSize) return;
+
+        const pageSize = this.pageSize;
+        const el = document.createElement("button");
+        el.type = "button";
+        el.value = index.toString();
+        el.textContent = `${pageSize * index + 1} ~ ${pageSize * (index + 1)}`;
+
+        if (index === 0) el.ariaSelected = "true";
+
+        el.addEventListener("click", this.onClickPageNav);
+        return el;
+    }
 
     onClickPageNav = (event: Event) => {
         const target = event.target as HTMLButtonElement;
@@ -113,6 +123,11 @@ export default class PopularHeader extends HTMLElement {
             targeted.ariaSelected = "false";
         }
         target.ariaSelected = "true";
+
+        if (this.pageNav.lastChild === target) {
+            const el = this.createNavItem(Number(target.value) + 1);
+            this.pageNav.appendChild(el);
+        }
 
         CustomEventEmitter.dispatch("clickPageNav", {
             pageIndex: Number(target.value) + 1,
