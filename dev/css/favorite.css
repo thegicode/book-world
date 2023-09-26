@@ -305,7 +305,7 @@ favorite-item .book-info li {
   font-size: 14px;
 }
 favorite-item .book-info .bookname {
-  padding: 8px 0;
+  padding-bottom: 10px;
   font-size: 1rem;
   color: #333;
 }
