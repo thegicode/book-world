@@ -21,13 +21,9 @@ export default class BookItem extends HTMLElement {
     };
 
     private libraryButton!: HTMLButtonElement;
-    private anchorElement!: HTMLElement;
     bookData!: ISearchBook;
 
     private boundClickLibraryHandler:
-        | ((this: HTMLElement, ev: MouseEvent) => void)
-        | null = null;
-    private boundClickLinkHandler:
         | ((this: HTMLElement, ev: MouseEvent) => void)
         | null = null;
 
@@ -43,20 +39,12 @@ export default class BookItem extends HTMLElement {
         this.libraryButton = this.querySelector(
             BookItem.SELECTORS.libraryButton
         ) as HTMLButtonElement;
-        this.anchorElement = this.querySelector(
-            BookItem.SELECTORS.bookSummary
-        ) as HTMLElement;
 
         this.boundClickLibraryHandler = this.onClickLibraryButton.bind(this);
-        this.boundClickLinkHandler = this.onClickLink.bind(this);
 
         this.libraryButton.addEventListener(
             "click",
             this.boundClickLibraryHandler
-        );
-        this.anchorElement.addEventListener(
-            "click",
-            this.boundClickLinkHandler
         );
     }
 
@@ -65,13 +53,6 @@ export default class BookItem extends HTMLElement {
             this.libraryButton.removeEventListener(
                 "click",
                 this.boundClickLibraryHandler
-            );
-        }
-
-        if (this.boundClickLinkHandler) {
-            this.anchorElement.removeEventListener(
-                "click",
-                this.boundClickLinkHandler
             );
         }
     }
@@ -163,6 +144,11 @@ export default class BookItem extends HTMLElement {
                 bookname: title,
             });
 
+        const anchorElement = this.querySelector("a") as HTMLAnchorElement;
+        if (anchorElement) {
+            anchorElement.href = `./book?isbn=${isbn}`;
+        }
+
         // this.dataset.index = this.index.toString();
         this.dataset.isbn = isbn;
     }
@@ -179,10 +165,5 @@ export default class BookItem extends HTMLElement {
                 state.libraries
             );
         }
-    }
-
-    private onClickLink(event: MouseEvent) {
-        event.preventDefault();
-        location.href = `book?isbn=${this.dataset.isbn}`;
     }
 }

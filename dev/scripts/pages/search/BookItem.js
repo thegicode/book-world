@@ -3,24 +3,17 @@ export default class BookItem extends HTMLElement {
     constructor() {
         super();
         this.boundClickLibraryHandler = null;
-        this.boundClickLinkHandler = null;
         // this.render(); why?
     }
     connectedCallback() {
         this.render();
         this.libraryButton = this.querySelector(BookItem.SELECTORS.libraryButton);
-        this.anchorElement = this.querySelector(BookItem.SELECTORS.bookSummary);
         this.boundClickLibraryHandler = this.onClickLibraryButton.bind(this);
-        this.boundClickLinkHandler = this.onClickLink.bind(this);
         this.libraryButton.addEventListener("click", this.boundClickLibraryHandler);
-        this.anchorElement.addEventListener("click", this.boundClickLinkHandler);
     }
     disconnectedCallback() {
         if (this.boundClickLibraryHandler) {
             this.libraryButton.removeEventListener("click", this.boundClickLibraryHandler);
-        }
-        if (this.boundClickLinkHandler) {
-            this.anchorElement.removeEventListener("click", this.boundClickLinkHandler);
         }
     }
     render() {
@@ -78,6 +71,10 @@ export default class BookItem extends HTMLElement {
                 bookImageURL: image,
                 bookname: title,
             });
+        const anchorElement = this.querySelector("a");
+        if (anchorElement) {
+            anchorElement.href = `./book?isbn=${isbn}`;
+        }
         // this.dataset.index = this.index.toString();
         this.dataset.isbn = isbn;
     }
@@ -87,10 +84,6 @@ export default class BookItem extends HTMLElement {
         if (libraryBookExist) {
             libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
         }
-    }
-    onClickLink(event) {
-        event.preventDefault();
-        location.href = `book?isbn=${this.dataset.isbn}`;
     }
 }
 BookItem.SELECTORS = {

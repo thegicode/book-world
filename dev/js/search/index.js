@@ -1231,23 +1231,16 @@
     constructor() {
       super();
       this.boundClickLibraryHandler = null;
-      this.boundClickLinkHandler = null;
     }
     connectedCallback() {
       this.render();
       this.libraryButton = this.querySelector(BookItem.SELECTORS.libraryButton);
-      this.anchorElement = this.querySelector(BookItem.SELECTORS.bookSummary);
       this.boundClickLibraryHandler = this.onClickLibraryButton.bind(this);
-      this.boundClickLinkHandler = this.onClickLink.bind(this);
       this.libraryButton.addEventListener("click", this.boundClickLibraryHandler);
-      this.anchorElement.addEventListener("click", this.boundClickLinkHandler);
     }
     disconnectedCallback() {
       if (this.boundClickLibraryHandler) {
         this.libraryButton.removeEventListener("click", this.boundClickLibraryHandler);
-      }
-      if (this.boundClickLinkHandler) {
-        this.anchorElement.removeEventListener("click", this.boundClickLinkHandler);
       }
     }
     render() {
@@ -1313,6 +1306,10 @@
           bookImageURL: image,
           bookname: title
         });
+      const anchorElement = this.querySelector("a");
+      if (anchorElement) {
+        anchorElement.href = `./book?isbn=${isbn}`;
+      }
       this.dataset.isbn = isbn;
     }
     onClickLibraryButton() {
@@ -1321,10 +1318,6 @@
       if (libraryBookExist) {
         libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
       }
-    }
-    onClickLink(event) {
-      event.preventDefault();
-      location.href = `book?isbn=${this.dataset.isbn}`;
     }
   };
   BookItem.SELECTORS = {

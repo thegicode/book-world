@@ -279,25 +279,33 @@ app-search {
   border-bottom: 1px solid #ccc;
   text-align: left;
 }
-.book .book-summary-wrap {
+.book .book-summary {
   position: relative;
   margin: 1rem 1rem 7px;
-}
-.book .book-summary {
   display: flex;
-  gap: 1rem;
+  gap: 10px;
   font-size: 14px;
   color: #333;
-  text-decoration: none;
-}
-.book .book-summary:hover {
-  text-decoration: underline;
 }
 .book .book-summary p {
   margin: 7px 0;
 }
-.book .title {
-  margin: 5px 0 10px;
+.book .book-info {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #666;
+}
+.book .book-info .title {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #333;
+}
+.book .book-info li {
+  margin-bottom: 5px;
+}
+.book book-image {
+  border: 1px solid transparent;
 }
 .book book-image[data-fail=true] .book-image {
   width: 120px;
@@ -305,6 +313,9 @@ app-search {
 }
 .book book-image .thumb {
   width: 120px;
+}
+.book a:hover .thumb {
+  border-color: #000;
 }
 .book book-description {
   margin: 0 1rem;

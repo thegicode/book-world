@@ -137,26 +137,32 @@ app-search {
     border-bottom: 1px solid #ccc;
     text-align: left;
     // font-size: 14px;
-    .book-summary-wrap {
+
+    .book-summary {
         position: relative;
         margin: 1rem 1rem 7px;
-    }
-    .book-summary {
-        display: flex;
-        gap: 1rem;
 
+        display: flex;
+        gap: 10px;
         font-size: 14px;
         color: #333;
-        text-decoration: none;
-        &:hover {
-            text-decoration: underline;
-        }
         p {
             margin: 7px 0;
         }
     }
-    .title {
-        margin: 5px 0 10px;
+    .book-info {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        color: #666;
+        .title {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #333;
+        }
+        li {
+            margin-bottom: 5px;
+        }
     }
 
     book-image {
@@ -169,6 +175,11 @@ app-search {
         .thumb {
             width: 120px;
         }
+        border: 1px solid transparent;
+    }
+
+    a:hover .thumb {
+        border-color: #000;
     }
 
     book-description {
