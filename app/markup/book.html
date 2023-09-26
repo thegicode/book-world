@@ -22,57 +22,55 @@
         <div class="root">
             <nav-gnb></nav-gnb>
             <app-book>
-                <h3 class="bookname"></h3>
-
-                <p class="authors"></p>
+                <h1 class="bookname"></h1>
 
                 <div class="book-image-container">
                     <book-image></book-image>
                     <checkbox-favorite-book></checkbox-favorite-book>
                 </div>
 
+                <ul class="bookInfo">
+                    <li class="description-area">
+                        <h6 class="title">책 소개</h6>
+                        <p class="description"></p>
+                    </li>
+                    <li>
+                        <h6 class="title">저자</h6>
+                        <p class="authors"></p>
+                    </li>
+                    <li>
+                        <h6 class="title">출판사</h6>
+                        <p class="publisher"></p>
+                    </li>
+
+                    <li>
+                        <h6 class="title">출판연월</h6>
+                        <p class="publication_year"></p>
+                    </li>
+                    <li>
+                        <h6 class="title">ISBN</h6>
+                        <p class="isbn13"></p>
+                    </li>
+                    <li>
+                        <h6 class="title">주제분야</h6>
+                        <p class="class_no"></p>
+                        <p class="class_nm"></p>
+                    </li>
+                    <li>
+                        <h6 class="title">대출횟수</h6>
+                        <p class="loanCnt"></p>
+                    </li>
+                </ul>
+
+                <h4 class="title">키워드</h4>
+                <div class="keyword"></div>
+
                 <library-search-by-book>
-                    <h4>도서 소장 도서관 조회</h4>
+                    <h4 class="title">도서 소장 도서관 조회</h4>
                     <div class="library-search-by-book"></div>
                 </library-search-by-book>
 
-                <div class="cols">
-                    <div class="col">
-                        <h4>분류</h4>
-                        <p class="class_nm"></p>
-                    </div>
-                    <div class="col">
-                        <h4>class_no</h4>
-                        <p class="class_no"></p>
-                    </div>
-                    <div class="col">
-                        <h4>isbn13</h4>
-                        <p class="isbn13"></p>
-                    </div>
-                    <div class="col">
-                        <h4>대출횟수</h4>
-                        <p class="loanCnt"></p>
-                    </div>
-                    <div class="col">
-                        <h4>발행년도</h4>
-                        <p class="publication_year"></p>
-                    </div>
-                    <div class="col">
-                        <h4>출판사</h4>
-                        <p class="publisher"></p>
-                    </div>
-                </div>
-
-                <h4>설명</h4>
-                <p class="description"></p>
-
-                <h4>키워드</h4>
-                <p class="keyword"></p>
-
-                <!-- <h4>관련 도서</h4>
-                <ul class="recBooks"></ul> -->
-
-                <div class="loading">Loading</div>
+                <div class="loading">loading</div>
             </app-book>
         </div>
 

@@ -26,26 +26,27 @@ app-book {
     // line-height: 1.7;
     color: #333;
 
-    h3 {
+    .bookname {
         margin: 0 0 10px;
         font-size: 1.2rem;
-    }
-
-    h4 {
-        display: block;
-        margin: 30px 0 0;
-        padding-bottom: 7px;
-        border-bottom: 1px solid #e7e7e7;
-        font-size: 1rem;
-    }
-
-    .bookname {
         p {
             margin: 7px 0;
             &:first-child {
                 font-size: 1.7rem;
             }
         }
+    }
+
+    h4 {
+        margin: 30px 0 0;
+    }
+
+    .title {
+        padding-bottom: 7px;
+        border-bottom: 1px solid #e7e7e7;
+        font-weight: bold;
+        font-size: 1rem;
+        color: #333;
     }
 
     .book-image-container {
@@ -65,19 +66,38 @@ app-book {
         }
     }
 
-    .cols {
+    .bookInfo {
         display: flex;
         flex-wrap: wrap;
-        .col {
+        margin: 10px 0 0;
+        padding: 0;
+        list-style: none;
+        font-size: 14px;
+
+        li {
             box-sizing: border-box;
             width: 50%;
+            margin-top: 20px;
             &:nth-child(even) {
-                padding-left: 10px;
+                .title {
+                    margin-right: 10px;
+                }
+            }
+            h6 {
+                margin: 0;
+            }
+            p {
+                margin: 8px 0 0;
+                color: #666;
             }
         }
-    }
-    .description {
-        line-height: 1.7;
+
+        .description-area {
+            width: 100%;
+        }
+        .description {
+            line-height: 1.7;
+        }
     }
 
     .library-search-by-book {
@@ -109,11 +129,12 @@ app-book {
     .keyword {
         display: flex;
         flex-wrap: wrap;
+        margin: 10px 0;
         a {
             display: inline-flex;
             margin: 2px;
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: 3px;
             border: 1px solid #ddd;
             background-color: #f8f8f8;
             font-size: 12px;

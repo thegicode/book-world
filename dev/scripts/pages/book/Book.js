@@ -25,6 +25,7 @@ export default class Book extends HTMLElement {
             try {
                 const data = yield CustomFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`);
                 this.data = data;
+                // console.log(data);
                 this.render();
             }
             catch (error) {

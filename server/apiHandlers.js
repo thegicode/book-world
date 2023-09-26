@@ -110,15 +110,21 @@ function usageAnalysisList(req, res) {
         });
         try {
             const data = yield fetchData(url);
-            const { book, loanHistory, loanGrps, keywords, } = data.response;
+            const { book, loanHistory, loanGrps, keywords, coLoanBooks, maniaRecBooks, readerRecBooks, } = data.response;
             const loanHistoryItems = loanHistory.map((item) => item.loan);
             const loanGrpsItems = loanGrps.map((item) => item.loanGrp);
             const keywordsItems = keywords.map((item) => item.keyword);
+            const coLoanBookItems = coLoanBooks.map((item) => item.book);
+            const maniaRecBookItems = maniaRecBooks.map((item) => item.book);
+            const readerRecBookItems = readerRecBooks.map((item) => item.book);
             res.send({
                 book,
                 loanHistory: loanHistoryItems,
                 loanGrps: loanGrpsItems,
                 keywords: keywordsItems,
+                coLoanBooks: coLoanBookItems,
+                maniaRecBooks: maniaRecBookItems,
+                readerRecBooks: readerRecBookItems,
             });
         }
         catch (error) {
@@ -161,7 +167,6 @@ function librarySearchByBook(req, res) {
 exports.librarySearchByBook = librarySearchByBook;
 function loanItemSrch(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("loanItemSrch");
         const { startDt, endDt, gender, age, region, addCode, kdc, pageNo, pageSize, } = req.query;
         if (typeof startDt !== "string" ||
             typeof endDt !== "string" ||

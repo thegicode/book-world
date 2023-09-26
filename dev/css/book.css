@@ -140,22 +140,25 @@ app-book {
   font-size: 14px;
   color: #333;
 }
-app-book h3 {
+app-book .bookname {
   margin: 0 0 10px;
   font-size: 1.2rem;
-}
-app-book h4 {
-  display: block;
-  margin: 30px 0 0;
-  padding-bottom: 7px;
-  border-bottom: 1px solid #e7e7e7;
-  font-size: 1rem;
 }
 app-book .bookname p {
   margin: 7px 0;
 }
 app-book .bookname p:first-child {
   font-size: 1.7rem;
+}
+app-book h4 {
+  margin: 30px 0 0;
+}
+app-book .title {
+  padding-bottom: 7px;
+  border-bottom: 1px solid #e7e7e7;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
 }
 app-book .book-image-container {
   position: relative;
@@ -168,18 +171,33 @@ app-book book-image .thumb {
   min-width: 100px;
   max-width: 200px;
 }
-app-book .cols {
+app-book .bookInfo {
   display: flex;
   flex-wrap: wrap;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
 }
-app-book .cols .col {
+app-book .bookInfo li {
   box-sizing: border-box;
   width: 50%;
+  margin-top: 20px;
 }
-app-book .cols .col:nth-child(even) {
-  padding-left: 10px;
+app-book .bookInfo li:nth-child(even) .title {
+  margin-right: 10px;
 }
-app-book .description {
+app-book .bookInfo li h6 {
+  margin: 0;
+}
+app-book .bookInfo li p {
+  margin: 8px 0 0;
+  color: #666;
+}
+app-book .bookInfo .description-area {
+  width: 100%;
+}
+app-book .bookInfo .description {
   line-height: 1.7;
 }
 app-book .library-search-by-book ul {
@@ -208,12 +226,13 @@ app-book .library-search-by-book p {
 app-book .keyword {
   display: flex;
   flex-wrap: wrap;
+  margin: 10px 0;
 }
 app-book .keyword a {
   display: inline-flex;
   margin: 2px;
   padding: 5px 10px;
-  border-radius: 5px;
+  border-radius: 3px;
   border: 1px solid #ddd;
   background-color: #f8f8f8;
   font-size: 12px;

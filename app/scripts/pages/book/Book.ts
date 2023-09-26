@@ -25,6 +25,7 @@ export default class Book extends HTMLElement {
                 `/usage-analysis-list?isbn13=${isbn}`
             );
             this.data = data;
+            // console.log(data);
             this.render();
         } catch (error) {
             this.renderError();

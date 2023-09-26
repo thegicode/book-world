@@ -106,10 +106,12 @@ export async function usageAnalysisList(req: Request, res: Response) {
 
         const {
             book,
-            loanHistory,
-            loanGrps,
-            keywords,
-            // recBooks, coLoanBooks
+            loanHistory, // 대출 추이
+            loanGrps, // 다대출 이용자 그룹
+            keywords, // 주요 키워드
+            coLoanBooks, // 함께 대출된 도서
+            maniaRecBooks, // 마니아를 위한 추천도서
+            readerRecBooks, // 다독자를 위한 추천도서
         } = data.response;
 
         const loanHistoryItems = loanHistory.map(
@@ -121,20 +123,18 @@ export async function usageAnalysisList(req: Request, res: Response) {
         const keywordsItems = keywords.map(
             (item: { keyword: string }) => item.keyword
         );
-        // const recBooksItems = recBooks.map(
-        //     (item: { book: string }) => item.book
-        // );
-        // const coLoanBooksItems = coLoanBooks.map(
-        //     (item: { book: string }) => item.book
-        // );
+        const coLoanBookItems = coLoanBooks.map((item: any) => item.book);
+        const maniaRecBookItems = maniaRecBooks.map((item: any) => item.book);
+        const readerRecBookItems = readerRecBooks.map((item: any) => item.book);
 
         res.send({
             book,
             loanHistory: loanHistoryItems,
             loanGrps: loanGrpsItems,
             keywords: keywordsItems,
-            // recBooks: recBooksItems,
-            // coLoanBooks: coLoanBooksItems,
+            coLoanBooks: coLoanBookItems,
+            maniaRecBooks: maniaRecBookItems,
+            readerRecBooks: readerRecBookItems,
         });
     } catch (error) {
         console.error(error);
@@ -180,7 +180,6 @@ export async function librarySearchByBook(req: Request, res: Response) {
 // 인기 대출 도서 조회
 // api/loanItemSrch?authKey=[발급받은키]&startDt=2022-01-01&endDt=2022-03-31& gender=1&age=20&region=11;31&addCode=0&kdc=6&pageNo=1&pageSize=10
 export async function loanItemSrch(req: Request, res: Response) {
-    console.log("loanItemSrch");
     const {
         startDt,
         endDt,
