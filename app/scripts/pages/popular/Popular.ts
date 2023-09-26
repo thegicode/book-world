@@ -6,6 +6,7 @@ export default class Popular extends HTMLElement {
     body: HTMLHtmlElement | null;
     list: HTMLElement | null;
     loading: HTMLElement | null;
+    pageNumber: number;
 
     constructor() {
         super();
@@ -15,6 +16,7 @@ export default class Popular extends HTMLElement {
         this.list = this.querySelector(".popular-list");
         this.loading = document.querySelector(".popular-loading");
         this.onRequestPopular = this.onRequestPopular.bind(this);
+        this.pageNumber = 1;
     }
 
     connectedCallback() {
@@ -28,7 +30,7 @@ export default class Popular extends HTMLElement {
             addCode: "",
             kdc: "",
             pageNo: "1",
-            pageSize: "20",
+            pageSize: "100",
         };
         this.fetch(params);
 

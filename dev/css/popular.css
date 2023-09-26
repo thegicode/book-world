@@ -50,16 +50,7 @@ nav-gnb {
   flex: 1;
   overflow: hidden;
   display: flex;
-}
-.popular .filterButton {
-  position: absolute;
-  right: 0;
-  box-sizing: border-box;
-  padding: 7px 1rem;
-  border-radius: 0;
-  background: #364d4e;
-  color: #efefef;
-  font-size: 11px;
+  flex-direction: column;
 }
 .popular input[type=date] {
   color: #666;
@@ -67,6 +58,44 @@ nav-gnb {
 
 popular-header {
   flex: none;
+  display: flex;
+  gap: 5px;
+}
+popular-header .page-nav {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  background-color: #364d4e;
+}
+popular-header .page-nav[hidden] {
+  display: none;
+}
+popular-header .page-nav button {
+  flex: 1;
+  padding: 7px 1rem;
+  border-radius: 0;
+  border-right: solid 1px #2b2b2b;
+  background-color: transparent;
+  text-align: center;
+  font-size: 12px;
+  color: #c8c8c8;
+  white-space: nowrap;
+}
+popular-header .page-nav button:hover, popular-header .page-nav button:active {
+  color: #fff;
+}
+popular-header .page-nav button[aria-selected=true] {
+  color: #333;
+  background-color: #fff;
+}
+popular-header .filterButton {
+  margin-left: auto;
+  box-sizing: border-box;
+  padding: 7px 1rem;
+  border-radius: 0;
+  background: #364d4e;
+  color: #efefef;
+  font-size: 11px;
 }
 
 .filter-form {
@@ -74,7 +103,7 @@ popular-header {
   position: absolute;
   left: 5px;
   right: 5px;
-  top: 65px;
+  top: 70px;
   z-index: 10;
   box-sizing: border-box;
   height: 80%;
@@ -190,8 +219,8 @@ popular-header {
 }
 .popular-item .ranking {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 1px;
+  left: 1px;
   width: 20px;
   height: 20px;
   background-color: #223233;

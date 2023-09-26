@@ -24,12 +24,22 @@
 
             <app-popular class="popular">
                 <popular-header>
+                    <nav class="page-nav" hidden>
+                        <!-- <button type="button" value="0" aria-selected="true">
+                            1-50
+                        </button>
+                        <button type="button" value="1">51-100</button>
+                        <button type="button" value="2">101-150</button>
+                        <button type="button" value="3">151-200</button>
+                        <button type="button" value="4">201-250</button>
+                        <button type="button" value="5">251-300</button>
+                        <button type="button" value="5">251-300</button>
+                        <button type="button" value="5">251-300</button> -->
+                    </nav>
                     <button type="button" class="filterButton">
                         검색 조건
                     </button>
-
                     <form class="filter-form" hidden>
-                        <!-- <h4>검색 조건</h4> -->
                         <fieldset class="dataSource">
                             <legend class="title">데이터 제공 방식</legend>
                             <div class="options">
@@ -641,10 +651,18 @@
                                     <input
                                         type="radio"
                                         name="pageSize"
-                                        value="20"
+                                        value="50"
                                         checked
                                     />
-                                    <span class="label">20건</span>
+                                    <span class="label">50건</span>
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="pageSize"
+                                        value="100"
+                                    />
+                                    <span class="label">100건</span>
                                 </label>
                                 <label>
                                     <input
@@ -683,7 +701,6 @@
                     </form>
                 </popular-header>
                 <main class="popular-body">
-                    <nav class="popular-list-nav"></nav>
                     <ul class="popular-list"></ul>
                     <div class="popular-loading">Loading...</div>
                 </main>
