@@ -13,6 +13,7 @@ export default class Book extends HTMLElement {
         super();
         this.loadingElement = null;
         this.data = null;
+        this.recBookTemplate = document.querySelector("#tp-recBookItem");
     }
     connectedCallback() {
         this.loadingElement = this.querySelector(".loading");
@@ -25,7 +26,7 @@ export default class Book extends HTMLElement {
             try {
                 const data = yield CustomFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`);
                 this.data = data;
-                // console.log(data);
+                console.log(data);
                 this.render();
             }
             catch (error) {
@@ -38,25 +39,23 @@ export default class Book extends HTMLElement {
     render() {
         if (!this.data)
             return;
-        const { book: { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher, }, keywords,
-        // recBooks,
-         } = this.data; // coLoanBooks, loanGrps,loanHistory,
+        const { book, keywords, coLoanBooks, maniaRecBooks, readerRecBooks } = this.data; // coLoanBooks, loanGrps,loanHistory,
+        this.renderBook(book);
+        this.renderKeyword(keywords);
+        this.renderCoLeanBooks(coLoanBooks);
+        this.renderManiaBooks(maniaRecBooks);
+        this.renderReaderBooks(readerRecBooks);
+        if (this.loadingElement) {
+            this.loadingElement.remove();
+            this.loadingElement = null;
+        }
+    }
+    renderBook(book) {
+        const { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher, } = book;
         const bookNames = bookname
             .split(/[=/:]/)
             .map((item) => `<p>${item}</p>`)
             .join("");
-        const keywordsString = keywords
-            .map((item) => {
-            const url = encodeURI(item.word);
-            return `<a href="/search?keyword=${url}"><span>${item.word}</span></a>`;
-        })
-            .join("");
-        // const recBooksString = recBooks
-        //     .map(
-        //         ({ bookname, isbn13 }) =>
-        //             `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`
-        //     )
-        //     .join("");
         this.querySelector(".bookname").innerHTML = bookNames;
         this.querySelector(".authors").textContent = authors;
         this.querySelector(".class_nm").textContent = class_nm;
@@ -70,10 +69,6 @@ export default class Book extends HTMLElement {
             publication_year;
         this.querySelector(".publisher").textContent =
             publisher;
-        this.querySelector(".keyword").innerHTML =
-            keywordsString;
-        // (this.querySelector(".recBooks") as HTMLElement).innerHTML =
-        //     recBooksString;
         const bookImageElement = this.querySelector("book-image");
         if (bookImageElement) {
             bookImageElement.data = {
@@ -81,10 +76,61 @@ export default class Book extends HTMLElement {
                 bookname,
             };
         }
-        if (this.loadingElement) {
-            this.loadingElement.remove();
-            this.loadingElement = null;
+    }
+    renderKeyword(keywords) {
+        const keywordsString = keywords
+            .map((item) => {
+            const url = encodeURI(item.word);
+            return `<a href="/search?keyword=${url}"><span>${item.word}</span></a>`;
+        })
+            .join("");
+        this.querySelector(".keyword").innerHTML =
+            keywordsString;
+    }
+    renderCoLeanBooks(coLoanBooks) {
+        var _a, _b;
+        const template = (_a = document.querySelector("#tp-coLoanBookItem")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+        if (!template)
+            return;
+        const fragment = new DocumentFragment();
+        coLoanBooks
+            .map((book) => this.createRecItem(template, book))
+            .forEach((el) => fragment.appendChild(el));
+        (_b = this.querySelector(".coLoanBooks")) === null || _b === void 0 ? void 0 : _b.appendChild(fragment);
+    }
+    renderManiaBooks(maniaRecBooks) {
+        var _a, _b;
+        const template = (_a = this.recBookTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+        if (!template)
+            return;
+        const fragment = new DocumentFragment();
+        maniaRecBooks
+            .map((book) => this.createRecItem(template, book))
+            .forEach((el) => fragment.appendChild(el));
+        (_b = this.querySelector(".maniaBooks")) === null || _b === void 0 ? void 0 : _b.appendChild(fragment);
+    }
+    renderReaderBooks(readerRecBooks) {
+        var _a, _b;
+        const template = (_a = this.recBookTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+        if (!template)
+            return;
+        const fragment = new DocumentFragment();
+        readerRecBooks
+            .map((book) => this.createRecItem(template, book))
+            .forEach((el) => fragment.appendChild(el));
+        (_b = this.querySelector(".readerBooks")) === null || _b === void 0 ? void 0 : _b.appendChild(fragment);
+    }
+    createRecItem(template, book) {
+        const el = template.cloneNode(true);
+        const { isbn13 } = book;
+        for (const [key, value] of Object.entries(book)) {
+            const node = el.querySelector(`.${key}`);
+            node.textContent = value;
         }
+        const link = el.querySelector("a");
+        if (link)
+            link.href = `book?isbn=${isbn13}`;
+        return el;
     }
     renderError() {
         if (this.loadingElement)

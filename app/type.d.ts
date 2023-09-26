@@ -13,6 +13,22 @@ interface IBook {
 
 interface IKeyword {
     word: string;
+    weight: string;
+}
+
+interface IReaderBook {
+    authors: string;
+    bookname: string;
+    isbn13: string;
+    publication_year: string;
+    publisher: string;
+    vol: string;
+}
+
+type IMainaBook = IReaderBook;
+
+interface ICoLoanBooks extends IReaderBook {
+    loanCnt: string;
 }
 
 interface IRecommendedBook {
@@ -23,7 +39,9 @@ interface IRecommendedBook {
 interface IUsageAnalysisListData {
     book: IBook;
     keywords: IKeyword[];
-    recBooks: IRecommendedBook[];
+    coLoanBooks: ICoLoanBooks[];
+    maniaRecBooks: IMainaBook[];
+    readerRecBooks: IReaderBook[];
 }
 
 interface ILibrary {

@@ -5,10 +5,14 @@ export default class Book extends HTMLElement {
     protected loadingElement: HTMLElement | null;
     protected data: IUsageAnalysisListData | null;
 
+    recBookTemplate: HTMLTemplateElement | null;
+
     constructor() {
         super();
         this.loadingElement = null;
         this.data = null;
+
+        this.recBookTemplate = document.querySelector("#tp-recBookItem");
     }
 
     connectedCallback(): void {
@@ -25,7 +29,7 @@ export default class Book extends HTMLElement {
                 `/usage-analysis-list?isbn13=${isbn}`
             );
             this.data = data;
-            // console.log(data);
+            console.log(data);
             this.render();
         } catch (error) {
             this.renderError();
@@ -37,41 +41,39 @@ export default class Book extends HTMLElement {
     protected render(): void {
         if (!this.data) return;
 
+        const { book, keywords, coLoanBooks, maniaRecBooks, readerRecBooks } =
+            this.data; // coLoanBooks, loanGrps,loanHistory,
+
+        this.renderBook(book);
+        this.renderKeyword(keywords);
+        this.renderCoLeanBooks(coLoanBooks);
+        this.renderManiaBooks(maniaRecBooks);
+        this.renderReaderBooks(readerRecBooks);
+
+        if (this.loadingElement) {
+            this.loadingElement.remove();
+            this.loadingElement = null;
+        }
+    }
+
+    renderBook(book: IBook) {
         const {
-            book: {
-                bookname,
-                authors,
-                bookImageURL,
-                class_nm,
-                class_no,
-                description,
-                isbn13,
-                loanCnt,
-                publication_year,
-                publisher,
-            },
-            keywords,
-            // recBooks,
-        } = this.data; // coLoanBooks, loanGrps,loanHistory,
+            bookname,
+            authors,
+            bookImageURL,
+            class_nm,
+            class_no,
+            description,
+            isbn13,
+            loanCnt,
+            publication_year,
+            publisher,
+        } = book;
 
         const bookNames = bookname
             .split(/[=/:]/)
             .map((item) => `<p>${item}</p>`)
             .join("");
-
-        const keywordsString = keywords
-            .map((item) => {
-                const url = encodeURI(item.word);
-                return `<a href="/search?keyword=${url}"><span>${item.word}</span></a>`;
-            })
-            .join("");
-
-        // const recBooksString = recBooks
-        //     .map(
-        //         ({ bookname, isbn13 }) =>
-        //             `<li><a href=book?isbn=${isbn13}>${bookname}</a></li>`
-        //     )
-        //     .join("");
 
         (this.querySelector(".bookname") as HTMLElement).innerHTML = bookNames;
         (this.querySelector(".authors") as HTMLElement).textContent = authors;
@@ -86,10 +88,6 @@ export default class Book extends HTMLElement {
             publication_year;
         (this.querySelector(".publisher") as HTMLElement).textContent =
             publisher;
-        (this.querySelector(".keyword") as HTMLElement).innerHTML =
-            keywordsString;
-        // (this.querySelector(".recBooks") as HTMLElement).innerHTML =
-        //     recBooksString;
 
         const bookImageElement = this.querySelector<BookImage>("book-image");
         if (bookImageElement) {
@@ -98,11 +96,70 @@ export default class Book extends HTMLElement {
                 bookname,
             };
         }
+    }
 
-        if (this.loadingElement) {
-            this.loadingElement.remove();
-            this.loadingElement = null;
+    renderKeyword(keywords: IKeyword[]) {
+        const keywordsString = keywords
+            .map((item) => {
+                const url = encodeURI(item.word);
+                return `<a href="/search?keyword=${url}"><span>${item.word}</span></a>`;
+            })
+            .join("");
+
+        (this.querySelector(".keyword") as HTMLElement).innerHTML =
+            keywordsString;
+    }
+
+    renderCoLeanBooks(coLoanBooks: ICoLoanBooks[]) {
+        const template = (
+            document.querySelector("#tp-coLoanBookItem") as HTMLTemplateElement
+        )?.content.firstElementChild;
+        if (!template) return;
+
+        const fragment = new DocumentFragment();
+        coLoanBooks
+            .map((book) => this.createRecItem(template, book))
+            .forEach((el) => fragment.appendChild(el));
+
+        this.querySelector(".coLoanBooks")?.appendChild(fragment);
+    }
+
+    renderManiaBooks(maniaRecBooks: IMainaBook[]) {
+        const template = this.recBookTemplate?.content.firstElementChild;
+        if (!template) return;
+
+        const fragment = new DocumentFragment();
+        maniaRecBooks
+            .map((book) => this.createRecItem(template, book))
+            .forEach((el) => fragment.appendChild(el));
+
+        this.querySelector(".maniaBooks")?.appendChild(fragment);
+    }
+
+    renderReaderBooks(readerRecBooks: IReaderBook[]) {
+        const template = this.recBookTemplate?.content.firstElementChild;
+        if (!template) return;
+
+        const fragment = new DocumentFragment();
+        readerRecBooks
+            .map((book) => this.createRecItem(template, book))
+            .forEach((el) => fragment.appendChild(el));
+
+        this.querySelector(".readerBooks")?.appendChild(fragment);
+    }
+
+    createRecItem(template: Element, book: IReaderBook) {
+        const el = template.cloneNode(true) as HTMLElement;
+        const { isbn13 } = book;
+
+        for (const [key, value] of Object.entries(book)) {
+            const node = el.querySelector(`.${key}`) as HTMLElement;
+            node.textContent = value;
         }
+        const link = el.querySelector("a");
+        if (link) link.href = `book?isbn=${isbn13}`;
+
+        return el;
     }
 
     protected renderError() {

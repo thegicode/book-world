@@ -26,7 +26,7 @@ app-book {
     // line-height: 1.7;
     color: #333;
 
-    .bookname {
+    h1.bookname {
         margin: 0 0 10px;
         font-size: 1.2rem;
         p {
@@ -102,14 +102,16 @@ app-book {
 
     .library-search-by-book {
         ul {
+            margin: 0;
             padding: 0;
         }
         li {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px dashed #ddd;
+            padding: 8px;
+            border-bottom: 1px dashed #e5e5e5;
+            font-size: 12px;
             &[data-available="true"] {
                 background-color: rgba(184, 207, 143, 0.1);
             }
@@ -123,6 +125,7 @@ app-book {
         }
         p {
             margin: 0;
+            color: #666;
         }
     }
 
@@ -134,17 +137,17 @@ app-book {
             display: inline-flex;
             margin: 2px;
             padding: 5px 10px;
-            border-radius: 3px;
-            border: 1px solid #ddd;
+            border-radius: 5px;
+            border: 1px solid #e2e2e2;
             background-color: #f8f8f8;
             font-size: 12px;
-            color: #525080;
+            color: #333;
             text-decoration: none;
 
             &:hover {
-                border-color: #bcc1d6;
-                background-color: #c5e6f3;
-                // text-decoration: underline;
+                border-color: #c7e53b;
+                background-color: #eff9c3;
+                color: green;
             }
         }
     }
@@ -182,6 +185,50 @@ app-book {
     }
 }
 
+.coLoanBooks,
+.maniaBooks,
+.readerBooks {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    li {
+        padding: 10px;
+        border-bottom: 1px dashed #ebebeb;
+        &:hover {
+            background-color: #f8f8f8;
+        }
+    }
+    p {
+        margin: 5px 0;
+        font-size: 12px;
+        color: #666;
+    }
+    .bookname {
+        font-size: 14px;
+        color: #333;
+    }
+    .isbn13 {
+        margin-left: 5px;
+    }
+    .publish {
+        span {
+            margin: 0 5px;
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+    }
+    .loanCnt {
+        margin-right: 5px;
+    }
+    a {
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
 .loading {
     display: flex;
     align-items: center;
@@ -193,6 +240,6 @@ app-book {
     left: 0;
     z-index: 10;
     background-color: #fff;
-    font-size: 1.5rem;
+    font-size: 14px;
     color: #666;
 }

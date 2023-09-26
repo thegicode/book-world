@@ -140,14 +140,14 @@ app-book {
   font-size: 14px;
   color: #333;
 }
-app-book .bookname {
+app-book h1.bookname {
   margin: 0 0 10px;
   font-size: 1.2rem;
 }
-app-book .bookname p {
+app-book h1.bookname p {
   margin: 7px 0;
 }
-app-book .bookname p:first-child {
+app-book h1.bookname p:first-child {
   font-size: 1.7rem;
 }
 app-book h4 {
@@ -201,14 +201,16 @@ app-book .bookInfo .description {
   line-height: 1.7;
 }
 app-book .library-search-by-book ul {
+  margin: 0;
   padding: 0;
 }
 app-book .library-search-by-book li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px dashed #ddd;
+  padding: 8px;
+  border-bottom: 1px dashed #e5e5e5;
+  font-size: 12px;
 }
 app-book .library-search-by-book li[data-available=true] {
   background-color: rgba(184, 207, 143, 0.1);
@@ -222,6 +224,7 @@ app-book .library-search-by-book a:hover {
 }
 app-book .library-search-by-book p {
   margin: 0;
+  color: #666;
 }
 app-book .keyword {
   display: flex;
@@ -232,16 +235,17 @@ app-book .keyword a {
   display: inline-flex;
   margin: 2px;
   padding: 5px 10px;
-  border-radius: 3px;
-  border: 1px solid #ddd;
+  border-radius: 5px;
+  border: 1px solid #e2e2e2;
   background-color: #f8f8f8;
   font-size: 12px;
-  color: #525080;
+  color: #333;
   text-decoration: none;
 }
 app-book .keyword a:hover {
-  border-color: #bcc1d6;
-  background-color: #c5e6f3;
+  border-color: #c7e53b;
+  background-color: #eff9c3;
+  color: green;
 }
 app-book .recBooks {
   padding: 0;
@@ -274,6 +278,68 @@ app-book .library-button:disabled {
   opacity: 0.5;
 }
 
+.coLoanBooks,
+.maniaBooks,
+.readerBooks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.coLoanBooks li,
+.maniaBooks li,
+.readerBooks li {
+  padding: 10px;
+  border-bottom: 1px dashed #ebebeb;
+}
+.coLoanBooks li:hover,
+.maniaBooks li:hover,
+.readerBooks li:hover {
+  background-color: #f8f8f8;
+}
+.coLoanBooks p,
+.maniaBooks p,
+.readerBooks p {
+  margin: 5px 0;
+  font-size: 12px;
+  color: #666;
+}
+.coLoanBooks .bookname,
+.maniaBooks .bookname,
+.readerBooks .bookname {
+  font-size: 14px;
+  color: #333;
+}
+.coLoanBooks .isbn13,
+.maniaBooks .isbn13,
+.readerBooks .isbn13 {
+  margin-left: 5px;
+}
+.coLoanBooks .publish span,
+.maniaBooks .publish span,
+.readerBooks .publish span {
+  margin: 0 5px;
+}
+.coLoanBooks .publish span:first-child,
+.maniaBooks .publish span:first-child,
+.readerBooks .publish span:first-child {
+  margin-left: 0;
+}
+.coLoanBooks .loanCnt,
+.maniaBooks .loanCnt,
+.readerBooks .loanCnt {
+  margin-right: 5px;
+}
+.coLoanBooks a,
+.maniaBooks a,
+.readerBooks a {
+  text-decoration: none;
+}
+.coLoanBooks a:hover,
+.maniaBooks a:hover,
+.readerBooks a:hover {
+  text-decoration: underline;
+}
+
 .loading {
   display: flex;
   align-items: center;
@@ -285,7 +351,7 @@ app-book .library-button:disabled {
   left: 0;
   z-index: 10;
   background-color: #fff;
-  font-size: 1.5rem;
+  font-size: 14px;
   color: #666;
 }
 

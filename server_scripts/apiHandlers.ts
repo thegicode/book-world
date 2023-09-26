@@ -123,9 +123,15 @@ export async function usageAnalysisList(req: Request, res: Response) {
         const keywordsItems = keywords.map(
             (item: { keyword: string }) => item.keyword
         );
-        const coLoanBookItems = coLoanBooks.map((item: any) => item.book);
-        const maniaRecBookItems = maniaRecBooks.map((item: any) => item.book);
-        const readerRecBookItems = readerRecBooks.map((item: any) => item.book);
+        const coLoanBookItems = coLoanBooks
+            .slice(0, 5)
+            .map((item: any) => item.book);
+        const maniaRecBookItems = maniaRecBooks
+            .slice(0, 5)
+            .map((item: any) => item.book);
+        const readerRecBookItems = readerRecBooks
+            .slice(0, 5)
+            .map((item: any) => item.book);
 
         res.send({
             book,

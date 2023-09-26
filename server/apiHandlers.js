@@ -114,9 +114,15 @@ function usageAnalysisList(req, res) {
             const loanHistoryItems = loanHistory.map((item) => item.loan);
             const loanGrpsItems = loanGrps.map((item) => item.loanGrp);
             const keywordsItems = keywords.map((item) => item.keyword);
-            const coLoanBookItems = coLoanBooks.map((item) => item.book);
-            const maniaRecBookItems = maniaRecBooks.map((item) => item.book);
-            const readerRecBookItems = readerRecBooks.map((item) => item.book);
+            const coLoanBookItems = coLoanBooks
+                .slice(0, 5)
+                .map((item) => item.book);
+            const maniaRecBookItems = maniaRecBooks
+                .slice(0, 5)
+                .map((item) => item.book);
+            const readerRecBookItems = readerRecBooks
+                .slice(0, 5)
+                .map((item) => item.book);
             res.send({
                 book,
                 loanHistory: loanHistoryItems,
