@@ -125,7 +125,9 @@ export default class PopularHeader extends HTMLElement {
         target.ariaSelected = "true";
 
         if (this.pageNav.lastChild === target) {
-            const el = this.createNavItem(Number(target.value) + 1);
+            const el = this.createNavItem(
+                Number(target.value) + 1
+            ) as HTMLButtonElement;
             this.pageNav.appendChild(el);
         }
 
