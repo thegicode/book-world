@@ -17,7 +17,8 @@ export default class Popular extends HTMLElement {
         this.list = this.querySelector(".popular-list");
         this.loading = document.querySelector(".popular-loading");
         this.onRequestPopular = this.onRequestPopular.bind(this);
-        this.pageNumber = 1;
+        this.onClickPageNav = this.onClickPageNav.bind(this);
+        this.params = null;
     }
     connectedCallback() {
         const { currentYear, currentMonth, currentDay } = getCurrentDates();
@@ -32,15 +33,14 @@ export default class Popular extends HTMLElement {
             pageNo: "1",
             pageSize: "100",
         };
+        this.params = params;
         this.fetch(params);
         CustomEventEmitter.add("requestPopular", this.onRequestPopular);
+        CustomEventEmitter.add("clickPageNav", this.onClickPageNav);
     }
     disconnectedCallback() {
         CustomEventEmitter.remove("requestPopular", this.onRequestPopular);
-    }
-    onRequestPopular(event) {
-        const { params } = event.detail;
-        this.fetch(params);
+        CustomEventEmitter.remove("clickPageNav", this.onClickPageNav);
     }
     fetch(params) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -55,6 +55,11 @@ export default class Popular extends HTMLElement {
             try {
                 const data = yield CustomFetch.fetch(url);
                 this.render(data);
+                if (params.pageNo === "1") {
+                    CustomEventEmitter.dispatch("renderPageNav", {
+                        pageSize: params.pageSize,
+                    });
+                }
             }
             catch (error) {
                 console.error(error);
@@ -63,9 +68,9 @@ export default class Popular extends HTMLElement {
         });
     }
     render({ data, resultNum }) {
-        console.log("resultNum", resultNum);
         if (!this.list)
             return;
+        console.log(resultNum);
         const fragment = new DocumentFragment();
         data.map((item) => {
             const cloned = this.createItem(item);
@@ -110,6 +115,18 @@ export default class Popular extends HTMLElement {
         bookDtlUrlEl.href = bookDtlUrl;
         imageEl.src = bookImageURL;
         return cloned;
+    }
+    onRequestPopular(event) {
+        const { params } = event.detail;
+        this.params = params;
+        this.fetch(params);
+    }
+    onClickPageNav(event) {
+        const { pageIndex } = event.detail;
+        if (this.params) {
+            this.params.pageNo = pageIndex.toString();
+            this.fetch(this.params);
+        }
     }
 }
 //# sourceMappingURL=Popular.js.map

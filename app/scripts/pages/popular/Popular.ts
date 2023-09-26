@@ -6,7 +6,7 @@ export default class Popular extends HTMLElement {
     body: HTMLHtmlElement | null;
     list: HTMLElement | null;
     loading: HTMLElement | null;
-    pageNumber: number;
+    params: IPopularFetchParams | null;
 
     constructor() {
         super();
@@ -16,7 +16,8 @@ export default class Popular extends HTMLElement {
         this.list = this.querySelector(".popular-list");
         this.loading = document.querySelector(".popular-loading");
         this.onRequestPopular = this.onRequestPopular.bind(this);
-        this.pageNumber = 1;
+        this.onClickPageNav = this.onClickPageNav.bind(this);
+        this.params = null;
     }
 
     connectedCallback() {
@@ -32,11 +33,18 @@ export default class Popular extends HTMLElement {
             pageNo: "1",
             pageSize: "100",
         };
+        this.params = params;
+
         this.fetch(params);
 
         CustomEventEmitter.add(
             "requestPopular",
             this.onRequestPopular as EventListener
+        );
+
+        CustomEventEmitter.add(
+            "clickPageNav",
+            this.onClickPageNav as EventListener
         );
     }
 
@@ -45,11 +53,10 @@ export default class Popular extends HTMLElement {
             "requestPopular",
             this.onRequestPopular as EventListener
         );
-    }
-
-    onRequestPopular(event: ICustomEvent<{ params: IPopularFetchParams }>) {
-        const { params } = event.detail;
-        this.fetch(params);
+        CustomEventEmitter.remove(
+            "clickPageNav",
+            this.onClickPageNav as EventListener
+        );
     }
 
     async fetch(params: IPopularFetchParams): Promise<void> {
@@ -69,6 +76,12 @@ export default class Popular extends HTMLElement {
         try {
             const data = await CustomFetch.fetch<IPopularBookResponse>(url);
             this.render(data);
+
+            if (params.pageNo === "1") {
+                CustomEventEmitter.dispatch("renderPageNav", {
+                    pageSize: params.pageSize,
+                });
+            }
         } catch (error) {
             console.error(error);
             throw new Error(`Fail to get library search by book.`);
@@ -76,8 +89,9 @@ export default class Popular extends HTMLElement {
     }
 
     render({ data, resultNum }: IPopularBookResponse) {
-        console.log("resultNum", resultNum);
         if (!this.list) return;
+
+        console.log(resultNum);
 
         const fragment = new DocumentFragment();
 
@@ -144,5 +158,20 @@ export default class Popular extends HTMLElement {
         imageEl.src = bookImageURL;
 
         return cloned;
+    }
+
+    onRequestPopular(event: ICustomEvent<{ params: IPopularFetchParams }>) {
+        const { params } = event.detail;
+        this.params = params;
+        this.fetch(params);
+    }
+
+    onClickPageNav(event: ICustomEvent<{ pageIndex: number }>) {
+        const { pageIndex } = event.detail;
+
+        if (this.params) {
+            this.params.pageNo = pageIndex.toString();
+            this.fetch(this.params);
+        }
     }
 }

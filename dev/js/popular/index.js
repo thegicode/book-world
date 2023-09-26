@@ -731,7 +731,8 @@
       this.list = this.querySelector(".popular-list");
       this.loading = document.querySelector(".popular-loading");
       this.onRequestPopular = this.onRequestPopular.bind(this);
-      this.pageNumber = 1;
+      this.onClickPageNav = this.onClickPageNav.bind(this);
+      this.params = null;
     }
     connectedCallback() {
       const { currentYear, currentMonth, currentDay } = getCurrentDates();
@@ -746,15 +747,14 @@
         pageNo: "1",
         pageSize: "100"
       };
+      this.params = params;
       this.fetch(params);
       CustomEventEmitter_default.add("requestPopular", this.onRequestPopular);
+      CustomEventEmitter_default.add("clickPageNav", this.onClickPageNav);
     }
     disconnectedCallback() {
       CustomEventEmitter_default.remove("requestPopular", this.onRequestPopular);
-    }
-    onRequestPopular(event) {
-      const { params } = event.detail;
-      this.fetch(params);
+      CustomEventEmitter_default.remove("clickPageNav", this.onClickPageNav);
     }
     fetch(params) {
       return __awaiter2(this, void 0, void 0, function* () {
@@ -767,6 +767,11 @@
         try {
           const data = yield CustomFetch_default.fetch(url);
           this.render(data);
+          if (params.pageNo === "1") {
+            CustomEventEmitter_default.dispatch("renderPageNav", {
+              pageSize: params.pageSize
+            });
+          }
         } catch (error) {
           console.error(error);
           throw new Error(`Fail to get library search by book.`);
@@ -774,9 +779,9 @@
       });
     }
     render({ data, resultNum }) {
-      console.log("resultNum", resultNum);
       if (!this.list)
         return;
+      console.log(resultNum);
       const fragment = new DocumentFragment();
       data.map((item) => {
         const cloned = this.createItem(item);
@@ -831,23 +836,69 @@
       imageEl.src = bookImageURL;
       return cloned;
     }
+    onRequestPopular(event) {
+      const { params } = event.detail;
+      this.params = params;
+      this.fetch(params);
+    }
+    onClickPageNav(event) {
+      const { pageIndex } = event.detail;
+      if (this.params) {
+        this.params.pageNo = pageIndex.toString();
+        this.fetch(this.params);
+      }
+    }
   };
 
   // dev/scripts/pages/popular/PopularHeader.js
   var PopularHeader = class extends HTMLElement {
     constructor() {
       super();
-      this.onClickFilterButton = () => {
-        if (!this.form)
-          return;
-        this.form.hidden = !this.form.hidden;
-      };
       this.closeForm = () => {
         if (!this.form)
           return;
         this.form.hidden = true;
       };
-      this.onChange = (event) => {
+      this.onRenderPageNav = (event) => {
+        const { pageSize } = event.detail;
+        if (!this.pageNav)
+          return;
+        this.pageNav.innerHTML = "";
+        const fragment = new DocumentFragment();
+        const navSize = 5;
+        for (let i = 0; i < navSize; i++) {
+          const el = document.createElement("button");
+          el.type = "button";
+          el.value = i.toString();
+          el.textContent = `${pageSize * i + 1} ~ ${pageSize * (i + 1)}`;
+          if (i === 0)
+            el.ariaSelected = "true";
+          el.addEventListener("click", this.onClickPageNav);
+          fragment.appendChild(el);
+        }
+        this.pageNav.appendChild(fragment);
+        this.pageNav.hidden = false;
+        this.insertBefore(this.pageNav, this.filterButton);
+      };
+      this.onClickPageNav = (event) => {
+        const target = event.target;
+        if (!target || !this.pageNav)
+          return;
+        const targeted = this.pageNav.querySelector("[aria-selected=true]");
+        if (targeted) {
+          targeted.ariaSelected = "false";
+        }
+        target.ariaSelected = "true";
+        CustomEventEmitter_default.dispatch("clickPageNav", {
+          pageIndex: Number(target.value) + 1
+        });
+      };
+      this.onClickFilterButton = () => {
+        if (!this.form)
+          return;
+        this.form.hidden = !this.form.hidden;
+      };
+      this.onChangeForm = (event) => {
         const target = event.target;
         switch (target.name) {
           case "loanDuration":
@@ -915,6 +966,9 @@
       this.subRegion = this.querySelector(".subRegion");
       this.detailSubject = this.querySelector("[name='detailKdc']");
       this.subSubject = this.querySelector(".subSubject");
+      this.pageNav = this.querySelector(".page-nav");
+      this.onRenderPageNav = this.onRenderPageNav.bind(this);
+      this.onClickPageNav = this.onClickPageNav.bind(this);
     }
     connectedCallback() {
       var _a, _b;
@@ -923,18 +977,20 @@
       this.initialLoanDuration();
       (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickFilterButton);
       (_b = this.closeButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.closeForm);
-      this.form.addEventListener("change", this.onChange);
+      this.form.addEventListener("change", this.onChangeForm);
       this.form.addEventListener("reset", this.onReset);
       this.form.addEventListener("submit", this.onSumbit);
+      CustomEventEmitter_default.add("renderPageNav", this.onRenderPageNav);
     }
     disconnectedCallback() {
       var _a;
       if (!this.form)
         return;
       (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onClickFilterButton);
-      this.form.removeEventListener("change", this.onChange);
+      this.form.removeEventListener("change", this.onChangeForm);
       this.form.removeEventListener("reset", this.onReset);
       this.form.removeEventListener("submit", this.onSumbit);
+      CustomEventEmitter_default.remove("renderPageNav", this.onRenderPageNav);
     }
     handleGender(target) {
       if (!(target.value === "A")) {

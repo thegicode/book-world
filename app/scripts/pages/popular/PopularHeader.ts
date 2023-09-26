@@ -11,6 +11,7 @@ export default class PopularHeader extends HTMLElement {
     subRegion: HTMLInputElement | null;
     detailSubject: HTMLInputElement | null;
     subSubject: HTMLInputElement | null;
+    pageNav: HTMLElement | null;
 
     constructor() {
         super();
@@ -24,6 +25,10 @@ export default class PopularHeader extends HTMLElement {
         this.subRegion = this.querySelector(".subRegion");
         this.detailSubject = this.querySelector("[name='detailKdc']");
         this.subSubject = this.querySelector(".subSubject");
+        this.pageNav = this.querySelector(".page-nav");
+
+        this.onRenderPageNav = this.onRenderPageNav.bind(this);
+        this.onClickPageNav = this.onClickPageNav.bind(this);
     }
 
     connectedCallback() {
@@ -34,11 +39,16 @@ export default class PopularHeader extends HTMLElement {
         this.filterButton?.addEventListener("click", this.onClickFilterButton);
         this.closeButton?.addEventListener("click", this.closeForm);
 
-        this.form.addEventListener("change", this.onChange);
+        this.form.addEventListener("change", this.onChangeForm);
 
         this.form.addEventListener("reset", this.onReset);
 
         this.form.addEventListener("submit", this.onSumbit);
+
+        CustomEventEmitter.add(
+            "renderPageNav",
+            this.onRenderPageNav as EventListener
+        );
     }
 
     disconnectedCallback() {
@@ -49,24 +59,72 @@ export default class PopularHeader extends HTMLElement {
             this.onClickFilterButton
         );
 
-        this.form.removeEventListener("change", this.onChange);
+        this.form.removeEventListener("change", this.onChangeForm);
 
         this.form.removeEventListener("reset", this.onReset);
 
         this.form.removeEventListener("submit", this.onSumbit);
-    }
 
-    onClickFilterButton = () => {
-        if (!this.form) return;
-        this.form.hidden = !this.form.hidden;
-    };
+        CustomEventEmitter.remove(
+            "renderPageNav",
+            this.onRenderPageNav as EventListener
+        );
+    }
 
     closeForm = () => {
         if (!this.form) return;
         this.form.hidden = true;
     };
 
-    onChange = (event: Event) => {
+    onRenderPageNav = (event: ICustomEvent<{ pageSize: number }>) => {
+        const { pageSize } = event.detail;
+
+        if (!this.pageNav) return;
+
+        this.pageNav.innerHTML = "";
+
+        const fragment = new DocumentFragment();
+        const navSize = 5;
+        for (let i = 0; i < navSize; i++) {
+            const el = document.createElement("button");
+            el.type = "button";
+            el.value = i.toString();
+            el.textContent = `${pageSize * i + 1} ~ ${pageSize * (i + 1)}`;
+
+            if (i === 0) el.ariaSelected = "true";
+
+            el.addEventListener("click", this.onClickPageNav);
+
+            fragment.appendChild(el);
+        }
+
+        this.pageNav.appendChild(fragment);
+        this.pageNav.hidden = false;
+
+        this.insertBefore(this.pageNav, this.filterButton);
+    };
+
+    onClickPageNav = (event: Event) => {
+        const target = event.target as HTMLButtonElement;
+        if (!target || !this.pageNav) return;
+
+        const targeted = this.pageNav.querySelector("[aria-selected=true]");
+        if (targeted) {
+            targeted.ariaSelected = "false";
+        }
+        target.ariaSelected = "true";
+
+        CustomEventEmitter.dispatch("clickPageNav", {
+            pageIndex: Number(target.value) + 1,
+        });
+    };
+
+    onClickFilterButton = () => {
+        if (!this.form) return;
+        this.form.hidden = !this.form.hidden;
+    };
+
+    onChangeForm = (event: Event) => {
         const target = event.target as HTMLInputElement;
 
         switch (target.name) {
