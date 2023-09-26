@@ -117,9 +117,9 @@ export async function usageAnalysisList(req: Request, res: Response) {
         const loanHistoryItems = loanHistory.map(
             (item: { loan: string }) => item.loan
         );
-        const loanGrpsItems = loanGrps.map(
-            (item: { loanGrp: string }) => item.loanGrp
-        );
+        const loanGrpsItems = loanGrps
+            .slice(0, 5)
+            .map((item: { loanGrp: string }) => item.loanGrp);
         const keywordsItems = keywords.map(
             (item: { keyword: string }) => item.keyword
         );

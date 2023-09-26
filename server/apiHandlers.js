@@ -112,7 +112,9 @@ function usageAnalysisList(req, res) {
             const data = yield fetchData(url);
             const { book, loanHistory, loanGrps, keywords, coLoanBooks, maniaRecBooks, readerRecBooks, } = data.response;
             const loanHistoryItems = loanHistory.map((item) => item.loan);
-            const loanGrpsItems = loanGrps.map((item) => item.loanGrp);
+            const loanGrpsItems = loanGrps
+                .slice(0, 5)
+                .map((item) => item.loanGrp);
             const keywordsItems = keywords.map((item) => item.keyword);
             const coLoanBookItems = coLoanBooks
                 .slice(0, 5)
