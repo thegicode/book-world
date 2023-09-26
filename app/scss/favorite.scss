@@ -141,12 +141,10 @@ favorite-item {
     .book-summary {
         position: relative;
         margin: 1rem 1rem 7px;
-        a {
-            display: flex;
-            gap: 1rem;
-            text-decoration: none;
-        }
+        display: flex;
+        gap: 10px;
     }
+
     book-description {
         margin: 0 1rem;
     }
@@ -154,28 +152,28 @@ favorite-item {
     book-image {
         .thumb {
             width: 120px;
+            border: 1px solid transparent;
         }
+    }
+    a:hover .thumb {
+        border-color: #000;
     }
 
     .book-info {
         flex: 1;
+        margin: 0;
+        padding: 0;
+
+        list-style: none;
         color: #666;
-        p {
-            margin: 0;
-            padding: 0 0 6px;
+        li {
+            padding-bottom: 6px;
             font-size: 14px;
-            &:before {
-                content: "⋅";
-                display: inline-4block;
-                padding-right: 5px;
-            }
         }
         .bookname {
-            margin: 5px 0 7px;
-            border-radius: 5px;
+            padding: 8px 0;
             font-size: 1rem;
             color: #333;
-            line-height: 1.5;
         }
         .isbn13,
         .publisher,

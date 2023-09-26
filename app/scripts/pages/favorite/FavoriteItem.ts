@@ -8,7 +8,6 @@ import {
 
 export default class FavoriteItem extends HTMLElement {
     protected libraryButton?: HTMLButtonElement;
-    protected anchorElement?: HTMLAnchorElement;
     protected bookData: IUsageAnalysisResult | undefined;
     hideButton?: HTMLButtonElement | null;
     libraryBookExist?: LibraryBookExist | null;
@@ -23,7 +22,6 @@ export default class FavoriteItem extends HTMLElement {
         ) as HTMLButtonElement;
         this.hideButton = this.querySelector(".hide-button");
         this.libraryBookExist = this.querySelector("library-book-exist");
-        this.anchorElement = this.querySelector("a") as HTMLAnchorElement;
 
         this.loading();
 
@@ -34,13 +32,11 @@ export default class FavoriteItem extends HTMLElement {
             "click",
             this.onHideLibrary.bind(this)
         );
-        this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
 
     disconnectedCallback() {
         this.libraryButton?.removeEventListener("click", this.onLibrary);
         this.hideButton?.removeEventListener("click", this.onHideLibrary);
-        this.anchorElement?.removeEventListener("click", this.onClick);
     }
 
     protected async fetchData(isbn: string) {
@@ -111,6 +107,10 @@ export default class FavoriteItem extends HTMLElement {
             };
         }
 
+        (
+            this.querySelector("a") as HTMLAnchorElement
+        ).href = `./book?isbn=${isbn13}`;
+
         if (this.libraryButton && Object.keys(state.libraries).length === 0) {
             this.libraryButton.hidden = true;
         }
@@ -167,10 +167,5 @@ export default class FavoriteItem extends HTMLElement {
 
     private removeLoading() {
         delete this.dataset.loading;
-    }
-
-    protected onClick(event: MouseEvent) {
-        event.preventDefault();
-        location.href = `book?isbn=${this.dataset.isbn}`;
     }
 }

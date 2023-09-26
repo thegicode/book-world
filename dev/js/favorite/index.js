@@ -1194,18 +1194,15 @@
       this.libraryButton = this.querySelector(".library-button");
       this.hideButton = this.querySelector(".hide-button");
       this.libraryBookExist = this.querySelector("library-book-exist");
-      this.anchorElement = this.querySelector("a");
       this.loading();
       this.fetchData(this.dataset.isbn);
       this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
       (_a = this.hideButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onHideLibrary.bind(this));
-      this.anchorElement.addEventListener("click", this.onClick.bind(this));
     }
     disconnectedCallback() {
-      var _a, _b, _c;
+      var _a, _b;
       (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
       (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
-      (_c = this.anchorElement) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.onClick);
     }
     fetchData(isbn) {
       return __awaiter3(this, void 0, void 0, function* () {
@@ -1266,6 +1263,7 @@
           bookname
         };
       }
+      this.querySelector("a").href = `./book?isbn=${isbn13}`;
       if (this.libraryButton && Object.keys(state.libraries).length === 0) {
         this.libraryButton.hidden = true;
       }
@@ -1306,10 +1304,6 @@
     }
     removeLoading() {
       delete this.dataset.loading;
-    }
-    onClick(event) {
-      event.preventDefault();
-      location.href = `book?isbn=${this.dataset.isbn}`;
     }
   };
 

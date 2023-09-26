@@ -280,38 +280,34 @@ favorite-item[data-fail=true] book-description {
 favorite-item .book-summary {
   position: relative;
   margin: 1rem 1rem 7px;
-}
-favorite-item .book-summary a {
   display: flex;
-  gap: 1rem;
-  text-decoration: none;
+  gap: 10px;
 }
 favorite-item book-description {
   margin: 0 1rem;
 }
 favorite-item book-image .thumb {
   width: 120px;
+  border: 1px solid transparent;
+}
+favorite-item a:hover .thumb {
+  border-color: #000;
 }
 favorite-item .book-info {
   flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   color: #666;
 }
-favorite-item .book-info p {
-  margin: 0;
-  padding: 0 0 6px;
+favorite-item .book-info li {
+  padding-bottom: 6px;
   font-size: 14px;
 }
-favorite-item .book-info p:before {
-  content: "⋅";
-  display: inline-4block;
-  padding-right: 5px;
-}
 favorite-item .book-info .bookname {
-  margin: 5px 0 7px;
-  border-radius: 5px;
+  padding: 8px 0;
   font-size: 1rem;
   color: #333;
-  line-height: 1.5;
 }
 favorite-item .book-info .isbn13,
 favorite-item .book-info .publisher,

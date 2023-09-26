@@ -53,23 +53,22 @@
         <template id="tp-favorite-item">
             <favorite-item>
                 <div class="book-summary" href="">
-                    <a href="">
-                        <book-image></book-image>
-                        <div class="book-info">
-                            <h4 class="bookname"></h4>
-                            <p class="authors"></p>
-                            <p class="class_nm"></p>
-                            <!-- <li>주제분류 : <span class="class_no"></span></li> -->
-                            <p>ISBN : <span class="isbn13"></span></p>
-                            <p>출판사 : <span class="publisher"></span></p>
-                            <p>
-                                출판년도 :
-                                <span class="publication_year"></span>
-                            </p>
-                            <p>대출권수 : <span class="loanCnt"></span></p>
-                            <!-- <li>권 : <span class="vol"></span></li> -->
-                        </div>
-                    </a>
+                    <a href=""> <book-image></book-image> </a>
+                    <ul class="book-info">
+                        <li class="bookname"></li>
+                        <li class="authors"></li>
+                        <li class="class_nm"></li>
+                        <!-- <li>주제분류 : <span class="class_no"></span></li> -->
+                        <li>ISBN : <span class="isbn13"></span></li>
+                        <li>출판사 : <span class="publisher"></span></li>
+                        <li>
+                            출판년도 :
+                            <span class="publication_year"></span>
+                        </li>
+                        <li>대출권수 : <span class="loanCnt"></span></li>
+                        <!-- <li>권 : <span class="vol"></span></li> -->
+                    </ul>
+
                     <checkbox-favorite-book></checkbox-favorite-book>
                 </div>
                 <book-description></book-description>
