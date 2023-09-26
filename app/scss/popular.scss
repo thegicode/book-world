@@ -193,6 +193,12 @@ popular-header {
 
     .thumb {
         position: relative;
+        img {
+            border: 1px solid transparent;
+        }
+        &:hover img {
+            border-color: #000;
+        }
     }
 
     .bookImage {

@@ -144,6 +144,7 @@ export default class Popular extends HTMLElement {
             ".bookDtlUrl"
         ) as HTMLLinkElement;
         const imageEl = cloned.querySelector(".bookImage") as HTMLImageElement;
+        const anchorEl = cloned.querySelector("a") as HTMLAnchorElement;
 
         cloned.dataset.index = no.toString();
         bookNameEl.textContent = bookname;
@@ -156,6 +157,7 @@ export default class Popular extends HTMLElement {
         loanCountEl.textContent = loan_count;
         bookDtlUrlEl.href = bookDtlUrl;
         imageEl.src = bookImageURL;
+        anchorEl.href = `./book?isbn=${isbn13}`;
 
         return cloned;
     }

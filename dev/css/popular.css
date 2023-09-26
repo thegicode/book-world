@@ -213,6 +213,12 @@ popular-header .filterButton {
 .popular-item .thumb {
   position: relative;
 }
+.popular-item .thumb img {
+  border: 1px solid transparent;
+}
+.popular-item .thumb:hover img {
+  border-color: #000;
+}
 .popular-item .bookImage {
   width: 120px;
   border: 1px solid #dedede;

@@ -103,6 +103,7 @@ export default class Popular extends HTMLElement {
         const loanCountEl = cloned.querySelector(".loan_count");
         const bookDtlUrlEl = cloned.querySelector(".bookDtlUrl");
         const imageEl = cloned.querySelector(".bookImage");
+        const anchorEl = cloned.querySelector("a");
         cloned.dataset.index = no.toString();
         bookNameEl.textContent = bookname;
         rankingEl.textContent = ranking;
@@ -114,6 +115,7 @@ export default class Popular extends HTMLElement {
         loanCountEl.textContent = loan_count;
         bookDtlUrlEl.href = bookDtlUrl;
         imageEl.src = bookImageURL;
+        anchorEl.href = `./book?isbn=${isbn13}`;
         return cloned;
     }
     onRequestPopular(event) {
