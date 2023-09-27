@@ -1108,121 +1108,102 @@
   var BookList = class extends HTMLElement {
     constructor() {
       super();
-      this.initializeProperties();
-      this.bindMethods();
-    }
-    initializeProperties() {
-      this.pagingInfo = this.querySelector(".paging-info");
-      this.books = this.querySelector(".books");
-    }
-    bindMethods() {
-      this.fetchSearchNaverBook = this.fetchSearchNaverBook.bind(this);
+      this.retrieveBooks = this.retrieveBooks.bind(this);
+      this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
     connectedCallback() {
+      this.paginationElement = this.querySelector(".paging-info");
+      this.bookContainer = this.querySelector(".books");
       this.setupObserver();
-      CustomEventEmitter_default.add("search-page-init", this.onSearchPageInit.bind(this));
+      CustomEventEmitter_default.add("search-page-init", this.initializeSearchPage);
     }
     disconnectedCallback() {
       var _a;
       (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
-      CustomEventEmitter_default.remove("search-page-init", this.onSearchPageInit);
+      CustomEventEmitter_default.remove("search-page-init", this.initializeSearchPage);
     }
     setupObserver() {
       const target = this.querySelector(".observe");
-      const callback = this.fetchSearchNaverBook;
-      this.observer = new Observer(target, callback);
+      this.observer = new Observer(target, this.retrieveBooks);
     }
-    onSearchPageInit(event) {
-      const customEvent = event;
-      const { keyword, sort } = customEvent.detail;
+    initializeSearchPage(event) {
+      const { keyword, sort } = event.detail;
       this.keyword = keyword;
-      this.sort = sort;
-      this.length = 0;
-      if (this.keyword) {
-        this.handleKeywordPresent();
-        return;
-      }
-      this.handleKeywordAbsent();
+      this.sortingOrder = sort;
+      this.itemCount = 0;
+      this.keyword ? this.renderBooks() : this.showDefaultMessage();
     }
-    handleKeywordPresent() {
-      this.showMessage("loading");
-      this.books.innerHTML = "";
-      this.fetchSearchNaverBook();
+    renderBooks() {
+      this.renderMessage("loading");
+      this.bookContainer.innerHTML = "";
+      this.retrieveBooks();
     }
-    handleKeywordAbsent() {
-      this.pagingInfo.hidden = true;
-      this.showMessage("message");
+    showDefaultMessage() {
+      this.paginationElement.hidden = true;
+      this.renderMessage("message");
     }
-    fetchSearchNaverBook() {
+    retrieveBooks() {
       return __awaiter3(this, void 0, void 0, function* () {
-        if (!this.keyword || !this.sort)
+        if (!this.keyword || !this.sortingOrder)
           return;
-        const keyworkd = encodeURIComponent(this.keyword);
-        const searchUrl = `/search-naver-book?keyword=${keyworkd}&display=${10}&start=${this.length + 1}&sort=${this.sort}`;
-        console.log("fetch-search: ", searchUrl);
+        const encodedKeyword = encodeURIComponent(this.keyword);
+        const searchUrl = `/search-naver-book?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
         try {
           const data = yield CustomFetch_default.fetch(searchUrl);
-          this.render(data);
+          this.renderBookList(data);
         } catch (error) {
-          console.error(error);
-          throw new Error(`Failed to get books with keyword ${this.keyword}.`);
+          if (error instanceof Error) {
+            console.error(`Error fetching books: ${error.message}`);
+          } else {
+            console.error("An unexpected error occurred");
+          }
         }
       });
     }
-    render(data) {
+    renderBookList(data) {
       var _a;
       const { total, display, items } = data;
-      const prevLength = this.length;
-      this.length += Number(display);
-      this.updatePagingInfo({ total, display });
-      this.pagingInfo.hidden = false;
       if (total === 0) {
-        this.showMessage("notFound");
+        this.renderMessage("notFound");
         return;
       }
-      this.appendBookItems(items, prevLength);
-      if (total !== this.length) {
+      this.itemCount += display;
+      this.refreshPagingData(total, display);
+      this.appendBookItems(items);
+      this.paginationElement.hidden = false;
+      if (total !== this.itemCount)
         (_a = this.observer) === null || _a === void 0 ? void 0 : _a.observe();
-      }
     }
-    updatePagingInfo({ total, display }) {
+    refreshPagingData(total, display) {
       const obj = {
         keyword: `${this.keyword}`,
-        length: `${this.length.toLocaleString()}`,
+        length: `${this.itemCount.toLocaleString()}`,
         total: `${total.toLocaleString()}`,
         display: `${display}\uAC1C\uC529`
       };
       for (const [key, value] of Object.entries(obj)) {
-        const element = this.pagingInfo.querySelector(`.__${key}`);
+        const element = this.paginationElement.querySelector(`.__${key}`);
         element.textContent = value;
       }
     }
-    appendBookItems(items, prevLength) {
+    appendBookItems(items) {
       const fragment = new DocumentFragment();
       const template = document.querySelector("#tp-book-item");
-      if (!template)
-        return;
-      const el = template.content.firstElementChild;
-      if (!el)
-        return;
       items.forEach((item, index) => {
-        const cloned = el.cloneNode(true);
-        cloned.bookData = item;
-        cloned.dataset.index = (prevLength + index).toString();
-        fragment.appendChild(cloned);
+        const clonedNode = template.content.cloneNode(true);
+        const bookItem = clonedNode.querySelector("book-item");
+        bookItem.bookData = item;
+        bookItem.dataset.index = (this.itemCount + index).toString();
+        fragment.appendChild(clonedNode);
       });
-      this.books.appendChild(fragment);
+      this.bookContainer.appendChild(fragment);
     }
-    showMessage(type) {
-      const template = document.querySelector(`#tp-${type}`);
-      if (!template)
+    renderMessage(type) {
+      const messageTemplate = document.querySelector(`#tp-${type}`);
+      if (!messageTemplate)
         return;
-      const el = template.content.firstElementChild;
-      if (!el)
-        return;
-      const cloned = el.cloneNode(true);
-      this.books.innerHTML = "";
-      this.books.appendChild(cloned);
+      this.bookContainer.innerHTML = "";
+      this.bookContainer.appendChild(messageTemplate.content.cloneNode(true));
     }
   };
 
@@ -1299,6 +1280,9 @@
             element.textContent = value;
         }
       });
+      const anchorEl = this.querySelector("a");
+      if (anchorEl)
+        anchorEl.href = `/book?isbn=${isbn}`;
       this.dataset.isbn = isbn;
     }
   };

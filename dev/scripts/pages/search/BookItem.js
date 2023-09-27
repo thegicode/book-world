@@ -72,6 +72,9 @@ export default class BookItem extends HTMLElement {
                     element.textContent = value;
             }
         });
+        const anchorEl = this.querySelector("a");
+        if (anchorEl)
+            anchorEl.href = `/book?isbn=${isbn}`;
         this.dataset.isbn = isbn;
     }
 }

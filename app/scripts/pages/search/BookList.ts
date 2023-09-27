@@ -2,177 +2,156 @@ import BookItem from "./BookItem";
 import { Observer, CustomFetch, CustomEventEmitter } from "../../utils/index";
 
 export default class BookList extends HTMLElement {
-    pagingInfo!: HTMLElement;
-    books!: HTMLElement;
+    paginationElement!: HTMLElement;
+    bookContainer!: HTMLElement;
     observer?: Observer;
     keyword?: string;
-    sort?: string;
-    length!: number;
+    sortingOrder?: string;
+    itemCount!: number;
 
     constructor() {
         super();
-        this.initializeProperties();
-        this.bindMethods();
-    }
 
-    private initializeProperties(): void {
-        this.pagingInfo = this.querySelector(".paging-info") as HTMLElement;
-        this.books = this.querySelector(".books") as HTMLElement;
-    }
-
-    private bindMethods(): void {
-        this.fetchSearchNaverBook = this.fetchSearchNaverBook.bind(this);
+        this.retrieveBooks = this.retrieveBooks.bind(this);
+        this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
 
     connectedCallback() {
+        this.paginationElement = this.querySelector(
+            ".paging-info"
+        ) as HTMLElement;
+        this.bookContainer = this.querySelector(".books") as HTMLElement;
         this.setupObserver();
+
         CustomEventEmitter.add(
             "search-page-init",
-            this.onSearchPageInit.bind(this)
+            this.initializeSearchPage as EventListener
         );
     }
 
     disconnectedCallback() {
         this.observer?.disconnect();
-        CustomEventEmitter.remove("search-page-init", this.onSearchPageInit);
+
+        CustomEventEmitter.remove(
+            "search-page-init",
+            this.initializeSearchPage as EventListener
+        );
     }
 
-    private setupObserver(): void {
+    private setupObserver() {
         const target = this.querySelector(".observe") as HTMLElement;
-        const callback = this.fetchSearchNaverBook;
-        this.observer = new Observer(target, callback);
+        this.observer = new Observer(target, this.retrieveBooks);
     }
 
-    private onSearchPageInit(event: Event): void {
-        const customEvent = event as CustomEvent<{
+    private initializeSearchPage(
+        event: ICustomEvent<{
             keyword: string;
             sort: string;
-        }>;
-        const { keyword, sort } = customEvent.detail;
+        }>
+    ) {
+        const { keyword, sort } = event.detail;
 
         this.keyword = keyword;
-        this.sort = sort;
-        this.length = 0;
+        this.sortingOrder = sort;
+        this.itemCount = 0;
 
-        if (this.keyword) {
-            // onSubmit으로 들어온 경우와 브라우저
-            this.handleKeywordPresent();
-            return;
-        }
-
-        // keyword 없을 때 기본 화면 노출, 브라우저
-        this.handleKeywordAbsent();
+        // renderBooks: onSubmit으로 들어온 경우와 브라우저
+        // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
+        this.keyword ? this.renderBooks() : this.showDefaultMessage();
     }
 
-    private handleKeywordPresent(): void {
-        this.showMessage("loading");
-        this.books.innerHTML = "";
-        this.fetchSearchNaverBook();
+    private renderBooks() {
+        this.renderMessage("loading");
+        this.bookContainer.innerHTML = "";
+        this.retrieveBooks();
     }
 
-    private handleKeywordAbsent(): void {
-        this.pagingInfo.hidden = true;
-        this.showMessage("message");
+    private showDefaultMessage() {
+        this.paginationElement.hidden = true;
+        this.renderMessage("message");
     }
 
-    private async fetchSearchNaverBook(): Promise<void> {
-        if (!this.keyword || !this.sort) return;
+    private async retrieveBooks(): Promise<void> {
+        if (!this.keyword || !this.sortingOrder) return;
 
-        const keyworkd = encodeURIComponent(this.keyword);
-        const searchUrl = `/search-naver-book?keyword=${keyworkd}&display=${10}&start=${
-            this.length + 1
-        }&sort=${this.sort}`;
+        const encodedKeyword = encodeURIComponent(this.keyword);
+        const searchUrl = `/search-naver-book?keyword=${encodedKeyword}&display=${10}&start=${
+            this.itemCount + 1
+        }&sort=${this.sortingOrder}`;
 
-        console.log("fetch-search: ", searchUrl);
+        // console.log("fetch-search: ", searchUrl);
 
         try {
             const data = await CustomFetch.fetch<ISearchNaverBookResult>(
                 searchUrl
             );
-            this.render(data);
-        } catch (error) {
-            console.error(error);
-            throw new Error(
-                `Failed to get books with keyword ${this.keyword}.`
-            );
+            this.renderBookList(data);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error(`Error fetching books: ${error.message}`);
+            } else {
+                console.error("An unexpected error occurred");
+            }
         }
     }
 
-    private render(data: ISearchNaverBookResult): void {
+    private renderBookList(data: ISearchNaverBookResult): void {
         const { total, display, items } = data;
-        const prevLength = this.length;
-
-        this.length += Number(display);
-        this.updatePagingInfo({ total, display });
-        this.pagingInfo.hidden = false;
 
         if (total === 0) {
-            this.showMessage("notFound");
+            this.renderMessage("notFound");
             return;
         }
 
-        this.appendBookItems(items, prevLength);
+        this.itemCount += display;
+        this.refreshPagingData(total, display);
+        this.appendBookItems(items);
+        this.paginationElement.hidden = false;
 
-        if (total !== this.length) {
-            this.observer?.observe();
-        }
+        if (total !== this.itemCount) this.observer?.observe();
     }
 
-    private updatePagingInfo({
-        total,
-        display,
-    }: {
-        total: number;
-        display: number;
-    }) {
+    private refreshPagingData(total: number, display: number) {
         const obj = {
             keyword: `${this.keyword}`,
-            length: `${this.length.toLocaleString()}`,
+            length: `${this.itemCount.toLocaleString()}`,
             total: `${total.toLocaleString()}`,
             display: `${display}개씩`,
         };
 
         for (const [key, value] of Object.entries(obj)) {
-            const element = this.pagingInfo.querySelector(
+            const element = this.paginationElement.querySelector(
                 `.__${key}`
             ) as HTMLElement;
             element.textContent = value;
         }
     }
 
-    private appendBookItems(items: ISearchBook[], prevLength: number): void {
+    private appendBookItems(items: ISearchBook[]) {
         const fragment = new DocumentFragment();
-
         const template = document.querySelector(
             "#tp-book-item"
         ) as HTMLTemplateElement;
-        if (!template) return;
-
-        const el = template.content.firstElementChild;
-        if (!el) return;
 
         items.forEach((item, index) => {
-            const cloned = el.cloneNode(true) as BookItem;
-            cloned.bookData = item;
-            cloned.dataset.index = (prevLength + index).toString();
-            fragment.appendChild(cloned);
+            const clonedNode = template.content.cloneNode(true) as HTMLElement;
+            const bookItem = clonedNode.querySelector("book-item") as BookItem;
+            bookItem.bookData = item;
+            bookItem.dataset.index = (this.itemCount + index).toString();
+            fragment.appendChild(clonedNode);
         });
 
-        this.books.appendChild(fragment);
+        this.bookContainer.appendChild(fragment);
     }
 
-    private showMessage(type: string) {
-        const template = document.querySelector(
+    private renderMessage(type: string) {
+        const messageTemplate = document.querySelector(
             `#tp-${type}`
         ) as HTMLTemplateElement;
-        if (!template) return;
+        if (!messageTemplate) return;
 
-        const el = template.content.firstElementChild;
-        if (!el) return;
-
-        const cloned = el.cloneNode(true) as HTMLElement;
-        this.books.innerHTML = "";
-        this.books.appendChild(cloned);
+        this.bookContainer.innerHTML = "";
+        this.bookContainer.appendChild(messageTemplate.content.cloneNode(true));
     }
 }
 
@@ -180,7 +159,7 @@ export default class BookList extends HTMLElement {
 //     changes.forEach( change => {
 //         if (change.isIntersecting) {
 //             this.observer.unobserve(change.target)
-//             this.fetchSearchNaverBook()
+//             this.retrieveBooks()
 //         }
 //     })
 // })
