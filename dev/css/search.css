@@ -304,6 +304,18 @@ app-search {
 .book .book-info li {
   margin-bottom: 5px;
 }
+.book .book-info .link {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  text-decoration: none;
+  color: #555;
+}
+.book .book-info .link:hover {
+  background-color: rgba(10, 100, 200, 0.05);
+}
 .book book-image {
   border: 1px solid transparent;
 }
@@ -319,25 +331,6 @@ app-search {
 }
 .book book-description {
   margin: 0 1rem;
-}
-.book .sites {
-  margin: 0 1rem;
-}
-.book .sites h4 {
-  margin: 0 0 10px;
-  font-weight: normal;
-}
-.book .sites .__link {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  font-size: 12px;
-  text-decoration: none;
-  color: #555;
-}
-.book .sites .__link:hover {
-  background-color: rgba(10, 100, 200, 0.05);
 }
 .book .actions {
   margin: 1rem;
@@ -362,6 +355,7 @@ app-search {
   width: 100%;
   margin-top: 10px;
   text-align: center;
+  color: #666;
 }
 
 .observe {

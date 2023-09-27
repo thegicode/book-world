@@ -163,6 +163,20 @@ app-search {
         li {
             margin-bottom: 5px;
         }
+
+        .link {
+            display: inline-block;
+            // color: #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+            text-decoration: none;
+            color: #555;
+            &:hover {
+                background-color: rgba(10, 100, 200, 0.05);
+            }
+        }
     }
 
     book-image {
@@ -184,27 +198,6 @@ app-search {
 
     book-description {
         margin: 0 1rem;
-    }
-
-    .sites {
-        margin: 0 1rem;
-        h4 {
-            margin: 0 0 10px;
-            font-weight: normal;
-        }
-        .__link {
-            display: inline-block;
-            // color: #333;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 12px;
-            text-decoration: none;
-            color: #555;
-            &:hover {
-                background-color: rgba(10, 100, 200, 0.05);
-            }
-        }
     }
 
     .actions {
@@ -230,6 +223,7 @@ app-search {
             width: 100%;
             margin-top: 10px;
             text-align: center;
+            color: #666;
         }
     }
 }
