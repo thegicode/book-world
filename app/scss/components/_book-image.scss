@@ -1,7 +1,7 @@
 book-image {
     display: flex;
     justify-content: center;
-    &[data-fail=true] {
+    &[data-fail="true"] {
         .book-image {
             border: 1px solid #eaeaea;
             background-color: #f8f8f8;
