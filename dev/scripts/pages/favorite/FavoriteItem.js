@@ -7,6 +7,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import { CustomFetch } from "../../utils/index";
 import { state } from "../../modules/model";
 export default class FavoriteItem extends HTMLElement {
@@ -43,47 +54,32 @@ export default class FavoriteItem extends HTMLElement {
         });
     }
     render(data) {
-        const { book,
-        // loanHistory,
-        // loanGrps,
-        // keywords,
-        // recBooks,
-        // coLoanBooks
-         } = data;
-        const { authors, bookImageURL, bookname, class_nm, 
-        // class_no,
-        description, isbn13, loanCnt, publication_year, publisher,
-        // vol
-         } = book;
         this.bookData = data;
-        this.querySelector(".bookname").textContent = bookname;
-        this.querySelector(".authors").textContent = authors;
-        const classNm = this.querySelector(".class_nm");
-        if (class_nm === " >  > ") {
-            classNm.remove();
-        }
-        else {
-            classNm.textContent = class_nm;
-        }
-        this.querySelector(".isbn13").textContent = isbn13;
-        this.querySelector(".loanCnt").textContent =
-            loanCnt.toLocaleString();
-        this.querySelector(".publication_year").textContent =
-            publication_year;
-        this.querySelector(".publisher").textContent =
-            publisher;
-        const descriptionElement = this.querySelector("book-description");
-        if (descriptionElement) {
-            descriptionElement.data = description;
-        }
-        const imageElement = this.querySelector("book-image");
-        if (imageElement) {
-            imageElement.data = {
+        const _a = data.book, { bookImageURL, bookname, isbn13 } = _a, otherData = __rest(_a, ["bookImageURL", "bookname", "isbn13"])
+        // authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
+        ;
+        const imageNode = this.querySelector("book-image");
+        if (imageNode) {
+            imageNode.data = {
                 bookImageURL,
                 bookname,
             };
         }
-        this.querySelector("a").href = `./book?isbn=${isbn13}`;
+        Object.entries(otherData).forEach(([key, value]) => {
+            if (key === "description") {
+                const descNode = this.querySelector("book-description");
+                if (descNode)
+                    descNode.data = value;
+            }
+            else {
+                const element = this.querySelector(`.${key}`);
+                if (element)
+                    element.textContent = value;
+            }
+        });
+        const anchorEl = this.querySelector("a");
+        if (anchorEl)
+            anchorEl.href = `/book?isbn=${isbn13}`;
         if (this.libraryButton && Object.keys(state.libraries).length === 0) {
             this.libraryButton.hidden = true;
         }

@@ -52,64 +52,37 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     protected render(data: IUsageAnalysisResult) {
-        const {
-            book,
-            // loanHistory,
-            // loanGrps,
-            // keywords,
-            // recBooks,
-            // coLoanBooks
-        } = data;
-
-        const {
-            authors,
-            bookImageURL,
-            bookname,
-            class_nm,
-            // class_no,
-            description,
-            isbn13,
-            loanCnt,
-            publication_year,
-            publisher,
-            // vol
-        } = book;
-
         this.bookData = data;
 
-        (this.querySelector(".bookname") as HTMLElement).textContent = bookname;
-        (this.querySelector(".authors") as HTMLElement).textContent = authors;
+        const {
+            bookImageURL,
+            bookname,
+            isbn13,
+            ...otherData
+            // authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
+        } = data.book;
 
-        const classNm = this.querySelector(".class_nm") as HTMLElement;
-        if (class_nm === " >  > ") {
-            classNm.remove();
-        } else {
-            classNm.textContent = class_nm;
-        }
-
-        (this.querySelector(".isbn13") as HTMLElement).textContent = isbn13;
-        (this.querySelector(".loanCnt") as HTMLElement).textContent =
-            loanCnt.toLocaleString();
-        (this.querySelector(".publication_year") as HTMLElement).textContent =
-            publication_year;
-        (this.querySelector(".publisher") as HTMLElement).textContent =
-            publisher;
-        const descriptionElement =
-            this.querySelector<BookDescription>("book-description");
-        if (descriptionElement) {
-            descriptionElement.data = description;
-        }
-        const imageElement = this.querySelector<BookImage>("book-image");
-        if (imageElement) {
-            imageElement.data = {
+        const imageNode = this.querySelector<BookImage>("book-image");
+        if (imageNode) {
+            imageNode.data = {
                 bookImageURL,
                 bookname,
             };
         }
 
-        (
-            this.querySelector("a") as HTMLAnchorElement
-        ).href = `./book?isbn=${isbn13}`;
+        Object.entries(otherData).forEach(([key, value]) => {
+            if (key === "description") {
+                const descNode =
+                    this.querySelector<BookDescription>("book-description");
+                if (descNode) descNode.data = value as string;
+            } else {
+                const element = this.querySelector(`.${key}`) as HTMLElement;
+                if (element) element.textContent = value as string;
+            }
+        });
+
+        const anchorEl = this.querySelector("a") as HTMLAnchorElement;
+        if (anchorEl) anchorEl.href = `/book?isbn=${isbn13}`;
 
         if (this.libraryButton && Object.keys(state.libraries).length === 0) {
             this.libraryButton.hidden = true;
