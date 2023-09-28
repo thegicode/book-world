@@ -1,54 +1,54 @@
 export default class BookImage extends HTMLElement {
+    private imgElement: HTMLImageElement;
+    private imgContainer: HTMLDivElement;
+
     constructor() {
         super();
+
+        this.imgElement = document.createElement("img");
+        this.imgElement.className = "thumb";
+
+        this.imgContainer = document.createElement("div");
+        this.imgContainer.className = "book-image";
+
+        this.imgElement.onerror = this.handleImageError.bind(this);
     }
 
     // 즐겨찾기, 상세
     set data(objectData: IBookImageData) {
-        this.dataset.object = JSON.stringify(objectData);
+        const jsonData = JSON.stringify(objectData);
 
-        const imgElement = this.querySelector("img");
-        if (imgElement && imgElement.getAttribute("src") === "") {
+        if (this.dataset.object !== jsonData) {
+            this.dataset.object = jsonData;
             this.render();
         }
     }
 
-    connectedCallback(): void {
-        this.render();
+    connectedCallback() {
+        if (!this.imgElement.src && this.dataset.object) {
+            this.render();
+        }
     }
 
     // search : dataset
-    private render(): void {
+    private render() {
         const data: IBookImageData | null = this.dataset.object
             ? JSON.parse(this.dataset.object)
             : null;
 
-        let imageSrc = "";
-        let imageAlt = "";
-
         if (data) {
             const { bookImageURL, bookname } = data;
-            imageSrc = bookImageURL;
-            imageAlt = bookname;
-        }
+            this.imgElement.src = bookImageURL;
+            this.imgElement.alt = bookname;
 
-        this.innerHTML = `
-            <div class="book-image">
-                <img class="thumb" src="${imageSrc}" alt="${imageAlt}"></img>
-            </div>`;
-
-        const imgElement = this.querySelector("img");
-        if (imgElement && imgElement.getAttribute("src")) {
-            this.handleError(imgElement);
+            this.imgContainer.appendChild(this.imgElement);
+            this.appendChild(this.imgContainer);
         }
     }
 
-    private handleError(imgElement: HTMLImageElement): void {
-        if (imgElement) {
-            imgElement.onerror = () => {
-                this.dataset.fail = "true";
-                imgElement.remove();
-            };
-        }
+    private handleImageError() {
+        this.dataset.fail = "true";
+        console.error(`Failed to load image: ${this.imgElement.src}`);
+        this.imgElement.remove();
     }
 }

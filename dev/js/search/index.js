@@ -958,44 +958,40 @@
   var BookImage = class extends HTMLElement {
     constructor() {
       super();
+      this.imgElement = document.createElement("img");
+      this.imgElement.className = "thumb";
+      this.imgContainer = document.createElement("div");
+      this.imgContainer.className = "book-image";
+      this.imgElement.onerror = this.handleImageError.bind(this);
     }
     // 즐겨찾기, 상세
     set data(objectData) {
-      this.dataset.object = JSON.stringify(objectData);
-      const imgElement = this.querySelector("img");
-      if (imgElement && imgElement.getAttribute("src") === "") {
+      const jsonData = JSON.stringify(objectData);
+      if (this.dataset.object !== jsonData) {
+        this.dataset.object = jsonData;
         this.render();
       }
     }
     connectedCallback() {
-      this.render();
+      if (!this.imgElement.src && this.dataset.object) {
+        this.render();
+      }
     }
     // search : dataset
     render() {
       const data = this.dataset.object ? JSON.parse(this.dataset.object) : null;
-      let imageSrc = "";
-      let imageAlt = "";
       if (data) {
         const { bookImageURL, bookname } = data;
-        imageSrc = bookImageURL;
-        imageAlt = bookname;
-      }
-      this.innerHTML = `
-            <div class="book-image">
-                <img class="thumb" src="${imageSrc}" alt="${imageAlt}"></img>
-            </div>`;
-      const imgElement = this.querySelector("img");
-      if (imgElement && imgElement.getAttribute("src")) {
-        this.handleError(imgElement);
+        this.imgElement.src = bookImageURL;
+        this.imgElement.alt = bookname;
+        this.imgContainer.appendChild(this.imgElement);
+        this.appendChild(this.imgContainer);
       }
     }
-    handleError(imgElement) {
-      if (imgElement) {
-        imgElement.onerror = () => {
-          this.dataset.fail = "true";
-          imgElement.remove();
-        };
-      }
+    handleImageError() {
+      this.dataset.fail = "true";
+      console.error(`Failed to load image: ${this.imgElement.src}`);
+      this.imgElement.remove();
     }
   };
 
