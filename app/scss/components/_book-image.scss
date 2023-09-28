@@ -2,10 +2,11 @@ book-image {
     display: flex;
     justify-content: center;
     &[data-fail="true"] {
-        .book-image {
-            border: 1px solid #eaeaea;
-            background-color: #f8f8f8;
-        }
+        box-sizing: border-box;
+        width: 120px;
+        height: 120px;
+        border: 1px solid #eaeaea;
+        background-color: #f8f8f8;
     }
     .thumb {
         border: 1px solid #e8e8e8;

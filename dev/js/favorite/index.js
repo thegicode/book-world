@@ -982,7 +982,7 @@
     // search : dataset
     render() {
       const data = this.dataset.object ? JSON.parse(this.dataset.object) : null;
-      if (data) {
+      if (data && "bookImageURL" in data && "bookname" in data) {
         const { bookImageURL, bookname } = data;
         this.imgElement.src = bookImageURL;
         this.imgElement.alt = bookname;
@@ -994,6 +994,9 @@
       this.dataset.fail = "true";
       console.error(`Failed to load image: ${this.imgElement.src}`);
       this.imgElement.remove();
+      if (!this.imgContainer.hasChildNodes()) {
+        this.imgContainer.remove();
+      }
     }
   };
 

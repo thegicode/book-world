@@ -114,7 +114,10 @@ book-image {
   display: flex;
   justify-content: center;
 }
-book-image[data-fail=true] .book-image {
+book-image[data-fail=true] {
+  box-sizing: border-box;
+  width: 120px;
+  height: 120px;
   border: 1px solid #eaeaea;
   background-color: #f8f8f8;
 }
