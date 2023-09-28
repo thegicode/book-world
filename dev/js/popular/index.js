@@ -641,6 +641,20 @@
     }
   };
   var state = getState();
+  var addBookInCategory = (name, isbn) => {
+    state.category[name].unshift(isbn);
+    setState(state);
+  };
+  var hasBookInCategory = (name, isbn) => {
+    return state.category[name].includes(isbn);
+  };
+  var removeBookInCategory = (name, isbn) => {
+    const index = state.category[name].indexOf(isbn);
+    if (index !== -1) {
+      state.category[name].splice(index, 1);
+      setState(state);
+    }
+  };
   var getBookSizeInCategory = () => {
     function getTotalItemCount(data) {
       return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
@@ -679,6 +693,84 @@
       const idx = this.PATHS.indexOf(document.location.pathname);
       if (idx >= 0)
         this.querySelectorAll("a")[idx].ariaSelected = "true";
+    }
+  };
+
+  // dev/scripts/modules/events.js
+  var updateBookSizeInCategor = () => {
+    const navElement = document.querySelector("nav-gnb");
+    navElement.querySelector(".size").textContent = String(getBookSizeInCategory());
+  };
+
+  // dev/scripts/components/CheckboxFavoriteBook.js
+  var CheckboxFavoriteBook = class extends HTMLElement {
+    constructor() {
+      super();
+      this.createCategoryItem = (container, category, ISBN) => {
+        const label = document.createElement("label");
+        const checkbox = this.createCheckbox(category, ISBN);
+        const span = document.createElement("span");
+        span.textContent = category;
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        container.appendChild(label);
+        return container;
+      };
+      this.isbn = this.getISBN();
+      this.button = null;
+      this.onClickCategory = this.onClickCategory.bind(this);
+    }
+    connectedCallback() {
+      this.render();
+    }
+    render() {
+      var _a;
+      const button = this.createButton();
+      const container = this.createContainer();
+      this.button = button;
+      this.appendChild(container);
+      this.appendChild(button);
+      (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
+    }
+    createButton() {
+      const button = document.createElement("button");
+      button.className = "category-button";
+      button.textContent = "Category";
+      return button;
+    }
+    onClickCategory() {
+      const el = this.querySelector(".category");
+      el.hidden = !el.hidden;
+    }
+    getISBN() {
+      const isbnElement = this.closest("[data-isbn]");
+      return isbnElement && isbnElement.dataset.isbn ? isbnElement.dataset.isbn : null;
+    }
+    createContainer() {
+      const container = document.createElement("div");
+      container.className = "category";
+      container.hidden = true;
+      state.categorySort.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      return container;
+    }
+    createCheckbox(category, ISBN) {
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      if (hasBookInCategory(category, ISBN)) {
+        checkbox.checked = true;
+      }
+      checkbox.addEventListener("change", () => this.onChange(checkbox, category, ISBN));
+      return checkbox;
+    }
+    onChange(checkbox, category, ISBN) {
+      const isBookInCategory = hasBookInCategory(category, ISBN);
+      if (isBookInCategory) {
+        removeBookInCategory(category, ISBN);
+      } else {
+        addBookInCategory(category, ISBN);
+      }
+      checkbox.checked = !isBookInCategory;
+      updateBookSizeInCategor();
     }
   };
 
@@ -813,9 +905,11 @@
         bookname,
         bookDtlUrl
       } = item, otherData = __rest(item, ["bookImageURL", "bookname", "bookDtlUrl"]);
+      const isbn = item.isbn13;
       const cloned = (_b = (_a = this.itemTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
       if (!cloned)
         return null;
+      cloned.dataset.isbn = isbn;
       const imageNode = cloned.querySelector("img");
       if (imageNode) {
         imageNode.src = bookImageURL;
@@ -832,7 +926,7 @@
       });
       const anchorEl = cloned.querySelector("a");
       if (anchorEl)
-        anchorEl.href = `/book?isbn=${item.isbn13}`;
+        anchorEl.href = `/book?isbn=${isbn}`;
       return cloned;
     }
     onRequestPopular(event) {
@@ -1127,5 +1221,6 @@
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-popular", Popular);
   customElements.define("popular-header", PopularHeader);
+  customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
 })();
 //# sourceMappingURL=index.js.map

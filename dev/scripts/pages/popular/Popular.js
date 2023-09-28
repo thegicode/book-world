@@ -18,6 +18,7 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+// import { BookImage } from "../../components/index";
 import { CustomEventEmitter, CustomFetch } from "../../utils";
 import { getCurrentDates } from "../../utils/utils";
 export default class Popular extends HTMLElement {
@@ -30,6 +31,7 @@ export default class Popular extends HTMLElement {
         this.onRequestPopular = this.onRequestPopular.bind(this);
         this.onClickPageNav = this.onClickPageNav.bind(this);
         this.params = null;
+        // console.log(BookImage);
     }
     connectedCallback() {
         const { currentYear, currentMonth, currentDay } = getCurrentDates();
@@ -99,9 +101,11 @@ export default class Popular extends HTMLElement {
         bookImageURL, bookname, bookDtlUrl } = item, otherData = __rest(item, ["bookImageURL", "bookname", "bookDtlUrl"])
         // authors,  class_nm, isbn13, class_no, loan_count,  no,  publication_year,  publisher, ranking, vol,
         ;
+        const isbn = item.isbn13;
         const cloned = (_b = (_a = this.itemTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
         if (!cloned)
             return null;
+        cloned.dataset.isbn = isbn;
         const imageNode = cloned.querySelector("img");
         if (imageNode) {
             imageNode.src = bookImageURL;
@@ -118,7 +122,7 @@ export default class Popular extends HTMLElement {
         });
         const anchorEl = cloned.querySelector("a");
         if (anchorEl)
-            anchorEl.href = `/book?isbn=${item.isbn13}`;
+            anchorEl.href = `/book?isbn=${isbn}`;
         return cloned;
     }
     onRequestPopular(event) {

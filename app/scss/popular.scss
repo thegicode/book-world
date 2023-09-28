@@ -1,5 +1,6 @@
 @import "./base/_reset.scss";
 @import "./components/_gnb.scss";
+@import "./components/_checkbox-favorite-book.scss";
 
 .root {
     display: flex;
@@ -188,6 +189,8 @@ popular-header {
 .popular-item {
     display: flex;
     gap: 10px;
+
+    position: relative;
     padding: 10px;
     border-bottom: 1px solid #ddd;
 
@@ -226,6 +229,11 @@ popular-header {
         li {
             margin-bottom: 6px;
         }
+    }
+
+    checkbox-favorite-book {
+        right: 10px;
+        bottom: 10px;
     }
 }
 
