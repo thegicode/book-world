@@ -1227,7 +1227,7 @@
     }
     render(data) {
       this.bookData = data;
-      const _a = data.book, { bookImageURL, bookname, isbn13 } = _a, otherData = __rest(_a, ["bookImageURL", "bookname", "isbn13"]);
+      const _a = data.book, { bookImageURL, bookname } = _a, otherData = __rest(_a, ["bookImageURL", "bookname"]);
       const imageNode = this.querySelector("book-image");
       if (imageNode) {
         imageNode.data = {
@@ -1248,7 +1248,7 @@
       });
       const anchorEl = this.querySelector("a");
       if (anchorEl)
-        anchorEl.href = `/book?isbn=${isbn13}`;
+        anchorEl.href = `/book?isbn=${data.book.isbn13}`;
       if (this.libraryButton && Object.keys(state.libraries).length === 0) {
         this.libraryButton.hidden = true;
       }

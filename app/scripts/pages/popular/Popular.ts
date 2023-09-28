@@ -110,19 +110,13 @@ export default class Popular extends HTMLElement {
     createItem(item: IPopularBook) {
         const {
             // addition_symbol,
-            authors,
-            bookDtlUrl,
             bookImageURL,
             bookname,
-            class_nm,
-            // class_no,
-            isbn13,
-            loan_count,
-            no,
-            publication_year,
-            publisher,
-            ranking,
-            // vol,
+            bookDtlUrl,
+
+            ...otherData
+
+            // authors,  class_nm, isbn13, class_no, loan_count,  no,  publication_year,  publisher, ranking, vol,
         } = item;
 
         const cloned = this.itemTemplate?.content.firstElementChild?.cloneNode(
@@ -130,34 +124,26 @@ export default class Popular extends HTMLElement {
         ) as HTMLElement;
         if (!cloned) return null;
 
-        const bookNameEl = cloned.querySelector(".bookname") as HTMLElement;
-        const rankingEl = cloned.querySelector(".ranking") as HTMLElement;
-        const authorsEl = cloned.querySelector(".authors") as HTMLElement;
-        const publicationYeaEl = cloned.querySelector(
-            ".publication_year"
-        ) as HTMLElement;
-        const publisherEl = cloned.querySelector(".publisher") as HTMLElement;
-        const classEl = cloned.querySelector(".class_nm") as HTMLElement;
-        const isbnEl = cloned.querySelector(".isbn13") as HTMLElement;
-        const loanCountEl = cloned.querySelector(".loan_count") as HTMLElement;
-        const bookDtlUrlEl = cloned.querySelector(
-            ".bookDtlUrl"
-        ) as HTMLLinkElement;
-        const imageEl = cloned.querySelector(".bookImage") as HTMLImageElement;
-        const anchorEl = cloned.querySelector("a") as HTMLAnchorElement;
+        const imageNode = cloned.querySelector("img");
+        if (imageNode) {
+            imageNode.src = bookImageURL;
+            imageNode.alt = bookname;
+        }
 
-        cloned.dataset.index = no.toString();
-        bookNameEl.textContent = bookname;
-        rankingEl.textContent = ranking;
-        authorsEl.textContent = authors;
-        publicationYeaEl.textContent = publication_year;
-        publisherEl.textContent = publisher;
-        classEl.textContent = class_nm;
-        isbnEl.textContent = isbn13;
-        loanCountEl.textContent = loan_count;
-        bookDtlUrlEl.href = bookDtlUrl;
-        imageEl.src = bookImageURL;
-        anchorEl.href = `./book?isbn=${isbn13}`;
+        const bookDtlUrlNode = cloned.querySelector(
+            ".bookDtlUrl"
+        ) as HTMLAnchorElement;
+        if (bookDtlUrlNode) {
+            bookDtlUrlNode.href = bookDtlUrl;
+        }
+
+        Object.entries(otherData).forEach(([key, value]) => {
+            const element = cloned.querySelector(`.${key}`) as HTMLElement;
+            if (element) element.textContent = value as string;
+        });
+
+        const anchorEl = cloned.querySelector("a") as HTMLAnchorElement;
+        if (anchorEl) anchorEl.href = `/book?isbn=${item.isbn13}`;
 
         return cloned;
     }

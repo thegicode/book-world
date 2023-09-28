@@ -57,9 +57,8 @@ export default class FavoriteItem extends HTMLElement {
         const {
             bookImageURL,
             bookname,
-            isbn13,
             ...otherData
-            // authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
+            // isbn13, authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
         } = data.book;
 
         const imageNode = this.querySelector<BookImage>("book-image");
@@ -82,7 +81,7 @@ export default class FavoriteItem extends HTMLElement {
         });
 
         const anchorEl = this.querySelector("a") as HTMLAnchorElement;
-        if (anchorEl) anchorEl.href = `/book?isbn=${isbn13}`;
+        if (anchorEl) anchorEl.href = `/book?isbn=${data.book.isbn13}`;
 
         if (this.libraryButton && Object.keys(state.libraries).length === 0) {
             this.libraryButton.hidden = true;

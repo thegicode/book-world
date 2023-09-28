@@ -55,8 +55,8 @@ export default class FavoriteItem extends HTMLElement {
     }
     render(data) {
         this.bookData = data;
-        const _a = data.book, { bookImageURL, bookname, isbn13 } = _a, otherData = __rest(_a, ["bookImageURL", "bookname", "isbn13"])
-        // authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
+        const _a = data.book, { bookImageURL, bookname } = _a, otherData = __rest(_a, ["bookImageURL", "bookname"])
+        // isbn13, authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
         ;
         const imageNode = this.querySelector("book-image");
         if (imageNode) {
@@ -79,7 +79,7 @@ export default class FavoriteItem extends HTMLElement {
         });
         const anchorEl = this.querySelector("a");
         if (anchorEl)
-            anchorEl.href = `/book?isbn=${isbn13}`;
+            anchorEl.href = `/book?isbn=${data.book.isbn13}`;
         if (this.libraryButton && Object.keys(state.libraries).length === 0) {
             this.libraryButton.hidden = true;
         }

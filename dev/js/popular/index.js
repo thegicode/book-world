@@ -724,6 +724,18 @@
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
+  var __rest = function(s, e) {
+    var t = {};
+    for (var p in s)
+      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+          t[p[i]] = s[p[i]];
+      }
+    return t;
+  };
   var Popular = class extends HTMLElement {
     constructor() {
       super();
@@ -797,46 +809,30 @@
       var _a, _b;
       const {
         // addition_symbol,
-        authors,
-        bookDtlUrl,
         bookImageURL,
         bookname,
-        class_nm,
-        // class_no,
-        isbn13,
-        loan_count,
-        no,
-        publication_year,
-        publisher,
-        ranking
-        // vol,
-      } = item;
+        bookDtlUrl
+      } = item, otherData = __rest(item, ["bookImageURL", "bookname", "bookDtlUrl"]);
       const cloned = (_b = (_a = this.itemTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
       if (!cloned)
         return null;
-      const bookNameEl = cloned.querySelector(".bookname");
-      const rankingEl = cloned.querySelector(".ranking");
-      const authorsEl = cloned.querySelector(".authors");
-      const publicationYeaEl = cloned.querySelector(".publication_year");
-      const publisherEl = cloned.querySelector(".publisher");
-      const classEl = cloned.querySelector(".class_nm");
-      const isbnEl = cloned.querySelector(".isbn13");
-      const loanCountEl = cloned.querySelector(".loan_count");
-      const bookDtlUrlEl = cloned.querySelector(".bookDtlUrl");
-      const imageEl = cloned.querySelector(".bookImage");
+      const imageNode = cloned.querySelector("img");
+      if (imageNode) {
+        imageNode.src = bookImageURL;
+        imageNode.alt = bookname;
+      }
+      const bookDtlUrlNode = cloned.querySelector(".bookDtlUrl");
+      if (bookDtlUrlNode) {
+        bookDtlUrlNode.href = bookDtlUrl;
+      }
+      Object.entries(otherData).forEach(([key, value]) => {
+        const element = cloned.querySelector(`.${key}`);
+        if (element)
+          element.textContent = value;
+      });
       const anchorEl = cloned.querySelector("a");
-      cloned.dataset.index = no.toString();
-      bookNameEl.textContent = bookname;
-      rankingEl.textContent = ranking;
-      authorsEl.textContent = authors;
-      publicationYeaEl.textContent = publication_year;
-      publisherEl.textContent = publisher;
-      classEl.textContent = class_nm;
-      isbnEl.textContent = isbn13;
-      loanCountEl.textContent = loan_count;
-      bookDtlUrlEl.href = bookDtlUrl;
-      imageEl.src = bookImageURL;
-      anchorEl.href = `./book?isbn=${isbn13}`;
+      if (anchorEl)
+        anchorEl.href = `/book?isbn=${item.isbn13}`;
       return cloned;
     }
     onRequestPopular(event) {
