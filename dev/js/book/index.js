@@ -826,6 +826,12 @@
     }
     return content.cloneNode(true);
   }
+  function fillElementsWithData(data, container) {
+    Object.entries(data).forEach(([key, value]) => {
+      const element = container.querySelector(`.${key}`);
+      element.textContent = String(value);
+    });
+  }
 
   // dev/scripts/pages/book/Book.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
@@ -904,9 +910,9 @@
       this.renderBook(book);
       this.renderLoanGroups(loanGrps);
       this.renderKeyword(keywords);
-      this.renderCoLeanBooks(coLoanBooks);
-      this.renderManiaBooks(maniaRecBooks);
-      this.renderReaderBooks(readerRecBooks);
+      this.renderRecBooks(".coLoanBooks", coLoanBooks, "#tp-coLoanBookItem");
+      this.renderRecBooks(".maniaBooks", maniaRecBooks, "#tp-recBookItem");
+      this.renderRecBooks(".readerBooks", readerRecBooks, "#tp-recBookItem");
       (_a = this.loadingElement) === null || _a === void 0 ? void 0 : _a.remove();
       this.loadingElement = null;
     }
@@ -921,10 +927,7 @@
         bookImageURL,
         bookname
       };
-      Object.entries(otherData).forEach(([key, value]) => {
-        const element = this.querySelector(`.${key}`);
-        element.textContent = value;
-      });
+      fillElementsWithData(otherData, this);
     }
     renderLoanGroups(loanGrps) {
       const loanGroupBody = this.querySelector(".loanGrps tbody");
@@ -936,10 +939,7 @@
       const fragment = new DocumentFragment();
       loanGrps.forEach((loanGrp) => {
         const clone = cloneTemplate(template);
-        Object.entries(loanGrp).map(([key, value]) => {
-          const targetElement = clone.querySelector(`.${key}`);
-          targetElement.textContent = value;
-        });
+        fillElementsWithData(loanGrp, clone);
         fragment.appendChild(clone);
       });
       loanGroupBody.appendChild(fragment);
@@ -951,40 +951,21 @@
       }).join("");
       this.querySelector(".keyword").innerHTML = keywordsString;
     }
-    renderCoLeanBooks(coLoanBooks) {
-      var _a;
-      const template = document.querySelector("#tp-coLoanBookItem");
-      if (!template)
+    renderRecBooks(selector, books, template) {
+      const container = this.querySelector(selector);
+      const tmpl = document.querySelector(template);
+      if (!container || !tmpl) {
+        console.error("Container or template not found");
         return;
-      const fragment = new DocumentFragment();
-      coLoanBooks.map((book) => this.createRecItem(template, book)).forEach((el) => fragment.appendChild(el));
-      (_a = this.querySelector(".coLoanBooks")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
-    }
-    renderManiaBooks(maniaRecBooks) {
-      var _a;
-      const template = this.recBookTemplate;
-      if (!template)
-        return;
-      const fragment = new DocumentFragment();
-      maniaRecBooks.map((book) => this.createRecItem(template, book)).forEach((el) => fragment.appendChild(el));
-      (_a = this.querySelector(".maniaBooks")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
-    }
-    renderReaderBooks(readerRecBooks) {
-      var _a;
-      const template = this.recBookTemplate;
-      if (!template)
-        return;
-      const fragment = new DocumentFragment();
-      readerRecBooks.map((book) => this.createRecItem(template, book)).forEach((el) => fragment.appendChild(el));
-      (_a = this.querySelector(".readerBooks")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
+      }
+      const fragment = document.createDocumentFragment();
+      books.map((book) => this.createRecItem(tmpl, book)).forEach((item) => fragment.appendChild(item));
+      container.appendChild(fragment);
     }
     createRecItem(template, book) {
       const el = cloneTemplate(template);
       const { isbn13 } = book;
-      for (const [key, value] of Object.entries(book)) {
-        const node = el.querySelector(`.${key}`);
-        node.textContent = value;
-      }
+      fillElementsWithData(book, el);
       const link = el.querySelector("a");
       if (link)
         link.href = `book?isbn=${isbn13}`;

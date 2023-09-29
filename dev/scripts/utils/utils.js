@@ -17,4 +17,10 @@ export function cloneTemplate(template) {
     }
     return content.cloneNode(true);
 }
+export function fillElementsWithData(data, container) {
+    Object.entries(data).forEach(([key, value]) => {
+        const element = container.querySelector(`.${key}`);
+        element.textContent = String(value);
+    });
+}
 //# sourceMappingURL=utils.js.map

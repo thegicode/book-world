@@ -1,6 +1,6 @@
 import { BookImage } from "../../components/index";
 import { CustomFetch } from "../../utils/index";
-import { cloneTemplate } from "../../utils/utils";
+import { cloneTemplate, fillElementsWithData } from "../../utils/utils";
 
 export default class Book extends HTMLElement {
     protected loadingElement: HTMLElement | null;
@@ -52,14 +52,15 @@ export default class Book extends HTMLElement {
             loanGrps,
             maniaRecBooks,
             readerRecBooks,
-        } = this.data; // coLoanBooks, loanGrps,loanHistory,
+        } = this.data; // loanHistory,
 
         this.renderBook(book);
         this.renderLoanGroups(loanGrps);
         this.renderKeyword(keywords);
-        this.renderCoLeanBooks(coLoanBooks);
-        this.renderManiaBooks(maniaRecBooks);
-        this.renderReaderBooks(readerRecBooks);
+
+        this.renderRecBooks(".coLoanBooks", coLoanBooks, "#tp-coLoanBookItem");
+        this.renderRecBooks(".maniaBooks", maniaRecBooks, "#tp-recBookItem");
+        this.renderRecBooks(".readerBooks", readerRecBooks, "#tp-recBookItem");
 
         this.loadingElement?.remove();
         this.loadingElement = null;
@@ -87,10 +88,7 @@ export default class Book extends HTMLElement {
             bookname,
         };
 
-        Object.entries(otherData).forEach(([key, value]) => {
-            const element = this.querySelector(`.${key}`) as HTMLElement;
-            element.textContent = value;
-        });
+        fillElementsWithData(otherData, this);
     }
 
     renderLoanGroups(loanGrps: ILoanGroups[]) {
@@ -105,12 +103,9 @@ export default class Book extends HTMLElement {
         const fragment = new DocumentFragment();
         loanGrps.forEach((loanGrp) => {
             const clone = cloneTemplate(template);
-            Object.entries(loanGrp).map(([key, value]) => {
-                const targetElement = clone.querySelector(
-                    `.${key}`
-                ) as HTMLElement;
-                targetElement.textContent = value;
-            });
+
+            fillElementsWithData(loanGrp, clone);
+
             fragment.appendChild(clone);
         });
 
@@ -129,52 +124,29 @@ export default class Book extends HTMLElement {
             keywordsString;
     }
 
-    renderCoLeanBooks(coLoanBooks: ICoLoanBooks[]) {
-        const template = document.querySelector(
-            "#tp-coLoanBookItem"
-        ) as HTMLTemplateElement;
-        if (!template) return;
+    renderRecBooks(selector: string, books: IRecBook[], template: string) {
+        const container = this.querySelector(selector);
+        const tmpl = document.querySelector(template) as HTMLTemplateElement;
+        if (!container || !tmpl) {
+            console.error("Container or template not found");
+            return;
+        }
 
-        const fragment = new DocumentFragment();
-        coLoanBooks
-            .map((book) => this.createRecItem(template, book))
-            .forEach((el) => fragment.appendChild(el));
+        const fragment = document.createDocumentFragment();
 
-        this.querySelector(".coLoanBooks")?.appendChild(fragment);
+        books
+            .map((book) => this.createRecItem(tmpl, book))
+            .forEach((item) => fragment.appendChild(item));
+
+        container.appendChild(fragment);
     }
 
-    renderManiaBooks(maniaRecBooks: IMainaBook[]) {
-        const template = this.recBookTemplate;
-        if (!template) return;
-
-        const fragment = new DocumentFragment();
-        maniaRecBooks
-            .map((book) => this.createRecItem(template, book))
-            .forEach((el) => fragment.appendChild(el));
-
-        this.querySelector(".maniaBooks")?.appendChild(fragment);
-    }
-
-    renderReaderBooks(readerRecBooks: IReaderBook[]) {
-        const template = this.recBookTemplate;
-        if (!template) return;
-
-        const fragment = new DocumentFragment();
-        readerRecBooks
-            .map((book) => this.createRecItem(template, book))
-            .forEach((el) => fragment.appendChild(el));
-
-        this.querySelector(".readerBooks")?.appendChild(fragment);
-    }
-
-    createRecItem(template: HTMLTemplateElement, book: IReaderBook) {
+    createRecItem(template: HTMLTemplateElement, book: IRecBook) {
         const el = cloneTemplate(template);
         const { isbn13 } = book;
 
-        for (const [key, value] of Object.entries(book)) {
-            const node = el.querySelector(`.${key}`) as HTMLElement;
-            node.textContent = value;
-        }
+        fillElementsWithData(book, el);
+
         const link = el.querySelector("a");
         if (link) link.href = `book?isbn=${isbn13}`;
 

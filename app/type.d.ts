@@ -23,19 +23,14 @@ interface IKeyword {
     weight: string;
 }
 
-interface IReaderBook {
+interface IRecBook {
     authors: string;
     bookname: string;
     isbn13: string;
     publication_year: string;
     publisher: string;
     vol: string;
-}
-
-type IMainaBook = IReaderBook;
-
-interface ICoLoanBooks extends IReaderBook {
-    loanCnt: string;
+    loanCnt?: string;
 }
 
 interface IRecommendedBook {

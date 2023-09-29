@@ -19,3 +19,10 @@ export function cloneTemplate(template: HTMLTemplateElement) {
     }
     return content.cloneNode(true) as HTMLElement;
 }
+
+export function fillElementsWithData<T>(data: T, container: HTMLElement) {
+    Object.entries(data as Record<string, number>).forEach(([key, value]) => {
+        const element = container.querySelector(`.${key}`) as HTMLElement;
+        element.textContent = String(value);
+    });
+}
