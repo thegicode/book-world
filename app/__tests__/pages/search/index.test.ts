@@ -9,7 +9,7 @@ describe("pages search index", () => {
         expect(customElements.get("book-item")).toBeDefined();
         expect(customElements.get("book-description")).toBeDefined();
         expect(customElements.get("library-book-exist")).toBeDefined();
-        expect(customElements.get("checkbox-favorite-book")).toBeDefined();
+        expect(customElements.get("category-selector")).toBeDefined();
         expect(customElements.get("book-image")).toBeDefined();
     });
 });

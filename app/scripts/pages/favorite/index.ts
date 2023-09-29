@@ -1,6 +1,6 @@
 import {
     BookDescription,
-    CheckboxFavoriteBook,
+    CategorySelector,
     LibraryBookExist,
     NavGnb,
     BookImage,
@@ -17,6 +17,6 @@ customElements.define("favorite-nav", FavoriteNav);
 customElements.define("favorite-item", FavoriteItem);
 customElements.define("book-description", BookDescription);
 customElements.define("library-book-exist", LibraryBookExist);
-customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
+customElements.define("category-selector", CategorySelector);
 customElements.define("book-image", BookImage);
 customElements.define("overlay-category", OverlayCategory);

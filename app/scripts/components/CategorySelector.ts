@@ -6,7 +6,7 @@ import {
 } from "../modules/model";
 import { updateBookSizeInCategor } from "../modules/events";
 
-export default class CheckboxFavoriteBook extends HTMLElement {
+export default class CategorySelector extends HTMLElement {
     protected isbn: string | null;
     button: HTMLButtonElement | null;
 

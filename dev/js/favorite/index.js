@@ -884,8 +884,8 @@
     navElement.querySelector(".size").textContent = String(getBookSizeInCategory());
   };
 
-  // dev/scripts/components/CheckboxFavoriteBook.js
-  var CheckboxFavoriteBook = class extends HTMLElement {
+  // dev/scripts/components/CategorySelector.js
+  var CategorySelector = class extends HTMLElement {
     constructor() {
       super();
       this.createCategoryItem = (container, category, ISBN) => {
@@ -1468,7 +1468,7 @@
   customElements.define("favorite-item", FavoriteItem);
   customElements.define("book-description", BookDescription);
   customElements.define("library-book-exist", LibraryBookExist);
-  customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
+  customElements.define("category-selector", CategorySelector);
   customElements.define("book-image", BookImage);
   customElements.define("overlay-category", OverlayCategory);
 })();

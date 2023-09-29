@@ -36,12 +36,12 @@ button:disabled {
   color: #ffffb1;
 }
 
-checkbox-favorite-book {
+category-selector {
   position: absolute;
   bottom: 0;
   right: 0;
 }
-checkbox-favorite-book .category-button {
+category-selector .category-button {
   position: relative;
   z-index: 1;
   width: 100%;
@@ -53,7 +53,7 @@ checkbox-favorite-book .category-button {
   color: #efefef;
   font-size: 12px;
 }
-checkbox-favorite-book .category {
+category-selector .category {
   display: block;
   box-sizing: border-box;
   margin-bottom: -5px;
@@ -64,21 +64,21 @@ checkbox-favorite-book .category {
   font-size: 12px;
   transition: all 0.3s ease;
 }
-checkbox-favorite-book .category[hidden] {
+category-selector .category[hidden] {
   opacity: 0;
 }
-checkbox-favorite-book .category label {
+category-selector .category label {
   display: flex;
   align-items: center;
   padding: 0 15px 0 5px;
 }
-checkbox-favorite-book .category label:first-child {
+category-selector .category label:first-child {
   padding-top: 8px;
 }
-checkbox-favorite-book .category label:last-child {
+category-selector .category label:last-child {
   padding-bottom: 8px;
 }
-checkbox-favorite-book .category span {
+category-selector .category span {
   margin-left: 3px;
   color: #666;
 }
@@ -291,7 +291,7 @@ popular-header .filterButton {
 .popular-item .book-info li {
   margin-bottom: 6px;
 }
-.popular-item checkbox-favorite-book {
+.popular-item category-selector {
   right: 10px;
   bottom: 10px;
 }

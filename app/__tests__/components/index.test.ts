@@ -2,7 +2,7 @@ import {
     BookDescription,
     LibraryBookExist,
     NavGnb,
-    CheckboxFavoriteBook,
+    CategorySelector,
     BookImage,
 } from "../../scripts/components/index";
 
@@ -19,8 +19,8 @@ describe("components index", () => {
         expect(NavGnb).toBeDefined();
     });
 
-    test("CheckboxFavoriteBook is defined", () => {
-        expect(CheckboxFavoriteBook).toBeDefined();
+    test("CategorySelector is defined", () => {
+        expect(CategorySelector).toBeDefined();
     });
 
     test("BookImage is defined", () => {

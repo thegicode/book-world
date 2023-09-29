@@ -1,7 +1,7 @@
 import {
     NavGnb,
     BookDescription,
-    CheckboxFavoriteBook,
+    CategorySelector,
     LibraryBookExist,
     BookImage,
 } from "../../components/index";
@@ -19,6 +19,6 @@ customElements.define("input-search", InputSearch);
 customElements.define("book-item", BookItem);
 customElements.define("book-description", BookDescription);
 customElements.define("library-book-exist", LibraryBookExist);
-customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
+customElements.define("category-selector", CategorySelector);
 customElements.define("book-image", BookImage);
 // customElements.define('test-element', TestElement)

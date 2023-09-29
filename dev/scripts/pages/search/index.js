@@ -1,4 +1,4 @@
-import { NavGnb, BookDescription, CheckboxFavoriteBook, LibraryBookExist, BookImage, } from "../../components/index";
+import { NavGnb, BookDescription, CategorySelector, LibraryBookExist, BookImage, } from "../../components/index";
 import AppSearch from "./AppSearch";
 import InputSearch from "./InputSearch";
 import BookList from "./BookList";
@@ -11,7 +11,7 @@ customElements.define("input-search", InputSearch);
 customElements.define("book-item", BookItem);
 customElements.define("book-description", BookDescription);
 customElements.define("library-book-exist", LibraryBookExist);
-customElements.define("checkbox-favorite-book", CheckboxFavoriteBook);
+customElements.define("category-selector", CategorySelector);
 customElements.define("book-image", BookImage);
 // customElements.define('test-element', TestElement)
 //# sourceMappingURL=index.js.map
