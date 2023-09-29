@@ -1,5 +1,6 @@
 import { BookImage } from "../../components/index";
 import { CustomFetch } from "../../utils/index";
+import { cloneTemplate } from "../../utils/utils";
 
 export default class Book extends HTMLElement {
     protected loadingElement: HTMLElement | null;
@@ -15,7 +16,7 @@ export default class Book extends HTMLElement {
         this.recBookTemplate = document.querySelector("#tp-recBookItem");
     }
 
-    connectedCallback(): void {
+    connectedCallback() {
         this.loadingElement = this.querySelector(".loading") as HTMLElement;
 
         const isbn = new URLSearchParams(location.search).get("isbn") as string;
@@ -38,36 +39,38 @@ export default class Book extends HTMLElement {
         }
     }
 
-    protected render(): void {
-        if (!this.data) return;
+    protected render() {
+        if (!this.data) {
+            console.error("Data is null");
+            return;
+        }
 
-        const { book, keywords, coLoanBooks, maniaRecBooks, readerRecBooks } =
-            this.data; // coLoanBooks, loanGrps,loanHistory,
+        const {
+            book,
+            keywords,
+            coLoanBooks,
+            loanGrps,
+            maniaRecBooks,
+            readerRecBooks,
+        } = this.data; // coLoanBooks, loanGrps,loanHistory,
 
         this.renderBook(book);
+        this.renderLoanGroups(loanGrps);
         this.renderKeyword(keywords);
         this.renderCoLeanBooks(coLoanBooks);
         this.renderManiaBooks(maniaRecBooks);
         this.renderReaderBooks(readerRecBooks);
 
-        if (this.loadingElement) {
-            this.loadingElement.remove();
-            this.loadingElement = null;
-        }
+        this.loadingElement?.remove();
+        this.loadingElement = null;
     }
 
     renderBook(book: IBook) {
         const {
             bookname,
-            authors,
             bookImageURL,
-            class_nm,
-            class_no,
-            description,
-            isbn13,
-            loanCnt,
-            publication_year,
-            publisher,
+            ...otherData
+            // authors, class_nm,  class_no, description, isbn13,  loanCnt, publication_year,  publisher,
         } = book;
 
         const bookNames = bookname
@@ -76,26 +79,42 @@ export default class Book extends HTMLElement {
             .join("");
 
         (this.querySelector(".bookname") as HTMLElement).innerHTML = bookNames;
-        (this.querySelector(".authors") as HTMLElement).textContent = authors;
-        (this.querySelector(".class_nm") as HTMLElement).textContent = class_nm;
-        (this.querySelector(".class_no") as HTMLElement).textContent = class_no;
-        (this.querySelector(".description") as HTMLElement).textContent =
-            description;
-        (this.querySelector(".isbn13") as HTMLElement).textContent = isbn13;
-        (this.querySelector(".loanCnt") as HTMLElement).textContent =
-            loanCnt.toLocaleString();
-        (this.querySelector(".publication_year") as HTMLElement).textContent =
-            publication_year;
-        (this.querySelector(".publisher") as HTMLElement).textContent =
-            publisher;
 
         const bookImageElement = this.querySelector<BookImage>("book-image");
-        if (bookImageElement) {
-            bookImageElement.data = {
-                bookImageURL,
-                bookname,
-            };
-        }
+        if (!bookImageElement) return;
+        bookImageElement.data = {
+            bookImageURL,
+            bookname,
+        };
+
+        Object.entries(otherData).forEach(([key, value]) => {
+            const element = this.querySelector(`.${key}`) as HTMLElement;
+            element.textContent = value;
+        });
+    }
+
+    renderLoanGroups(loanGrps: ILoanGroups[]) {
+        const loanGroupBody = this.querySelector(".loanGrps tbody");
+        if (!loanGroupBody) return;
+
+        const template = document.querySelector(
+            "#tp-loanGrpItem"
+        ) as HTMLTemplateElement;
+        if (!template) return;
+
+        const fragment = new DocumentFragment();
+        loanGrps.forEach((loanGrp) => {
+            const clone = cloneTemplate(template);
+            Object.entries(loanGrp).map(([key, value]) => {
+                const targetElement = clone.querySelector(
+                    `.${key}`
+                ) as HTMLElement;
+                targetElement.textContent = value;
+            });
+            fragment.appendChild(clone);
+        });
+
+        loanGroupBody.appendChild(fragment);
     }
 
     renderKeyword(keywords: IKeyword[]) {
@@ -111,9 +130,9 @@ export default class Book extends HTMLElement {
     }
 
     renderCoLeanBooks(coLoanBooks: ICoLoanBooks[]) {
-        const template = (
-            document.querySelector("#tp-coLoanBookItem") as HTMLTemplateElement
-        )?.content.firstElementChild;
+        const template = document.querySelector(
+            "#tp-coLoanBookItem"
+        ) as HTMLTemplateElement;
         if (!template) return;
 
         const fragment = new DocumentFragment();
@@ -125,7 +144,7 @@ export default class Book extends HTMLElement {
     }
 
     renderManiaBooks(maniaRecBooks: IMainaBook[]) {
-        const template = this.recBookTemplate?.content.firstElementChild;
+        const template = this.recBookTemplate;
         if (!template) return;
 
         const fragment = new DocumentFragment();
@@ -137,7 +156,7 @@ export default class Book extends HTMLElement {
     }
 
     renderReaderBooks(readerRecBooks: IReaderBook[]) {
-        const template = this.recBookTemplate?.content.firstElementChild;
+        const template = this.recBookTemplate;
         if (!template) return;
 
         const fragment = new DocumentFragment();
@@ -148,8 +167,8 @@ export default class Book extends HTMLElement {
         this.querySelector(".readerBooks")?.appendChild(fragment);
     }
 
-    createRecItem(template: Element, book: IReaderBook) {
-        const el = template.cloneNode(true) as HTMLElement;
+    createRecItem(template: HTMLTemplateElement, book: IReaderBook) {
+        const el = cloneTemplate(template);
         const { isbn13 } = book;
 
         for (const [key, value] of Object.entries(book)) {

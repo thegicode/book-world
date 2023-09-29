@@ -10,4 +10,11 @@ export function getCurrentDates() {
         currentDay,
     };
 }
+export function cloneTemplate(template) {
+    const content = template.content.firstElementChild;
+    if (!content) {
+        throw new Error("Template content is empty");
+    }
+    return content.cloneNode(true);
+}
 //# sourceMappingURL=utils.js.map

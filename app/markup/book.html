@@ -31,36 +31,59 @@
 
                 <ul class="bookInfo">
                     <li class="description-area">
-                        <h6 class="title">책 소개</h6>
+                        <p class="title">책 소개</p>
                         <p class="description"></p>
                     </li>
                     <li>
-                        <h6 class="title">저자</h6>
+                        <p class="title">저자</p>
                         <p class="authors"></p>
                     </li>
                     <li>
-                        <h6 class="title">출판사</h6>
+                        <p class="title">출판사</p>
                         <p class="publisher"></p>
                     </li>
 
                     <li>
-                        <h6 class="title">출판연월</h6>
+                        <p class="title">출판연월</p>
                         <p class="publication_year"></p>
                     </li>
                     <li>
-                        <h6 class="title">ISBN</h6>
+                        <p class="title">ISBN</p>
                         <p class="isbn13"></p>
                     </li>
                     <li>
-                        <h6 class="title">주제분야</h6>
+                        <p class="title">주제분야</p>
                         <p class="class_no"></p>
                         <p class="class_nm"></p>
                     </li>
                     <li>
-                        <h6 class="title">대출횟수</h6>
+                        <p class="title">대출횟수</p>
                         <p class="loanCnt"></p>
                     </li>
+                    <li>
+                        <p class="title">vol</p>
+                        <p class="vol"></p>
+                    </li>
                 </ul>
+
+                <h4 class="title">다대출 이용자 그룹</h4>
+                <div class="loanGrps">
+                    <p class="guide">
+                        최근 30일동안 대출을 가장 많이 한 연령 및 성별을
+                        제공합니다.
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>연령</th>
+                                <th>성별</th>
+                                <th>대출건수</th>
+                                <th>순위</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
 
                 <h4 class="title">키워드</h4>
                 <div class="keyword"></div>
@@ -90,6 +113,15 @@
                     <span class="loanAvailable"></span>
                 </p>
             </li>
+        </template>
+
+        <template id="tp-loanGrpItem">
+            <tr>
+                <td class="age"></td>
+                <td class="gender"></td>
+                <td class="loanCnt"></td>
+                <td class="ranking"></td>
+            </tr>
         </template>
 
         <template id="tp-coLoanBookItem">

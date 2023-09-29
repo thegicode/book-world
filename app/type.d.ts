@@ -11,6 +11,13 @@ interface IBook {
     publisher: string;
 }
 
+interface ILoanGroups {
+    age: string;
+    gender: string;
+    loanCnt: number;
+    ranking: number;
+}
+
 interface IKeyword {
     word: string;
     weight: string;
@@ -40,6 +47,7 @@ interface IUsageAnalysisListData {
     book: IBook;
     keywords: IKeyword[];
     coLoanBooks: ICoLoanBooks[];
+    loanGrps: ILoanGroups[];
     maniaRecBooks: IMainaBook[];
     readerRecBooks: IReaderBook[];
 }

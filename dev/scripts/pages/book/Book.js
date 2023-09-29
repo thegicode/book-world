@@ -7,7 +7,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import { CustomFetch } from "../../utils/index";
+import { cloneTemplate } from "../../utils/utils";
 export default class Book extends HTMLElement {
     constructor() {
         super();
@@ -37,45 +49,59 @@ export default class Book extends HTMLElement {
         });
     }
     render() {
-        if (!this.data)
+        var _a;
+        if (!this.data) {
+            console.error("Data is null");
             return;
-        const { book, keywords, coLoanBooks, maniaRecBooks, readerRecBooks } = this.data; // coLoanBooks, loanGrps,loanHistory,
+        }
+        const { book, keywords, coLoanBooks, loanGrps, maniaRecBooks, readerRecBooks, } = this.data; // coLoanBooks, loanGrps,loanHistory,
         this.renderBook(book);
+        this.renderLoanGroups(loanGrps);
         this.renderKeyword(keywords);
         this.renderCoLeanBooks(coLoanBooks);
         this.renderManiaBooks(maniaRecBooks);
         this.renderReaderBooks(readerRecBooks);
-        if (this.loadingElement) {
-            this.loadingElement.remove();
-            this.loadingElement = null;
-        }
+        (_a = this.loadingElement) === null || _a === void 0 ? void 0 : _a.remove();
+        this.loadingElement = null;
     }
     renderBook(book) {
-        const { bookname, authors, bookImageURL, class_nm, class_no, description, isbn13, loanCnt, publication_year, publisher, } = book;
+        const { bookname, bookImageURL } = book, otherData = __rest(book, ["bookname", "bookImageURL"])
+        // authors, class_nm,  class_no, description, isbn13,  loanCnt, publication_year,  publisher,
+        ;
         const bookNames = bookname
             .split(/[=/:]/)
             .map((item) => `<p>${item}</p>`)
             .join("");
         this.querySelector(".bookname").innerHTML = bookNames;
-        this.querySelector(".authors").textContent = authors;
-        this.querySelector(".class_nm").textContent = class_nm;
-        this.querySelector(".class_no").textContent = class_no;
-        this.querySelector(".description").textContent =
-            description;
-        this.querySelector(".isbn13").textContent = isbn13;
-        this.querySelector(".loanCnt").textContent =
-            loanCnt.toLocaleString();
-        this.querySelector(".publication_year").textContent =
-            publication_year;
-        this.querySelector(".publisher").textContent =
-            publisher;
         const bookImageElement = this.querySelector("book-image");
-        if (bookImageElement) {
-            bookImageElement.data = {
-                bookImageURL,
-                bookname,
-            };
-        }
+        if (!bookImageElement)
+            return;
+        bookImageElement.data = {
+            bookImageURL,
+            bookname,
+        };
+        Object.entries(otherData).forEach(([key, value]) => {
+            const element = this.querySelector(`.${key}`);
+            element.textContent = value;
+        });
+    }
+    renderLoanGroups(loanGrps) {
+        const loanGroupBody = this.querySelector(".loanGrps tbody");
+        if (!loanGroupBody)
+            return;
+        const template = document.querySelector("#tp-loanGrpItem");
+        if (!template)
+            return;
+        const fragment = new DocumentFragment();
+        loanGrps.forEach((loanGrp) => {
+            const clone = cloneTemplate(template);
+            Object.entries(loanGrp).map(([key, value]) => {
+                const targetElement = clone.querySelector(`.${key}`);
+                targetElement.textContent = value;
+            });
+            fragment.appendChild(clone);
+        });
+        loanGroupBody.appendChild(fragment);
     }
     renderKeyword(keywords) {
         const keywordsString = keywords
@@ -88,40 +114,40 @@ export default class Book extends HTMLElement {
             keywordsString;
     }
     renderCoLeanBooks(coLoanBooks) {
-        var _a, _b;
-        const template = (_a = document.querySelector("#tp-coLoanBookItem")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+        var _a;
+        const template = document.querySelector("#tp-coLoanBookItem");
         if (!template)
             return;
         const fragment = new DocumentFragment();
         coLoanBooks
             .map((book) => this.createRecItem(template, book))
             .forEach((el) => fragment.appendChild(el));
-        (_b = this.querySelector(".coLoanBooks")) === null || _b === void 0 ? void 0 : _b.appendChild(fragment);
+        (_a = this.querySelector(".coLoanBooks")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
     }
     renderManiaBooks(maniaRecBooks) {
-        var _a, _b;
-        const template = (_a = this.recBookTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+        var _a;
+        const template = this.recBookTemplate;
         if (!template)
             return;
         const fragment = new DocumentFragment();
         maniaRecBooks
             .map((book) => this.createRecItem(template, book))
             .forEach((el) => fragment.appendChild(el));
-        (_b = this.querySelector(".maniaBooks")) === null || _b === void 0 ? void 0 : _b.appendChild(fragment);
+        (_a = this.querySelector(".maniaBooks")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
     }
     renderReaderBooks(readerRecBooks) {
-        var _a, _b;
-        const template = (_a = this.recBookTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+        var _a;
+        const template = this.recBookTemplate;
         if (!template)
             return;
         const fragment = new DocumentFragment();
         readerRecBooks
             .map((book) => this.createRecItem(template, book))
             .forEach((el) => fragment.appendChild(el));
-        (_b = this.querySelector(".readerBooks")) === null || _b === void 0 ? void 0 : _b.appendChild(fragment);
+        (_a = this.querySelector(".readerBooks")) === null || _a === void 0 ? void 0 : _a.appendChild(fragment);
     }
     createRecItem(template, book) {
-        const el = template.cloneNode(true);
+        const el = cloneTemplate(template);
         const { isbn13 } = book;
         for (const [key, value] of Object.entries(book)) {
             const node = el.querySelector(`.${key}`);

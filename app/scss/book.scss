@@ -100,6 +100,53 @@ app-book {
         }
     }
 
+    .loanGrps {
+        .guide {
+            margin: 8px 0;
+            font-size: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th,
+        td {
+            padding: 5px;
+        }
+        th {
+            background-color: #efefef;
+            font-weight: normal;
+        }
+        td {
+            text-align: center;
+            border-bottom: 1px solid #ebebeb;
+            color: #666;
+        }
+    }
+
+    .keyword {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 10px 0;
+        a {
+            display: inline-flex;
+            margin: 2px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #e2e2e2;
+            background-color: #f8f8f8;
+            font-size: 12px;
+            color: #333;
+            text-decoration: none;
+
+            &:hover {
+                border-color: #c7e53b;
+                background-color: #eff9c3;
+                color: green;
+            }
+        }
+    }
+
     .library-search-by-book {
         ul {
             margin: 0;
@@ -126,29 +173,6 @@ app-book {
         p {
             margin: 0;
             color: #666;
-        }
-    }
-
-    .keyword {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 10px 0;
-        a {
-            display: inline-flex;
-            margin: 2px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #e2e2e2;
-            background-color: #f8f8f8;
-            font-size: 12px;
-            color: #333;
-            text-decoration: none;
-
-            &:hover {
-                border-color: #c7e53b;
-                background-color: #eff9c3;
-                color: green;
-            }
         }
     }
 

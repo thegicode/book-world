@@ -11,3 +11,11 @@ export function getCurrentDates() {
         currentDay,
     };
 }
+
+export function cloneTemplate(template: HTMLTemplateElement) {
+    const content = template.content.firstElementChild;
+    if (!content) {
+        throw new Error("Template content is empty");
+    }
+    return content.cloneNode(true) as HTMLElement;
+}
