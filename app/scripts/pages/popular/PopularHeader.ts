@@ -1,5 +1,5 @@
 import { CustomEventEmitter } from "../../utils";
-import { getCurrentDates } from "../../utils/utils";
+import { getCurrentDates } from "../../utils/helpers";
 
 export default class PopularHeader extends HTMLElement {
     form: HTMLFormElement | null;

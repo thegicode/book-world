@@ -818,7 +818,7 @@
     }
   };
 
-  // dev/scripts/utils/utils.js
+  // dev/scripts/utils/helpers.js
   function cloneTemplate(template) {
     const content = template.content.firstElementChild;
     if (!content) {

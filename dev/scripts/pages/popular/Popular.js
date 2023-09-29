@@ -20,7 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 // import { BookImage } from "../../components/index";
 import { CustomEventEmitter, CustomFetch } from "../../utils";
-import { getCurrentDates } from "../../utils/utils";
+import { getCurrentDates } from "../../utils/helpers";
 export default class Popular extends HTMLElement {
     constructor() {
         super();

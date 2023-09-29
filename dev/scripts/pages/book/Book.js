@@ -19,7 +19,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import { CustomFetch } from "../../utils/index";
-import { cloneTemplate, fillElementsWithData } from "../../utils/utils";
+import { cloneTemplate, fillElementsWithData } from "../../utils/helpers";
 export default class Book extends HTMLElement {
     constructor() {
         super();

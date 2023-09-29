@@ -774,7 +774,7 @@
     }
   };
 
-  // dev/scripts/utils/utils.js
+  // dev/scripts/utils/helpers.js
   function getCurrentDates() {
     const currentDate = /* @__PURE__ */ new Date();
     const currentYear = currentDate.getFullYear();
