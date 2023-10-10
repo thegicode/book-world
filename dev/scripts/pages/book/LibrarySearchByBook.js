@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomFetch } from "../../utils/index";
 import { getState } from "../../modules/model";
+import { cloneTemplate } from "../../utils/helpers";
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
         super();
@@ -69,13 +70,10 @@ export default class LibrarySearchByBook extends HTMLElement {
         container.appendChild(listElement);
     }
     createLibrarySearchResultItem(isbn, homepage, libCode, libName) {
-        var _a;
         const template = document.querySelector("#tp-librarySearchByBookItem");
         if (!template)
             return null;
-        const cloned = (_a = template.content.firstElementChild) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
-        if (!cloned)
-            return null;
+        const cloned = cloneTemplate(template);
         const link = cloned.querySelector("a");
         if (!link)
             return null;

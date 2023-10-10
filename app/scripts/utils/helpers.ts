@@ -12,12 +12,14 @@ export function getCurrentDates() {
     };
 }
 
-export function cloneTemplate(template: HTMLTemplateElement) {
+export function cloneTemplate<T extends HTMLElement>(
+    template: HTMLTemplateElement
+) {
     const content = template.content.firstElementChild;
     if (!content) {
         throw new Error("Template content is empty");
     }
-    return content.cloneNode(true) as HTMLElement;
+    return content.cloneNode(true) as T;
 }
 
 export function fillElementsWithData<T>(data: T, container: HTMLElement) {

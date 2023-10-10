@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { hasLibrary } from "../../modules/model";
+import { cloneTemplate } from "../../utils/helpers";
 export default class Library extends HTMLElement {
     constructor() {
         super();
@@ -46,8 +47,8 @@ export default class Library extends HTMLElement {
         }
         const template = document.querySelector("#tp-item");
         const fragment = libraries.reduce((fragment, lib) => {
-            if (template === null || template === void 0 ? void 0 : template.content.firstElementChild) {
-                const libraryItem = template.content.firstElementChild.cloneNode(true);
+            if (template) {
+                const libraryItem = cloneTemplate(template);
                 libraryItem.dataset.object = JSON.stringify(lib);
                 if (hasLibrary(lib.libCode)) {
                     libraryItem.dataset.has = "true";
@@ -67,9 +68,10 @@ export default class Library extends HTMLElement {
     }
     showMessage(type) {
         const template = document.querySelector(`#tp-${type}`);
-        if ((template === null || template === void 0 ? void 0 : template.content.firstElementChild) && this.form) {
+        if (template && this.form) {
             this.form.innerHTML = "";
-            this.form.appendChild(template.content.firstElementChild.cloneNode(true));
+            const clone = cloneTemplate(template);
+            this.form.appendChild(clone);
         }
     }
     handleDetailRegion(evt) {

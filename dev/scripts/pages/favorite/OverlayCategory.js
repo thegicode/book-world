@@ -1,5 +1,6 @@
 import { state, addCategory, hasCategory, renameCategory, deleteCategory, changeCategory, } from "../../modules/model";
 import { CustomEventEmitter } from "../../utils";
+import { cloneTemplate } from "../../utils/helpers";
 export default class OverlayCategory extends HTMLElement {
     constructor() {
         super();
@@ -80,8 +81,10 @@ export default class OverlayCategory extends HTMLElement {
         this.list.appendChild(fragment);
     }
     createItem(category, index) {
-        var _a, _b;
-        const cloned = (_b = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
+        if (this.template === null) {
+            throw new Error("Template is null");
+        }
+        const cloned = cloneTemplate(this.template);
         cloned.dataset.index = index.toString();
         cloned.dataset.category = category;
         const input = cloned.querySelector("input[name='category']");

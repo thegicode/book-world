@@ -1,6 +1,7 @@
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { hasLibrary } from "../../modules/model";
 import LibraryItem from "./LibraryItem";
+import { cloneTemplate } from "../../utils/helpers";
 
 export default class Library extends HTMLElement {
     private form?: HTMLFormElement;
@@ -56,11 +57,8 @@ export default class Library extends HTMLElement {
         ) as HTMLTemplateElement;
         const fragment = libraries.reduce(
             (fragment: DocumentFragment, lib: ILibrary) => {
-                if (template?.content.firstElementChild) {
-                    const libraryItem =
-                        template.content.firstElementChild.cloneNode(
-                            true
-                        ) as LibraryItem;
+                if (template) {
+                    const libraryItem = cloneTemplate<LibraryItem>(template);
                     libraryItem.dataset.object = JSON.stringify(lib);
 
                     if (hasLibrary(lib.libCode)) {
@@ -86,11 +84,10 @@ export default class Library extends HTMLElement {
         const template = document.querySelector(
             `#tp-${type}`
         ) as HTMLTemplateElement;
-        if (template?.content.firstElementChild && this.form) {
+        if (template && this.form) {
             this.form.innerHTML = "";
-            this.form.appendChild(
-                template.content.firstElementChild.cloneNode(true)
-            );
+            const clone = cloneTemplate(template);
+            this.form.appendChild(clone);
         }
     }
 

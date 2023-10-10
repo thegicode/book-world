@@ -705,6 +705,15 @@
     }
   };
 
+  // dev/scripts/utils/helpers.js
+  function cloneTemplate(template) {
+    const content = template.content.firstElementChild;
+    if (!content) {
+      throw new Error("Template content is empty");
+    }
+    return content.cloneNode(true);
+  }
+
   // dev/scripts/pages/setting/SetRegion.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
@@ -767,10 +776,7 @@
     }
     renderRegion() {
       const templateElement = document.querySelector(REGION_TEMPLATE_NAME);
-      const template = templateElement === null || templateElement === void 0 ? void 0 : templateElement.content.firstElementChild;
-      if (!template)
-        return;
-      const regionElementsFragment = this.createRegionElementsFragment(template);
+      const regionElementsFragment = this.createRegionElementsFragment(templateElement);
       const container = this.querySelector(".regions");
       container.appendChild(regionElementsFragment);
     }
@@ -788,7 +794,7 @@
       return fragment;
     }
     createRegionElement(template, key, value, favoriteRegions) {
-      const regionElement = template.cloneNode(true);
+      const regionElement = cloneTemplate(template);
       const checkbox = regionElement.querySelector("input");
       checkbox.value = value;
       checkbox.checked = favoriteRegions.includes(key);
@@ -860,13 +866,10 @@
       this.initializeFirstRegion(container);
     }
     createRegions(favoriteRegions) {
-      var _a;
-      const template = (_a = document.querySelector("#tp-favorite-region")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
-      if (!template)
-        return;
+      const template = document.querySelector("#tp-favorite-region");
       const fragment = new DocumentFragment();
       favoriteRegions.forEach((region) => {
-        const element = template.cloneNode(true);
+        const element = cloneTemplate(template);
         const spanElement = element.querySelector("span");
         if (spanElement)
           spanElement.textContent = region;
@@ -885,7 +888,6 @@
       this.changeRegion();
     }
     renderDetailRegions(regionName) {
-      var _a;
       if (!this.regionData)
         return;
       const detailRegionsElement = this.querySelector(".detailRegions");
@@ -893,7 +895,7 @@
         return;
       const regionObj = getState().regions[regionName];
       const regionCodes = regionObj ? Object.values(regionObj) : [];
-      const template = (_a = document.querySelector("#tp-detail-region")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+      const template = document.querySelector("#tp-detail-region");
       if (!template)
         return;
       detailRegionsElement.innerHTML = "";
@@ -908,7 +910,7 @@
     createDetailRegionElements(detailRegionData, template, regionCodes) {
       const fragment = new DocumentFragment();
       for (const [key, value] of Object.entries(detailRegionData)) {
-        const element = template.cloneNode(true);
+        const element = cloneTemplate(template);
         const spanElement = element.querySelector("span");
         if (spanElement)
           spanElement.textContent = key;

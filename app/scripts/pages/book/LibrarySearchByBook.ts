@@ -1,5 +1,6 @@
 import { CustomFetch } from "../../utils/index";
 import { getState } from "../../modules/model";
+import { cloneTemplate } from "../../utils/helpers";
 
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
@@ -87,10 +88,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         ) as HTMLTemplateElement;
         if (!template) return null;
 
-        const cloned = template.content.firstElementChild?.cloneNode(
-            true
-        ) as HTMLElement;
-        if (!cloned) return null;
+        const cloned = cloneTemplate(template);
 
         const link = cloned.querySelector("a");
         if (!link) return null;

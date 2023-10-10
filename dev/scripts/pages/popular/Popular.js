@@ -20,7 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 // import { BookImage } from "../../components/index";
 import { CustomEventEmitter, CustomFetch } from "../../utils";
-import { getCurrentDates } from "../../utils/helpers";
+import { cloneTemplate, getCurrentDates } from "../../utils/helpers";
 export default class Popular extends HTMLElement {
     constructor() {
         super();
@@ -95,16 +95,16 @@ export default class Popular extends HTMLElement {
         }
     }
     createItem(item) {
-        var _a, _b;
         const { 
         // addition_symbol,
         bookImageURL, bookname, bookDtlUrl } = item, otherData = __rest(item, ["bookImageURL", "bookname", "bookDtlUrl"])
         // authors,  class_nm, isbn13, class_no, loan_count,  no,  publication_year,  publisher, ranking, vol,
         ;
         const isbn = item.isbn13;
-        const cloned = (_b = (_a = this.itemTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
-        if (!cloned)
-            return null;
+        if (this.itemTemplate === null) {
+            throw new Error("Template is null");
+        }
+        const cloned = cloneTemplate(this.itemTemplate);
         cloned.dataset.isbn = isbn;
         const imageNode = cloned.querySelector("img");
         if (imageNode) {

@@ -693,6 +693,15 @@
     }
   };
 
+  // dev/scripts/utils/helpers.js
+  function cloneTemplate(template) {
+    const content = template.content.firstElementChild;
+    if (!content) {
+      throw new Error("Template content is empty");
+    }
+    return content.cloneNode(true);
+  }
+
   // dev/scripts/pages/library/Library.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
@@ -758,8 +767,8 @@
       }
       const template = document.querySelector("#tp-item");
       const fragment = libraries.reduce((fragment2, lib) => {
-        if (template === null || template === void 0 ? void 0 : template.content.firstElementChild) {
-          const libraryItem = template.content.firstElementChild.cloneNode(true);
+        if (template) {
+          const libraryItem = cloneTemplate(template);
           libraryItem.dataset.object = JSON.stringify(lib);
           if (hasLibrary(lib.libCode)) {
             libraryItem.dataset.has = "true";
@@ -777,9 +786,10 @@
     }
     showMessage(type) {
       const template = document.querySelector(`#tp-${type}`);
-      if ((template === null || template === void 0 ? void 0 : template.content.firstElementChild) && this.form) {
+      if (template && this.form) {
         this.form.innerHTML = "";
-        this.form.appendChild(template.content.firstElementChild.cloneNode(true));
+        const clone = cloneTemplate(template);
+        this.form.appendChild(clone);
       }
     }
     handleDetailRegion(evt) {
@@ -820,12 +830,12 @@
       this.changeRegion();
     }
     getRegionElements(favoriteRegions) {
-      const template = document.querySelector("#tp-region").content.firstElementChild;
+      const template = document.querySelector("#tp-region");
       const fragment = new DocumentFragment();
       for (const regionName of Object.keys(favoriteRegions)) {
         const size = Object.keys(favoriteRegions[regionName]).length;
         if (template && size > 0) {
-          const element = template.cloneNode(true);
+          const element = cloneTemplate(template);
           const inputElement = element.querySelector("input");
           if (inputElement)
             inputElement.value = regionName;

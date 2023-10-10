@@ -1,5 +1,6 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { getState, addRegion, addDetailRegion, removeDetailRegion, } from "../../modules/model";
+import { cloneTemplate } from "../../utils/helpers";
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
 const SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
@@ -39,13 +40,10 @@ export default class SetDetailRegion extends HTMLElement {
         this.initializeFirstRegion(container);
     }
     createRegions(favoriteRegions) {
-        var _a;
-        const template = (_a = document.querySelector("#tp-favorite-region")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
-        if (!template)
-            return;
+        const template = document.querySelector("#tp-favorite-region");
         const fragment = new DocumentFragment();
         favoriteRegions.forEach((region) => {
-            const element = template.cloneNode(true);
+            const element = cloneTemplate(template);
             const spanElement = element.querySelector("span");
             if (spanElement)
                 spanElement.textContent = region;
@@ -64,7 +62,6 @@ export default class SetDetailRegion extends HTMLElement {
         this.changeRegion();
     }
     renderDetailRegions(regionName) {
-        var _a;
         if (!this.regionData)
             return;
         const detailRegionsElement = this.querySelector(".detailRegions");
@@ -72,7 +69,7 @@ export default class SetDetailRegion extends HTMLElement {
             return;
         const regionObj = getState().regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
-        const template = (_a = document.querySelector("#tp-detail-region")) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
+        const template = document.querySelector("#tp-detail-region");
         if (!template)
             return;
         detailRegionsElement.innerHTML = "";
@@ -87,7 +84,7 @@ export default class SetDetailRegion extends HTMLElement {
     createDetailRegionElements(detailRegionData, template, regionCodes) {
         const fragment = new DocumentFragment();
         for (const [key, value] of Object.entries(detailRegionData)) {
-            const element = template.cloneNode(true);
+            const element = cloneTemplate(template);
             const spanElement = element.querySelector("span");
             if (spanElement)
                 spanElement.textContent = key;

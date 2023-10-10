@@ -5,6 +5,7 @@ import {
     addDetailRegion,
     removeDetailRegion,
 } from "../../modules/model";
+import { cloneTemplate } from "../../utils/helpers";
 
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
@@ -59,14 +60,13 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     private createRegions(favoriteRegions: string[]) {
-        const template = (
-            document.querySelector("#tp-favorite-region") as HTMLTemplateElement
-        )?.content.firstElementChild;
-        if (!template) return;
+        const template = document.querySelector(
+            "#tp-favorite-region"
+        ) as HTMLTemplateElement;
 
         const fragment = new DocumentFragment();
         favoriteRegions.forEach((region) => {
-            const element = template.cloneNode(true) as HTMLElement;
+            const element = cloneTemplate(template);
             const spanElement = element.querySelector<HTMLElement>("span");
             if (spanElement) spanElement.textContent = region;
 
@@ -98,9 +98,9 @@ export default class SetDetailRegion extends HTMLElement {
         const regionObj = getState().regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
 
-        const template = (
-            document.querySelector("#tp-detail-region") as HTMLTemplateElement
-        )?.content.firstElementChild;
+        const template = document.querySelector(
+            "#tp-detail-region"
+        ) as HTMLTemplateElement;
         if (!template) return;
 
         detailRegionsElement.innerHTML = "";
@@ -122,13 +122,13 @@ export default class SetDetailRegion extends HTMLElement {
 
     private createDetailRegionElements(
         detailRegionData: { [key: string]: string },
-        template: Element,
+        template: HTMLTemplateElement,
         regionCodes: string[]
     ): DocumentFragment {
         const fragment = new DocumentFragment();
 
         for (const [key, value] of Object.entries(detailRegionData)) {
-            const element = template.cloneNode(true) as HTMLElement;
+            const element = cloneTemplate(template);
             const spanElement = element.querySelector("span");
             if (spanElement) spanElement.textContent = key;
             const input = element.querySelector<HTMLInputElement>("input");

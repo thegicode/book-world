@@ -1000,6 +1000,15 @@
     }
   };
 
+  // dev/scripts/utils/helpers.js
+  function cloneTemplate(template) {
+    const content = template.content.firstElementChild;
+    if (!content) {
+      throw new Error("Template content is empty");
+    }
+    return content.cloneNode(true);
+  }
+
   // dev/scripts/pages/favorite/Favorite.js
   var Favorite = class extends HTMLElement {
     constructor() {
@@ -1020,28 +1029,27 @@
     disconnectedCallback() {
     }
     render(key) {
-      var _a;
       const fragment = new DocumentFragment();
-      const template = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
       this.booksElement.innerHTML = "";
-      if (template) {
-        const data = state.category[key];
-        if (data.length === 0) {
-          this.renderMessage("\uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
-          return;
-        }
-        data.forEach((isbn) => {
-          const el = template.cloneNode(true);
-          el.dataset.isbn = isbn;
-          fragment.appendChild(el);
-        });
+      const data = state.category[key];
+      if (data.length === 0) {
+        this.renderMessage("\uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
+        return;
       }
+      data.forEach((isbn) => {
+        if (this.template === null) {
+          throw Error("Template is null");
+        }
+        const el = cloneTemplate(this.template);
+        el.dataset.isbn = isbn;
+        fragment.appendChild(el);
+      });
       this.booksElement.appendChild(fragment);
     }
     renderMessage(message) {
-      const template = document.querySelector("#tp-message").content.firstElementChild;
+      const template = document.querySelector("#tp-message");
       if (template) {
-        const element = template.cloneNode(true);
+        const element = cloneTemplate(template);
         element.textContent = message;
         this.booksElement.appendChild(element);
       }
@@ -1376,8 +1384,10 @@
       this.list.appendChild(fragment);
     }
     createItem(category, index) {
-      var _a, _b;
-      const cloned = (_b = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
+      if (this.template === null) {
+        throw new Error("Template is null");
+      }
+      const cloned = cloneTemplate(this.template);
       cloned.dataset.index = index.toString();
       cloned.dataset.category = category;
       const input = cloned.querySelector("input[name='category']");

@@ -7,6 +7,7 @@ import {
     changeCategory,
 } from "../../modules/model";
 import { CustomEventEmitter } from "../../utils";
+import { cloneTemplate } from "../../utils/helpers";
 
 export default class OverlayCategory extends HTMLElement {
     form: HTMLFormElement | null;
@@ -77,9 +78,11 @@ export default class OverlayCategory extends HTMLElement {
     }
 
     private createItem(category: string, index: number) {
-        const cloned = this.template?.content.firstElementChild?.cloneNode(
-            true
-        ) as HTMLLIElement;
+        if (this.template === null) {
+            throw new Error("Template is null");
+        }
+
+        const cloned = cloneTemplate<HTMLLIElement>(this.template);
 
         cloned.dataset.index = index.toString();
         cloned.dataset.category = category;

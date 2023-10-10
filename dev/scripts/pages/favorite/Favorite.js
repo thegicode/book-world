@@ -1,4 +1,5 @@
 import { state } from "../../modules/model";
+import { cloneTemplate } from "../../utils/helpers";
 export default class Favorite extends HTMLElement {
     constructor() {
         super();
@@ -19,28 +20,27 @@ export default class Favorite extends HTMLElement {
         //
     }
     render(key) {
-        var _a;
         const fragment = new DocumentFragment();
-        const template = (_a = this.template) === null || _a === void 0 ? void 0 : _a.content.firstElementChild;
         this.booksElement.innerHTML = "";
-        if (template) {
-            const data = state.category[key];
-            if (data.length === 0) {
-                this.renderMessage("관심책이 없습니다.");
-                return;
-            }
-            data.forEach((isbn) => {
-                const el = template.cloneNode(true);
-                el.dataset.isbn = isbn;
-                fragment.appendChild(el);
-            });
+        const data = state.category[key];
+        if (data.length === 0) {
+            this.renderMessage("관심책이 없습니다.");
+            return;
         }
+        data.forEach((isbn) => {
+            if (this.template === null) {
+                throw Error("Template is null");
+            }
+            const el = cloneTemplate(this.template);
+            el.dataset.isbn = isbn;
+            fragment.appendChild(el);
+        });
         this.booksElement.appendChild(fragment);
     }
     renderMessage(message) {
-        const template = document.querySelector("#tp-message").content.firstElementChild;
+        const template = document.querySelector("#tp-message");
         if (template) {
-            const element = template.cloneNode(true);
+            const element = cloneTemplate(template);
             element.textContent = message;
             this.booksElement.appendChild(element);
         }

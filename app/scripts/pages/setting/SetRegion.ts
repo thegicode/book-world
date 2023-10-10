@@ -1,5 +1,6 @@
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { getState, addRegion, removeRegion } from "../../modules/model";
+import { cloneTemplate } from "../../utils/helpers";
 
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
@@ -42,17 +43,15 @@ export default class SetRegion extends HTMLElement {
         const templateElement = document.querySelector(
             REGION_TEMPLATE_NAME
         ) as HTMLTemplateElement;
-        const template = templateElement?.content.firstElementChild;
-        if (!template) return;
 
         const regionElementsFragment =
-            this.createRegionElementsFragment(template);
+            this.createRegionElementsFragment(templateElement);
 
         const container = this.querySelector(".regions") as HTMLElement;
         container.appendChild(regionElementsFragment);
     }
 
-    private createRegionElementsFragment(template: Element) {
+    private createRegionElementsFragment(template: HTMLTemplateElement) {
         if (!this.regionData) {
             throw new Error("regionData is null.");
         }
@@ -76,12 +75,12 @@ export default class SetRegion extends HTMLElement {
     }
 
     private createRegionElement(
-        template: Element,
+        template: HTMLTemplateElement,
         key: string,
         value: string,
         favoriteRegions: string[]
     ) {
-        const regionElement = template.cloneNode(true) as HTMLElement;
+        const regionElement = cloneTemplate(template);
         const checkbox = regionElement.querySelector(
             "input"
         ) as HTMLInputElement;

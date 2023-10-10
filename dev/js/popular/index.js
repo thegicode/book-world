@@ -787,6 +787,13 @@
       currentDay
     };
   }
+  function cloneTemplate(template) {
+    const content = template.content.firstElementChild;
+    if (!content) {
+      throw new Error("Template content is empty");
+    }
+    return content.cloneNode(true);
+  }
 
   // dev/scripts/pages/popular/Popular.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
@@ -898,7 +905,6 @@
       }
     }
     createItem(item) {
-      var _a, _b;
       const {
         // addition_symbol,
         bookImageURL,
@@ -906,9 +912,10 @@
         bookDtlUrl
       } = item, otherData = __rest(item, ["bookImageURL", "bookname", "bookDtlUrl"]);
       const isbn = item.isbn13;
-      const cloned = (_b = (_a = this.itemTemplate) === null || _a === void 0 ? void 0 : _a.content.firstElementChild) === null || _b === void 0 ? void 0 : _b.cloneNode(true);
-      if (!cloned)
-        return null;
+      if (this.itemTemplate === null) {
+        throw new Error("Template is null");
+      }
+      const cloned = cloneTemplate(this.itemTemplate);
       cloned.dataset.isbn = isbn;
       const imageNode = cloned.querySelector("img");
       if (imageNode) {

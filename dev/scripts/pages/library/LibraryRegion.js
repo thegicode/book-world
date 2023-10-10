@@ -1,5 +1,6 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { getState } from "../../modules/model";
+import { cloneTemplate } from "../../utils/helpers";
 export default class LibraryRegion extends HTMLElement {
     constructor() {
         super();
@@ -31,12 +32,12 @@ export default class LibraryRegion extends HTMLElement {
         this.changeRegion();
     }
     getRegionElements(favoriteRegions) {
-        const template = document.querySelector("#tp-region").content.firstElementChild;
+        const template = document.querySelector("#tp-region");
         const fragment = new DocumentFragment();
         for (const regionName of Object.keys(favoriteRegions)) {
             const size = Object.keys(favoriteRegions[regionName]).length;
             if (template && size > 0) {
-                const element = template.cloneNode(true);
+                const element = cloneTemplate(template);
                 const inputElement = element.querySelector("input");
                 if (inputElement)
                     inputElement.value = regionName;

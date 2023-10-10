@@ -1,6 +1,6 @@
 // import { BookImage } from "../../components/index";
 import { CustomEventEmitter, CustomFetch } from "../../utils";
-import { getCurrentDates } from "../../utils/helpers";
+import { cloneTemplate, getCurrentDates } from "../../utils/helpers";
 
 export default class Popular extends HTMLElement {
     itemTemplate: HTMLTemplateElement | null;
@@ -124,10 +124,10 @@ export default class Popular extends HTMLElement {
 
         const isbn = item.isbn13;
 
-        const cloned = this.itemTemplate?.content.firstElementChild?.cloneNode(
-            true
-        ) as HTMLElement;
-        if (!cloned) return null;
+        if (this.itemTemplate === null) {
+            throw new Error("Template is null");
+        }
+        const cloned = cloneTemplate(this.itemTemplate);
 
         cloned.dataset.isbn = isbn;
 
