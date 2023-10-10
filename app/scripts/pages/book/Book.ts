@@ -49,12 +49,14 @@ export default class Book extends HTMLElement {
             book,
             keywords,
             coLoanBooks,
+            loanHistory,
             loanGrps,
             maniaRecBooks,
             readerRecBooks,
-        } = this.data; // loanHistory,
+        } = this.data;
 
         this.renderBook(book);
+        this.renderLoanHistory(loanHistory);
         this.renderLoanGroups(loanGrps);
         this.renderKeyword(keywords);
 
@@ -89,6 +91,25 @@ export default class Book extends HTMLElement {
         };
 
         fillElementsWithData(otherData, this);
+    }
+
+    renderLoanHistory(loanHistory: ILoanHistory[]) {
+        const loanHistoryBody = this.querySelector(".loanHistory tbody");
+        if (!loanHistoryBody) return;
+
+        const template = this.querySelector(
+            "#tp-loanHistoryItem"
+        ) as HTMLTemplateElement;
+        if (!template) return;
+
+        const fragment = new DocumentFragment();
+        loanHistory.forEach((history) => {
+            const clone = cloneTemplate(template);
+            fillElementsWithData(history, clone);
+            fragment.appendChild(clone);
+        });
+
+        loanHistoryBody.appendChild(fragment);
     }
 
     renderLoanGroups(loanGrps: ILoanGroups[]) {

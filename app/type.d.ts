@@ -18,6 +18,12 @@ interface ILoanGroups {
     ranking: number;
 }
 
+interface ILoanHistory {
+    loanCnt: number;
+    month: string;
+    ranking: number;
+}
+
 interface IKeyword {
     word: string;
     weight: string;
@@ -41,6 +47,7 @@ interface IRecommendedBook {
 interface IUsageAnalysisListData {
     book: IBook;
     keywords: IKeyword[];
+    loanHistory: ILoanHistory[];
     coLoanBooks: ICoLoanBooks[];
     loanGrps: ILoanGroups[];
     maniaRecBooks: IMainaBook[];

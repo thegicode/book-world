@@ -66,6 +66,27 @@
                     </li>
                 </ul>
 
+                <h4 class="title">대출 추이</h4>
+                <div class="loanHistory">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>대출연월</th>
+                                <th>대출건수</th>
+                                <th>대출순위</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <template id="tp-loanHistoryItem">
+                        <tr>
+                            <td class="month"></td>
+                            <td class="loanCnt"></td>
+                            <td class="ranking"></td>
+                        </tr>
+                    </template>
+                </div>
+
                 <h4 class="title">다대출 이용자 그룹</h4>
                 <div class="loanGrps">
                     <p class="guide">

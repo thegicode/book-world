@@ -203,26 +203,32 @@ app-book .bookInfo .description-area {
 app-book .bookInfo .description {
   line-height: 1.7;
 }
-app-book .loanGrps .guide {
-  margin: 8px 0;
-  font-size: 12px;
-}
+app-book .loanHistory table,
 app-book .loanGrps table {
   width: 100%;
   border-collapse: collapse;
 }
+app-book .loanHistory th,
+app-book .loanHistory td,
 app-book .loanGrps th,
 app-book .loanGrps td {
   padding: 5px;
+  font-size: 12px;
 }
+app-book .loanHistory th,
 app-book .loanGrps th {
   background-color: #efefef;
   font-weight: normal;
 }
+app-book .loanHistory td,
 app-book .loanGrps td {
   text-align: center;
   border-bottom: 1px solid #ebebeb;
   color: #666;
+}
+app-book .loanGrps .guide {
+  margin: 8px 0;
+  font-size: 12px;
 }
 app-book .keyword {
   display: flex;
