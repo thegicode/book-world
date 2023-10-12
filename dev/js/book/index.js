@@ -1095,11 +1095,16 @@
     }
     loanAvailable(isbn, libCode, el) {
       return __awaiter3(this, void 0, void 0, function* () {
-        const isAvailable = yield this.fetchLoadnAvailabilty(isbn, libCode);
-        const element = el.querySelector(".loanAvailable");
-        if (element) {
-          element.textContent = isAvailable ? "\uB300\uCD9C \uAC00\uB2A5" : "\uB300\uCD9C \uBD88\uAC00";
-          if (isAvailable) {
+        const { hasBook, loanAvailable } = yield this.fetchLoadnAvailabilty(isbn, libCode);
+        const hasBookEl = el.querySelector(".hasBook");
+        const isAvailableEl = el.querySelector(".loanAvailable");
+        if (hasBookEl) {
+          hasBookEl.textContent = hasBook === "Y" ? "\uC18C\uC7A5" : "\uBBF8\uC18C\uC7A5";
+        }
+        if (isAvailableEl) {
+          const isLoanAvailable = loanAvailable === "Y";
+          isAvailableEl.textContent = isLoanAvailable ? "\uB300\uCD9C \uAC00\uB2A5" : "\uB300\uCD9C \uBD88\uAC00";
+          if (isLoanAvailable) {
             el.dataset.available = "true";
           }
         }
@@ -1113,11 +1118,11 @@
         });
         const url = `/book-exist?${searchParams}`;
         try {
-          const data = yield CustomFetch_default.fetch(url, {
+          const result = yield CustomFetch_default.fetch(url, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
           });
-          return data.loanAvailable === "Y";
+          return result;
         } catch (error) {
           console.error(error);
           throw new Error(`Fail to get book exist.`);

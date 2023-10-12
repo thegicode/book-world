@@ -107,31 +107,38 @@ export default class LibrarySearchByBook extends HTMLElement {
         libCode: string,
         el: HTMLElement
     ) {
-        const isAvailable = await this.fetchLoadnAvailabilty(isbn, libCode);
-        const element = el.querySelector(".loanAvailable");
-        if (element) {
-            element.textContent = isAvailable ? "대출 가능" : "대출 불가";
-            if (isAvailable) {
+        const { hasBook, loanAvailable } = await this.fetchLoadnAvailabilty(
+            isbn,
+            libCode
+        );
+        const hasBookEl = el.querySelector(".hasBook");
+        const isAvailableEl = el.querySelector(".loanAvailable");
+        if (hasBookEl) {
+            hasBookEl.textContent = hasBook === "Y" ? "소장" : "미소장";
+        }
+        if (isAvailableEl) {
+            const isLoanAvailable = loanAvailable === "Y";
+            isAvailableEl.textContent = isLoanAvailable
+                ? "대출 가능"
+                : "대출 불가";
+            if (isLoanAvailable) {
                 el.dataset.available = "true";
             }
         }
     }
 
-    protected async fetchLoadnAvailabilty(
-        isbn13: string,
-        libCode: string
-    ): Promise<boolean> {
+    protected async fetchLoadnAvailabilty(isbn13: string, libCode: string) {
         const searchParams = new URLSearchParams({
             isbn13,
             libCode,
         });
         const url = `/book-exist?${searchParams}`;
         try {
-            const data = await CustomFetch.fetch<IBookExist>(url, {
+            const result = await CustomFetch.fetch<IBookExist>(url, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });
-            return data.loanAvailable === "Y";
+            return result;
         } catch (error) {
             console.error(error);
             throw new Error(`Fail to get book exist.`);

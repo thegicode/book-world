@@ -85,11 +85,18 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
     loanAvailable(isbn, libCode, el) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isAvailable = yield this.fetchLoadnAvailabilty(isbn, libCode);
-            const element = el.querySelector(".loanAvailable");
-            if (element) {
-                element.textContent = isAvailable ? "대출 가능" : "대출 불가";
-                if (isAvailable) {
+            const { hasBook, loanAvailable } = yield this.fetchLoadnAvailabilty(isbn, libCode);
+            const hasBookEl = el.querySelector(".hasBook");
+            const isAvailableEl = el.querySelector(".loanAvailable");
+            if (hasBookEl) {
+                hasBookEl.textContent = hasBook === "Y" ? "소장" : "미소장";
+            }
+            if (isAvailableEl) {
+                const isLoanAvailable = loanAvailable === "Y";
+                isAvailableEl.textContent = isLoanAvailable
+                    ? "대출 가능"
+                    : "대출 불가";
+                if (isLoanAvailable) {
                     el.dataset.available = "true";
                 }
             }
@@ -103,11 +110,11 @@ export default class LibrarySearchByBook extends HTMLElement {
             });
             const url = `/book-exist?${searchParams}`;
             try {
-                const data = yield CustomFetch.fetch(url, {
+                const result = yield CustomFetch.fetch(url, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
-                return data.loanAvailable === "Y";
+                return result;
             }
             catch (error) {
                 console.error(error);
