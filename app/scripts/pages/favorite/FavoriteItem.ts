@@ -56,10 +56,11 @@ export default class FavoriteItem extends HTMLElement {
 
         const {
             bookImageURL,
-            bookname,
             ...otherData
-            // isbn13, authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
+            // bookname, isbn13, authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
         } = data.book;
+
+        const bookname = data.book.bookname;
 
         const imageNode = this.querySelector<BookImage>("book-image");
         if (imageNode) {

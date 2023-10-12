@@ -55,9 +55,10 @@ export default class FavoriteItem extends HTMLElement {
     }
     render(data) {
         this.bookData = data;
-        const _a = data.book, { bookImageURL, bookname } = _a, otherData = __rest(_a, ["bookImageURL", "bookname"])
-        // isbn13, authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
+        const _a = data.book, { bookImageURL } = _a, otherData = __rest(_a, ["bookImageURL"])
+        // bookname, isbn13, authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
         ;
+        const bookname = data.book.bookname;
         const imageNode = this.querySelector("book-image");
         if (imageNode) {
             imageNode.data = {

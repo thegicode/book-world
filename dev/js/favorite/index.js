@@ -1238,7 +1238,8 @@
     }
     render(data) {
       this.bookData = data;
-      const _a = data.book, { bookImageURL, bookname } = _a, otherData = __rest(_a, ["bookImageURL", "bookname"]);
+      const _a = data.book, { bookImageURL } = _a, otherData = __rest(_a, ["bookImageURL"]);
+      const bookname = data.book.bookname;
       const imageNode = this.querySelector("book-image");
       if (imageNode) {
         imageNode.data = {
