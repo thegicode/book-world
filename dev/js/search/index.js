@@ -1253,7 +1253,8 @@
       this.updateBookElements(this.bookData);
     }
     updateBookElements(bookData) {
-      const { image, isbn, link, pubdate, title } = bookData, otherData = __rest(bookData, ["image", "isbn", "link", "pubdate", "title"]);
+      const { image, isbn, link, pubdate } = bookData, otherData = __rest(bookData, ["image", "isbn", "link", "pubdate"]);
+      const title = bookData.title;
       const imageNode = this.querySelector("book-image");
       if (imageNode) {
         imageNode.dataset.object = JSON.stringify({

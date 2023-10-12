@@ -908,10 +908,11 @@
       const {
         // addition_symbol,
         bookImageURL,
-        bookname,
+        // bookname,
         bookDtlUrl
-      } = item, otherData = __rest(item, ["bookImageURL", "bookname", "bookDtlUrl"]);
+      } = item, otherData = __rest(item, ["bookImageURL", "bookDtlUrl"]);
       const isbn = item.isbn13;
+      const bookname = item.bookname;
       if (this.itemTemplate === null) {
         throw new Error("Template is null");
       }

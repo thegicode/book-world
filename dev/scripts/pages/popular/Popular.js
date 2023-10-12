@@ -97,10 +97,13 @@ export default class Popular extends HTMLElement {
     createItem(item) {
         const { 
         // addition_symbol,
-        bookImageURL, bookname, bookDtlUrl } = item, otherData = __rest(item, ["bookImageURL", "bookname", "bookDtlUrl"])
+        bookImageURL, 
+        // bookname,
+        bookDtlUrl } = item, otherData = __rest(item, ["bookImageURL", "bookDtlUrl"])
         // authors,  class_nm, isbn13, class_no, loan_count,  no,  publication_year,  publisher, ranking, vol,
         ;
         const isbn = item.isbn13;
+        const bookname = item.bookname;
         if (this.itemTemplate === null) {
             throw new Error("Template is null");
         }

@@ -44,8 +44,9 @@ export default class BookItem extends HTMLElement {
         this.updateBookElements(this.bookData);
     }
     updateBookElements(bookData) {
-        const { image, isbn, link, pubdate, title } = bookData, otherData = __rest(bookData, ["image", "isbn", "link", "pubdate", "title"]) // author,  description,  discount,  publisher,
+        const { image, isbn, link, pubdate } = bookData, otherData = __rest(bookData, ["image", "isbn", "link", "pubdate"]) // author,  description,  discount,  publisher, title,
         ;
+        const title = bookData.title;
         const imageNode = this.querySelector("book-image");
         if (imageNode) {
             imageNode.dataset.object = JSON.stringify({

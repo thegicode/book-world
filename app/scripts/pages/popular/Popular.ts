@@ -114,7 +114,7 @@ export default class Popular extends HTMLElement {
         const {
             // addition_symbol,
             bookImageURL,
-            bookname,
+            // bookname,
             bookDtlUrl,
 
             ...otherData
@@ -123,6 +123,7 @@ export default class Popular extends HTMLElement {
         } = item;
 
         const isbn = item.isbn13;
+        const bookname = item.bookname;
 
         if (this.itemTemplate === null) {
             throw new Error("Template is null");

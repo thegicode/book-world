@@ -52,9 +52,10 @@ export default class BookItem extends HTMLElement {
             isbn,
             link,
             pubdate,
-            title,
-            ...otherData // author,  description,  discount,  publisher,
+            ...otherData // author,  description,  discount,  publisher, title,
         } = bookData;
+
+        const title = bookData.title;
 
         const imageNode = this.querySelector<BookImage>("book-image");
         if (imageNode) {
