@@ -166,6 +166,9 @@ app-book {
             font-size: 12px;
             &[data-available="true"] {
                 background-color: rgba(184, 207, 143, 0.1);
+                .loanAvailable {
+                    color: #a52fb2;
+                }
             }
         }
         a {
