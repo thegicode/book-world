@@ -8,7 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CustomFetch } from "../../utils/index";
-import { setState } from "../../modules/model";
+// import { setState } from "../../modules/model";
+import store from "../../modules/store";
 // import { updateBookSizeInCategor } from "../../modules/events.js";
 const LOCAL_STORAGE_NAME = "BookWorld";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
@@ -20,8 +21,10 @@ export default class SetStorage extends HTMLElement {
         this.setLocalStorageToBase = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
-                setState(data);
+                // setState(data);
+                store.setState(data);
                 console.log("Saved local stronage by base data!");
+                // TODO
                 this.updateAndReload();
             }
             catch (error) {
@@ -30,6 +33,7 @@ export default class SetStorage extends HTMLElement {
             }
         });
         this.resetStorage = () => {
+            // TODO
             localStorage.removeItem(LOCAL_STORAGE_NAME);
             this.updateAndReload();
         };

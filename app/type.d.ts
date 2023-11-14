@@ -112,13 +112,6 @@ interface TotalRegions {
     detailRegion: IDetailRegionData;
 }
 
-interface IStorageData {
-    libraries: Record<string, string>;
-    regions: Record<string, Record<string, string>>;
-    category: Record<string, string[]>;
-    categorySort: string[];
-}
-
 interface IBookImageData {
     bookImageURL: string;
     bookname: string;
@@ -165,3 +158,51 @@ interface IPopularFetchParams {
     pageNo?: string;
     pageSize: string;
 }
+
+/* 작업중 */
+
+// interface IStoreState {
+//     favorites: TFavorites;
+//     libraries: TLibraries;
+//     regions: TRegions;
+//     categorySort: string[];
+// }
+
+interface IStorageData {
+    category: TCategory;
+    libraries: TLibraries;
+    regions: Record<string, Record<string, string>>;
+    categorySort: string[];
+}
+
+interface IStore {
+    state: IStorageData;
+
+    listeners: TListener[];
+    subscribe(listener: TListener): void;
+    unsubscribe(callback: TListener): void;
+    notify(): void;
+
+    getState(): IStorageData;
+    setState(newState: IStorageData);
+
+    // localStorage(newState: IStorageData): IStorageData;
+    category: TCategory;
+    libraries: TLibraries;
+    regions: TRegions;
+
+    addCategory(name: string): void;
+    hasCategory(name: string): boolean;
+    renameCategory(prevName: string, newName: string): void;
+    deleteCategory(name: string): void;
+
+    addLibrary(code: string, name: string): void;
+    removeLibrary(code: string): void;
+
+    addRegion(name: string): void;
+}
+
+type TListener = () => void;
+type TCategory = Record<string, string[]>;
+type TLibraries = Record<string, string>;
+type TRegions = Record<string, Record<string, string>>;

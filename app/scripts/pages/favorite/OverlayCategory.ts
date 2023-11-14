@@ -1,11 +1,12 @@
 import {
     state,
-    addCategory,
-    hasCategory,
+    // addCategory,
+    // hasCategory,
     renameCategory,
     deleteCategory,
     changeCategory,
 } from "../../modules/model";
+import store from "../../modules/store";
 import { CustomEventEmitter } from "../../utils";
 import { cloneTemplate } from "../../utils/helpers";
 
@@ -209,13 +210,15 @@ export default class OverlayCategory extends HTMLElement {
         const category = this.addInput.value;
         if (!category) return;
 
-        if (hasCategory(category)) {
+        // if (hasCategory(category)) {
+        if (store.hasCategory(category)) {
             alert("중복된 이름입니다.");
             this.addInput.value = "";
             return;
         }
 
-        addCategory(category);
+        store.addCategory(category);
+        // addCategory(category);
 
         const index = state.categorySort.length;
         const cloned = this.createItem(category, index);
