@@ -1336,6 +1336,9 @@
         console.error(error);
       }
     },
+    resetState() {
+      this.setState(initialState2);
+    },
     get category() {
       return cloneDeep2(this.state.category);
     },

@@ -1047,6 +1047,9 @@
         console.error(error);
       }
     },
+    resetState() {
+      this.setState(initialState2);
+    },
     get category() {
       return cloneDeep2(this.state.category);
     },
@@ -1130,7 +1133,6 @@
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  var LOCAL_STORAGE_NAME = "BookWorld";
   var SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
   var SetStorage = class extends HTMLElement {
     constructor() {
@@ -1149,7 +1151,7 @@
         }
       });
       this.resetStorage = () => {
-        localStorage.removeItem(LOCAL_STORAGE_NAME);
+        store_default.resetState();
         this.updateAndReload();
       };
     }

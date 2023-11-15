@@ -39,6 +39,9 @@ const store = {
             console.error(error);
         }
     },
+    resetState() {
+        this.setState(initialState);
+    },
     get category() {
         return cloneDeep(this.state.category);
     },

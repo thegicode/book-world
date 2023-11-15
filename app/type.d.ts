@@ -185,6 +185,7 @@ interface IStore {
 
     getState(): IStorageData;
     setState(newState: IStorageData);
+    resetState(): void;
 
     // localStorage(newState: IStorageData): IStorageData;
     category: TCategory;

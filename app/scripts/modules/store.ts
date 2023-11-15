@@ -50,6 +50,10 @@ const store: IStore = {
         }
     },
 
+    resetState() {
+        this.setState(initialState);
+    },
+
     get category() {
         return cloneDeep(this.state.category);
     },

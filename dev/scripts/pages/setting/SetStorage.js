@@ -11,7 +11,7 @@ import { CustomFetch } from "../../utils/index";
 // import { setState } from "../../modules/model";
 import store from "../../modules/store";
 // import { updateBookSizeInCategor } from "../../modules/events.js";
-const LOCAL_STORAGE_NAME = "BookWorld";
+// const LOCAL_STORAGE_NAME = "BookWorld";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
     constructor() {
@@ -33,8 +33,9 @@ export default class SetStorage extends HTMLElement {
             }
         });
         this.resetStorage = () => {
+            store.resetState();
+            // localStorage.removeItem(LOCAL_STORAGE_NAME);
             // TODO
-            localStorage.removeItem(LOCAL_STORAGE_NAME);
             this.updateAndReload();
         };
     }
