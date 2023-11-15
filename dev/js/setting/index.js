@@ -641,22 +641,6 @@
     }
   };
   var state = getState();
-  var addRegion = (regionName) => {
-    state.regions[regionName] = {};
-    setState(state);
-  };
-  var removeRegion = (regionName) => {
-    delete state.regions[regionName];
-    setState(state);
-  };
-  var addDetailRegion = (regionName, detailName, detailCode) => {
-    state.regions[regionName][detailName] = detailCode;
-    setState(state);
-  };
-  var removeDetailRegion = (regionName, detailName) => {
-    delete state.regions[regionName][detailName];
-    setState(state);
-  };
   var getBookSizeInCategory = () => {
     function getTotalItemCount(data) {
       return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
@@ -713,6 +697,126 @@
     }
     return content.cloneNode(true);
   }
+
+  // dev/scripts/modules/store.js
+  var cloneDeep2 = (obj) => {
+    return JSON.parse(JSON.stringify(obj));
+  };
+  var STORAGE_NAME = "BookWorld";
+  var initialState2 = {
+    libraries: {},
+    regions: {},
+    category: {},
+    categorySort: []
+  };
+  var store = {
+    listeners: [],
+    subscribe(listener) {
+      this.listeners.push(listener);
+    },
+    unsubscribe(callback) {
+      this.listeners = this.listeners.filter((subscriber) => subscriber !== callback);
+    },
+    notify() {
+      this.listeners.forEach((listener) => listener());
+    },
+    get storage() {
+      try {
+        const storageData = localStorage.getItem(STORAGE_NAME);
+        const state2 = storageData === null ? this.state : JSON.parse(storageData);
+        return cloneDeep2(state2);
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to get state from localStorage.");
+      }
+    },
+    set storage(newState) {
+      try {
+        localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    get state() {
+      return cloneDeep2(this.storage);
+    },
+    set state(newState) {
+      this.storage = newState;
+    },
+    get category() {
+      return cloneDeep2(this.state.category);
+    },
+    set category(name) {
+      console.log(this.state.category);
+    },
+    get libraries() {
+      return cloneDeep2(this.state.libraries);
+    },
+    set libraries(newLibries) {
+      this.state.libraries = newLibries;
+    },
+    get regions() {
+      return cloneDeep2(this.state.regions);
+    },
+    set regions(newRegions) {
+      const newState = this.state;
+      newState.regions = newRegions;
+      this.state = newState;
+    },
+    resetState() {
+      this.storage = initialState2;
+    },
+    addCategory(name) {
+      const newFavorites = this.category;
+      newFavorites[name] = [];
+      this.category = newFavorites;
+    },
+    hasCategory(name) {
+      return name in this.category;
+    },
+    renameCategory(prevName, newName) {
+      const newFavorites = this.category;
+      newFavorites[prevName] = newFavorites[newName];
+      delete newFavorites[prevName];
+      this.category = newFavorites;
+    },
+    deleteCategory(name) {
+      const newFavorites = this.category;
+      delete newFavorites[name];
+      this.category = newFavorites;
+    },
+    addLibrary(code, name) {
+      const newLibries = this.libraries;
+      newLibries[code] = name;
+      this.libraries = newLibries;
+    },
+    removeLibrary(code) {
+      const newLibries = this.libraries;
+      delete newLibries[code];
+      this.libraries = newLibries;
+    },
+    addRegion(name) {
+      const newRegion = this.regions;
+      newRegion[name] = {};
+      this.regions = newRegion;
+    },
+    removeRegion(name) {
+      const newRegions = this.regions;
+      delete newRegions[name];
+      this.regions = newRegions;
+    },
+    addDetailRegion(regionName, detailName, detailCode) {
+      const newRegions = this.regions;
+      newRegions[regionName][detailName] = detailCode;
+      this.regions = newRegions;
+    },
+    removeDetailRegion(regionName, detailName) {
+      const newRegions = this.regions;
+      delete newRegions[regionName][detailName];
+      this.regions = newRegions;
+    }
+  };
+  var store_default = store;
 
   // dev/scripts/pages/setting/SetRegion.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
@@ -786,7 +890,7 @@
       }
       const fragment = new DocumentFragment();
       const regionData = this.regionData["region"];
-      const favoriteRegions = Object.keys(getState().regions);
+      const favoriteRegions = Object.keys(store_default.regions);
       for (const [key, value] of Object.entries(regionData)) {
         const regionElement = this.createRegionElement(template, key, value, favoriteRegions);
         fragment.appendChild(regionElement);
@@ -817,9 +921,9 @@
         }
         const key = spanElement.textContent;
         if (checkbox.checked) {
-          addRegion(key);
+          store_default.addRegion(key);
         } else {
-          removeRegion(key);
+          store_default.removeRegion(key);
         }
         CustomEventEmitter_default.dispatch(SET_FAVORITE_REGIONS_EVENT, {});
       };
@@ -852,7 +956,7 @@
       this.renderRegion();
     }
     renderRegion() {
-      const favoriteRegions = Object.keys(getState().regions);
+      const favoriteRegions = Object.keys(store_default.regions);
       if (favoriteRegions.length < 1)
         return;
       const container = this.querySelector(".regions");
@@ -893,7 +997,7 @@
       const detailRegionsElement = this.querySelector(".detailRegions");
       if (!detailRegionsElement)
         return;
-      const regionObj = getState().regions[regionName];
+      const regionObj = store_default.regions[regionName];
       const regionCodes = regionObj ? Object.values(regionObj) : [];
       const template = document.querySelector("#tp-detail-region");
       if (!template)
@@ -942,8 +1046,8 @@
     }
     onChangeDetail() {
       const region = this.region;
-      if (!getState().regions[region]) {
-        addRegion(region);
+      if (!store_default.regions[region]) {
+        store_default.addRegion(region);
       }
       const checkboxes = document.querySelectorAll("[name=detailRegion]");
       checkboxes.forEach((checkbox) => {
@@ -953,9 +1057,9 @@
           const labelElement = inputCheckbox.nextElementSibling;
           const label = (labelElement === null || labelElement === void 0 ? void 0 : labelElement.textContent) || "";
           if (inputCheckbox.checked) {
-            addDetailRegion(region, label, value);
+            store_default.addDetailRegion(region, label, value);
           } else {
-            removeDetailRegion(region, label);
+            store_default.removeDetailRegion(region, label);
           }
           CustomEventEmitter_default.dispatch(SET_DETAIL_REGIONS_EVENT, {});
         });
@@ -965,6 +1069,7 @@
 
   // dev/scripts/pages/setting/FavoriteRegions.js
   var DETAIL_REGIONS_EVENT = "set-detail-regions";
+  var SET_FAVORITE_REGIONS_EVENT3 = "set-favorite-regions";
   var FavoriteRegions = class extends HTMLElement {
     constructor() {
       super();
@@ -974,16 +1079,18 @@
     connectedCallback() {
       this.container = this.querySelector(".favorites");
       this.render();
+      CustomEventEmitter_default.add(SET_FAVORITE_REGIONS_EVENT3, this.render);
       CustomEventEmitter_default.add(DETAIL_REGIONS_EVENT, this.render);
     }
     disconnectedCallback() {
+      CustomEventEmitter_default.remove(SET_FAVORITE_REGIONS_EVENT3, this.render);
       CustomEventEmitter_default.remove(DETAIL_REGIONS_EVENT, this.render);
     }
     render() {
       if (!this.container)
         return;
       this.container.innerHTML = "";
-      const { regions } = getState();
+      const { regions } = store_default;
       for (const regionName in regions) {
         const detailRegions = Object.keys(regions[regionName]);
         if (detailRegions.length > 0) {
@@ -1006,104 +1113,6 @@
       this.container.appendChild(fragment);
     }
   };
-
-  // dev/scripts/modules/store.js
-  var cloneDeep2 = (obj) => {
-    return JSON.parse(JSON.stringify(obj));
-  };
-  var STORAGE_NAME = "BookWorld";
-  var initialState2 = {
-    libraries: {},
-    regions: {},
-    category: {},
-    categorySort: []
-  };
-  var store = {
-    state: initialState2,
-    listeners: [],
-    subscribe(listener) {
-      this.listeners.push(listener);
-    },
-    unsubscribe(callback) {
-      this.listeners = this.listeners.filter((subscriber) => subscriber !== callback);
-    },
-    notify() {
-      this.listeners.forEach((listener) => listener());
-    },
-    getState() {
-      try {
-        const storageData = localStorage.getItem(STORAGE_NAME);
-        const state2 = storageData === null ? this.state : JSON.parse(storageData);
-        return cloneDeep2(state2);
-      } catch (error) {
-        console.error(error);
-        throw new Error("Failed to get state from localStorage.");
-      }
-    },
-    setState(newState) {
-      try {
-        localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    resetState() {
-      this.setState(initialState2);
-    },
-    get category() {
-      return cloneDeep2(this.state.category);
-    },
-    set category(newCategory) {
-      this.state.category = newCategory;
-      console.log("store favorites: ", this.state.category);
-    },
-    get libraries() {
-      return cloneDeep2(this.state.libraries);
-    },
-    set libraries(newLibries) {
-      this.state.libraries = newLibries;
-    },
-    get regions() {
-      return cloneDeep2(this.state.regions);
-    },
-    set regions(newRegions) {
-      this.state.regions = newRegions;
-    },
-    addCategory(name) {
-      const newFavorites = this.category;
-      newFavorites[name] = [];
-      this.category = newFavorites;
-    },
-    hasCategory(name) {
-      return name in this.category;
-    },
-    renameCategory(prevName, newName) {
-      const newFavorites = this.category;
-      newFavorites[prevName] = newFavorites[newName];
-      delete newFavorites[prevName];
-      this.category = newFavorites;
-    },
-    deleteCategory(name) {
-      const newFavorites = this.category;
-      delete newFavorites[name];
-      this.category = newFavorites;
-    },
-    addLibrary(code, name) {
-      const newLibries = this.libraries;
-      newLibries[code] = name;
-      this.libraries = newLibries;
-    },
-    removeLibrary(code) {
-      const newLibries = this.libraries;
-      delete newLibries[code];
-      this.libraries = newLibries;
-    },
-    addRegion(name) {
-      const newRegion = this.regions;
-      newRegion[name] = {};
-    }
-  };
-  var store_default = store;
 
   // dev/scripts/pages/setting/SetStorage.js
   var __awaiter3 = function(thisArg, _arguments, P, generator) {
@@ -1142,7 +1151,7 @@
       this.setLocalStorageToBase = () => __awaiter3(this, void 0, void 0, function* () {
         try {
           const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
-          store_default.setState(data);
+          store_default.state = data;
           console.log("Saved local stronage by base data!");
           this.updateAndReload();
         } catch (error) {

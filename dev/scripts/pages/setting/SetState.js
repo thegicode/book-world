@@ -13,7 +13,7 @@ import store from "../../modules/store";
 // import { updateBookSizeInCategor } from "../../modules/events.js";
 // const LOCAL_STORAGE_NAME = "BookWorld";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
-export default class SetStorage extends HTMLElement {
+export default class SetState extends HTMLElement {
     constructor() {
         super();
         this.storageButton = null;
@@ -22,7 +22,7 @@ export default class SetStorage extends HTMLElement {
             try {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
                 // setState(data);
-                store.state = data;
+                store.setState(data);
                 console.log("Saved local stronage by base data!");
                 // TODO
                 this.updateAndReload();
@@ -63,4 +63,4 @@ export default class SetStorage extends HTMLElement {
         location.reload();
     }
 }
-//# sourceMappingURL=SetStorage.js.map
+//# sourceMappingURL=SetState.js.map

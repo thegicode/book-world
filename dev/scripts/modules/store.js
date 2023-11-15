@@ -9,7 +9,6 @@ const initialState = {
     categorySort: [],
 };
 const store = {
-    state: initialState,
     listeners: [],
     subscribe(listener) {
         this.listeners.push(listener);
@@ -20,7 +19,7 @@ const store = {
     notify() {
         this.listeners.forEach((listener) => listener());
     },
-    getState() {
+    get storage() {
         try {
             const storageData = localStorage.getItem(STORAGE_NAME);
             const state = storageData === null ? this.state : JSON.parse(storageData);
@@ -31,7 +30,7 @@ const store = {
             throw new Error("Failed to get state from localStorage.");
         }
     },
-    setState(newState) {
+    set storage(newState) {
         try {
             localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
         }
@@ -39,15 +38,19 @@ const store = {
             console.error(error);
         }
     },
-    resetState() {
-        this.setState(initialState);
+    get state() {
+        return cloneDeep(this.storage);
+    },
+    set state(newState) {
+        this.storage = newState;
     },
     get category() {
         return cloneDeep(this.state.category);
     },
-    set category(newCategory) {
-        this.state.category = newCategory;
-        console.log("store favorites: ", this.state.category);
+    set category(name) {
+        // this.state.category = { ...this.state.category, newCategory };
+        console.log(this.state.category);
+        // console.log("store favorites: ", this.state.category);
     },
     get libraries() {
         return cloneDeep(this.state.libraries);
@@ -59,7 +62,13 @@ const store = {
         return cloneDeep(this.state.regions);
     },
     set regions(newRegions) {
-        this.state.regions = newRegions;
+        const newState = this.state;
+        newState.regions = newRegions;
+        this.state = newState;
+        // console.log(this.regions);
+    },
+    resetState() {
+        this.storage = initialState;
     },
     addCategory(name) {
         const newFavorites = this.category;
@@ -93,6 +102,22 @@ const store = {
     addRegion(name) {
         const newRegion = this.regions;
         newRegion[name] = {};
+        this.regions = newRegion;
+    },
+    removeRegion(name) {
+        const newRegions = this.regions;
+        delete newRegions[name];
+        this.regions = newRegions;
+    },
+    addDetailRegion(regionName, detailName, detailCode) {
+        const newRegions = this.regions;
+        newRegions[regionName][detailName] = detailCode;
+        this.regions = newRegions;
+    },
+    removeDetailRegion(regionName, detailName) {
+        const newRegions = this.regions;
+        delete newRegions[regionName][detailName];
+        this.regions = newRegions;
     },
 };
 export default store;

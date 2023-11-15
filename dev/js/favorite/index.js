@@ -1308,7 +1308,6 @@
     categorySort: []
   };
   var store = {
-    state: initialState2,
     listeners: [],
     subscribe(listener) {
       this.listeners.push(listener);
@@ -1319,7 +1318,7 @@
     notify() {
       this.listeners.forEach((listener) => listener());
     },
-    getState() {
+    get storage() {
       try {
         const storageData = localStorage.getItem(STORAGE_NAME);
         const state2 = storageData === null ? this.state : JSON.parse(storageData);
@@ -1329,22 +1328,24 @@
         throw new Error("Failed to get state from localStorage.");
       }
     },
-    setState(newState) {
+    set storage(newState) {
       try {
         localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
       } catch (error) {
         console.error(error);
       }
     },
-    resetState() {
-      this.setState(initialState2);
+    get state() {
+      return cloneDeep2(this.storage);
+    },
+    set state(newState) {
+      this.storage = newState;
     },
     get category() {
       return cloneDeep2(this.state.category);
     },
-    set category(newCategory) {
-      this.state.category = newCategory;
-      console.log("store favorites: ", this.state.category);
+    set category(name) {
+      console.log(this.state.category);
     },
     get libraries() {
       return cloneDeep2(this.state.libraries);
@@ -1356,7 +1357,12 @@
       return cloneDeep2(this.state.regions);
     },
     set regions(newRegions) {
-      this.state.regions = newRegions;
+      const newState = this.state;
+      newState.regions = newRegions;
+      this.state = newState;
+    },
+    resetState() {
+      this.storage = initialState2;
     },
     addCategory(name) {
       const newFavorites = this.category;
@@ -1390,6 +1396,22 @@
     addRegion(name) {
       const newRegion = this.regions;
       newRegion[name] = {};
+      this.regions = newRegion;
+    },
+    removeRegion(name) {
+      const newRegions = this.regions;
+      delete newRegions[name];
+      this.regions = newRegions;
+    },
+    addDetailRegion(regionName, detailName, detailCode) {
+      const newRegions = this.regions;
+      newRegions[regionName][detailName] = detailCode;
+      this.regions = newRegions;
+    },
+    removeDetailRegion(regionName, detailName) {
+      const newRegions = this.regions;
+      delete newRegions[regionName][detailName];
+      this.regions = newRegions;
     }
   };
   var store_default = store;

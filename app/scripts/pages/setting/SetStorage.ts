@@ -47,8 +47,10 @@ export default class SetStorage extends HTMLElement {
     private setLocalStorageToBase = async () => {
         try {
             const data = await CustomFetch.fetch<IStorageData>(SAMPLE_JSON_URL);
+
             // setState(data);
-            store.setState(data);
+            store.state = data;
+
             console.log("Saved local stronage by base data!");
 
             // TODO
@@ -62,6 +64,7 @@ export default class SetStorage extends HTMLElement {
     private resetStorage = () => {
         store.resetState();
         // localStorage.removeItem(LOCAL_STORAGE_NAME);
+
         // TODO
         this.updateAndReload();
     };

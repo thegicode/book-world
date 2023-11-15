@@ -176,21 +176,20 @@ interface IStorageData {
 }
 
 interface IStore {
-    state: IStorageData;
+    // state: IStorageData;
 
     listeners: TListener[];
     subscribe(listener: TListener): void;
     unsubscribe(callback: TListener): void;
     notify(): void;
 
-    getState(): IStorageData;
-    setState(newState: IStorageData);
-    resetState(): void;
-
-    // localStorage(newState: IStorageData): IStorageData;
+    storage: IStorageData;
+    state: IStorageData;
     category: TCategory;
     libraries: TLibraries;
     regions: TRegions;
+
+    resetState(): void;
 
     addCategory(name: string): void;
     hasCategory(name: string): boolean;
@@ -201,6 +200,14 @@ interface IStore {
     removeLibrary(code: string): void;
 
     addRegion(name: string): void;
+    removeRegion(name: string): void;
+
+    addDetailRegion(
+        regionName: string,
+        detailName: string,
+        detailCode: string
+    ): void;
+    removeDetailRegion(regionName: string, detailName: string): void;
 }
 
 type TListener = () => void;
