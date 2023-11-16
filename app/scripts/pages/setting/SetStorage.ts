@@ -1,8 +1,6 @@
 import { CustomFetch } from "../../utils/index";
 import store from "../../modules/store";
-// import { updateBookSizeInCategor } from "../../modules/events.js";
 
-// const LOCAL_STORAGE_NAME = "BookWorld";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
 export default class SetStorage extends HTMLElement {
@@ -69,8 +67,6 @@ export default class SetStorage extends HTMLElement {
     };
 
     private updateAndReload() {
-        // CustomEventEmitter.dispatch('favorite-books-changed', { size : 0 })
-        // updateBookSizeInCategor(0);
         location.reload();
     }
 }
