@@ -622,8 +622,12 @@
   };
   var store = {
     listeners: [],
+    librariesChangedCategory: [],
     subscribe(listener) {
       this.listeners.push(listener);
+    },
+    subscribeChangedCatgory(listener) {
+      this.librariesChangedCategory.push(listener);
     },
     unsubscribe(callback) {
       this.listeners = this.listeners.filter((subscriber) => subscriber !== callback);
@@ -631,11 +635,14 @@
     notify() {
       this.listeners.forEach((listener) => listener());
     },
+    notifyChangedCategory() {
+      this.librariesChangedCategory.forEach((listener) => listener());
+    },
     get storage() {
       try {
         const storageData = localStorage.getItem(STORAGE_NAME);
-        const state2 = storageData === null ? this.state : JSON.parse(storageData);
-        return cloneDeep(state2);
+        const state = storageData === null ? this.state : JSON.parse(storageData);
+        return cloneDeep(state);
       } catch (error) {
         console.error(error);
         throw new Error("Failed to get state from localStorage.");
@@ -733,6 +740,7 @@
       const newCategory = this.category;
       newCategory[name].unshift(isbn);
       this.category = newCategory;
+      this.notifyChangedCategory();
     },
     hasBookInCategory(name, isbn) {
       return this.category[name].includes(isbn);
@@ -744,11 +752,15 @@
         newCategory[name].splice(index, 1);
         this.category = newCategory;
       }
+      this.notifyChangedCategory();
     },
     // Book Size
-    getBookSizeInCategory() {
-      return Object.values(store.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
-    },
+    // getBookSizeInCategory() {
+    //     return Object.values(store.category).reduce(
+    //         (sum, currentArray: string[]) => sum + currentArray.length,
+    //         0
+    //     );
+    // },
     // Library
     addLibrary(code, name) {
       const newLibries = this.libraries;
@@ -798,17 +810,22 @@
         "/library",
         "/setting"
       ];
+      this.renderBookSize = this.renderBookSize.bind(this);
     }
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
+      store_default.subscribeChangedCatgory(this.renderBookSize);
+    }
+    get bookSize() {
+      return Object.values(store_default.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
       this.innerHTML = `
             <nav class="gnb">
                 <a class="gnb-item" href=".${paths[0]}">\uCC45 \uAC80\uC0C9</a>
-                <a class="gnb-item" href=".${paths[1]}">\uB098\uC758 \uCC45 (<span class="size">${store_default.getBookSizeInCategory()}</span>)</a>
+                <a class="gnb-item" href=".${paths[1]}">\uB098\uC758 \uCC45 (<span class="size">${this.bookSize}</span>)</a>
                 <a class="gnb-item" href=".${paths[2]}">\uC778\uAE30\uB300\uCD9C\uB3C4\uC11C</a>
                 <a class="gnb-item" href=".${paths[3]}">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
                 <a class="gnb-item" href=".${paths[4]}">\uC124\uC815</a>
@@ -819,51 +836,10 @@
       if (idx >= 0)
         this.querySelectorAll("a")[idx].ariaSelected = "true";
     }
-  };
-
-  // dev/scripts/modules/model.js
-  var cloneDeep2 = (obj) => {
-    return JSON.parse(JSON.stringify(obj));
-  };
-  var initialState2 = {
-    libraries: {},
-    regions: {},
-    category: {},
-    categorySort: []
-  };
-  var storageKey = "BookWorld";
-  var setState = (newState) => {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(newState));
-    } catch (error) {
-      console.error(error);
+    renderBookSize() {
+      const sizeEl = this.querySelector(".size");
+      sizeEl.textContent = this.bookSize.toString();
     }
-  };
-  var getState = () => {
-    try {
-      const storedState = localStorage.getItem(storageKey);
-      if (storedState == null) {
-        setState(initialState2);
-        return initialState2;
-      }
-      return cloneDeep2(JSON.parse(storedState));
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to get state from localStorage.");
-    }
-  };
-  var state = getState();
-  var getBookSizeInCategory = () => {
-    function getTotalItemCount(data) {
-      return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
-    }
-    return getTotalItemCount(state.category);
-  };
-
-  // dev/scripts/modules/events.js
-  var updateBookSizeInCategor = () => {
-    const navElement = document.querySelector("nav-gnb");
-    navElement.querySelector(".size").textContent = String(getBookSizeInCategory());
   };
 
   // dev/scripts/components/CategorySelector.js
@@ -934,7 +910,6 @@
         store_default.addBookInCategory(category, ISBN);
       }
       checkbox.checked = !isBookInCategory;
-      updateBookSizeInCategor();
     }
   };
 

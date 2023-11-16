@@ -1,4 +1,3 @@
-import { updateBookSizeInCategor } from "../modules/events";
 import store from "../modules/store";
 
 export default class CategorySelector extends HTMLElement {
@@ -104,6 +103,5 @@ export default class CategorySelector extends HTMLElement {
         }
 
         checkbox.checked = !isBookInCategory;
-        updateBookSizeInCategor();
     }
 }

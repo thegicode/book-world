@@ -1,4 +1,3 @@
-import { updateBookSizeInCategor } from "../modules/events";
 import store from "../modules/store";
 export default class CategorySelector extends HTMLElement {
     constructor() {
@@ -70,7 +69,6 @@ export default class CategorySelector extends HTMLElement {
             store.addBookInCategory(category, ISBN);
         }
         checkbox.checked = !isBookInCategory;
-        updateBookSizeInCategor();
     }
 }
 //# sourceMappingURL=CategorySelector.js.map

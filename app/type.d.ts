@@ -179,9 +179,12 @@ interface IStore {
     // state: IStorageData;
 
     listeners: TListener[];
+    librariesChangedCategory: TListener[];
     subscribe(listener: TListener): void;
+    subscribeChangedCatgory(listener: TListener): void;
     unsubscribe(callback: TListener): void;
     notify(): void;
+    notifyChangedCategory(): void;
 
     storage: IStorageData;
     state: IStorageData;
@@ -202,7 +205,7 @@ interface IStore {
     addBookInCategory(name: string, isbn: string): void;
     hasBookInCategory(name: string, isbn: string): boolean;
     removeBookInCategory(name: string, isbn: string): void;
-    getBookSizeInCategory(): number;
+    // getBookSizeInCategory(): number;
 
     addLibrary(code: string, name: string): void;
     hasLibrary(code: string): boolean;
