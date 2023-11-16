@@ -172,7 +172,7 @@ interface IStorageData {
     category: TCategory;
     libraries: TLibraries;
     regions: Record<string, Record<string, string>>;
-    categorySort: string[];
+    categorySort: TCategorySrot;
 }
 
 interface IStore {
@@ -186,17 +186,26 @@ interface IStore {
     storage: IStorageData;
     state: IStorageData;
     category: TCategory;
+    categorySort: TCategorySrot;
     libraries: TLibraries;
     regions: TRegions;
 
     resetState(): void;
 
     addCategory(name: string): void;
+    addCategorySort(name: string): void;
     hasCategory(name: string): boolean;
     renameCategory(prevName: string, newName: string): void;
+    renameCategorySort(prevName: string, newName: string): void;
     deleteCategory(name: string): void;
+    changeCategory(draggedKey: string, targetKey: string): void;
+    addBookInCategory(name: string, isbn: string): void;
+    hasBookInCategory(name: string, isbn: string): boolean;
+    removeBookInCategory(name: string, isbn: string): void;
+    getBookSizeInCategory(): number;
 
     addLibrary(code: string, name: string): void;
+    hasLibrary(code: string): boolean;
     removeLibrary(code: string): void;
 
     addRegion(name: string): void;
@@ -212,5 +221,6 @@ interface IStore {
 
 type TListener = () => void;
 type TCategory = Record<string, string[]>;
+type TCategorySrot = string[];
 type TLibraries = Record<string, string>;
 type TRegions = Record<string, Record<string, string>>;

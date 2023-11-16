@@ -609,101 +609,12 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // dev/scripts/modules/model.js
+  // dev/scripts/modules/store.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
-  var initialState = {
-    libraries: {},
-    regions: {},
-    category: {},
-    categorySort: []
-  };
-  var storageKey = "BookWorld";
-  var setState = (newState) => {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(newState));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  var getState = () => {
-    try {
-      const storedState = localStorage.getItem(storageKey);
-      if (storedState == null) {
-        setState(initialState);
-        return initialState;
-      }
-      return cloneDeep(JSON.parse(storedState));
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to get state from localStorage.");
-    }
-  };
-  var state = getState();
-  var getBookSizeInCategory = () => {
-    function getTotalItemCount(data) {
-      return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
-    }
-    return getTotalItemCount(state.category);
-  };
-
-  // dev/scripts/components/NavGnb.js
-  var NavGnb = class extends HTMLElement {
-    constructor() {
-      super();
-      this.PATHS = [
-        "/search",
-        "/favorite",
-        "/popular",
-        "/library",
-        "/setting"
-      ];
-    }
-    connectedCallback() {
-      this.render();
-      this.setSelectedMenu();
-    }
-    render() {
-      const paths = this.PATHS;
-      this.innerHTML = `
-            <nav class="gnb">
-                <a class="gnb-item" href=".${paths[0]}">\uCC45 \uAC80\uC0C9</a>
-                <a class="gnb-item" href=".${paths[1]}">\uB098\uC758 \uCC45 (<span class="size">${getBookSizeInCategory()}</span>)</a>
-                <a class="gnb-item" href=".${paths[2]}">\uC778\uAE30\uB300\uCD9C\uB3C4\uC11C</a>
-                <a class="gnb-item" href=".${paths[3]}">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
-                <a class="gnb-item" href=".${paths[4]}">\uC124\uC815</a>
-            </nav>`;
-    }
-    setSelectedMenu() {
-      const idx = this.PATHS.indexOf(document.location.pathname);
-      if (idx >= 0)
-        this.querySelectorAll("a")[idx].ariaSelected = "true";
-    }
-  };
-
-  // dev/scripts/pages/setting/AppSetting.js
-  var AppSetting = class extends HTMLElement {
-    constructor() {
-      super();
-    }
-  };
-
-  // dev/scripts/utils/helpers.js
-  function cloneTemplate(template) {
-    const content = template.content.firstElementChild;
-    if (!content) {
-      throw new Error("Template content is empty");
-    }
-    return content.cloneNode(true);
-  }
-
-  // dev/scripts/modules/store.js
-  var cloneDeep2 = (obj) => {
-    return JSON.parse(JSON.stringify(obj));
-  };
   var STORAGE_NAME = "BookWorld";
-  var initialState2 = {
+  var initialState = {
     libraries: {},
     regions: {},
     category: {},
@@ -724,7 +635,7 @@
       try {
         const storageData = localStorage.getItem(STORAGE_NAME);
         const state2 = storageData === null ? this.state : JSON.parse(storageData);
-        return cloneDeep2(state2);
+        return cloneDeep(state2);
       } catch (error) {
         console.error(error);
         throw new Error("Failed to get state from localStorage.");
@@ -738,25 +649,37 @@
       }
     },
     get state() {
-      return cloneDeep2(this.storage);
+      return cloneDeep(this.storage);
     },
     set state(newState) {
       this.storage = newState;
     },
     get category() {
-      return cloneDeep2(this.state.category);
+      return cloneDeep(this.state.category);
     },
-    set category(name) {
-      console.log(this.state.category);
+    set category(newCategory) {
+      const newState = this.state;
+      newState.category = newCategory;
+      this.state = newState;
+    },
+    get categorySort() {
+      return cloneDeep(this.state.categorySort);
+    },
+    set categorySort(newSort) {
+      const newState = this.state;
+      newState.categorySort = newSort;
+      this.state = newState;
     },
     get libraries() {
-      return cloneDeep2(this.state.libraries);
+      return cloneDeep(this.state.libraries);
     },
     set libraries(newLibries) {
-      this.state.libraries = newLibries;
+      const newState = this.state;
+      newState.libraries = newLibries;
+      this.state = newState;
     },
     get regions() {
-      return cloneDeep2(this.state.regions);
+      return cloneDeep(this.state.regions);
     },
     set regions(newRegions) {
       const newState = this.state;
@@ -764,27 +687,69 @@
       this.state = newState;
     },
     resetState() {
-      this.storage = initialState2;
+      this.storage = initialState;
     },
+    // Category, CategorySort
     addCategory(name) {
-      const newFavorites = this.category;
-      newFavorites[name] = [];
-      this.category = newFavorites;
+      const newCategory = this.category;
+      newCategory[name] = [];
+      this.category = newCategory;
+    },
+    addCategorySort(name) {
+      const newCategorySort = this.categorySort;
+      newCategorySort.push(name);
+      this.categorySort = newCategorySort;
     },
     hasCategory(name) {
       return name in this.category;
     },
     renameCategory(prevName, newName) {
-      const newFavorites = this.category;
-      newFavorites[prevName] = newFavorites[newName];
-      delete newFavorites[prevName];
-      this.category = newFavorites;
+      const newCategory = this.category;
+      newCategory[newName] = newCategory[prevName];
+      delete newCategory[prevName];
+      this.category = newCategory;
+    },
+    renameCategorySort(prevName, newName) {
+      const newCategorySort = this.categorySort;
+      const index = newCategorySort.indexOf(prevName);
+      newCategorySort[index] = newName;
+      this.categorySort = newCategorySort;
     },
     deleteCategory(name) {
       const newFavorites = this.category;
       delete newFavorites[name];
       this.category = newFavorites;
     },
+    changeCategory(draggedKey, targetKey) {
+      const newSort = this.categorySort;
+      const draggedIndex = newSort.indexOf(draggedKey);
+      const targetIndex = newSort.indexOf(targetKey);
+      newSort[targetIndex] = draggedKey;
+      newSort[draggedIndex] = targetKey;
+      this.categorySort = newSort;
+    },
+    // BookInCategory
+    addBookInCategory(name, isbn) {
+      const newCategory = this.category;
+      newCategory[name].unshift(isbn);
+      this.category = newCategory;
+    },
+    hasBookInCategory(name, isbn) {
+      return this.category[name].includes(isbn);
+    },
+    removeBookInCategory(name, isbn) {
+      const newCategory = this.category;
+      const index = newCategory[name].indexOf(isbn);
+      if (index !== -1) {
+        newCategory[name].splice(index, 1);
+        this.category = newCategory;
+      }
+    },
+    // Book Size
+    getBookSizeInCategory() {
+      return Object.values(store.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
+    },
+    // Library
     addLibrary(code, name) {
       const newLibries = this.libraries;
       newLibries[code] = name;
@@ -795,6 +760,10 @@
       delete newLibries[code];
       this.libraries = newLibries;
     },
+    hasLibrary(code) {
+      return code in this.libraries;
+    },
+    // Region
     addRegion(name) {
       const newRegion = this.regions;
       newRegion[name] = {};
@@ -817,6 +786,89 @@
     }
   };
   var store_default = store;
+
+  // dev/scripts/components/NavGnb.js
+  var NavGnb = class extends HTMLElement {
+    constructor() {
+      super();
+      this.PATHS = [
+        "/search",
+        "/favorite",
+        "/popular",
+        "/library",
+        "/setting"
+      ];
+    }
+    connectedCallback() {
+      this.render();
+      this.setSelectedMenu();
+    }
+    render() {
+      const paths = this.PATHS;
+      this.innerHTML = `
+            <nav class="gnb">
+                <a class="gnb-item" href=".${paths[0]}">\uCC45 \uAC80\uC0C9</a>
+                <a class="gnb-item" href=".${paths[1]}">\uB098\uC758 \uCC45 (<span class="size">${store_default.getBookSizeInCategory()}</span>)</a>
+                <a class="gnb-item" href=".${paths[2]}">\uC778\uAE30\uB300\uCD9C\uB3C4\uC11C</a>
+                <a class="gnb-item" href=".${paths[3]}">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
+                <a class="gnb-item" href=".${paths[4]}">\uC124\uC815</a>
+            </nav>`;
+    }
+    setSelectedMenu() {
+      const idx = this.PATHS.indexOf(document.location.pathname);
+      if (idx >= 0)
+        this.querySelectorAll("a")[idx].ariaSelected = "true";
+    }
+  };
+
+  // dev/scripts/modules/model.js
+  var cloneDeep2 = (obj) => {
+    return JSON.parse(JSON.stringify(obj));
+  };
+  var initialState2 = {
+    libraries: {},
+    regions: {},
+    category: {},
+    categorySort: []
+  };
+  var storageKey = "BookWorld";
+  var setState = (newState) => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(newState));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  var getState = () => {
+    try {
+      const storedState = localStorage.getItem(storageKey);
+      if (storedState == null) {
+        setState(initialState2);
+        return initialState2;
+      }
+      return cloneDeep2(JSON.parse(storedState));
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to get state from localStorage.");
+    }
+  };
+  var state = getState();
+
+  // dev/scripts/pages/setting/AppSetting.js
+  var AppSetting = class extends HTMLElement {
+    constructor() {
+      super();
+    }
+  };
+
+  // dev/scripts/utils/helpers.js
+  function cloneTemplate(template) {
+    const content = template.content.firstElementChild;
+    if (!content) {
+      throw new Error("Template content is empty");
+    }
+    return content.cloneNode(true);
+  }
 
   // dev/scripts/pages/setting/SetRegion.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {

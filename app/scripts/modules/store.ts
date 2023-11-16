@@ -60,10 +60,19 @@ const store: IStore = {
         return cloneDeep(this.state.category);
     },
 
-    set category(name) {
-        // this.state.category = { ...this.state.category, newCategory };
-        console.log(this.state.category);
-        // console.log("store favorites: ", this.state.category);
+    set category(newCategory) {
+        const newState = this.state;
+        newState.category = newCategory;
+        this.state = newState;
+    },
+
+    get categorySort() {
+        return cloneDeep(this.state.categorySort);
+    },
+    set categorySort(newSort) {
+        const newState = this.state;
+        newState.categorySort = newSort;
+        this.state = newState;
     },
 
     get libraries() {
@@ -71,7 +80,9 @@ const store: IStore = {
     },
 
     set libraries(newLibries) {
-        this.state.libraries = newLibries;
+        const newState = this.state;
+        newState.libraries = newLibries;
+        this.state = newState;
     },
 
     get regions() {
@@ -88,10 +99,17 @@ const store: IStore = {
         this.storage = initialState;
     },
 
+    // Category, CategorySort
     addCategory(name) {
-        const newFavorites = this.category;
-        newFavorites[name] = [];
-        this.category = newFavorites;
+        const newCategory = this.category;
+        newCategory[name] = [];
+        this.category = newCategory;
+    },
+
+    addCategorySort(name) {
+        const newCategorySort = this.categorySort;
+        newCategorySort.push(name);
+        this.categorySort = newCategorySort;
     },
 
     hasCategory(name) {
@@ -99,11 +117,17 @@ const store: IStore = {
     },
 
     renameCategory(prevName, newName) {
-        const newFavorites = this.category;
-        newFavorites[prevName] = newFavorites[newName];
-        delete newFavorites[prevName];
+        const newCategory = this.category;
+        newCategory[newName] = newCategory[prevName];
+        delete newCategory[prevName];
+        this.category = newCategory;
+    },
 
-        this.category = newFavorites;
+    renameCategorySort(prevName, newName) {
+        const newCategorySort = this.categorySort;
+        const index = newCategorySort.indexOf(prevName);
+        newCategorySort[index] = newName;
+        this.categorySort = newCategorySort;
     },
 
     deleteCategory(name) {
@@ -111,6 +135,47 @@ const store: IStore = {
         delete newFavorites[name];
         this.category = newFavorites;
     },
+
+    changeCategory(draggedKey, targetKey) {
+        const newSort = this.categorySort;
+        const draggedIndex = newSort.indexOf(draggedKey);
+        const targetIndex = newSort.indexOf(targetKey);
+        newSort[targetIndex] = draggedKey;
+        newSort[draggedIndex] = targetKey;
+
+        this.categorySort = newSort;
+    },
+
+    // BookInCategory
+
+    addBookInCategory(name, isbn) {
+        const newCategory = this.category;
+        newCategory[name].unshift(isbn);
+        this.category = newCategory;
+    },
+
+    hasBookInCategory(name, isbn) {
+        return this.category[name].includes(isbn);
+    },
+
+    removeBookInCategory(name, isbn) {
+        const newCategory = this.category;
+        const index = newCategory[name].indexOf(isbn);
+        if (index !== -1) {
+            newCategory[name].splice(index, 1);
+            this.category = newCategory;
+        }
+    },
+
+    // Book Size
+    getBookSizeInCategory() {
+        return Object.values(store.category).reduce(
+            (sum, currentArray: string[]) => sum + currentArray.length,
+            0
+        );
+    },
+
+    // Library
 
     addLibrary(code, name) {
         const newLibries = this.libraries;
@@ -123,6 +188,12 @@ const store: IStore = {
         delete newLibries[code];
         this.libraries = newLibries;
     },
+
+    hasLibrary(code) {
+        return code in this.libraries;
+    },
+
+    // Region
 
     addRegion(name: string) {
         const newRegion = this.regions;

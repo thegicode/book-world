@@ -1,6 +1,6 @@
 import { CustomEventEmitter } from "../../utils/index";
-import { getState } from "../../modules/model";
 import { cloneTemplate } from "../../utils/helpers";
+import store from "../../modules/store";
 export default class LibraryRegion extends HTMLElement {
     constructor() {
         super();
@@ -20,7 +20,7 @@ export default class LibraryRegion extends HTMLElement {
         this.selectElement.removeEventListener("change", this.onChangeDetail);
     }
     renderRegion() {
-        const favoriteRegions = getState().regions;
+        const favoriteRegions = store.regions;
         if (Object.keys(favoriteRegions).length === 0)
             return;
         const container = this.querySelector(".region");
@@ -62,7 +62,7 @@ export default class LibraryRegion extends HTMLElement {
     }
     renderDetailRegion(regionName) {
         this.selectElement.innerHTML = "";
-        const detailRegionObject = getState().regions[regionName];
+        const detailRegionObject = store.regions[regionName];
         for (const [key, value] of Object.entries(detailRegionObject)) {
             const optionEl = document.createElement("option");
             optionEl.textContent = key;

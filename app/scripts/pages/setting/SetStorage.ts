@@ -1,5 +1,4 @@
 import { CustomFetch } from "../../utils/index";
-// import { setState } from "../../modules/model";
 import store from "../../modules/store";
 // import { updateBookSizeInCategor } from "../../modules/events.js";
 

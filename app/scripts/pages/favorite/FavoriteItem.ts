@@ -1,10 +1,10 @@
 import { CustomFetch } from "../../utils/index";
-import { state } from "../../modules/model";
 import {
     BookDescription,
     BookImage,
     LibraryBookExist,
 } from "../../components/index";
+import store from "../../modules/store";
 
 export default class FavoriteItem extends HTMLElement {
     protected libraryButton?: HTMLButtonElement;
@@ -84,7 +84,7 @@ export default class FavoriteItem extends HTMLElement {
         const anchorEl = this.querySelector("a") as HTMLAnchorElement;
         if (anchorEl) anchorEl.href = `/book?isbn=${data.book.isbn13}`;
 
-        if (this.libraryButton && Object.keys(state.libraries).length === 0) {
+        if (this.libraryButton && Object.keys(store.libraries).length === 0) {
             this.libraryButton.hidden = true;
         }
 
@@ -107,7 +107,7 @@ export default class FavoriteItem extends HTMLElement {
             this.libraryBookExist.onLibraryBookExist(
                 this.libraryButton,
                 isbn,
-                state.libraries
+                store.libraries
             );
             if (this.libraryButton) {
                 this.libraryButton.hidden = true;

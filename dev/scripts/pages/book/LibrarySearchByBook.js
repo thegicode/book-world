@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CustomFetch } from "../../utils/index";
-import { getState } from "../../modules/model";
 import { cloneTemplate } from "../../utils/helpers";
+import store from "../../modules/store";
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
         super();
@@ -20,7 +20,7 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
     fetchList(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
-            const favoriteLibraries = getState().regions;
+            const favoriteLibraries = store.regions;
             if (Object.entries(favoriteLibraries).length === 0)
                 return;
             for (const regionName in favoriteLibraries) {

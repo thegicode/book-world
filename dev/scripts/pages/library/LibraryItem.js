@@ -1,4 +1,4 @@
-import { addLibrary, removeLibrary, hasLibrary } from "../../modules/model";
+import store from "../../modules/store";
 export default class LibraryItem extends HTMLElement {
     constructor() {
         super();
@@ -35,17 +35,17 @@ export default class LibraryItem extends HTMLElement {
         this.libCode = libCode;
         this.libName = libName;
         if (this.checkbox)
-            this.checkbox.checked = hasLibrary(this.libCode);
+            this.checkbox.checked = store.hasLibrary(this.libCode);
     }
     onChange(event) {
         const target = event.target;
         if (!target)
             return;
         if (target.checked) {
-            addLibrary(this.libCode, this.libName);
+            store.addLibrary(this.libCode, this.libName);
         }
         else {
-            removeLibrary(this.libCode);
+            store.removeLibrary(this.libCode);
         }
     }
 }

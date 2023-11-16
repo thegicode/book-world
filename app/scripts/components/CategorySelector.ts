@@ -1,10 +1,5 @@
-import {
-    state,
-    addBookInCategory,
-    hasBookInCategory,
-    removeBookInCategory,
-} from "../modules/model";
 import { updateBookSizeInCategor } from "../modules/events";
+import store from "../modules/store";
 
 export default class CategorySelector extends HTMLElement {
     protected isbn: string | null;
@@ -58,7 +53,7 @@ export default class CategorySelector extends HTMLElement {
         const container = document.createElement("div");
         container.className = "category";
         container.hidden = true;
-        state.categorySort.forEach((category: string) =>
+        store.categorySort.forEach((category: string) =>
             this.createCategoryItem(container, category, this.isbn || "")
         );
         return container;
@@ -84,7 +79,7 @@ export default class CategorySelector extends HTMLElement {
     private createCheckbox(category: string, ISBN: string) {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        if (hasBookInCategory(category, ISBN)) {
+        if (store.hasBookInCategory(category, ISBN)) {
             checkbox.checked = true;
         }
 
@@ -100,12 +95,12 @@ export default class CategorySelector extends HTMLElement {
         category: string,
         ISBN: string
     ) {
-        const isBookInCategory = hasBookInCategory(category, ISBN);
+        const isBookInCategory = store.hasBookInCategory(category, ISBN);
 
         if (isBookInCategory) {
-            removeBookInCategory(category, ISBN);
+            store.removeBookInCategory(category, ISBN);
         } else {
-            addBookInCategory(category, ISBN);
+            store.addBookInCategory(category, ISBN);
         }
 
         checkbox.checked = !isBookInCategory;

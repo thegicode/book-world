@@ -1,4 +1,4 @@
-import { addLibrary, removeLibrary, hasLibrary } from "../../modules/model";
+import store from "../../modules/store";
 
 export default class LibraryItem extends HTMLElement {
     protected checkbox: HTMLInputElement | null = null;
@@ -41,16 +41,17 @@ export default class LibraryItem extends HTMLElement {
         this.libCode = libCode;
         this.libName = libName;
 
-        if (this.checkbox) this.checkbox.checked = hasLibrary(this.libCode);
+        if (this.checkbox)
+            this.checkbox.checked = store.hasLibrary(this.libCode);
     }
 
     protected onChange(event: MouseEvent): void {
         const target = event.target as HTMLInputElement;
         if (!target) return;
         if (target.checked) {
-            addLibrary(this.libCode, this.libName);
+            store.addLibrary(this.libCode, this.libName);
         } else {
-            removeLibrary(this.libCode);
+            store.removeLibrary(this.libCode);
         }
     }
 }

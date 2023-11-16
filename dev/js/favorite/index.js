@@ -762,79 +762,183 @@
     }
   };
 
-  // dev/scripts/modules/model.js
+  // dev/scripts/modules/store.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
+  var STORAGE_NAME = "BookWorld";
   var initialState = {
     libraries: {},
     regions: {},
     category: {},
     categorySort: []
   };
-  var storageKey = "BookWorld";
-  var setState = (newState) => {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(newState));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  var getState = () => {
-    try {
-      const storedState = localStorage.getItem(storageKey);
-      if (storedState == null) {
-        setState(initialState);
-        return initialState;
+  var store = {
+    listeners: [],
+    subscribe(listener) {
+      this.listeners.push(listener);
+    },
+    unsubscribe(callback) {
+      this.listeners = this.listeners.filter((subscriber) => subscriber !== callback);
+    },
+    notify() {
+      this.listeners.forEach((listener) => listener());
+    },
+    get storage() {
+      try {
+        const storageData = localStorage.getItem(STORAGE_NAME);
+        const state2 = storageData === null ? this.state : JSON.parse(storageData);
+        return cloneDeep(state2);
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to get state from localStorage.");
       }
-      return cloneDeep(JSON.parse(storedState));
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to get state from localStorage.");
+    },
+    set storage(newState) {
+      try {
+        localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    get state() {
+      return cloneDeep(this.storage);
+    },
+    set state(newState) {
+      this.storage = newState;
+    },
+    get category() {
+      return cloneDeep(this.state.category);
+    },
+    set category(newCategory) {
+      const newState = this.state;
+      newState.category = newCategory;
+      this.state = newState;
+    },
+    get categorySort() {
+      return cloneDeep(this.state.categorySort);
+    },
+    set categorySort(newSort) {
+      const newState = this.state;
+      newState.categorySort = newSort;
+      this.state = newState;
+    },
+    get libraries() {
+      return cloneDeep(this.state.libraries);
+    },
+    set libraries(newLibries) {
+      const newState = this.state;
+      newState.libraries = newLibries;
+      this.state = newState;
+    },
+    get regions() {
+      return cloneDeep(this.state.regions);
+    },
+    set regions(newRegions) {
+      const newState = this.state;
+      newState.regions = newRegions;
+      this.state = newState;
+    },
+    resetState() {
+      this.storage = initialState;
+    },
+    // Category, CategorySort
+    addCategory(name) {
+      const newCategory = this.category;
+      newCategory[name] = [];
+      this.category = newCategory;
+    },
+    addCategorySort(name) {
+      const newCategorySort = this.categorySort;
+      newCategorySort.push(name);
+      this.categorySort = newCategorySort;
+    },
+    hasCategory(name) {
+      return name in this.category;
+    },
+    renameCategory(prevName, newName) {
+      const newCategory = this.category;
+      newCategory[newName] = newCategory[prevName];
+      delete newCategory[prevName];
+      this.category = newCategory;
+    },
+    renameCategorySort(prevName, newName) {
+      const newCategorySort = this.categorySort;
+      const index = newCategorySort.indexOf(prevName);
+      newCategorySort[index] = newName;
+      this.categorySort = newCategorySort;
+    },
+    deleteCategory(name) {
+      const newFavorites = this.category;
+      delete newFavorites[name];
+      this.category = newFavorites;
+    },
+    changeCategory(draggedKey, targetKey) {
+      const newSort = this.categorySort;
+      const draggedIndex = newSort.indexOf(draggedKey);
+      const targetIndex = newSort.indexOf(targetKey);
+      newSort[targetIndex] = draggedKey;
+      newSort[draggedIndex] = targetKey;
+      this.categorySort = newSort;
+    },
+    // BookInCategory
+    addBookInCategory(name, isbn) {
+      const newCategory = this.category;
+      newCategory[name].unshift(isbn);
+      this.category = newCategory;
+    },
+    hasBookInCategory(name, isbn) {
+      return this.category[name].includes(isbn);
+    },
+    removeBookInCategory(name, isbn) {
+      const newCategory = this.category;
+      const index = newCategory[name].indexOf(isbn);
+      if (index !== -1) {
+        newCategory[name].splice(index, 1);
+        this.category = newCategory;
+      }
+    },
+    // Book Size
+    getBookSizeInCategory() {
+      return Object.values(store.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
+    },
+    // Library
+    addLibrary(code, name) {
+      const newLibries = this.libraries;
+      newLibries[code] = name;
+      this.libraries = newLibries;
+    },
+    removeLibrary(code) {
+      const newLibries = this.libraries;
+      delete newLibries[code];
+      this.libraries = newLibries;
+    },
+    hasLibrary(code) {
+      return code in this.libraries;
+    },
+    // Region
+    addRegion(name) {
+      const newRegion = this.regions;
+      newRegion[name] = {};
+      this.regions = newRegion;
+    },
+    removeRegion(name) {
+      const newRegions = this.regions;
+      delete newRegions[name];
+      this.regions = newRegions;
+    },
+    addDetailRegion(regionName, detailName, detailCode) {
+      const newRegions = this.regions;
+      newRegions[regionName][detailName] = detailCode;
+      this.regions = newRegions;
+    },
+    removeDetailRegion(regionName, detailName) {
+      const newRegions = this.regions;
+      delete newRegions[regionName][detailName];
+      this.regions = newRegions;
     }
   };
-  var state = getState();
-  var renameCategory = (name, newName) => {
-    const index = state.categorySort.indexOf(name);
-    state.categorySort[index] = newName;
-    state.category[newName] = state.category[name];
-    delete state.category[name];
-    setState(state);
-  };
-  var deleteCategory = (name) => {
-    state.categorySort = state.categorySort.filter((item) => item !== name);
-    delete state.category[name];
-    setState(state);
-  };
-  var changeCategory = (draggedKey, targetKey) => {
-    const draggedIndex = state.categorySort.indexOf(draggedKey);
-    const targetIndex = state.categorySort.indexOf(targetKey);
-    const sortData = [...state.categorySort];
-    sortData[targetIndex] = draggedKey;
-    sortData[draggedIndex] = targetKey;
-    state.categorySort = sortData;
-    setState(state);
-  };
-  var addBookInCategory = (name, isbn) => {
-    state.category[name].unshift(isbn);
-    setState(state);
-  };
-  var hasBookInCategory = (name, isbn) => {
-    return state.category[name].includes(isbn);
-  };
-  var removeBookInCategory = (name, isbn) => {
-    const index = state.category[name].indexOf(isbn);
-    if (index !== -1) {
-      state.category[name].splice(index, 1);
-      setState(state);
-    }
-  };
-  var getBookSizeInCategory = () => {
-    function getTotalItemCount(data) {
-      return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
-    }
-    return getTotalItemCount(state.category);
-  };
+  var store_default = store;
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
@@ -857,7 +961,7 @@
       this.innerHTML = `
             <nav class="gnb">
                 <a class="gnb-item" href=".${paths[0]}">\uCC45 \uAC80\uC0C9</a>
-                <a class="gnb-item" href=".${paths[1]}">\uB098\uC758 \uCC45 (<span class="size">${getBookSizeInCategory()}</span>)</a>
+                <a class="gnb-item" href=".${paths[1]}">\uB098\uC758 \uCC45 (<span class="size">${store_default.getBookSizeInCategory()}</span>)</a>
                 <a class="gnb-item" href=".${paths[2]}">\uC778\uAE30\uB300\uCD9C\uB3C4\uC11C</a>
                 <a class="gnb-item" href=".${paths[3]}">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
                 <a class="gnb-item" href=".${paths[4]}">\uC124\uC815</a>
@@ -868,6 +972,45 @@
       if (idx >= 0)
         this.querySelectorAll("a")[idx].ariaSelected = "true";
     }
+  };
+
+  // dev/scripts/modules/model.js
+  var cloneDeep2 = (obj) => {
+    return JSON.parse(JSON.stringify(obj));
+  };
+  var initialState2 = {
+    libraries: {},
+    regions: {},
+    category: {},
+    categorySort: []
+  };
+  var storageKey = "BookWorld";
+  var setState = (newState) => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(newState));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  var getState = () => {
+    try {
+      const storedState = localStorage.getItem(storageKey);
+      if (storedState == null) {
+        setState(initialState2);
+        return initialState2;
+      }
+      return cloneDeep2(JSON.parse(storedState));
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to get state from localStorage.");
+    }
+  };
+  var state = getState();
+  var getBookSizeInCategory = () => {
+    function getTotalItemCount(data) {
+      return Object.values(data).reduce((sum, currentArray) => sum + currentArray.length, 0);
+    }
+    return getTotalItemCount(state.category);
   };
 
   // dev/scripts/modules/events.js
@@ -924,24 +1067,24 @@
       const container = document.createElement("div");
       container.className = "category";
       container.hidden = true;
-      state.categorySort.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      store_default.categorySort.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
       return container;
     }
     createCheckbox(category, ISBN) {
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
-      if (hasBookInCategory(category, ISBN)) {
+      if (store_default.hasBookInCategory(category, ISBN)) {
         checkbox.checked = true;
       }
       checkbox.addEventListener("change", () => this.onChange(checkbox, category, ISBN));
       return checkbox;
     }
     onChange(checkbox, category, ISBN) {
-      const isBookInCategory = hasBookInCategory(category, ISBN);
+      const isBookInCategory = store_default.hasBookInCategory(category, ISBN);
       if (isBookInCategory) {
-        removeBookInCategory(category, ISBN);
+        store_default.removeBookInCategory(category, ISBN);
       } else {
-        addBookInCategory(category, ISBN);
+        store_default.addBookInCategory(category, ISBN);
       }
       checkbox.checked = !isBookInCategory;
       updateBookSizeInCategor();
@@ -1011,7 +1154,7 @@
       this.locationCategory = params.get("category");
     }
     connectedCallback() {
-      if (state.categorySort.length === 0) {
+      if (store_default.categorySort.length === 0) {
         this.renderMessage("\uAD00\uC2EC \uCE74\uD14C\uACE0\uB9AC\uB97C \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.");
         return;
       }
@@ -1067,7 +1210,7 @@
       CustomEventEmitter_default.add("categoryDeleted", this.onCategoryDeleted);
       CustomEventEmitter_default.add("categoryChanged", this.onCategoryChanged);
       if (this.category === null) {
-        this.category = state.categorySort[0];
+        this.category = store_default.categorySort[0];
         const url = this.getUrl(this.category);
         location.search = url;
       }
@@ -1084,7 +1227,7 @@
         return;
       this.nav.innerHTML = "";
       const fragment = new DocumentFragment();
-      state.categorySort.forEach((category) => {
+      store_default.categorySort.forEach((category) => {
         const el = this.createItem(category);
         fragment.appendChild(el);
       });
@@ -1130,7 +1273,7 @@
       if (!this.nav)
         return;
       const { category, value } = event.detail;
-      const index = state.categorySort.indexOf(value);
+      const index = store_default.categorySort.indexOf(value);
       this.nav.querySelectorAll("a")[index].textContent = value;
       if (this.category === category) {
         location.search = this.getUrl(value);
@@ -1144,8 +1287,8 @@
     onCategoryChanged(event) {
       var _a;
       const { draggedKey, targetKey } = event.detail;
-      const draggedIndex = state.categorySort.indexOf(draggedKey);
-      const targetIndex = state.categorySort.indexOf(targetKey);
+      const draggedIndex = store_default.categorySort.indexOf(draggedKey);
+      const targetIndex = store_default.categorySort.indexOf(targetKey);
       const navLinks = (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a");
       if (navLinks) {
         const targetEl = navLinks[targetIndex].cloneNode(true);
@@ -1253,7 +1396,7 @@
       const anchorEl = this.querySelector("a");
       if (anchorEl)
         anchorEl.href = `/book?isbn=${data.book.isbn13}`;
-      if (this.libraryButton && Object.keys(state.libraries).length === 0) {
+      if (this.libraryButton && Object.keys(store_default.libraries).length === 0) {
         this.libraryButton.hidden = true;
       }
       this.removeLoading();
@@ -1267,7 +1410,7 @@
     onLibrary() {
       const isbn = this.dataset.isbn;
       if (this.libraryBookExist && this.libraryButton) {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, state.libraries);
+        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, store_default.libraries);
         if (this.libraryButton) {
           this.libraryButton.hidden = true;
         }
@@ -1296,126 +1439,6 @@
     }
   };
 
-  // dev/scripts/modules/store.js
-  var cloneDeep2 = (obj) => {
-    return JSON.parse(JSON.stringify(obj));
-  };
-  var STORAGE_NAME = "BookWorld";
-  var initialState2 = {
-    libraries: {},
-    regions: {},
-    category: {},
-    categorySort: []
-  };
-  var store = {
-    listeners: [],
-    subscribe(listener) {
-      this.listeners.push(listener);
-    },
-    unsubscribe(callback) {
-      this.listeners = this.listeners.filter((subscriber) => subscriber !== callback);
-    },
-    notify() {
-      this.listeners.forEach((listener) => listener());
-    },
-    get storage() {
-      try {
-        const storageData = localStorage.getItem(STORAGE_NAME);
-        const state2 = storageData === null ? this.state : JSON.parse(storageData);
-        return cloneDeep2(state2);
-      } catch (error) {
-        console.error(error);
-        throw new Error("Failed to get state from localStorage.");
-      }
-    },
-    set storage(newState) {
-      try {
-        localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    get state() {
-      return cloneDeep2(this.storage);
-    },
-    set state(newState) {
-      this.storage = newState;
-    },
-    get category() {
-      return cloneDeep2(this.state.category);
-    },
-    set category(name) {
-      console.log(this.state.category);
-    },
-    get libraries() {
-      return cloneDeep2(this.state.libraries);
-    },
-    set libraries(newLibries) {
-      this.state.libraries = newLibries;
-    },
-    get regions() {
-      return cloneDeep2(this.state.regions);
-    },
-    set regions(newRegions) {
-      const newState = this.state;
-      newState.regions = newRegions;
-      this.state = newState;
-    },
-    resetState() {
-      this.storage = initialState2;
-    },
-    addCategory(name) {
-      const newFavorites = this.category;
-      newFavorites[name] = [];
-      this.category = newFavorites;
-    },
-    hasCategory(name) {
-      return name in this.category;
-    },
-    renameCategory(prevName, newName) {
-      const newFavorites = this.category;
-      newFavorites[prevName] = newFavorites[newName];
-      delete newFavorites[prevName];
-      this.category = newFavorites;
-    },
-    deleteCategory(name) {
-      const newFavorites = this.category;
-      delete newFavorites[name];
-      this.category = newFavorites;
-    },
-    addLibrary(code, name) {
-      const newLibries = this.libraries;
-      newLibries[code] = name;
-      this.libraries = newLibries;
-    },
-    removeLibrary(code) {
-      const newLibries = this.libraries;
-      delete newLibries[code];
-      this.libraries = newLibries;
-    },
-    addRegion(name) {
-      const newRegion = this.regions;
-      newRegion[name] = {};
-      this.regions = newRegion;
-    },
-    removeRegion(name) {
-      const newRegions = this.regions;
-      delete newRegions[name];
-      this.regions = newRegions;
-    },
-    addDetailRegion(regionName, detailName, detailCode) {
-      const newRegions = this.regions;
-      newRegions[regionName][detailName] = detailCode;
-      this.regions = newRegions;
-    },
-    removeDetailRegion(regionName, detailName) {
-      const newRegions = this.regions;
-      delete newRegions[regionName][detailName];
-      this.regions = newRegions;
-    }
-  };
-  var store_default = store;
-
   // dev/scripts/pages/favorite/OverlayCategory.js
   var OverlayCategory = class extends HTMLElement {
     constructor() {
@@ -1434,7 +1457,8 @@
           return;
         }
         store_default.addCategory(category);
-        const index = state.categorySort.length;
+        store_default.addCategorySort(category);
+        const index = store_default.categorySort.length;
         const cloned = this.createItem(category, index);
         (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
         this.addInput.value = "";
@@ -1490,7 +1514,7 @@
       if (!this.list)
         return;
       const fragment = new DocumentFragment();
-      state.categorySort.forEach((category, index) => {
+      store_default.categorySort.forEach((category, index) => {
         const cloned = this.createItem(category, index);
         fragment.appendChild(cloned);
       });
@@ -1526,16 +1550,17 @@
       const value = input.value;
       if (!value || category === value)
         return;
-      renameCategory(category, value);
+      store_default.renameCategory(category, value);
+      store_default.renameCategorySort(category, value);
       CustomEventEmitter_default.dispatch("categoryRenamed", {
         category,
         value
       });
     }
     handleDelete(cloned, category) {
-      const index = state.categorySort.indexOf(category);
+      const index = store_default.categorySort.indexOf(category);
       cloned.remove();
-      deleteCategory(category);
+      store_default.deleteCategory(category);
       CustomEventEmitter_default.dispatch("categoryDeleted", {
         index
       });
@@ -1573,7 +1598,7 @@
         const draggedKey = this.draggedItem.dataset.category;
         const targetKey = cloned.dataset.category;
         if (draggedKey && targetKey) {
-          changeCategory(draggedKey, targetKey);
+          store_default.changeCategory(draggedKey, targetKey);
           CustomEventEmitter_default.dispatch("categoryChanged", {
             draggedKey,
             targetKey

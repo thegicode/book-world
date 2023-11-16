@@ -1,7 +1,7 @@
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
-import { hasLibrary } from "../../modules/model";
 import LibraryItem from "./LibraryItem";
 import { cloneTemplate } from "../../utils/helpers";
+import store from "../../modules/store";
 
 export default class Library extends HTMLElement {
     private form?: HTMLFormElement;
@@ -61,7 +61,7 @@ export default class Library extends HTMLElement {
                     const libraryItem = cloneTemplate<LibraryItem>(template);
                     libraryItem.dataset.object = JSON.stringify(lib);
 
-                    if (hasLibrary(lib.libCode)) {
+                    if (store.hasLibrary(lib.libCode)) {
                         libraryItem.dataset.has = "true";
                         fragment.prepend(libraryItem);
                         // fragment.insertBefore(libraryItem, fragment.firstChild);

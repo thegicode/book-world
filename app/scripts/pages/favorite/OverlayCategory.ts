@@ -1,11 +1,3 @@
-import {
-    state,
-    // addCategory,
-    // hasCategory,
-    renameCategory,
-    deleteCategory,
-    changeCategory,
-} from "../../modules/model";
 import store from "../../modules/store";
 import { CustomEventEmitter } from "../../utils";
 import { cloneTemplate } from "../../utils/helpers";
@@ -70,7 +62,7 @@ export default class OverlayCategory extends HTMLElement {
         if (!this.list) return;
 
         const fragment = new DocumentFragment();
-        state.categorySort.forEach((category, index) => {
+        store.categorySort.forEach((category, index) => {
             const cloned = this.createItem(category, index);
             fragment.appendChild(cloned);
         });
@@ -131,7 +123,8 @@ export default class OverlayCategory extends HTMLElement {
         const value = input.value;
         if (!value || category === value) return;
 
-        renameCategory(category, value);
+        store.renameCategory(category, value);
+        store.renameCategorySort(category, value);
 
         CustomEventEmitter.dispatch("categoryRenamed", {
             category,
@@ -140,10 +133,10 @@ export default class OverlayCategory extends HTMLElement {
     }
 
     private handleDelete(cloned: HTMLLIElement, category: string) {
-        const index = state.categorySort.indexOf(category);
+        const index = store.categorySort.indexOf(category);
 
         cloned.remove();
-        deleteCategory(category);
+        store.deleteCategory(category);
 
         CustomEventEmitter.dispatch("categoryDeleted", {
             index,
@@ -193,7 +186,7 @@ export default class OverlayCategory extends HTMLElement {
             const draggedKey = this.draggedItem.dataset.category;
             const targetKey = cloned.dataset.category;
             if (draggedKey && targetKey) {
-                changeCategory(draggedKey, targetKey);
+                store.changeCategory(draggedKey, targetKey);
 
                 CustomEventEmitter.dispatch("categoryChanged", {
                     draggedKey,
@@ -210,7 +203,6 @@ export default class OverlayCategory extends HTMLElement {
         const category = this.addInput.value;
         if (!category) return;
 
-        // if (hasCategory(category)) {
         if (store.hasCategory(category)) {
             alert("중복된 이름입니다.");
             this.addInput.value = "";
@@ -218,9 +210,9 @@ export default class OverlayCategory extends HTMLElement {
         }
 
         store.addCategory(category);
-        // addCategory(category);
+        store.addCategorySort(category);
 
-        const index = state.categorySort.length;
+        const index = store.categorySort.length;
         const cloned = this.createItem(category, index);
         this.list?.appendChild(cloned);
 

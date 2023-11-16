@@ -1,4 +1,5 @@
 import { state } from "../../modules/model";
+import store from "../../modules/store";
 import { cloneTemplate } from "../../utils/helpers";
 export default class Favorite extends HTMLElement {
     constructor() {
@@ -9,7 +10,7 @@ export default class Favorite extends HTMLElement {
         this.locationCategory = params.get("category");
     }
     connectedCallback() {
-        if (state.categorySort.length === 0) {
+        if (store.categorySort.length === 0) {
             this.renderMessage("관심 카테고리를 등록해주세요.");
             return;
         }

@@ -1,4 +1,4 @@
-import { getBookSizeInCategory } from "../modules/model";
+import store from "../modules/store";
 
 export default class NavGnb extends HTMLElement {
     PATHS: string[];
@@ -27,7 +27,7 @@ export default class NavGnb extends HTMLElement {
                 <a class="gnb-item" href=".${paths[0]}">책 검색</a>
                 <a class="gnb-item" href=".${
                     paths[1]
-                }">나의 책 (<span class="size">${getBookSizeInCategory()}</span>)</a>
+                }">나의 책 (<span class="size">${store.getBookSizeInCategory()}</span>)</a>
                 <a class="gnb-item" href=".${paths[2]}">인기대출도서</a>
                 <a class="gnb-item" href=".${paths[3]}">도서관 조회</a>
                 <a class="gnb-item" href=".${paths[4]}">설정</a>
