@@ -1,6 +1,6 @@
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore, { bookStateUpdatePublisher } from "../../modules/BookStore";
+import bookStore, { publishers } from "../../modules/BookStore";
 
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const REGION_JSON_URL = "../../../assets/json/region.json";
@@ -23,11 +23,11 @@ export default class SetRegion extends HTMLElement {
     connectedCallback() {
         this.fetchAndRender();
 
-        bookStateUpdatePublisher.subscribe(this.fetchAndRender);
+        publishers.bookStateUpdate.subscribe(this.fetchAndRender);
     }
 
     discinnectedCallback() {
-        bookStateUpdatePublisher.unsubscribe(this.fetchAndRender);
+        publishers.bookStateUpdate.unsubscribe(this.fetchAndRender);
     }
 
     private async fetchAndRender() {

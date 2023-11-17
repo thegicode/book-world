@@ -9,10 +9,12 @@ const initialState = {
     category: {},
     categorySort: [],
 };
-export const bookStateUpdatePublisher = new Publisher();
-export const categoryBookUpdatePublisher = new Publisher();
-export const regionUpdatePublisher = new Publisher();
-export const detailRegionUpdatePublisher = new Publisher();
+export const publishers = {
+    bookStateUpdate: new Publisher(),
+    categoryBookUpdate: new Publisher(),
+    regionUpdate: new Publisher(),
+    detailRegionUpdate: new Publisher(),
+};
 class BookStore {
     constructor() {
         this.state = this.loadStorage() || cloneDeep(initialState);
@@ -120,7 +122,8 @@ class BookStore {
         const newCategory = this.category;
         newCategory[name].unshift(isbn);
         this.category = newCategory;
-        categoryBookUpdatePublisher.notify();
+        publishers.categoryBookUpdate.notify();
+        publishers.categoryBookUpdate.notify();
     }
     hasBookInCategory(name, isbn) {
         return this.category[name].includes(isbn);
@@ -132,7 +135,7 @@ class BookStore {
             newCategory[name].splice(index, 1);
             this.category = newCategory;
         }
-        categoryBookUpdatePublisher.notify();
+        publishers.categoryBookUpdate.notify();
     }
     addLibrary(code, name) {
         const newLibries = this.libraries;
@@ -151,25 +154,25 @@ class BookStore {
         const newRegion = this.regions;
         newRegion[name] = {};
         this.regions = newRegion;
-        regionUpdatePublisher.notify();
+        publishers.regionUpdate.notify();
     }
     removeRegion(name) {
         const newRegions = this.regions;
         delete newRegions[name];
         this.regions = newRegions;
-        regionUpdatePublisher.notify();
+        publishers.regionUpdate.notify();
     }
     addDetailRegion(regionName, detailName, detailCode) {
         const newRegions = this.regions;
         newRegions[regionName][detailName] = detailCode;
         this.regions = newRegions;
-        detailRegionUpdatePublisher.notify();
+        publishers.detailRegionUpdate.notify();
     }
     removeDetailRegion(regionName, detailName) {
         const newRegions = this.regions;
         delete newRegions[regionName][detailName];
         this.regions = newRegions;
-        detailRegionUpdatePublisher.notify();
+        publishers.detailRegionUpdate.notify();
     }
 }
 const bookStore = new BookStore();

@@ -636,10 +636,12 @@
     category: {},
     categorySort: []
   };
-  var bookStateUpdatePublisher = new Publisher();
-  var categoryBookUpdatePublisher = new Publisher();
-  var regionUpdatePublisher = new Publisher();
-  var detailRegionUpdatePublisher = new Publisher();
+  var publishers = {
+    bookStateUpdate: new Publisher(),
+    categoryBookUpdate: new Publisher(),
+    regionUpdate: new Publisher(),
+    detailRegionUpdate: new Publisher()
+  };
   var BookStore = class {
     constructor() {
       this.state = this.loadStorage() || cloneDeep(initialState);
@@ -745,7 +747,8 @@
       const newCategory = this.category;
       newCategory[name].unshift(isbn);
       this.category = newCategory;
-      categoryBookUpdatePublisher.notify();
+      publishers.categoryBookUpdate.notify();
+      publishers.categoryBookUpdate.notify();
     }
     hasBookInCategory(name, isbn) {
       return this.category[name].includes(isbn);
@@ -757,7 +760,7 @@
         newCategory[name].splice(index, 1);
         this.category = newCategory;
       }
-      categoryBookUpdatePublisher.notify();
+      publishers.categoryBookUpdate.notify();
     }
     addLibrary(code, name) {
       const newLibries = this.libraries;
@@ -776,25 +779,25 @@
       const newRegion = this.regions;
       newRegion[name] = {};
       this.regions = newRegion;
-      regionUpdatePublisher.notify();
+      publishers.regionUpdate.notify();
     }
     removeRegion(name) {
       const newRegions = this.regions;
       delete newRegions[name];
       this.regions = newRegions;
-      regionUpdatePublisher.notify();
+      publishers.regionUpdate.notify();
     }
     addDetailRegion(regionName, detailName, detailCode) {
       const newRegions = this.regions;
       newRegions[regionName][detailName] = detailCode;
       this.regions = newRegions;
-      detailRegionUpdatePublisher.notify();
+      publishers.detailRegionUpdate.notify();
     }
     removeDetailRegion(regionName, detailName) {
       const newRegions = this.regions;
       delete newRegions[regionName][detailName];
       this.regions = newRegions;
-      detailRegionUpdatePublisher.notify();
+      publishers.detailRegionUpdate.notify();
     }
   };
   var bookStore = new BookStore();
@@ -816,7 +819,7 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      categoryBookUpdatePublisher.subscribe(this.renderBookSize);
+      publishers.categoryBookUpdate.subscribe(this.renderBookSize);
     }
     get bookSize() {
       return Object.values(BookStore_default.category).reduce((sum, currentArray) => sum + currentArray.length, 0);

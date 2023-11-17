@@ -1,8 +1,5 @@
 import { CustomFetch } from "../../utils/index";
-import bookStore, {
-    categoryBookUpdatePublisher,
-    bookStateUpdatePublisher,
-} from "../../modules/BookStore";
+import bookStore, { publishers } from "../../modules/BookStore";
 
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
@@ -66,7 +63,7 @@ export default class SetStorage extends HTMLElement {
     };
 
     private updatePage() {
-        categoryBookUpdatePublisher.notify();
-        bookStateUpdatePublisher.notify();
+        publishers.categoryBookUpdate.notify();
+        publishers.bookStateUpdate.notify();
     }
 }

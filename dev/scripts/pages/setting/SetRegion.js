@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore, { bookStateUpdatePublisher } from "../../modules/BookStore";
+import bookStore, { publishers } from "../../modules/BookStore";
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const REGION_JSON_URL = "../../../assets/json/region.json";
 const REGION_TEMPLATE_NAME = "#tp-region";
@@ -22,10 +22,10 @@ export default class SetRegion extends HTMLElement {
     }
     connectedCallback() {
         this.fetchAndRender();
-        bookStateUpdatePublisher.subscribe(this.fetchAndRender);
+        publishers.bookStateUpdate.subscribe(this.fetchAndRender);
     }
     discinnectedCallback() {
-        bookStateUpdatePublisher.unsubscribe(this.fetchAndRender);
+        publishers.bookStateUpdate.unsubscribe(this.fetchAndRender);
     }
     fetchAndRender() {
         return __awaiter(this, void 0, void 0, function* () {

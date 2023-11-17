@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CustomFetch } from "../../utils/index";
-import bookStore, { categoryBookUpdatePublisher, bookStateUpdatePublisher, } from "../../modules/BookStore";
+import bookStore, { publishers } from "../../modules/BookStore";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
     constructor() {
@@ -51,8 +51,8 @@ export default class SetStorage extends HTMLElement {
         (_b = this.resetButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.resetStorage);
     }
     updatePage() {
-        categoryBookUpdatePublisher.notify();
-        bookStateUpdatePublisher.notify();
+        publishers.categoryBookUpdate.notify();
+        publishers.bookStateUpdate.notify();
     }
 }
 //# sourceMappingURL=SetStorage.js.map

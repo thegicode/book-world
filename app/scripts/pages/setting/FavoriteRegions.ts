@@ -1,7 +1,4 @@
-import bookStore, {
-    bookStateUpdatePublisher,
-    detailRegionUpdatePublisher,
-} from "../../modules/BookStore";
+import bookStore, { publishers } from "../../modules/BookStore";
 
 export default class FavoriteRegions extends HTMLElement {
     private container: HTMLElement | null = null;
@@ -15,13 +12,13 @@ export default class FavoriteRegions extends HTMLElement {
         this.container = this.querySelector(".favorites") as HTMLElement;
         this.render();
 
-        bookStateUpdatePublisher.subscribe(this.render);
-        detailRegionUpdatePublisher.subscribe(this.render);
+        publishers.bookStateUpdate.subscribe(this.render);
+        publishers.detailRegionUpdate.subscribe(this.render);
     }
 
     disconnectedCallback() {
-        bookStateUpdatePublisher.unsubscribe(this.render);
-        detailRegionUpdatePublisher.unsubscribe(this.render);
+        publishers.bookStateUpdate.unsubscribe(this.render);
+        publishers.detailRegionUpdate.unsubscribe(this.render);
     }
 
     private render() {

@@ -13,10 +13,12 @@ const initialState: IBookState = {
     categorySort: [],
 };
 
-export const bookStateUpdatePublisher = new Publisher();
-export const categoryBookUpdatePublisher = new Publisher();
-export const regionUpdatePublisher = new Publisher();
-export const detailRegionUpdatePublisher = new Publisher();
+export const publishers = {
+    bookStateUpdate: new Publisher(),
+    categoryBookUpdate: new Publisher(),
+    regionUpdate: new Publisher(),
+    detailRegionUpdate: new Publisher(),
+};
 
 class BookStore {
     private state: IBookState;
@@ -146,7 +148,8 @@ class BookStore {
         newCategory[name].unshift(isbn);
         this.category = newCategory;
 
-        categoryBookUpdatePublisher.notify();
+        publishers.categoryBookUpdate.notify();
+        publishers.categoryBookUpdate.notify();
     }
 
     hasBookInCategory(name: string, isbn: string) {
@@ -161,7 +164,7 @@ class BookStore {
             this.category = newCategory;
         }
 
-        categoryBookUpdatePublisher.notify();
+        publishers.categoryBookUpdate.notify();
     }
 
     addLibrary(code: string, name: string) {
@@ -185,7 +188,7 @@ class BookStore {
         newRegion[name] = {};
         this.regions = newRegion;
 
-        regionUpdatePublisher.notify();
+        publishers.regionUpdate.notify();
     }
 
     removeRegion(name: string) {
@@ -193,7 +196,7 @@ class BookStore {
         delete newRegions[name];
         this.regions = newRegions;
 
-        regionUpdatePublisher.notify();
+        publishers.regionUpdate.notify();
     }
 
     addDetailRegion(
@@ -205,7 +208,7 @@ class BookStore {
         newRegions[regionName][detailName] = detailCode;
         this.regions = newRegions;
 
-        detailRegionUpdatePublisher.notify();
+        publishers.detailRegionUpdate.notify();
     }
 
     removeDetailRegion(regionName: string, detailName: string) {
@@ -213,7 +216,7 @@ class BookStore {
         delete newRegions[regionName][detailName];
         this.regions = newRegions;
 
-        detailRegionUpdatePublisher.notify();
+        publishers.detailRegionUpdate.notify();
     }
 }
 
