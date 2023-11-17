@@ -1,8 +1,8 @@
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore, { publishers } from "../../modules/BookStore";
+import { FETCH_REGION_DATA_EVENT } from "./constant";
 
-const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const REGION_JSON_URL = "../../../assets/json/region.json";
 const REGION_TEMPLATE_NAME = "#tp-region";
 

@@ -862,6 +862,9 @@
     return content.cloneNode(true);
   }
 
+  // dev/scripts/pages/setting/constant.js
+  var FETCH_REGION_DATA_EVENT = "fetch-region-data";
+
   // dev/scripts/pages/setting/SetRegion.js
   var __awaiter2 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
@@ -890,7 +893,6 @@
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  var FETCH_REGION_DATA_EVENT = "fetch-region-data";
   var REGION_JSON_URL = "../../../assets/json/region.json";
   var REGION_TEMPLATE_NAME = "#tp-region";
   var SetRegion = class extends HTMLElement {
@@ -968,8 +970,6 @@
   };
 
   // dev/scripts/pages/setting/SetDetailRegion.js
-  var FETCH_REGION_DATA_EVENT2 = "fetch-region-data";
-  var SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
   var SetDetailRegion = class extends HTMLElement {
     constructor() {
       super();
@@ -980,11 +980,11 @@
     }
     connectedCallback() {
       publishers.regionUpdate.subscribe(this.renderRegion);
-      CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT2, this.setRegionData);
+      CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     disconnectedCallback() {
       publishers.regionUpdate.unsubscribe(this.renderRegion);
-      CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT2, this.setRegionData);
+      CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     setRegionData(event) {
       const customEvent = event;
@@ -1096,7 +1096,6 @@
           } else {
             BookStore_default.removeDetailRegion(region, label);
           }
-          CustomEventEmitter_default.dispatch(SET_DETAIL_REGIONS_EVENT, {});
         });
       });
     }

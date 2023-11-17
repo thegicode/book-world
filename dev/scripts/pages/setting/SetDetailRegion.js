@@ -1,8 +1,7 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore, { publishers } from "../../modules/BookStore";
-const FETCH_REGION_DATA_EVENT = "fetch-region-data";
-const SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
+import { FETCH_REGION_DATA_EVENT } from "./constant";
 export default class SetDetailRegion extends HTMLElement {
     constructor() {
         super();
@@ -131,7 +130,6 @@ export default class SetDetailRegion extends HTMLElement {
                 else {
                     bookStore.removeDetailRegion(region, label);
                 }
-                CustomEventEmitter.dispatch(SET_DETAIL_REGIONS_EVENT, {});
             });
         });
     }

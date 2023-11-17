@@ -10,7 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore, { publishers } from "../../modules/BookStore";
-import { FETCH_REGION_DATA_EVENT } from "./constant";
+import * as regionData from "../../../assets/json/region.json";
+const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const REGION_JSON_URL = "../../../assets/json/region.json";
 const REGION_TEMPLATE_NAME = "#tp-region";
 export default class SetRegion extends HTMLElement {
@@ -30,8 +31,9 @@ export default class SetRegion extends HTMLElement {
     fetchAndRender() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                this.regionData = (yield yield CustomFetch.fetch(REGION_JSON_URL));
+                this.regionData = yield this.fetchRegionData(REGION_JSON_URL);
                 this.render();
+                console.log("regionJson", regionData);
                 CustomEventEmitter.dispatch(FETCH_REGION_DATA_EVENT, {
                     regionData: this.regionData,
                 });
@@ -42,13 +44,18 @@ export default class SetRegion extends HTMLElement {
             }
         });
     }
+    fetchRegionData(url) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield CustomFetch.fetch(url));
+        });
+    }
     render() {
-        const regionElementsFragment = this.createRegionElementsFragment();
+        const regionElementsFragment = this.createRegionElementsFragment(this.template);
         const container = this.querySelector(".regions");
         container.innerHTML = "";
         container.appendChild(regionElementsFragment);
     }
-    createRegionElementsFragment() {
+    createRegionElementsFragment(template) {
         if (!this.regionData) {
             throw new Error("regionData is null.");
         }
@@ -56,7 +63,7 @@ export default class SetRegion extends HTMLElement {
         const regionData = this.regionData["region"];
         const favoriteRegions = Object.keys(bookStore.regions);
         for (const [key, value] of Object.entries(regionData)) {
-            const regionElement = this.createRegionElement(this.template, key, value, favoriteRegions);
+            const regionElement = this.createRegionElement(template, key, value, favoriteRegions);
             fragment.appendChild(regionElement);
         }
         return fragment;
