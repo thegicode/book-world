@@ -1,4 +1,5 @@
 import { CustomEventEmitter } from "../../utils/index";
+import { SEARCH_PAGE_INIT } from "./constant";
 
 export default class AppSearch extends HTMLElement {
     private boundPopStateHandler: ((ev: PopStateEvent) => void) | null = null;
@@ -32,7 +33,7 @@ export default class AppSearch extends HTMLElement {
         ) as HTMLInputElement;
 
         if (keyword && sort) {
-            CustomEventEmitter.dispatch("search-page-init", { keyword, sort });
+            CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
             searchElement.value = keyword;
         }
     }

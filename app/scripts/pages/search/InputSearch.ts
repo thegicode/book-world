@@ -1,4 +1,5 @@
 import { CustomEventEmitter } from "../../utils/index";
+import { SEARCH_PAGE_INIT } from "./constant";
 
 export default class InputSearch extends HTMLElement {
     private form: HTMLFormElement | null = null;
@@ -52,7 +53,7 @@ export default class InputSearch extends HTMLElement {
 
             window.history.pushState({}, "", url.toString());
 
-            CustomEventEmitter.dispatch("search-page-init", { keyword, sort });
+            CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
         }
     };
 }

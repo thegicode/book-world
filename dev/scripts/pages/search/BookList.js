@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Observer, CustomFetch, CustomEventEmitter } from "../../utils/index";
+import { SEARCH_PAGE_INIT } from "./constant";
 export default class BookList extends HTMLElement {
     constructor() {
         super();
@@ -18,12 +19,12 @@ export default class BookList extends HTMLElement {
         this.paginationElement = this.querySelector(".paging-info");
         this.bookContainer = this.querySelector(".books");
         this.setupObserver();
-        CustomEventEmitter.add("search-page-init", this.initializeSearchPage);
+        CustomEventEmitter.add(SEARCH_PAGE_INIT, this.initializeSearchPage);
     }
     disconnectedCallback() {
         var _a;
         (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
-        CustomEventEmitter.remove("search-page-init", this.initializeSearchPage);
+        CustomEventEmitter.remove(SEARCH_PAGE_INIT, this.initializeSearchPage);
     }
     setupObserver() {
         const target = this.querySelector(".observe");

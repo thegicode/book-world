@@ -1,5 +1,6 @@
 import BookItem from "./BookItem";
 import { Observer, CustomFetch, CustomEventEmitter } from "../../utils/index";
+import { SEARCH_PAGE_INIT } from "./constant";
 
 export default class BookList extends HTMLElement {
     paginationElement!: HTMLElement;
@@ -24,7 +25,7 @@ export default class BookList extends HTMLElement {
         this.setupObserver();
 
         CustomEventEmitter.add(
-            "search-page-init",
+            SEARCH_PAGE_INIT,
             this.initializeSearchPage as EventListener
         );
     }
@@ -33,7 +34,7 @@ export default class BookList extends HTMLElement {
         this.observer?.disconnect();
 
         CustomEventEmitter.remove(
-            "search-page-init",
+            SEARCH_PAGE_INIT,
             this.initializeSearchPage as EventListener
         );
     }

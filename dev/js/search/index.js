@@ -1141,6 +1141,9 @@
     }
   };
 
+  // dev/scripts/pages/search/constant.js
+  var SEARCH_PAGE_INIT = "search-page-init";
+
   // dev/scripts/pages/search/AppSearch.js
   var AppSearch = class extends HTMLElement {
     constructor() {
@@ -1166,7 +1169,7 @@
       const sort = params.get("sort") || "sim";
       const searchElement = document.querySelector("input-search input[type='search']");
       if (keyword && sort) {
-        CustomEventEmitter_default.dispatch("search-page-init", { keyword, sort });
+        CustomEventEmitter_default.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
         searchElement.value = keyword;
       }
     }
@@ -1196,7 +1199,7 @@
           url.searchParams.set("keyword", keyword);
           url.searchParams.set("sort", sort);
           window.history.pushState({}, "", url.toString());
-          CustomEventEmitter_default.dispatch("search-page-init", { keyword, sort });
+          CustomEventEmitter_default.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
         }
       };
       this.initialize();
@@ -1257,12 +1260,12 @@
       this.paginationElement = this.querySelector(".paging-info");
       this.bookContainer = this.querySelector(".books");
       this.setupObserver();
-      CustomEventEmitter_default.add("search-page-init", this.initializeSearchPage);
+      CustomEventEmitter_default.add(SEARCH_PAGE_INIT, this.initializeSearchPage);
     }
     disconnectedCallback() {
       var _a;
       (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
-      CustomEventEmitter_default.remove("search-page-init", this.initializeSearchPage);
+      CustomEventEmitter_default.remove(SEARCH_PAGE_INIT, this.initializeSearchPage);
     }
     setupObserver() {
       const target = this.querySelector(".observe");
