@@ -32,7 +32,10 @@ export default class SetRegion extends HTMLElement {
 
     private async fetchAndRender() {
         try {
-            this.regionData = await this.fetchRegionData(REGION_JSON_URL);
+            this.regionData = (await await CustomFetch.fetch(
+                REGION_JSON_URL
+            )) as TotalRegions;
+
             this.render();
 
             CustomEventEmitter.dispatch(FETCH_REGION_DATA_EVENT, {
@@ -44,21 +47,15 @@ export default class SetRegion extends HTMLElement {
         }
     }
 
-    private async fetchRegionData(url: string) {
-        return (await CustomFetch.fetch(url)) as TotalRegions;
-    }
-
     private render() {
-        const regionElementsFragment = this.createRegionElementsFragment(
-            this.template
-        );
+        const regionElementsFragment = this.createRegionElementsFragment();
 
         const container = this.querySelector(".regions") as HTMLElement;
         container.innerHTML = "";
         container.appendChild(regionElementsFragment);
     }
 
-    private createRegionElementsFragment(template: HTMLTemplateElement) {
+    private createRegionElementsFragment() {
         if (!this.regionData) {
             throw new Error("regionData is null.");
         }
@@ -70,7 +67,7 @@ export default class SetRegion extends HTMLElement {
 
         for (const [key, value] of Object.entries(regionData)) {
             const regionElement = this.createRegionElement(
-                template,
+                this.template,
                 key,
                 value,
                 favoriteRegions

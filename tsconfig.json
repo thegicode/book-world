@@ -11,6 +11,7 @@
         "skipLibCheck": true,
         "types": ["jest"],
         "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
         // "baseUrl": "./app",
         // "paths": {
         //     "@components/*": ["scripts/components/*"],

@@ -910,7 +910,7 @@
     fetchAndRender() {
       return __awaiter2(this, void 0, void 0, function* () {
         try {
-          this.regionData = yield this.fetchRegionData(REGION_JSON_URL);
+          this.regionData = yield yield CustomFetch_default.fetch(REGION_JSON_URL);
           this.render();
           CustomEventEmitter_default.dispatch(FETCH_REGION_DATA_EVENT, {
             regionData: this.regionData
@@ -921,18 +921,13 @@
         }
       });
     }
-    fetchRegionData(url) {
-      return __awaiter2(this, void 0, void 0, function* () {
-        return yield CustomFetch_default.fetch(url);
-      });
-    }
     render() {
-      const regionElementsFragment = this.createRegionElementsFragment(this.template);
+      const regionElementsFragment = this.createRegionElementsFragment();
       const container = this.querySelector(".regions");
       container.innerHTML = "";
       container.appendChild(regionElementsFragment);
     }
-    createRegionElementsFragment(template) {
+    createRegionElementsFragment() {
       if (!this.regionData) {
         throw new Error("regionData is null.");
       }
@@ -940,7 +935,7 @@
       const regionData = this.regionData["region"];
       const favoriteRegions = Object.keys(BookStore_default.regions);
       for (const [key, value] of Object.entries(regionData)) {
-        const regionElement = this.createRegionElement(template, key, value, favoriteRegions);
+        const regionElement = this.createRegionElement(this.template, key, value, favoriteRegions);
         fragment.appendChild(regionElement);
       }
       return fragment;
@@ -974,7 +969,6 @@
 
   // dev/scripts/pages/setting/SetDetailRegion.js
   var FETCH_REGION_DATA_EVENT2 = "fetch-region-data";
-  var SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
   var SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
   var SetDetailRegion = class extends HTMLElement {
     constructor() {
@@ -989,8 +983,8 @@
       CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT2, this.setRegionData);
     }
     disconnectedCallback() {
+      publishers.regionUpdate.unsubscribe(this.renderRegion);
       CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT2, this.setRegionData);
-      CustomEventEmitter_default.remove(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
     }
     setRegionData(event) {
       const customEvent = event;

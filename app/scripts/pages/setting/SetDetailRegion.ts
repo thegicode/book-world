@@ -3,7 +3,6 @@ import { cloneTemplate } from "../../utils/helpers";
 import bookStore, { publishers } from "../../modules/BookStore";
 
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
-const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
 const SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
 
 export default class SetDetailRegion extends HTMLElement {
@@ -26,11 +25,9 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     disconnectedCallback() {
+        publishers.regionUpdate.unsubscribe(this.renderRegion);
+
         CustomEventEmitter.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
-        CustomEventEmitter.remove(
-            SET_FAVORITE_REGIONS_EVENT,
-            this.renderRegion
-        );
     }
 
     private setRegionData(event: Event) {

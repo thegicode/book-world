@@ -30,7 +30,7 @@ export default class SetRegion extends HTMLElement {
     fetchAndRender() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                this.regionData = yield this.fetchRegionData(REGION_JSON_URL);
+                this.regionData = (yield yield CustomFetch.fetch(REGION_JSON_URL));
                 this.render();
                 CustomEventEmitter.dispatch(FETCH_REGION_DATA_EVENT, {
                     regionData: this.regionData,
@@ -42,18 +42,13 @@ export default class SetRegion extends HTMLElement {
             }
         });
     }
-    fetchRegionData(url) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (yield CustomFetch.fetch(url));
-        });
-    }
     render() {
-        const regionElementsFragment = this.createRegionElementsFragment(this.template);
+        const regionElementsFragment = this.createRegionElementsFragment();
         const container = this.querySelector(".regions");
         container.innerHTML = "";
         container.appendChild(regionElementsFragment);
     }
-    createRegionElementsFragment(template) {
+    createRegionElementsFragment() {
         if (!this.regionData) {
             throw new Error("regionData is null.");
         }
@@ -61,7 +56,7 @@ export default class SetRegion extends HTMLElement {
         const regionData = this.regionData["region"];
         const favoriteRegions = Object.keys(bookStore.regions);
         for (const [key, value] of Object.entries(regionData)) {
-            const regionElement = this.createRegionElement(template, key, value, favoriteRegions);
+            const regionElement = this.createRegionElement(this.template, key, value, favoriteRegions);
             fragment.appendChild(regionElement);
         }
         return fragment;
