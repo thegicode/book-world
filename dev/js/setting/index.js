@@ -893,13 +893,11 @@
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
   };
-  var REGION_JSON_URL = "../../../assets/json/region.json";
-  var REGION_TEMPLATE_NAME = "#tp-region";
   var SetRegion = class extends HTMLElement {
     constructor() {
       super();
       this.regionData = null;
-      this.template = document.querySelector(REGION_TEMPLATE_NAME);
+      this.template = document.querySelector("#tp-region");
       this.fetchAndRender = this.fetchAndRender.bind(this);
     }
     connectedCallback() {
@@ -912,7 +910,7 @@
     fetchAndRender() {
       return __awaiter2(this, void 0, void 0, function* () {
         try {
-          this.regionData = yield yield CustomFetch_default.fetch(REGION_JSON_URL);
+          this.regionData = yield yield CustomFetch_default.fetch("../../../assets/json/region.json");
           this.render();
           CustomEventEmitter_default.dispatch(FETCH_REGION_DATA_EVENT, {
             regionData: this.regionData

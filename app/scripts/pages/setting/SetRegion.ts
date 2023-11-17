@@ -3,9 +3,6 @@ import { cloneTemplate } from "../../utils/helpers";
 import bookStore, { publishers } from "../../modules/BookStore";
 import { FETCH_REGION_DATA_EVENT } from "./constant";
 
-const REGION_JSON_URL = "../../../assets/json/region.json";
-const REGION_TEMPLATE_NAME = "#tp-region";
-
 export default class SetRegion extends HTMLElement {
     private regionData: TotalRegions | null;
     private template: HTMLTemplateElement;
@@ -14,7 +11,7 @@ export default class SetRegion extends HTMLElement {
         super();
         this.regionData = null;
         this.template = document.querySelector(
-            REGION_TEMPLATE_NAME
+            "#tp-region"
         ) as HTMLTemplateElement;
 
         this.fetchAndRender = this.fetchAndRender.bind(this);
@@ -33,7 +30,7 @@ export default class SetRegion extends HTMLElement {
     private async fetchAndRender() {
         try {
             this.regionData = (await await CustomFetch.fetch(
-                REGION_JSON_URL
+                "../../../assets/json/region.json"
             )) as TotalRegions;
 
             this.render();

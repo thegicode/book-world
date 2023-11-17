@@ -11,13 +11,11 @@ import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore, { publishers } from "../../modules/BookStore";
 import { FETCH_REGION_DATA_EVENT } from "./constant";
-const REGION_JSON_URL = "../../../assets/json/region.json";
-const REGION_TEMPLATE_NAME = "#tp-region";
 export default class SetRegion extends HTMLElement {
     constructor() {
         super();
         this.regionData = null;
-        this.template = document.querySelector(REGION_TEMPLATE_NAME);
+        this.template = document.querySelector("#tp-region");
         this.fetchAndRender = this.fetchAndRender.bind(this);
     }
     connectedCallback() {
@@ -30,7 +28,7 @@ export default class SetRegion extends HTMLElement {
     fetchAndRender() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                this.regionData = (yield yield CustomFetch.fetch(REGION_JSON_URL));
+                this.regionData = (yield yield CustomFetch.fetch("../../../assets/json/region.json"));
                 this.render();
                 CustomEventEmitter.dispatch(FETCH_REGION_DATA_EVENT, {
                     regionData: this.regionData,

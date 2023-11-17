@@ -1,6 +1,5 @@
 import { CustomFetch } from "../../utils/index";
 import bookStore, { publishers } from "../../modules/BookStore";
-
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
 export default class SetStorage extends HTMLElement {
