@@ -1,4 +1,4 @@
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 import { CustomEventEmitter } from "../../utils";
 import { cloneTemplate } from "../../utils/helpers";
 export default class OverlayCategory extends HTMLElement {
@@ -12,14 +12,14 @@ export default class OverlayCategory extends HTMLElement {
             const category = this.addInput.value;
             if (!category)
                 return;
-            if (store.hasCategory(category)) {
+            if (bookStore.hasCategory(category)) {
                 alert("중복된 이름입니다.");
                 this.addInput.value = "";
                 return;
             }
-            store.addCategory(category);
-            store.addCategorySort(category);
-            const index = store.categorySort.length;
+            bookStore.addCategory(category);
+            bookStore.addCategorySort(category);
+            const index = bookStore.categorySort.length;
             const cloned = this.createItem(category, index);
             (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
             this.addInput.value = "";
@@ -75,7 +75,7 @@ export default class OverlayCategory extends HTMLElement {
         if (!this.list)
             return;
         const fragment = new DocumentFragment();
-        store.categorySort.forEach((category, index) => {
+        bookStore.categorySort.forEach((category, index) => {
             const cloned = this.createItem(category, index);
             fragment.appendChild(cloned);
         });
@@ -113,17 +113,17 @@ export default class OverlayCategory extends HTMLElement {
         const value = input.value;
         if (!value || category === value)
             return;
-        store.renameCategory(category, value);
-        store.renameCategorySort(category, value);
+        bookStore.renameCategory(category, value);
+        bookStore.renameCategorySort(category, value);
         CustomEventEmitter.dispatch("categoryRenamed", {
             category,
             value,
         });
     }
     handleDelete(cloned, category) {
-        const index = store.categorySort.indexOf(category);
+        const index = bookStore.categorySort.indexOf(category);
         cloned.remove();
-        store.deleteCategory(category);
+        bookStore.deleteCategory(category);
         CustomEventEmitter.dispatch("categoryDeleted", {
             index,
         });
@@ -164,7 +164,7 @@ export default class OverlayCategory extends HTMLElement {
             const draggedKey = this.draggedItem.dataset.category;
             const targetKey = cloned.dataset.category;
             if (draggedKey && targetKey) {
-                store.changeCategory(draggedKey, targetKey);
+                bookStore.changeCategory(draggedKey, targetKey);
                 CustomEventEmitter.dispatch("categoryChanged", {
                     draggedKey,
                     targetKey,

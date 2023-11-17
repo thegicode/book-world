@@ -625,7 +625,7 @@
     }
   };
 
-  // dev/scripts/modules/store.js
+  // dev/scripts/modules/BookStore.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -637,96 +637,99 @@
     categorySort: []
   };
   var publisherChangedCategoryBook = new Publisher();
-  var store = {
-    get storage() {
+  var BookStore = class {
+    constructor() {
+      this.state = this.loadStorage() || cloneDeep(initialState);
+    }
+    loadStorage() {
       try {
         const storageData = localStorage.getItem(STORAGE_NAME);
-        const state = storageData === null ? this.state : JSON.parse(storageData);
-        return cloneDeep(state);
+        return storageData ? JSON.parse(storageData) : null;
       } catch (error) {
         console.error(error);
         throw new Error("Failed to get state from localStorage.");
       }
-    },
-    set storage(newState) {
+    }
+    setStorage(newState) {
       try {
         localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
       } catch (error) {
         console.error(error);
       }
-    },
-    get state() {
-      return cloneDeep(this.storage);
-    },
-    set state(newState) {
-      this.storage = newState;
-    },
+    }
+    reset() {
+      this.state = cloneDeep(initialState);
+      this.storage = cloneDeep(initialState);
+    }
+    get storage() {
+      return cloneDeep(this.state);
+    }
+    set storage(newState) {
+      this.setStorage(newState);
+      this.state = newState;
+    }
     get category() {
       return cloneDeep(this.state.category);
-    },
+    }
     set category(newCategory) {
-      const newState = this.state;
+      const newState = this.storage;
       newState.category = newCategory;
-      this.state = newState;
-    },
+      this.storage = newState;
+    }
     get categorySort() {
       return cloneDeep(this.state.categorySort);
-    },
+    }
     set categorySort(newSort) {
       const newState = this.state;
       newState.categorySort = newSort;
-      this.state = newState;
-    },
+      this.storage = newState;
+    }
     get libraries() {
       return cloneDeep(this.state.libraries);
-    },
+    }
     set libraries(newLibries) {
       const newState = this.state;
       newState.libraries = newLibries;
-      this.state = newState;
-    },
+      this.storage = newState;
+    }
     get regions() {
       return cloneDeep(this.state.regions);
-    },
+    }
     set regions(newRegions) {
       const newState = this.state;
       newState.regions = newRegions;
-      this.state = newState;
-    },
-    resetState() {
-      this.storage = initialState;
-    },
-    // Category, CategorySort
+      this.storage = newState;
+    }
     addCategory(name) {
       const newCategory = this.category;
       newCategory[name] = [];
       this.category = newCategory;
-    },
+    }
     addCategorySort(name) {
       const newCategorySort = this.categorySort;
       newCategorySort.push(name);
       this.categorySort = newCategorySort;
-    },
+    }
     hasCategory(name) {
       return name in this.category;
-    },
+    }
     renameCategory(prevName, newName) {
       const newCategory = this.category;
       newCategory[newName] = newCategory[prevName];
       delete newCategory[prevName];
       this.category = newCategory;
-    },
+    }
     renameCategorySort(prevName, newName) {
       const newCategorySort = this.categorySort;
       const index = newCategorySort.indexOf(prevName);
       newCategorySort[index] = newName;
       this.categorySort = newCategorySort;
-    },
+    }
     deleteCategory(name) {
       const newFavorites = this.category;
       delete newFavorites[name];
       this.category = newFavorites;
-    },
+    }
     changeCategory(draggedKey, targetKey) {
       const newSort = this.categorySort;
       const draggedIndex = newSort.indexOf(draggedKey);
@@ -734,17 +737,16 @@
       newSort[targetIndex] = draggedKey;
       newSort[draggedIndex] = targetKey;
       this.categorySort = newSort;
-    },
-    // BookInCategory
+    }
     addBookInCategory(name, isbn) {
       const newCategory = this.category;
       newCategory[name].unshift(isbn);
       this.category = newCategory;
       publisherChangedCategoryBook.notify();
-    },
+    }
     hasBookInCategory(name, isbn) {
       return this.category[name].includes(isbn);
-    },
+    }
     removeBookInCategory(name, isbn) {
       const newCategory = this.category;
       const index = newCategory[name].indexOf(isbn);
@@ -753,44 +755,43 @@
         this.category = newCategory;
       }
       publisherChangedCategoryBook.notify();
-    },
-    // Library
+    }
     addLibrary(code, name) {
       const newLibries = this.libraries;
       newLibries[code] = name;
       this.libraries = newLibries;
-    },
+    }
     removeLibrary(code) {
       const newLibries = this.libraries;
       delete newLibries[code];
       this.libraries = newLibries;
-    },
+    }
     hasLibrary(code) {
       return code in this.libraries;
-    },
-    // Region
+    }
     addRegion(name) {
       const newRegion = this.regions;
       newRegion[name] = {};
       this.regions = newRegion;
-    },
+    }
     removeRegion(name) {
       const newRegions = this.regions;
       delete newRegions[name];
       this.regions = newRegions;
-    },
+    }
     addDetailRegion(regionName, detailName, detailCode) {
       const newRegions = this.regions;
       newRegions[regionName][detailName] = detailCode;
       this.regions = newRegions;
-    },
+    }
     removeDetailRegion(regionName, detailName) {
       const newRegions = this.regions;
       delete newRegions[regionName][detailName];
       this.regions = newRegions;
     }
   };
-  var store_default = store;
+  var bookStore = new BookStore();
+  var BookStore_default = bookStore;
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
@@ -811,7 +812,7 @@
       publisherChangedCategoryBook.subscribe(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(store_default.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(BookStore_default.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -923,7 +924,7 @@
       }
       const fragment = new DocumentFragment();
       const regionData = this.regionData["region"];
-      const favoriteRegions = Object.keys(store_default.regions);
+      const favoriteRegions = Object.keys(BookStore_default.regions);
       for (const [key, value] of Object.entries(regionData)) {
         const regionElement = this.createRegionElement(template, key, value, favoriteRegions);
         fragment.appendChild(regionElement);
@@ -954,9 +955,9 @@
         }
         const key = spanElement.textContent;
         if (checkbox.checked) {
-          store_default.addRegion(key);
+          BookStore_default.addRegion(key);
         } else {
-          store_default.removeRegion(key);
+          BookStore_default.removeRegion(key);
         }
         CustomEventEmitter_default.dispatch(SET_FAVORITE_REGIONS_EVENT, {});
       };
@@ -989,7 +990,7 @@
       this.renderRegion();
     }
     renderRegion() {
-      const favoriteRegions = Object.keys(store_default.regions);
+      const favoriteRegions = Object.keys(BookStore_default.regions);
       if (favoriteRegions.length < 1)
         return;
       const container = this.querySelector(".regions");
@@ -1030,7 +1031,7 @@
       const detailRegionsElement = this.querySelector(".detailRegions");
       if (!detailRegionsElement)
         return;
-      const regionObj = store_default.regions[regionName];
+      const regionObj = BookStore_default.regions[regionName];
       const regionCodes = regionObj ? Object.values(regionObj) : [];
       const template = document.querySelector("#tp-detail-region");
       if (!template)
@@ -1079,8 +1080,8 @@
     }
     onChangeDetail() {
       const region = this.region;
-      if (!store_default.regions[region]) {
-        store_default.addRegion(region);
+      if (!BookStore_default.regions[region]) {
+        BookStore_default.addRegion(region);
       }
       const checkboxes = document.querySelectorAll("[name=detailRegion]");
       checkboxes.forEach((checkbox) => {
@@ -1090,9 +1091,9 @@
           const labelElement = inputCheckbox.nextElementSibling;
           const label = (labelElement === null || labelElement === void 0 ? void 0 : labelElement.textContent) || "";
           if (inputCheckbox.checked) {
-            store_default.addDetailRegion(region, label, value);
+            BookStore_default.addDetailRegion(region, label, value);
           } else {
-            store_default.removeDetailRegion(region, label);
+            BookStore_default.removeDetailRegion(region, label);
           }
           CustomEventEmitter_default.dispatch(SET_DETAIL_REGIONS_EVENT, {});
         });
@@ -1123,7 +1124,7 @@
       if (!this.container)
         return;
       this.container.innerHTML = "";
-      const { regions } = store_default;
+      const { regions } = BookStore_default;
       for (const regionName in regions) {
         const detailRegions = Object.keys(regions[regionName]);
         if (detailRegions.length > 0) {
@@ -1184,7 +1185,8 @@
       this.setLocalStorageToBase = () => __awaiter3(this, void 0, void 0, function* () {
         try {
           const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
-          store_default.state = data;
+          console.log(data);
+          BookStore_default.storage = data;
           console.log("Saved local stronage by base data!");
           this.updateAndReload();
         } catch (error) {
@@ -1193,7 +1195,7 @@
         }
       });
       this.resetStorage = () => {
-        store_default.resetState();
+        BookStore_default.reset();
         this.updateAndReload();
       };
     }

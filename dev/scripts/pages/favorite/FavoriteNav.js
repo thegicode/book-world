@@ -1,4 +1,4 @@
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 import { CustomEventEmitter } from "../../utils";
 export default class FavoriteNav extends HTMLElement {
     constructor() {
@@ -18,7 +18,7 @@ export default class FavoriteNav extends HTMLElement {
         CustomEventEmitter.add("categoryDeleted", this.onCategoryDeleted);
         CustomEventEmitter.add("categoryChanged", this.onCategoryChanged);
         if (this.category === null) {
-            this.category = store.categorySort[0];
+            this.category = bookStore.categorySort[0];
             const url = this.getUrl(this.category);
             location.search = url;
         }
@@ -35,7 +35,7 @@ export default class FavoriteNav extends HTMLElement {
             return;
         this.nav.innerHTML = "";
         const fragment = new DocumentFragment();
-        store.categorySort.forEach((category) => {
+        bookStore.categorySort.forEach((category) => {
             const el = this.createItem(category);
             fragment.appendChild(el);
         });
@@ -81,7 +81,7 @@ export default class FavoriteNav extends HTMLElement {
         if (!this.nav)
             return;
         const { category, value } = event.detail;
-        const index = store.categorySort.indexOf(value);
+        const index = bookStore.categorySort.indexOf(value);
         this.nav.querySelectorAll("a")[index].textContent = value;
         if (this.category === category) {
             location.search = this.getUrl(value);
@@ -95,8 +95,8 @@ export default class FavoriteNav extends HTMLElement {
     onCategoryChanged(event) {
         var _a;
         const { draggedKey, targetKey } = event.detail;
-        const draggedIndex = store.categorySort.indexOf(draggedKey);
-        const targetIndex = store.categorySort.indexOf(targetKey);
+        const draggedIndex = bookStore.categorySort.indexOf(draggedKey);
+        const targetIndex = bookStore.categorySort.indexOf(targetKey);
         const navLinks = (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a");
         if (navLinks) {
             const targetEl = navLinks[targetIndex].cloneNode(true);

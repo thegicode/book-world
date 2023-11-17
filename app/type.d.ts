@@ -168,7 +168,7 @@ interface IPopularFetchParams {
 //     categorySort: string[];
 // }
 
-interface IStorageData {
+interface IBookState {
     category: TCategory;
     libraries: TLibraries;
     regions: Record<string, Record<string, string>>;
@@ -176,10 +176,8 @@ interface IStorageData {
 }
 
 interface IStore {
-    // state: IStorageData;
-
-    storage: IStorageData;
-    state: IStorageData;
+    storage: IBookState;
+    state: IBookState;
     category: TCategory;
     categorySort: TCategorySrot;
     libraries: TLibraries;
@@ -197,7 +195,6 @@ interface IStore {
     addBookInCategory(name: string, isbn: string): void;
     hasBookInCategory(name: string, isbn: string): boolean;
     removeBookInCategory(name: string, isbn: string): void;
-    // getBookSizeInCategory(): number;
 
     addLibrary(code: string, name: string): void;
     hasLibrary(code: string): boolean;

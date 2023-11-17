@@ -625,7 +625,7 @@
     }
   };
 
-  // dev/scripts/modules/store.js
+  // dev/scripts/modules/BookStore.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -637,96 +637,99 @@
     categorySort: []
   };
   var publisherChangedCategoryBook = new Publisher();
-  var store = {
-    get storage() {
+  var BookStore = class {
+    constructor() {
+      this.state = this.loadStorage() || cloneDeep(initialState);
+    }
+    loadStorage() {
       try {
         const storageData = localStorage.getItem(STORAGE_NAME);
-        const state = storageData === null ? this.state : JSON.parse(storageData);
-        return cloneDeep(state);
+        return storageData ? JSON.parse(storageData) : null;
       } catch (error) {
         console.error(error);
         throw new Error("Failed to get state from localStorage.");
       }
-    },
-    set storage(newState) {
+    }
+    setStorage(newState) {
       try {
         localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
       } catch (error) {
         console.error(error);
       }
-    },
-    get state() {
-      return cloneDeep(this.storage);
-    },
-    set state(newState) {
-      this.storage = newState;
-    },
+    }
+    reset() {
+      this.state = cloneDeep(initialState);
+      this.storage = cloneDeep(initialState);
+    }
+    get storage() {
+      return cloneDeep(this.state);
+    }
+    set storage(newState) {
+      this.setStorage(newState);
+      this.state = newState;
+    }
     get category() {
       return cloneDeep(this.state.category);
-    },
+    }
     set category(newCategory) {
-      const newState = this.state;
+      const newState = this.storage;
       newState.category = newCategory;
-      this.state = newState;
-    },
+      this.storage = newState;
+    }
     get categorySort() {
       return cloneDeep(this.state.categorySort);
-    },
+    }
     set categorySort(newSort) {
       const newState = this.state;
       newState.categorySort = newSort;
-      this.state = newState;
-    },
+      this.storage = newState;
+    }
     get libraries() {
       return cloneDeep(this.state.libraries);
-    },
+    }
     set libraries(newLibries) {
       const newState = this.state;
       newState.libraries = newLibries;
-      this.state = newState;
-    },
+      this.storage = newState;
+    }
     get regions() {
       return cloneDeep(this.state.regions);
-    },
+    }
     set regions(newRegions) {
       const newState = this.state;
       newState.regions = newRegions;
-      this.state = newState;
-    },
-    resetState() {
-      this.storage = initialState;
-    },
-    // Category, CategorySort
+      this.storage = newState;
+    }
     addCategory(name) {
       const newCategory = this.category;
       newCategory[name] = [];
       this.category = newCategory;
-    },
+    }
     addCategorySort(name) {
       const newCategorySort = this.categorySort;
       newCategorySort.push(name);
       this.categorySort = newCategorySort;
-    },
+    }
     hasCategory(name) {
       return name in this.category;
-    },
+    }
     renameCategory(prevName, newName) {
       const newCategory = this.category;
       newCategory[newName] = newCategory[prevName];
       delete newCategory[prevName];
       this.category = newCategory;
-    },
+    }
     renameCategorySort(prevName, newName) {
       const newCategorySort = this.categorySort;
       const index = newCategorySort.indexOf(prevName);
       newCategorySort[index] = newName;
       this.categorySort = newCategorySort;
-    },
+    }
     deleteCategory(name) {
       const newFavorites = this.category;
       delete newFavorites[name];
       this.category = newFavorites;
-    },
+    }
     changeCategory(draggedKey, targetKey) {
       const newSort = this.categorySort;
       const draggedIndex = newSort.indexOf(draggedKey);
@@ -734,17 +737,16 @@
       newSort[targetIndex] = draggedKey;
       newSort[draggedIndex] = targetKey;
       this.categorySort = newSort;
-    },
-    // BookInCategory
+    }
     addBookInCategory(name, isbn) {
       const newCategory = this.category;
       newCategory[name].unshift(isbn);
       this.category = newCategory;
       publisherChangedCategoryBook.notify();
-    },
+    }
     hasBookInCategory(name, isbn) {
       return this.category[name].includes(isbn);
-    },
+    }
     removeBookInCategory(name, isbn) {
       const newCategory = this.category;
       const index = newCategory[name].indexOf(isbn);
@@ -753,44 +755,43 @@
         this.category = newCategory;
       }
       publisherChangedCategoryBook.notify();
-    },
-    // Library
+    }
     addLibrary(code, name) {
       const newLibries = this.libraries;
       newLibries[code] = name;
       this.libraries = newLibries;
-    },
+    }
     removeLibrary(code) {
       const newLibries = this.libraries;
       delete newLibries[code];
       this.libraries = newLibries;
-    },
+    }
     hasLibrary(code) {
       return code in this.libraries;
-    },
-    // Region
+    }
     addRegion(name) {
       const newRegion = this.regions;
       newRegion[name] = {};
       this.regions = newRegion;
-    },
+    }
     removeRegion(name) {
       const newRegions = this.regions;
       delete newRegions[name];
       this.regions = newRegions;
-    },
+    }
     addDetailRegion(regionName, detailName, detailCode) {
       const newRegions = this.regions;
       newRegions[regionName][detailName] = detailCode;
       this.regions = newRegions;
-    },
+    }
     removeDetailRegion(regionName, detailName) {
       const newRegions = this.regions;
       delete newRegions[regionName][detailName];
       this.regions = newRegions;
     }
   };
-  var store_default = store;
+  var bookStore = new BookStore();
+  var BookStore_default = bookStore;
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
@@ -811,7 +812,7 @@
       publisherChangedCategoryBook.subscribe(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(store_default.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(BookStore_default.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -912,7 +913,7 @@
         if (template) {
           const libraryItem = cloneTemplate(template);
           libraryItem.dataset.object = JSON.stringify(lib);
-          if (store_default.hasLibrary(lib.libCode)) {
+          if (BookStore_default.hasLibrary(lib.libCode)) {
             libraryItem.dataset.has = "true";
             fragment2.prepend(libraryItem);
           } else {
@@ -960,7 +961,7 @@
       this.selectElement.removeEventListener("change", this.onChangeDetail);
     }
     renderRegion() {
-      const favoriteRegions = store_default.regions;
+      const favoriteRegions = BookStore_default.regions;
       if (Object.keys(favoriteRegions).length === 0)
         return;
       const container = this.querySelector(".region");
@@ -1002,7 +1003,7 @@
     }
     renderDetailRegion(regionName) {
       this.selectElement.innerHTML = "";
-      const detailRegionObject = store_default.regions[regionName];
+      const detailRegionObject = BookStore_default.regions[regionName];
       for (const [key, value] of Object.entries(detailRegionObject)) {
         const optionEl = document.createElement("option");
         optionEl.textContent = key;
@@ -1051,16 +1052,16 @@
       this.libCode = libCode;
       this.libName = libName;
       if (this.checkbox)
-        this.checkbox.checked = store_default.hasLibrary(this.libCode);
+        this.checkbox.checked = BookStore_default.hasLibrary(this.libCode);
     }
     onChange(event) {
       const target = event.target;
       if (!target)
         return;
       if (target.checked) {
-        store_default.addLibrary(this.libCode, this.libName);
+        BookStore_default.addLibrary(this.libCode, this.libName);
       } else {
-        store_default.removeLibrary(this.libCode);
+        BookStore_default.removeLibrary(this.libCode);
       }
     }
   };

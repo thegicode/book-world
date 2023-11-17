@@ -4,7 +4,7 @@ import {
     BookImage,
     LibraryBookExist,
 } from "../../components/index";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 
 export default class FavoriteItem extends HTMLElement {
     protected libraryButton?: HTMLButtonElement;
@@ -84,7 +84,10 @@ export default class FavoriteItem extends HTMLElement {
         const anchorEl = this.querySelector("a") as HTMLAnchorElement;
         if (anchorEl) anchorEl.href = `/book?isbn=${data.book.isbn13}`;
 
-        if (this.libraryButton && Object.keys(store.libraries).length === 0) {
+        if (
+            this.libraryButton &&
+            Object.keys(bookStore.libraries).length === 0
+        ) {
             this.libraryButton.hidden = true;
         }
 
@@ -107,7 +110,7 @@ export default class FavoriteItem extends HTMLElement {
             this.libraryBookExist.onLibraryBookExist(
                 this.libraryButton,
                 isbn,
-                store.libraries
+                bookStore.libraries
             );
             if (this.libraryButton) {
                 this.libraryButton.hidden = true;

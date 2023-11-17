@@ -1,4 +1,4 @@
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 
 export default class LibraryItem extends HTMLElement {
     protected checkbox: HTMLInputElement | null = null;
@@ -42,16 +42,16 @@ export default class LibraryItem extends HTMLElement {
         this.libName = libName;
 
         if (this.checkbox)
-            this.checkbox.checked = store.hasLibrary(this.libCode);
+            this.checkbox.checked = bookStore.hasLibrary(this.libCode);
     }
 
     protected onChange(event: MouseEvent): void {
         const target = event.target as HTMLInputElement;
         if (!target) return;
         if (target.checked) {
-            store.addLibrary(this.libCode, this.libName);
+            bookStore.addLibrary(this.libCode, this.libName);
         } else {
-            store.removeLibrary(this.libCode);
+            bookStore.removeLibrary(this.libCode);
         }
     }
 }

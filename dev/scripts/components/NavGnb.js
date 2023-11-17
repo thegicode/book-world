@@ -1,4 +1,4 @@
-import store, { publisherChangedCategoryBook } from "../modules/store";
+import bookStore, { publisherChangedCategoryBook } from "../modules/BookStore";
 export default class NavGnb extends HTMLElement {
     constructor() {
         super();
@@ -17,7 +17,7 @@ export default class NavGnb extends HTMLElement {
         publisherChangedCategoryBook.subscribe(this.renderBookSize);
     }
     get bookSize() {
-        return Object.values(store.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
+        return Object.values(bookStore.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
         const paths = this.PATHS;

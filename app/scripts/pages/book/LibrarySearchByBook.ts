@@ -1,6 +1,6 @@
 import { CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 
 export default class LibrarySearchByBook extends HTMLElement {
     constructor() {
@@ -13,7 +13,7 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
 
     protected async fetchList(isbn: string): Promise<void> {
-        const favoriteLibraries = store.regions;
+        const favoriteLibraries = bookStore.regions;
         if (Object.entries(favoriteLibraries).length === 0) return;
 
         for (const regionName in favoriteLibraries) {

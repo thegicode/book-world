@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
 const REGION_JSON_URL = "../../../assets/json/region.json";
@@ -55,7 +55,7 @@ export default class SetRegion extends HTMLElement {
         }
         const fragment = new DocumentFragment();
         const regionData = this.regionData["region"];
-        const favoriteRegions = Object.keys(store.regions);
+        const favoriteRegions = Object.keys(bookStore.regions);
         for (const [key, value] of Object.entries(regionData)) {
             const regionElement = this.createRegionElement(template, key, value, favoriteRegions);
             fragment.appendChild(regionElement);
@@ -86,10 +86,10 @@ export default class SetRegion extends HTMLElement {
             }
             const key = spanElement.textContent;
             if (checkbox.checked) {
-                store.addRegion(key);
+                bookStore.addRegion(key);
             }
             else {
-                store.removeRegion(key);
+                bookStore.removeRegion(key);
             }
             CustomEventEmitter.dispatch(SET_FAVORITE_REGIONS_EVENT, {});
         };

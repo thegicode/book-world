@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 export default class Library extends HTMLElement {
     constructor() {
         super();
@@ -50,7 +50,7 @@ export default class Library extends HTMLElement {
             if (template) {
                 const libraryItem = cloneTemplate(template);
                 libraryItem.dataset.object = JSON.stringify(lib);
-                if (store.hasLibrary(lib.libCode)) {
+                if (bookStore.hasLibrary(lib.libCode)) {
                     libraryItem.dataset.has = "true";
                     fragment.prepend(libraryItem);
                     // fragment.insertBefore(libraryItem, fragment.firstChild);

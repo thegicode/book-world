@@ -1,6 +1,6 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 
 export default class LibraryRegion extends HTMLElement {
     private selectElement!: HTMLSelectElement;
@@ -21,7 +21,7 @@ export default class LibraryRegion extends HTMLElement {
     }
 
     private renderRegion() {
-        const favoriteRegions = store.regions;
+        const favoriteRegions = bookStore.regions;
 
         if (Object.keys(favoriteRegions).length === 0) return;
 
@@ -72,7 +72,7 @@ export default class LibraryRegion extends HTMLElement {
 
     private renderDetailRegion(regionName: string) {
         this.selectElement.innerHTML = "";
-        const detailRegionObject = store.regions[regionName];
+        const detailRegionObject = bookStore.regions[regionName];
         for (const [key, value] of Object.entries(detailRegionObject)) {
             const optionEl = document.createElement("option");
             optionEl.textContent = key;

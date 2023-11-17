@@ -1,4 +1,4 @@
-import store from "../modules/store";
+import bookStore from "../modules/BookStore";
 
 export default class CategorySelector extends HTMLElement {
     protected isbn: string | null;
@@ -52,7 +52,7 @@ export default class CategorySelector extends HTMLElement {
         const container = document.createElement("div");
         container.className = "category";
         container.hidden = true;
-        store.categorySort.forEach((category: string) =>
+        bookStore.categorySort.forEach((category: string) =>
             this.createCategoryItem(container, category, this.isbn || "")
         );
         return container;
@@ -78,7 +78,7 @@ export default class CategorySelector extends HTMLElement {
     private createCheckbox(category: string, ISBN: string) {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        if (store.hasBookInCategory(category, ISBN)) {
+        if (bookStore.hasBookInCategory(category, ISBN)) {
             checkbox.checked = true;
         }
 
@@ -94,12 +94,12 @@ export default class CategorySelector extends HTMLElement {
         category: string,
         ISBN: string
     ) {
-        const isBookInCategory = store.hasBookInCategory(category, ISBN);
+        const isBookInCategory = bookStore.hasBookInCategory(category, ISBN);
 
         if (isBookInCategory) {
-            store.removeBookInCategory(category, ISBN);
+            bookStore.removeBookInCategory(category, ISBN);
         } else {
-            store.addBookInCategory(category, ISBN);
+            bookStore.addBookInCategory(category, ISBN);
         }
 
         checkbox.checked = !isBookInCategory;

@@ -1,4 +1,4 @@
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 import { CustomEventEmitter } from "../../utils";
 
 export default class FavoriteNav extends HTMLElement {
@@ -46,7 +46,7 @@ export default class FavoriteNav extends HTMLElement {
         );
 
         if (this.category === null) {
-            this.category = store.categorySort[0];
+            this.category = bookStore.categorySort[0];
             const url = this.getUrl(this.category);
             location.search = url;
         }
@@ -77,7 +77,7 @@ export default class FavoriteNav extends HTMLElement {
         this.nav.innerHTML = "";
 
         const fragment = new DocumentFragment();
-        store.categorySort.forEach((category: string) => {
+        bookStore.categorySort.forEach((category: string) => {
             const el = this.createItem(category);
             fragment.appendChild(el);
         });
@@ -137,7 +137,7 @@ export default class FavoriteNav extends HTMLElement {
     ) {
         if (!this.nav) return;
         const { category, value } = event.detail;
-        const index = store.categorySort.indexOf(value);
+        const index = bookStore.categorySort.indexOf(value);
         this.nav.querySelectorAll("a")[index].textContent = value;
 
         if (this.category === category) {
@@ -155,8 +155,8 @@ export default class FavoriteNav extends HTMLElement {
     ) {
         const { draggedKey, targetKey } = event.detail;
 
-        const draggedIndex = store.categorySort.indexOf(draggedKey);
-        const targetIndex = store.categorySort.indexOf(targetKey);
+        const draggedIndex = bookStore.categorySort.indexOf(draggedKey);
+        const targetIndex = bookStore.categorySort.indexOf(targetKey);
 
         const navLinks = this.nav?.querySelectorAll("a");
         if (navLinks) {

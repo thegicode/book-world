@@ -1,6 +1,6 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
@@ -39,7 +39,7 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     private renderRegion() {
-        const favoriteRegions = Object.keys(store.regions);
+        const favoriteRegions = Object.keys(bookStore.regions);
 
         if (favoriteRegions.length < 1) return;
 
@@ -91,7 +91,7 @@ export default class SetDetailRegion extends HTMLElement {
         ) as HTMLElement;
         if (!detailRegionsElement) return;
 
-        const regionObj = store.regions[regionName];
+        const regionObj = bookStore.regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
 
         const template = document.querySelector(
@@ -159,8 +159,8 @@ export default class SetDetailRegion extends HTMLElement {
     private onChangeDetail() {
         const region = this.region;
 
-        if (!store.regions[region]) {
-            store.addRegion(region);
+        if (!bookStore.regions[region]) {
+            bookStore.addRegion(region);
         }
         const checkboxes = document.querySelectorAll("[name=detailRegion]");
 
@@ -172,9 +172,9 @@ export default class SetDetailRegion extends HTMLElement {
                     inputCheckbox.nextElementSibling as HTMLElement;
                 const label = labelElement?.textContent || "";
                 if (inputCheckbox.checked) {
-                    store.addDetailRegion(region, label, value);
+                    bookStore.addDetailRegion(region, label, value);
                 } else {
-                    store.removeDetailRegion(region, label);
+                    bookStore.removeDetailRegion(region, label);
                 }
 
                 CustomEventEmitter.dispatch(SET_DETAIL_REGIONS_EVENT, {});

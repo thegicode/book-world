@@ -1,5 +1,5 @@
 import { CustomFetch } from "../../utils/index";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
@@ -43,10 +43,10 @@ export default class SetStorage extends HTMLElement {
 
     private setLocalStorageToBase = async () => {
         try {
-            const data = await CustomFetch.fetch<IStorageData>(SAMPLE_JSON_URL);
+            const data = await CustomFetch.fetch<IBookState>(SAMPLE_JSON_URL);
+            console.log(data);
 
-            // setState(data);
-            store.state = data;
+            bookStore.storage = data;
 
             console.log("Saved local stronage by base data!");
 
@@ -59,8 +59,7 @@ export default class SetStorage extends HTMLElement {
     };
 
     private resetStorage = () => {
-        store.resetState();
-        // localStorage.removeItem(LOCAL_STORAGE_NAME);
+        bookStore.reset();
 
         // TODO
         this.updateAndReload();

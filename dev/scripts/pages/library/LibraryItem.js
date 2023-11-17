@@ -1,4 +1,4 @@
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 export default class LibraryItem extends HTMLElement {
     constructor() {
         super();
@@ -35,17 +35,17 @@ export default class LibraryItem extends HTMLElement {
         this.libCode = libCode;
         this.libName = libName;
         if (this.checkbox)
-            this.checkbox.checked = store.hasLibrary(this.libCode);
+            this.checkbox.checked = bookStore.hasLibrary(this.libCode);
     }
     onChange(event) {
         const target = event.target;
         if (!target)
             return;
         if (target.checked) {
-            store.addLibrary(this.libCode, this.libName);
+            bookStore.addLibrary(this.libCode, this.libName);
         }
         else {
-            store.removeLibrary(this.libCode);
+            bookStore.removeLibrary(this.libCode);
         }
     }
 }

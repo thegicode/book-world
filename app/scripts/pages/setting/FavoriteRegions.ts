@@ -1,5 +1,5 @@
 import { CustomEventEmitter } from "../../utils/index";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 
 const DETAIL_REGIONS_EVENT = "set-detail-regions";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
@@ -28,7 +28,7 @@ export default class FavoriteRegions extends HTMLElement {
         if (!this.container) return;
 
         this.container.innerHTML = "";
-        const { regions } = store;
+        const { regions } = bookStore;
         for (const regionName in regions) {
             const detailRegions = Object.keys(regions[regionName]);
             if (detailRegions.length > 0) {

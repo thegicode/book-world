@@ -1,5 +1,4 @@
-import { state } from "../../modules/model";
-import store from "../../modules/store";
+import bookStore from "../../modules/BookStore";
 import { cloneTemplate } from "../../utils/helpers";
 
 export default class Favorite extends HTMLElement {
@@ -21,12 +20,12 @@ export default class Favorite extends HTMLElement {
     }
 
     connectedCallback() {
-        if (store.categorySort.length === 0) {
+        if (bookStore.categorySort.length === 0) {
             this.renderMessage("관심 카테고리를 등록해주세요.");
             return;
         }
 
-        const key = this.locationCategory || state.categorySort[0];
+        const key = this.locationCategory || bookStore.categorySort[0];
         this.render(key);
     }
 
@@ -37,7 +36,7 @@ export default class Favorite extends HTMLElement {
     private render(key: string) {
         const fragment = new DocumentFragment();
         this.booksElement.innerHTML = "";
-        const data = state.category[key];
+        const data = bookStore.category[key];
 
         if (data.length === 0) {
             this.renderMessage("관심책이 없습니다.");
