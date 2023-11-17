@@ -20,7 +20,6 @@ export default class SetStorage extends HTMLElement {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
                 bookStore.storage = data;
                 console.log("Saved local stronage by base data!");
-                // TODO
                 this.updatePage();
             }
             catch (error) {
@@ -30,7 +29,6 @@ export default class SetStorage extends HTMLElement {
         });
         this.resetStorage = () => {
             bookStore.reset();
-            // TODO
             this.updatePage();
         };
     }
@@ -55,7 +53,6 @@ export default class SetStorage extends HTMLElement {
     updatePage() {
         categoryBookUpdatePublisher.notify();
         bookStateUpdatePublisher.notify();
-        // location.reload();
     }
 }
 //# sourceMappingURL=SetStorage.js.map

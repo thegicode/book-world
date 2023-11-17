@@ -52,7 +52,6 @@ export default class SetStorage extends HTMLElement {
 
             console.log("Saved local stronage by base data!");
 
-            // TODO
             this.updatePage();
         } catch (error) {
             console.error(error);
@@ -63,13 +62,11 @@ export default class SetStorage extends HTMLElement {
     private resetStorage = () => {
         bookStore.reset();
 
-        // TODO
         this.updatePage();
     };
 
     private updatePage() {
         categoryBookUpdatePublisher.notify();
         bookStateUpdatePublisher.notify();
-        // location.reload();
     }
 }
