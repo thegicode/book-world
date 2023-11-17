@@ -1,5 +1,5 @@
 import { CustomEventEmitter } from "../../utils/index";
-import bookStore from "../../modules/BookStore";
+import bookStore, { bookStateChangePublisher } from "../../modules/BookStore";
 
 const DETAIL_REGIONS_EVENT = "set-detail-regions";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
@@ -15,6 +15,9 @@ export default class FavoriteRegions extends HTMLElement {
     connectedCallback() {
         this.container = this.querySelector(".favorites") as HTMLElement;
         this.render();
+
+        bookStateChangePublisher.subscribe(this.render);
+
         CustomEventEmitter.add(SET_FAVORITE_REGIONS_EVENT, this.render);
         CustomEventEmitter.add(DETAIL_REGIONS_EVENT, this.render);
     }

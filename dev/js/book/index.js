@@ -636,7 +636,8 @@
     category: {},
     categorySort: []
   };
-  var publisherChangedCategoryBook = new Publisher();
+  var bookStateChangePublisher = new Publisher();
+  var categoryBookUpdatePublisher = new Publisher();
   var BookStore = class {
     constructor() {
       this.state = this.loadStorage() || cloneDeep(initialState);
@@ -742,7 +743,7 @@
       const newCategory = this.category;
       newCategory[name].unshift(isbn);
       this.category = newCategory;
-      publisherChangedCategoryBook.notify();
+      categoryBookUpdatePublisher.notify();
     }
     hasBookInCategory(name, isbn) {
       return this.category[name].includes(isbn);
@@ -754,7 +755,7 @@
         newCategory[name].splice(index, 1);
         this.category = newCategory;
       }
-      publisherChangedCategoryBook.notify();
+      categoryBookUpdatePublisher.notify();
     }
     addLibrary(code, name) {
       const newLibries = this.libraries;
@@ -809,7 +810,7 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      publisherChangedCategoryBook.subscribe(this.renderBookSize);
+      categoryBookUpdatePublisher.subscribe(this.renderBookSize);
     }
     get bookSize() {
       return Object.values(BookStore_default.category).reduce((sum, currentArray) => sum + currentArray.length, 0);

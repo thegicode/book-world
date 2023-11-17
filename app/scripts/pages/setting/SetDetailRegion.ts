@@ -1,6 +1,6 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore from "../../modules/BookStore";
+import bookStore, { bookStateChangePublisher } from "../../modules/BookStore";
 
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
@@ -20,6 +20,8 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     connectedCallback() {
+        // bookStateChangePublisher.subscribe(this.renderRegion);
+
         CustomEventEmitter.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
         CustomEventEmitter.add(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
     }
@@ -35,22 +37,23 @@ export default class SetDetailRegion extends HTMLElement {
     private setRegionData(event: Event) {
         const customEvent = event as CustomEvent<{ regionData: TotalRegions }>;
         this.regionData = customEvent.detail.regionData;
+
         this.renderRegion();
     }
 
     private renderRegion() {
         const favoriteRegions = Object.keys(bookStore.regions);
 
-        if (favoriteRegions.length < 1) return;
-
         const container = this.querySelector(".regions") as HTMLElement;
         if (!container) return;
 
         container.innerHTML = "";
-        const regionElements = this.createRegions(favoriteRegions);
-        if (!regionElements) return;
 
-        container.appendChild(regionElements);
+        if (favoriteRegions.length > 0) {
+            const regionElements = this.createRegions(favoriteRegions);
+
+            container.appendChild(regionElements);
+        }
 
         this.initializeFirstRegion(container);
     }
@@ -62,6 +65,7 @@ export default class SetDetailRegion extends HTMLElement {
 
         const fragment = new DocumentFragment();
         favoriteRegions.forEach((region) => {
+            if (region === "") return null;
             const element = cloneTemplate(template);
             const spanElement = element.querySelector<HTMLElement>("span");
             if (spanElement) spanElement.textContent = region;
@@ -72,8 +76,14 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     private initializeFirstRegion(container: HTMLElement) {
-        const firstInput = container.querySelector<HTMLInputElement>("input");
-        if (!firstInput) return;
+        const firstInput = container.querySelector<HTMLInputElement>(
+            "input"
+        ) as HTMLInputElement;
+
+        if (!firstInput) {
+            this.renderDetailRegions("");
+            return;
+        }
 
         firstInput.checked = true;
         const labelEl = firstInput.nextElementSibling as HTMLElement;
@@ -84,8 +94,6 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     private renderDetailRegions(regionName: string) {
-        if (!this.regionData) return;
-
         const detailRegionsElement = this.querySelector(
             ".detailRegions"
         ) as HTMLElement;
@@ -101,8 +109,8 @@ export default class SetDetailRegion extends HTMLElement {
 
         detailRegionsElement.innerHTML = "";
 
-        const detailRegionData = this.regionData.detailRegion[regionName];
-        if (!detailRegionData) return;
+        const detailRegionData =
+            this.regionData?.detailRegion[regionName] || {};
 
         const fragment = this.createDetailRegionElements(
             detailRegionData,

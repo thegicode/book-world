@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CustomFetch } from "../../utils/index";
-import bookStore from "../../modules/BookStore";
+import bookStore, { categoryBookUpdatePublisher, bookStateChangePublisher, } from "../../modules/BookStore";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
     constructor() {
@@ -18,11 +18,10 @@ export default class SetStorage extends HTMLElement {
         this.setLocalStorageToBase = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
-                console.log(data);
                 bookStore.storage = data;
                 console.log("Saved local stronage by base data!");
                 // TODO
-                this.updateAndReload();
+                this.updatePage();
             }
             catch (error) {
                 console.error(error);
@@ -32,7 +31,7 @@ export default class SetStorage extends HTMLElement {
         this.resetStorage = () => {
             bookStore.reset();
             // TODO
-            this.updateAndReload();
+            this.updatePage();
         };
     }
     connectedCallback() {
@@ -53,8 +52,10 @@ export default class SetStorage extends HTMLElement {
         (_a = this.storageButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.setLocalStorageToBase);
         (_b = this.resetButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.resetStorage);
     }
-    updateAndReload() {
-        location.reload();
+    updatePage() {
+        categoryBookUpdatePublisher.notify();
+        bookStateChangePublisher.notify();
+        // location.reload();
     }
 }
 //# sourceMappingURL=SetStorage.js.map

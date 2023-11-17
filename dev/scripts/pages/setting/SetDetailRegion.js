@@ -13,6 +13,7 @@ export default class SetDetailRegion extends HTMLElement {
         this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
+        // bookStateChangePublisher.subscribe(this.renderRegion);
         CustomEventEmitter.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
         CustomEventEmitter.add(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
     }
@@ -27,22 +28,22 @@ export default class SetDetailRegion extends HTMLElement {
     }
     renderRegion() {
         const favoriteRegions = Object.keys(bookStore.regions);
-        if (favoriteRegions.length < 1)
-            return;
         const container = this.querySelector(".regions");
         if (!container)
             return;
         container.innerHTML = "";
-        const regionElements = this.createRegions(favoriteRegions);
-        if (!regionElements)
-            return;
-        container.appendChild(regionElements);
+        if (favoriteRegions.length > 0) {
+            const regionElements = this.createRegions(favoriteRegions);
+            container.appendChild(regionElements);
+        }
         this.initializeFirstRegion(container);
     }
     createRegions(favoriteRegions) {
         const template = document.querySelector("#tp-favorite-region");
         const fragment = new DocumentFragment();
         favoriteRegions.forEach((region) => {
+            if (region === "")
+                return null;
             const element = cloneTemplate(template);
             const spanElement = element.querySelector("span");
             if (spanElement)
@@ -53,8 +54,10 @@ export default class SetDetailRegion extends HTMLElement {
     }
     initializeFirstRegion(container) {
         const firstInput = container.querySelector("input");
-        if (!firstInput)
+        if (!firstInput) {
+            this.renderDetailRegions("");
             return;
+        }
         firstInput.checked = true;
         const labelEl = firstInput.nextElementSibling;
         const label = (labelEl === null || labelEl === void 0 ? void 0 : labelEl.textContent) || "";
@@ -62,8 +65,7 @@ export default class SetDetailRegion extends HTMLElement {
         this.changeRegion();
     }
     renderDetailRegions(regionName) {
-        if (!this.regionData)
-            return;
+        var _a;
         const detailRegionsElement = this.querySelector(".detailRegions");
         if (!detailRegionsElement)
             return;
@@ -73,9 +75,7 @@ export default class SetDetailRegion extends HTMLElement {
         if (!template)
             return;
         detailRegionsElement.innerHTML = "";
-        const detailRegionData = this.regionData.detailRegion[regionName];
-        if (!detailRegionData)
-            return;
+        const detailRegionData = ((_a = this.regionData) === null || _a === void 0 ? void 0 : _a.detailRegion[regionName]) || {};
         const fragment = this.createDetailRegionElements(detailRegionData, template, regionCodes);
         detailRegionsElement.appendChild(fragment);
         this.region = regionName;

@@ -1,5 +1,8 @@
 import { CustomFetch } from "../../utils/index";
-import bookStore from "../../modules/BookStore";
+import bookStore, {
+    categoryBookUpdatePublisher,
+    bookStateChangePublisher,
+} from "../../modules/BookStore";
 
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
@@ -44,14 +47,13 @@ export default class SetStorage extends HTMLElement {
     private setLocalStorageToBase = async () => {
         try {
             const data = await CustomFetch.fetch<IBookState>(SAMPLE_JSON_URL);
-            console.log(data);
 
             bookStore.storage = data;
 
             console.log("Saved local stronage by base data!");
 
             // TODO
-            this.updateAndReload();
+            this.updatePage();
         } catch (error) {
             console.error(error);
             throw new Error("Fail to get storage sample data.");
@@ -62,10 +64,12 @@ export default class SetStorage extends HTMLElement {
         bookStore.reset();
 
         // TODO
-        this.updateAndReload();
+        this.updatePage();
     };
 
-    private updateAndReload() {
-        location.reload();
+    private updatePage() {
+        categoryBookUpdatePublisher.notify();
+        bookStateChangePublisher.notify();
+        // location.reload();
     }
 }

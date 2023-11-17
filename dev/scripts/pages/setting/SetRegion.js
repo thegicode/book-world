@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore from "../../modules/BookStore";
+import bookStore, { bookStateChangePublisher } from "../../modules/BookStore";
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
 const REGION_JSON_URL = "../../../assets/json/region.json";
@@ -18,16 +18,18 @@ export default class SetRegion extends HTMLElement {
     constructor() {
         super();
         this.regionData = null;
+        this.template = document.querySelector(REGION_TEMPLATE_NAME);
+        this.fetchAndRender = this.fetchAndRender.bind(this);
     }
     connectedCallback() {
-        this.initializeRegionDataAndRender();
+        this.fetchAndRender();
+        bookStateChangePublisher.subscribe(this.fetchAndRender);
     }
-    initializeRegionDataAndRender() {
+    fetchAndRender() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 this.regionData = yield this.fetchRegionData(REGION_JSON_URL);
-                this.renderRegion();
-                this.addCheckboxChangeListeners();
+                this.render();
                 CustomEventEmitter.dispatch(FETCH_REGION_DATA_EVENT, {
                     regionData: this.regionData,
                 });
@@ -43,10 +45,10 @@ export default class SetRegion extends HTMLElement {
             return (yield CustomFetch.fetch(url));
         });
     }
-    renderRegion() {
-        const templateElement = document.querySelector(REGION_TEMPLATE_NAME);
-        const regionElementsFragment = this.createRegionElementsFragment(templateElement);
+    render() {
+        const regionElementsFragment = this.createRegionElementsFragment(this.template);
         const container = this.querySelector(".regions");
+        container.innerHTML = "";
         container.appendChild(regionElementsFragment);
     }
     createRegionElementsFragment(template) {
@@ -67,16 +69,11 @@ export default class SetRegion extends HTMLElement {
         const checkbox = regionElement.querySelector("input");
         checkbox.value = value;
         checkbox.checked = favoriteRegions.includes(key);
+        checkbox.addEventListener("change", this.createCheckboxChangeListener(checkbox));
         const spanElement = regionElement.querySelector("span");
         if (spanElement)
             spanElement.textContent = key;
         return regionElement;
-    }
-    addCheckboxChangeListeners() {
-        const checkboxes = this.querySelectorAll("[name=region]");
-        checkboxes.forEach((checkbox) => {
-            checkbox.addEventListener("change", this.createCheckboxChangeListener(checkbox));
-        });
     }
     createCheckboxChangeListener(checkbox) {
         return () => {
