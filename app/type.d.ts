@@ -178,14 +178,6 @@ interface IStorageData {
 interface IStore {
     // state: IStorageData;
 
-    listeners: TListener[];
-    librariesChangedCategory: TListener[];
-    subscribe(listener: TListener): void;
-    subscribeChangedCatgory(listener: TListener): void;
-    unsubscribe(callback: TListener): void;
-    notify(): void;
-    notifyChangedCategory(): void;
-
     storage: IStorageData;
     state: IStorageData;
     category: TCategory;
@@ -222,8 +214,8 @@ interface IStore {
     removeDetailRegion(regionName: string, detailName: string): void;
 }
 
-type TListener = () => void;
 type TCategory = Record<string, string[]>;
 type TCategorySrot = string[];
 type TLibraries = Record<string, string>;
 type TRegions = Record<string, Record<string, string>>;
+type TSubscriberCallback = () => void;

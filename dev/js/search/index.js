@@ -789,6 +789,22 @@
     }
   };
 
+  // dev/scripts/utils/Publisher.js
+  var Publisher = class {
+    constructor() {
+      this.subscribers = [];
+    }
+    subscribe(callback) {
+      this.subscribers.push(callback);
+    }
+    unssubscribe(callback) {
+      this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
+    }
+    notify() {
+      this.subscribers.forEach((callback) => callback());
+    }
+  };
+
   // dev/scripts/modules/store.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
@@ -800,24 +816,8 @@
     category: {},
     categorySort: []
   };
+  var publisherChangedCategoryBook = new Publisher();
   var store = {
-    listeners: [],
-    librariesChangedCategory: [],
-    subscribe(listener) {
-      this.listeners.push(listener);
-    },
-    subscribeChangedCatgory(listener) {
-      this.librariesChangedCategory.push(listener);
-    },
-    unsubscribe(callback) {
-      this.listeners = this.listeners.filter((subscriber) => subscriber !== callback);
-    },
-    notify() {
-      this.listeners.forEach((listener) => listener());
-    },
-    notifyChangedCategory() {
-      this.librariesChangedCategory.forEach((listener) => listener());
-    },
     get storage() {
       try {
         const storageData = localStorage.getItem(STORAGE_NAME);
@@ -920,7 +920,7 @@
       const newCategory = this.category;
       newCategory[name].unshift(isbn);
       this.category = newCategory;
-      this.notifyChangedCategory();
+      publisherChangedCategoryBook.notify();
     },
     hasBookInCategory(name, isbn) {
       return this.category[name].includes(isbn);
@@ -932,15 +932,8 @@
         newCategory[name].splice(index, 1);
         this.category = newCategory;
       }
-      this.notifyChangedCategory();
+      publisherChangedCategoryBook.notify();
     },
-    // Book Size
-    // getBookSizeInCategory() {
-    //     return Object.values(store.category).reduce(
-    //         (sum, currentArray: string[]) => sum + currentArray.length,
-    //         0
-    //     );
-    // },
     // Library
     addLibrary(code, name) {
       const newLibries = this.libraries;
@@ -995,7 +988,7 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      store_default.subscribeChangedCatgory(this.renderBookSize);
+      publisherChangedCategoryBook.subscribe(this.renderBookSize);
     }
     get bookSize() {
       return Object.values(store_default.category).reduce((sum, currentArray) => sum + currentArray.length, 0);

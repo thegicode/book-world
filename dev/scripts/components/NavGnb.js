@@ -1,4 +1,4 @@
-import store from "../modules/store";
+import store, { publisherChangedCategoryBook } from "../modules/store";
 export default class NavGnb extends HTMLElement {
     constructor() {
         super();
@@ -14,7 +14,7 @@ export default class NavGnb extends HTMLElement {
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
-        store.subscribeChangedCatgory(this.renderBookSize);
+        publisherChangedCategoryBook.subscribe(this.renderBookSize);
     }
     get bookSize() {
         return Object.values(store.category).reduce((sum, currentArray) => sum + currentArray.length, 0);

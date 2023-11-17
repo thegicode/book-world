@@ -1,3 +1,5 @@
+import Publisher from "../utils/Publisher";
+
 const cloneDeep = <T>(obj: T): T => {
     return JSON.parse(JSON.stringify(obj));
 };
@@ -11,32 +13,9 @@ const initialState: IStorageData = {
     categorySort: [],
 };
 
+export const publisherChangedCategoryBook = new Publisher();
+
 const store: IStore = {
-    listeners: [],
-    librariesChangedCategory: [],
-
-    subscribe(listener) {
-        this.listeners.push(listener);
-    },
-
-    subscribeChangedCatgory(listener) {
-        this.librariesChangedCategory.push(listener);
-    },
-
-    unsubscribe(callback) {
-        this.listeners = this.listeners.filter(
-            (subscriber) => subscriber !== callback
-        );
-    },
-
-    notify() {
-        this.listeners.forEach((listener) => listener());
-    },
-
-    notifyChangedCategory() {
-        this.librariesChangedCategory.forEach((listener) => listener());
-    },
-
     get storage() {
         try {
             const storageData = localStorage.getItem(STORAGE_NAME);
@@ -162,7 +141,8 @@ const store: IStore = {
         newCategory[name].unshift(isbn);
         this.category = newCategory;
 
-        this.notifyChangedCategory();
+        // this.notifyChangedCategory();
+        publisherChangedCategoryBook.notify();
     },
 
     hasBookInCategory(name, isbn) {
@@ -176,16 +156,10 @@ const store: IStore = {
             newCategory[name].splice(index, 1);
             this.category = newCategory;
         }
-        this.notifyChangedCategory();
-    },
 
-    // Book Size
-    // getBookSizeInCategory() {
-    //     return Object.values(store.category).reduce(
-    //         (sum, currentArray: string[]) => sum + currentArray.length,
-    //         0
-    //     );
-    // },
+        // this.notifyChangedCategory();
+        publisherChangedCategoryBook.notify();
+    },
 
     // Library
 

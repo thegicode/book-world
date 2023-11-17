@@ -1,4 +1,4 @@
-import store from "../modules/store";
+import store, { publisherChangedCategoryBook } from "../modules/store";
 
 export default class NavGnb extends HTMLElement {
     PATHS: string[];
@@ -21,7 +21,7 @@ export default class NavGnb extends HTMLElement {
         this.render();
         this.setSelectedMenu();
 
-        store.subscribeChangedCatgory(this.renderBookSize);
+        publisherChangedCategoryBook.subscribe(this.renderBookSize);
     }
 
     get bookSize() {
