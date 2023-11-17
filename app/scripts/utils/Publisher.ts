@@ -5,7 +5,7 @@ export default class Publisher {
         this.subscribers.push(callback);
     }
 
-    unssubscribe(callback: TSubscriberCallback) {
+    unsubscribe(callback: TSubscriberCallback) {
         this.subscribers = this.subscribers.filter(
             (subscriber) => subscriber !== callback
         );

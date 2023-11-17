@@ -9,8 +9,10 @@ const initialState = {
     category: {},
     categorySort: [],
 };
-export const bookStateChangePublisher = new Publisher();
+export const bookStateUpdatePublisher = new Publisher();
 export const categoryBookUpdatePublisher = new Publisher();
+export const regionUpdatePublisher = new Publisher();
+export const detailRegionUpdatePublisher = new Publisher();
 class BookStore {
     constructor() {
         this.state = this.loadStorage() || cloneDeep(initialState);
@@ -149,21 +151,25 @@ class BookStore {
         const newRegion = this.regions;
         newRegion[name] = {};
         this.regions = newRegion;
+        regionUpdatePublisher.notify();
     }
     removeRegion(name) {
         const newRegions = this.regions;
         delete newRegions[name];
         this.regions = newRegions;
+        regionUpdatePublisher.notify();
     }
     addDetailRegion(regionName, detailName, detailCode) {
         const newRegions = this.regions;
         newRegions[regionName][detailName] = detailCode;
         this.regions = newRegions;
+        detailRegionUpdatePublisher.notify();
     }
     removeDetailRegion(regionName, detailName) {
         const newRegions = this.regions;
         delete newRegions[regionName][detailName];
         this.regions = newRegions;
+        detailRegionUpdatePublisher.notify();
     }
 }
 const bookStore = new BookStore();

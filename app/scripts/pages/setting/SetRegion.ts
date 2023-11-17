@@ -1,9 +1,9 @@
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore, { bookStateChangePublisher } from "../../modules/BookStore";
+import bookStore, { bookStateUpdatePublisher } from "../../modules/BookStore";
 
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
-const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
+// const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
 const REGION_JSON_URL = "../../../assets/json/region.json";
 const REGION_TEMPLATE_NAME = "#tp-region";
 
@@ -24,7 +24,11 @@ export default class SetRegion extends HTMLElement {
     connectedCallback() {
         this.fetchAndRender();
 
-        bookStateChangePublisher.subscribe(this.fetchAndRender);
+        bookStateUpdatePublisher.subscribe(this.fetchAndRender);
+    }
+
+    discinnectedCallback() {
+        bookStateUpdatePublisher.unsubscribe(this.fetchAndRender);
     }
 
     private async fetchAndRender() {
@@ -117,7 +121,8 @@ export default class SetRegion extends HTMLElement {
             } else {
                 bookStore.removeRegion(key);
             }
-            CustomEventEmitter.dispatch(SET_FAVORITE_REGIONS_EVENT, {});
+
+            // CustomEventEmitter.dispatch(SET_FAVORITE_REGIONS_EVENT, {});
         };
     }
 }

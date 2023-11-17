@@ -1,7 +1,7 @@
-import { CustomEventEmitter } from "../../utils/index";
-import bookStore, { bookStateChangePublisher } from "../../modules/BookStore";
-const DETAIL_REGIONS_EVENT = "set-detail-regions";
-const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
+// import { CustomEventEmitter } from "../../utils/index";
+import bookStore, { bookStateUpdatePublisher, detailRegionUpdatePublisher, } from "../../modules/BookStore";
+// const DETAIL_REGIONS_EVENT = "set-detail-regions";
+// const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
 export default class FavoriteRegions extends HTMLElement {
     constructor() {
         super();
@@ -11,13 +11,16 @@ export default class FavoriteRegions extends HTMLElement {
     connectedCallback() {
         this.container = this.querySelector(".favorites");
         this.render();
-        bookStateChangePublisher.subscribe(this.render);
-        CustomEventEmitter.add(SET_FAVORITE_REGIONS_EVENT, this.render);
-        CustomEventEmitter.add(DETAIL_REGIONS_EVENT, this.render);
+        bookStateUpdatePublisher.subscribe(this.render);
+        detailRegionUpdatePublisher.subscribe(this.render);
+        // CustomEventEmitter.add(SET_FAVORITE_REGIONS_EVENT, this.render);
+        // CustomEventEmitter.add(DETAIL_REGIONS_EVENT, this.render);
     }
     disconnectedCallback() {
-        CustomEventEmitter.remove(SET_FAVORITE_REGIONS_EVENT, this.render);
-        CustomEventEmitter.remove(DETAIL_REGIONS_EVENT, this.render);
+        bookStateUpdatePublisher.unsubscribe(this.render);
+        detailRegionUpdatePublisher.unsubscribe(this.render);
+        // CustomEventEmitter.remove(SET_FAVORITE_REGIONS_EVENT, this.render);
+        // CustomEventEmitter.remove(DETAIL_REGIONS_EVENT, this.render);
     }
     render() {
         if (!this.container)

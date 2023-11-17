@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CustomFetch } from "../../utils/index";
-import bookStore, { categoryBookUpdatePublisher, bookStateChangePublisher, } from "../../modules/BookStore";
+import bookStore, { categoryBookUpdatePublisher, bookStateUpdatePublisher, } from "../../modules/BookStore";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
     constructor() {
@@ -54,7 +54,7 @@ export default class SetStorage extends HTMLElement {
     }
     updatePage() {
         categoryBookUpdatePublisher.notify();
-        bookStateChangePublisher.notify();
+        bookStateUpdatePublisher.notify();
         // location.reload();
     }
 }

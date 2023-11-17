@@ -13,8 +13,10 @@ const initialState: IBookState = {
     categorySort: [],
 };
 
-export const bookStateChangePublisher = new Publisher();
+export const bookStateUpdatePublisher = new Publisher();
 export const categoryBookUpdatePublisher = new Publisher();
+export const regionUpdatePublisher = new Publisher();
+export const detailRegionUpdatePublisher = new Publisher();
 
 class BookStore {
     private state: IBookState;
@@ -182,12 +184,16 @@ class BookStore {
         const newRegion = this.regions;
         newRegion[name] = {};
         this.regions = newRegion;
+
+        regionUpdatePublisher.notify();
     }
 
     removeRegion(name: string) {
         const newRegions = this.regions;
         delete newRegions[name];
         this.regions = newRegions;
+
+        regionUpdatePublisher.notify();
     }
 
     addDetailRegion(
@@ -198,12 +204,16 @@ class BookStore {
         const newRegions = this.regions;
         newRegions[regionName][detailName] = detailCode;
         this.regions = newRegions;
+
+        detailRegionUpdatePublisher.notify();
     }
 
     removeDetailRegion(regionName: string, detailName: string) {
         const newRegions = this.regions;
         delete newRegions[regionName][detailName];
         this.regions = newRegions;
+
+        detailRegionUpdatePublisher.notify();
     }
 }
 

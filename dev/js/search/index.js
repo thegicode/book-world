@@ -797,7 +797,7 @@
     subscribe(callback) {
       this.subscribers.push(callback);
     }
-    unssubscribe(callback) {
+    unsubscribe(callback) {
       this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
     }
     notify() {
@@ -816,8 +816,10 @@
     category: {},
     categorySort: []
   };
-  var bookStateChangePublisher = new Publisher();
+  var bookStateUpdatePublisher = new Publisher();
   var categoryBookUpdatePublisher = new Publisher();
+  var regionUpdatePublisher = new Publisher();
+  var detailRegionUpdatePublisher = new Publisher();
   var BookStore = class {
     constructor() {
       this.state = this.loadStorage() || cloneDeep(initialState);
@@ -954,21 +956,25 @@
       const newRegion = this.regions;
       newRegion[name] = {};
       this.regions = newRegion;
+      regionUpdatePublisher.notify();
     }
     removeRegion(name) {
       const newRegions = this.regions;
       delete newRegions[name];
       this.regions = newRegions;
+      regionUpdatePublisher.notify();
     }
     addDetailRegion(regionName, detailName, detailCode) {
       const newRegions = this.regions;
       newRegions[regionName][detailName] = detailCode;
       this.regions = newRegions;
+      detailRegionUpdatePublisher.notify();
     }
     removeDetailRegion(regionName, detailName) {
       const newRegions = this.regions;
       delete newRegions[regionName][detailName];
       this.regions = newRegions;
+      detailRegionUpdatePublisher.notify();
     }
   };
   var bookStore = new BookStore();

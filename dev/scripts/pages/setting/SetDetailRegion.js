@@ -1,6 +1,6 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore from "../../modules/BookStore";
+import bookStore, { regionUpdatePublisher } from "../../modules/BookStore";
 const FETCH_REGION_DATA_EVENT = "fetch-region-data";
 const SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
 const SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
@@ -13,9 +13,8 @@ export default class SetDetailRegion extends HTMLElement {
         this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
-        // bookStateChangePublisher.subscribe(this.renderRegion);
+        regionUpdatePublisher.subscribe(this.renderRegion);
         CustomEventEmitter.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
-        CustomEventEmitter.add(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
     }
     disconnectedCallback() {
         CustomEventEmitter.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);

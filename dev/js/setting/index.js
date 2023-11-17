@@ -617,7 +617,7 @@
     subscribe(callback) {
       this.subscribers.push(callback);
     }
-    unssubscribe(callback) {
+    unsubscribe(callback) {
       this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
     }
     notify() {
@@ -636,8 +636,10 @@
     category: {},
     categorySort: []
   };
-  var bookStateChangePublisher = new Publisher();
+  var bookStateUpdatePublisher = new Publisher();
   var categoryBookUpdatePublisher = new Publisher();
+  var regionUpdatePublisher = new Publisher();
+  var detailRegionUpdatePublisher = new Publisher();
   var BookStore = class {
     constructor() {
       this.state = this.loadStorage() || cloneDeep(initialState);
@@ -774,21 +776,25 @@
       const newRegion = this.regions;
       newRegion[name] = {};
       this.regions = newRegion;
+      regionUpdatePublisher.notify();
     }
     removeRegion(name) {
       const newRegions = this.regions;
       delete newRegions[name];
       this.regions = newRegions;
+      regionUpdatePublisher.notify();
     }
     addDetailRegion(regionName, detailName, detailCode) {
       const newRegions = this.regions;
       newRegions[regionName][detailName] = detailCode;
       this.regions = newRegions;
+      detailRegionUpdatePublisher.notify();
     }
     removeDetailRegion(regionName, detailName) {
       const newRegions = this.regions;
       delete newRegions[regionName][detailName];
       this.regions = newRegions;
+      detailRegionUpdatePublisher.notify();
     }
   };
   var bookStore = new BookStore();
@@ -882,7 +888,6 @@
     });
   };
   var FETCH_REGION_DATA_EVENT = "fetch-region-data";
-  var SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
   var REGION_JSON_URL = "../../../assets/json/region.json";
   var REGION_TEMPLATE_NAME = "#tp-region";
   var SetRegion = class extends HTMLElement {
@@ -894,7 +899,10 @@
     }
     connectedCallback() {
       this.fetchAndRender();
-      bookStateChangePublisher.subscribe(this.fetchAndRender);
+      bookStateUpdatePublisher.subscribe(this.fetchAndRender);
+    }
+    discinnectedCallback() {
+      bookStateUpdatePublisher.unsubscribe(this.fetchAndRender);
     }
     fetchAndRender() {
       return __awaiter2(this, void 0, void 0, function* () {
@@ -957,14 +965,13 @@
         } else {
           BookStore_default.removeRegion(key);
         }
-        CustomEventEmitter_default.dispatch(SET_FAVORITE_REGIONS_EVENT, {});
       };
     }
   };
 
   // dev/scripts/pages/setting/SetDetailRegion.js
   var FETCH_REGION_DATA_EVENT2 = "fetch-region-data";
-  var SET_FAVORITE_REGIONS_EVENT2 = "set-favorite-regions";
+  var SET_FAVORITE_REGIONS_EVENT = "set-favorite-regions";
   var SET_DETAIL_REGIONS_EVENT = "set-detail-regions";
   var SetDetailRegion = class extends HTMLElement {
     constructor() {
@@ -975,12 +982,12 @@
       this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
+      regionUpdatePublisher.subscribe(this.renderRegion);
       CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT2, this.setRegionData);
-      CustomEventEmitter_default.add(SET_FAVORITE_REGIONS_EVENT2, this.renderRegion);
     }
     disconnectedCallback() {
       CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT2, this.setRegionData);
-      CustomEventEmitter_default.remove(SET_FAVORITE_REGIONS_EVENT2, this.renderRegion);
+      CustomEventEmitter_default.remove(SET_FAVORITE_REGIONS_EVENT, this.renderRegion);
     }
     setRegionData(event) {
       const customEvent = event;
@@ -1099,8 +1106,6 @@
   };
 
   // dev/scripts/pages/setting/FavoriteRegions.js
-  var DETAIL_REGIONS_EVENT = "set-detail-regions";
-  var SET_FAVORITE_REGIONS_EVENT3 = "set-favorite-regions";
   var FavoriteRegions = class extends HTMLElement {
     constructor() {
       super();
@@ -1110,13 +1115,12 @@
     connectedCallback() {
       this.container = this.querySelector(".favorites");
       this.render();
-      bookStateChangePublisher.subscribe(this.render);
-      CustomEventEmitter_default.add(SET_FAVORITE_REGIONS_EVENT3, this.render);
-      CustomEventEmitter_default.add(DETAIL_REGIONS_EVENT, this.render);
+      bookStateUpdatePublisher.subscribe(this.render);
+      detailRegionUpdatePublisher.subscribe(this.render);
     }
     disconnectedCallback() {
-      CustomEventEmitter_default.remove(SET_FAVORITE_REGIONS_EVENT3, this.render);
-      CustomEventEmitter_default.remove(DETAIL_REGIONS_EVENT, this.render);
+      bookStateUpdatePublisher.unsubscribe(this.render);
+      detailRegionUpdatePublisher.unsubscribe(this.render);
     }
     render() {
       if (!this.container)
@@ -1216,7 +1220,7 @@
     }
     updatePage() {
       categoryBookUpdatePublisher.notify();
-      bookStateChangePublisher.notify();
+      bookStateUpdatePublisher.notify();
     }
   };
 
