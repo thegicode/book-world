@@ -1,5 +1,4 @@
 import bookStore from "../../modules/BookStore";
-import { CustomEventEmitter } from "../../utils";
 import { cloneTemplate } from "../../utils/helpers";
 
 export default class OverlayCategory extends HTMLElement {
@@ -125,22 +124,14 @@ export default class OverlayCategory extends HTMLElement {
 
         bookStore.renameCategory(category, value);
         bookStore.renameCategorySort(category, value);
-
-        CustomEventEmitter.dispatch("categoryRenamed", {
-            category,
-            value,
-        });
     }
 
     private handleDelete(cloned: HTMLLIElement, category: string) {
-        const index = bookStore.categorySort.indexOf(category);
+        // const index = bookStore.categorySort.indexOf(category);
 
         cloned.remove();
         bookStore.deleteCategory(category);
-
-        CustomEventEmitter.dispatch("categoryDeleted", {
-            index,
-        });
+        bookStore.deleteCatgorySort(category);
     }
 
     private changeItem(cloned: HTMLLIElement) {
@@ -187,11 +178,6 @@ export default class OverlayCategory extends HTMLElement {
             const targetKey = cloned.dataset.category;
             if (draggedKey && targetKey) {
                 bookStore.changeCategory(draggedKey, targetKey);
-
-                CustomEventEmitter.dispatch("categoryChanged", {
-                    draggedKey,
-                    targetKey,
-                });
             }
             delete cloned.dataset.drag;
         });
@@ -218,9 +204,9 @@ export default class OverlayCategory extends HTMLElement {
 
         this.addInput.value = "";
 
-        CustomEventEmitter.dispatch("categoryAdded", {
-            category,
-        });
+        // CustomEventEmitter.dispatch("categoryAdded", {
+        //     category,
+        // });
     };
 
     private handleSubmit = (event: Event) => {

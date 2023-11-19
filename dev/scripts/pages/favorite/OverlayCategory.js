@@ -1,5 +1,4 @@
 import bookStore from "../../modules/BookStore";
-import { CustomEventEmitter } from "../../utils";
 import { cloneTemplate } from "../../utils/helpers";
 export default class OverlayCategory extends HTMLElement {
     constructor() {
@@ -23,9 +22,9 @@ export default class OverlayCategory extends HTMLElement {
             const cloned = this.createItem(category, index);
             (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
             this.addInput.value = "";
-            CustomEventEmitter.dispatch("categoryAdded", {
-                category,
-            });
+            // CustomEventEmitter.dispatch("categoryAdded", {
+            //     category,
+            // });
         };
         this.handleSubmit = (event) => {
             event.preventDefault();
@@ -115,18 +114,12 @@ export default class OverlayCategory extends HTMLElement {
             return;
         bookStore.renameCategory(category, value);
         bookStore.renameCategorySort(category, value);
-        CustomEventEmitter.dispatch("categoryRenamed", {
-            category,
-            value,
-        });
     }
     handleDelete(cloned, category) {
-        const index = bookStore.categorySort.indexOf(category);
+        // const index = bookStore.categorySort.indexOf(category);
         cloned.remove();
         bookStore.deleteCategory(category);
-        CustomEventEmitter.dispatch("categoryDeleted", {
-            index,
-        });
+        bookStore.deleteCatgorySort(category);
     }
     changeItem(cloned) {
         const dragggerButton = cloned.querySelector(".dragger");
@@ -165,10 +158,6 @@ export default class OverlayCategory extends HTMLElement {
             const targetKey = cloned.dataset.category;
             if (draggedKey && targetKey) {
                 bookStore.changeCategory(draggedKey, targetKey);
-                CustomEventEmitter.dispatch("categoryChanged", {
-                    draggedKey,
-                    targetKey,
-                });
             }
             delete cloned.dataset.drag;
         });

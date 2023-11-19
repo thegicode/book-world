@@ -215,4 +215,13 @@ type TCategory = Record<string, string[]>;
 type TCategorySrot = string[];
 type TLibraries = Record<string, string>;
 type TRegions = Record<string, Record<string, string>>;
-type TSubscriberCallback = () => void;
+type TSubscriberCallback<T = undefined> = (payload?: T) => void;
+
+interface ICategoryUpdateProps {
+    type: string;
+    name?: string;
+    prevName?: string;
+    newName?: string;
+    targetIndex?: number;
+    draggedIndex?: number;
+}

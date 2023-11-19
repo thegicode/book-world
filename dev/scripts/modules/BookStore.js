@@ -11,6 +11,7 @@ const initialState = {
 };
 export const publishers = {
     bookStateUpdate: new Publisher(),
+    categoryUpdate: new Publisher(),
     categoryBookUpdate: new Publisher(),
     regionUpdate: new Publisher(),
     detailRegionUpdate: new Publisher(),
@@ -84,6 +85,7 @@ class BookStore {
         const newCategory = this.category;
         newCategory[name] = [];
         this.category = newCategory;
+        publishers.categoryUpdate.notify({ type: "add", name });
     }
     addCategorySort(name) {
         const newCategorySort = this.categorySort;
@@ -98,17 +100,30 @@ class BookStore {
         newCategory[newName] = newCategory[prevName];
         delete newCategory[prevName];
         this.category = newCategory;
+        publishers.categoryUpdate.notify({ type: "rename", prevName, newName });
     }
     renameCategorySort(prevName, newName) {
         const newCategorySort = this.categorySort;
-        const index = newCategorySort.indexOf(prevName);
+        const index = this.indexCategorySort(prevName);
         newCategorySort[index] = newName;
         this.categorySort = newCategorySort;
+    }
+    indexCategorySort(name) {
+        const newCategorySort = this.categorySort;
+        const index = newCategorySort.indexOf(name);
+        return index;
     }
     deleteCategory(name) {
         const newFavorites = this.category;
         delete newFavorites[name];
         this.category = newFavorites;
+        publishers.categoryUpdate.notify({ type: "delete", name });
+    }
+    deleteCatgorySort(name) {
+        const newCategorySort = this.categorySort;
+        const index = newCategorySort.indexOf(name);
+        newCategorySort.splice(index, 1);
+        this.categorySort = newCategorySort;
     }
     changeCategory(draggedKey, targetKey) {
         const newSort = this.categorySort;
@@ -117,12 +132,16 @@ class BookStore {
         newSort[targetIndex] = draggedKey;
         newSort[draggedIndex] = targetKey;
         this.categorySort = newSort;
+        publishers.categoryUpdate.notify({
+            type: "change",
+            targetIndex,
+            draggedIndex,
+        });
     }
     addBookInCategory(name, isbn) {
         const newCategory = this.category;
         newCategory[name].unshift(isbn);
         this.category = newCategory;
-        publishers.categoryBookUpdate.notify();
         publishers.categoryBookUpdate.notify();
     }
     hasBookInCategory(name, isbn) {

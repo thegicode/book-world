@@ -1,5 +1,4 @@
-import bookStore from "../../modules/BookStore";
-import { CustomEventEmitter } from "../../utils";
+import bookStore, { publishers } from "../../modules/BookStore";
 export default class FavoriteNav extends HTMLElement {
     constructor() {
         super();
@@ -7,16 +6,10 @@ export default class FavoriteNav extends HTMLElement {
         this.overlayCategory = document.querySelector("overlay-category");
         const params = new URLSearchParams(location.search);
         this.category = params.get("category");
-        this.onCategoryAdded = this.onCategoryAdded.bind(this);
-        this.onCategoryRenamed = this.onCategoryRenamed.bind(this);
-        this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
-        this.onCategoryChanged = this.onCategoryChanged.bind(this);
+        this.handleSubscribe = this.handleSubscribe.bind(this);
     }
     connectedCallback() {
-        CustomEventEmitter.add("categoryAdded", this.onCategoryAdded);
-        CustomEventEmitter.add("categoryRenamed", this.onCategoryRenamed);
-        CustomEventEmitter.add("categoryDeleted", this.onCategoryDeleted);
-        CustomEventEmitter.add("categoryChanged", this.onCategoryChanged);
+        publishers.categoryUpdate.subscribe(this.handleSubscribe);
         if (this.category === null) {
             this.category = bookStore.categorySort[0];
             const url = this.getUrl(this.category);
@@ -26,9 +19,7 @@ export default class FavoriteNav extends HTMLElement {
         this.overlayCatalog();
     }
     disconnectedCallback() {
-        CustomEventEmitter.remove("categoryAdded", this.onCategoryAdded);
-        CustomEventEmitter.remove("categoryRenamed", this.onCategoryRenamed);
-        CustomEventEmitter.remove("categoryDeleted", this.onCategoryDeleted);
+        publishers.categoryUpdate.unsubscribe(this.handleSubscribe);
     }
     render() {
         if (!this.nav)
@@ -71,38 +62,51 @@ export default class FavoriteNav extends HTMLElement {
             modal.hidden = Boolean(!modal.hidden);
         });
     }
-    onCategoryAdded(event) {
-        var _a;
-        const { category } = event.detail;
-        const element = this.createItem(category);
-        (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
-    }
-    onCategoryRenamed(event) {
-        if (!this.nav)
-            return;
-        const { category, value } = event.detail;
-        const index = bookStore.categorySort.indexOf(value);
-        this.nav.querySelectorAll("a")[index].textContent = value;
-        if (this.category === category) {
-            location.search = this.getUrl(value);
-        }
-    }
-    onCategoryDeleted(event) {
-        var _a;
-        const { index } = event.detail;
-        (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a")[index].remove();
-    }
-    onCategoryChanged(event) {
-        var _a;
-        const { draggedKey, targetKey } = event.detail;
-        const draggedIndex = bookStore.categorySort.indexOf(draggedKey);
-        const targetIndex = bookStore.categorySort.indexOf(targetKey);
-        const navLinks = (_a = this.nav) === null || _a === void 0 ? void 0 : _a.querySelectorAll("a");
-        if (navLinks) {
-            const targetEl = navLinks[targetIndex].cloneNode(true);
-            const draggedEl = navLinks[draggedIndex].cloneNode(true);
-            navLinks[draggedIndex].replaceWith(targetEl);
-            navLinks[targetIndex].replaceWith(draggedEl);
+    handleSubscribe(payload) {
+        var _a, _b, _c;
+        switch (payload.type) {
+            case "add":
+                {
+                    const element = this.createItem(payload.name);
+                    (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
+                }
+                break;
+            case "rename":
+                {
+                    if (!this.nav)
+                        return;
+                    const prevName = payload.prevName;
+                    const newName = payload.newName;
+                    const index = bookStore.categorySort.indexOf(prevName);
+                    this.nav.querySelectorAll("a")[index].textContent = newName;
+                    if (this.category === prevName) {
+                        location.search = this.getUrl(newName);
+                    }
+                }
+                break;
+            case "delete": {
+                const { name } = payload;
+                if (!name)
+                    return;
+                const index = bookStore.indexCategorySort(name);
+                if (index > 0) {
+                    const index = bookStore.categorySort.indexOf(name);
+                    (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[index].remove();
+                }
+                break;
+            }
+            case "change": {
+                const { targetIndex, draggedIndex } = payload;
+                if (targetIndex === undefined || draggedIndex === undefined)
+                    return;
+                const navLinks = (_c = this.nav) === null || _c === void 0 ? void 0 : _c.querySelectorAll("a");
+                if (navLinks) {
+                    const targetEl = navLinks[targetIndex].cloneNode(true);
+                    const draggedEl = navLinks[draggedIndex].cloneNode(true);
+                    navLinks[draggedIndex].replaceWith(targetEl);
+                    navLinks[targetIndex].replaceWith(draggedEl);
+                }
+            }
         }
     }
 }

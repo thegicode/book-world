@@ -1,5 +1,4 @@
-import bookStore from "../../modules/BookStore";
-import { CustomEventEmitter } from "../../utils";
+import bookStore, { publishers } from "../../modules/BookStore";
 
 export default class FavoriteNav extends HTMLElement {
     nav: HTMLElement | null;
@@ -18,31 +17,12 @@ export default class FavoriteNav extends HTMLElement {
         const params = new URLSearchParams(location.search);
         this.category = params.get("category");
 
-        this.onCategoryAdded = this.onCategoryAdded.bind(this);
-        this.onCategoryRenamed = this.onCategoryRenamed.bind(this);
-        this.onCategoryDeleted = this.onCategoryDeleted.bind(this);
-        this.onCategoryChanged = this.onCategoryChanged.bind(this);
+        this.handleSubscribe = this.handleSubscribe.bind(this);
     }
 
     connectedCallback() {
-        CustomEventEmitter.add(
-            "categoryAdded",
-            this.onCategoryAdded as EventListener
-        );
-
-        CustomEventEmitter.add(
-            "categoryRenamed",
-            this.onCategoryRenamed as EventListener
-        );
-
-        CustomEventEmitter.add(
-            "categoryDeleted",
-            this.onCategoryDeleted as EventListener
-        );
-
-        CustomEventEmitter.add(
-            "categoryChanged",
-            this.onCategoryChanged as EventListener
+        publishers.categoryUpdate.subscribe(
+            this.handleSubscribe as TSubscriberCallback<ICategoryUpdateProps>
         );
 
         if (this.category === null) {
@@ -56,19 +36,8 @@ export default class FavoriteNav extends HTMLElement {
     }
 
     disconnectedCallback() {
-        CustomEventEmitter.remove(
-            "categoryAdded",
-            this.onCategoryAdded as EventListener
-        );
-
-        CustomEventEmitter.remove(
-            "categoryRenamed",
-            this.onCategoryRenamed as EventListener
-        );
-
-        CustomEventEmitter.remove(
-            "categoryDeleted",
-            this.onCategoryDeleted as EventListener
+        publishers.categoryUpdate.unsubscribe(
+            this.handleSubscribe as TSubscriberCallback<ICategoryUpdateProps>
         );
     }
 
@@ -125,46 +94,50 @@ export default class FavoriteNav extends HTMLElement {
         });
     }
 
-    private onCategoryAdded(event: ICustomEvent<{ category: string }>) {
-        const { category } = event.detail;
+    private handleSubscribe(payload: ICategoryUpdateProps) {
+        switch (payload.type) {
+            case "add":
+                {
+                    const element = this.createItem(payload.name as string);
+                    this.nav?.appendChild(element);
+                }
+                break;
+            case "rename":
+                {
+                    if (!this.nav) return;
+                    const prevName = payload.prevName as string;
+                    const newName = payload.newName as string;
+                    const index = bookStore.categorySort.indexOf(prevName);
+                    this.nav.querySelectorAll("a")[index].textContent = newName;
 
-        const element = this.createItem(category);
-        this.nav?.appendChild(element);
-    }
+                    if (this.category === prevName) {
+                        location.search = this.getUrl(newName);
+                    }
+                }
+                break;
+            case "delete": {
+                const { name } = payload;
+                if (!name) return;
+                const index = bookStore.indexCategorySort(name);
+                if (index > 0) {
+                    const index = bookStore.categorySort.indexOf(name);
+                    this.nav?.querySelectorAll("a")[index].remove();
+                }
+                break;
+            }
+            case "change": {
+                const { targetIndex, draggedIndex } = payload;
+                if (targetIndex === undefined || draggedIndex === undefined)
+                    return;
+                const navLinks = this.nav?.querySelectorAll("a");
+                if (navLinks) {
+                    const targetEl = navLinks[targetIndex].cloneNode(true);
+                    const draggedEl = navLinks[draggedIndex].cloneNode(true);
 
-    private onCategoryRenamed(
-        event: ICustomEvent<{ category: string; value: string }>
-    ) {
-        if (!this.nav) return;
-        const { category, value } = event.detail;
-        const index = bookStore.categorySort.indexOf(value);
-        this.nav.querySelectorAll("a")[index].textContent = value;
-
-        if (this.category === category) {
-            location.search = this.getUrl(value);
-        }
-    }
-
-    private onCategoryDeleted(event: ICustomEvent<{ index: number }>) {
-        const { index } = event.detail;
-        this.nav?.querySelectorAll("a")[index].remove();
-    }
-
-    private onCategoryChanged(
-        event: ICustomEvent<{ draggedKey: string; targetKey: string }>
-    ) {
-        const { draggedKey, targetKey } = event.detail;
-
-        const draggedIndex = bookStore.categorySort.indexOf(draggedKey);
-        const targetIndex = bookStore.categorySort.indexOf(targetKey);
-
-        const navLinks = this.nav?.querySelectorAll("a");
-        if (navLinks) {
-            const targetEl = navLinks[targetIndex].cloneNode(true);
-            const draggedEl = navLinks[draggedIndex].cloneNode(true);
-
-            navLinks[draggedIndex].replaceWith(targetEl);
-            navLinks[targetIndex].replaceWith(draggedEl);
+                    navLinks[draggedIndex].replaceWith(targetEl);
+                    navLinks[targetIndex].replaceWith(draggedEl);
+                }
+            }
         }
     }
 }

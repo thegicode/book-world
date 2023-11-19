@@ -8,8 +8,8 @@ export default class Publisher {
     unsubscribe(callback) {
         this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
     }
-    notify() {
-        this.subscribers.forEach((callback) => callback());
+    notify(payload) {
+        this.subscribers.forEach((callback) => callback(payload));
     }
 }
 //# sourceMappingURL=Publisher.js.map

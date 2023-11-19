@@ -15,7 +15,10 @@ const initialState: IBookState = {
 
 export const publishers = {
     bookStateUpdate: new Publisher(),
+
+    categoryUpdate: new Publisher<ICategoryUpdateProps>(),
     categoryBookUpdate: new Publisher(),
+
     regionUpdate: new Publisher(),
     detailRegionUpdate: new Publisher(),
 };
@@ -101,6 +104,8 @@ class BookStore {
         const newCategory = this.category;
         newCategory[name] = [];
         this.category = newCategory;
+
+        publishers.categoryUpdate.notify({ type: "add", name });
     }
 
     addCategorySort(name: string) {
@@ -118,19 +123,36 @@ class BookStore {
         newCategory[newName] = newCategory[prevName];
         delete newCategory[prevName];
         this.category = newCategory;
+
+        publishers.categoryUpdate.notify({ type: "rename", prevName, newName });
     }
 
     renameCategorySort(prevName: string, newName: string) {
         const newCategorySort = this.categorySort;
-        const index = newCategorySort.indexOf(prevName);
+        const index = this.indexCategorySort(prevName);
         newCategorySort[index] = newName;
         this.categorySort = newCategorySort;
+    }
+
+    indexCategorySort(name: string) {
+        const newCategorySort = this.categorySort;
+        const index = newCategorySort.indexOf(name);
+        return index;
     }
 
     deleteCategory(name: string) {
         const newFavorites = this.category;
         delete newFavorites[name];
         this.category = newFavorites;
+
+        publishers.categoryUpdate.notify({ type: "delete", name });
+    }
+
+    deleteCatgorySort(name: string) {
+        const newCategorySort = this.categorySort;
+        const index = newCategorySort.indexOf(name);
+        newCategorySort.splice(index, 1);
+        this.categorySort = newCategorySort;
     }
 
     changeCategory(draggedKey: string, targetKey: string) {
@@ -141,6 +163,12 @@ class BookStore {
         newSort[draggedIndex] = targetKey;
 
         this.categorySort = newSort;
+
+        publishers.categoryUpdate.notify({
+            type: "change",
+            targetIndex,
+            draggedIndex,
+        });
     }
 
     addBookInCategory(name: string, isbn: string) {
@@ -148,7 +176,6 @@ class BookStore {
         newCategory[name].unshift(isbn);
         this.category = newCategory;
 
-        publishers.categoryBookUpdate.notify();
         publishers.categoryBookUpdate.notify();
     }
 
