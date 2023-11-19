@@ -9,7 +9,6 @@ export default class FavoriteNav extends HTMLElement {
         this.handleSubscribe = this.handleSubscribe.bind(this);
     }
     connectedCallback() {
-        publishers.categoryUpdate.subscribe(this.handleSubscribe);
         if (this.category === null) {
             this.category = bookStore.categorySort[0];
             const url = this.getUrl(this.category);
@@ -17,6 +16,7 @@ export default class FavoriteNav extends HTMLElement {
         }
         this.render();
         this.overlayCatalog();
+        publishers.categoryUpdate.subscribe(this.handleSubscribe);
     }
     disconnectedCallback() {
         publishers.categoryUpdate.unsubscribe(this.handleSubscribe);

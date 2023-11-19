@@ -1200,7 +1200,6 @@
       this.handleSubscribe = this.handleSubscribe.bind(this);
     }
     connectedCallback() {
-      publishers.categoryUpdate.subscribe(this.handleSubscribe);
       if (this.category === null) {
         this.category = BookStore_default.categorySort[0];
         const url = this.getUrl(this.category);
@@ -1208,6 +1207,7 @@
       }
       this.render();
       this.overlayCatalog();
+      publishers.categoryUpdate.subscribe(this.handleSubscribe);
     }
     disconnectedCallback() {
       publishers.categoryUpdate.unsubscribe(this.handleSubscribe);

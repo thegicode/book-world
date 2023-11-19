@@ -21,10 +21,6 @@ export default class FavoriteNav extends HTMLElement {
     }
 
     connectedCallback() {
-        publishers.categoryUpdate.subscribe(
-            this.handleSubscribe as TSubscriberCallback<ICategoryUpdateProps>
-        );
-
         if (this.category === null) {
             this.category = bookStore.categorySort[0];
             const url = this.getUrl(this.category);
@@ -33,6 +29,10 @@ export default class FavoriteNav extends HTMLElement {
 
         this.render();
         this.overlayCatalog();
+
+        publishers.categoryUpdate.subscribe(
+            this.handleSubscribe as TSubscriberCallback<ICategoryUpdateProps>
+        );
     }
 
     disconnectedCallback() {
