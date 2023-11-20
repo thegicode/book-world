@@ -1,28 +1,40 @@
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore from "../../modules/BookStore";
-import { libraryElement } from "./constant";
+import { libraryElement } from "./selectors";
 export default class LibraryRegion extends HTMLElement {
     constructor() {
         super();
-        this.alertDetailCode = () => {
-            const { value } = this.detailElement;
+        this.regionCode = null;
+        this.template = null;
+        this.handleDetailSelectChange = () => {
+            const { value } = this.detailSelectElement;
             console.log("detailCdoe", value);
             if (libraryElement)
                 libraryElement.regionCode = value;
         };
-        this.regionCode = null;
     }
     connectedCallback() {
-        this.detailElement = this.querySelector("select");
-        this.renderRegion();
+        this.template = document.querySelector("#tp-region");
+        this.detailSelectElement = this.querySelector("select");
+        this.renderFavoriteRegions();
+        this.detailSelectElement.addEventListener("change", this.handleDetailSelectChange);
     }
-    // disconnectedCallback() {}
-    renderRegion() {
+    disconnectedCallback() {
+        this.detailSelectElement.removeEventListener("change", this.handleDetailSelectChange);
+    }
+    renderFavoriteRegions() {
         const favoriteRegions = bookStore.regions;
         if (Object.keys(favoriteRegions).length === 0)
             return;
         const container = this.querySelector(".region");
-        const fragment = this.createRegionElement(favoriteRegions);
+        const fragment = new DocumentFragment();
+        for (const regionName of Object.keys(favoriteRegions)) {
+            const size = Object.keys(favoriteRegions[regionName]).length;
+            if (this.template && size > 0) {
+                const element = this.createElement(regionName);
+                fragment.appendChild(element);
+            }
+        }
         container.appendChild(fragment);
         if (!this.regionCode) {
             const firstInput = container.querySelector("input");
@@ -30,41 +42,33 @@ export default class LibraryRegion extends HTMLElement {
             this.renderDetailRegion(firstInput.value);
         }
     }
-    createRegionElement(favoriteRegions) {
-        const template = document.querySelector("#tp-region");
-        const fragment = new DocumentFragment();
-        for (const regionName of Object.keys(favoriteRegions)) {
-            const size = Object.keys(favoriteRegions[regionName]).length;
-            if (template && size > 0) {
-                const element = cloneTemplate(template);
-                const radioElement = element.querySelector("input");
-                if (radioElement)
-                    radioElement.value = regionName;
-                radioElement === null || radioElement === void 0 ? void 0 : radioElement.addEventListener("change", () => {
-                    this.regionCode = radioElement.value;
-                    this.renderDetailRegion(radioElement.value);
-                });
-                const spanElement = element.querySelector("span");
-                if (spanElement)
-                    spanElement.textContent = regionName;
-                fragment.appendChild(element);
-            }
-        }
-        return fragment;
+    createElement(regionName) {
+        if (!this.template)
+            return;
+        const element = cloneTemplate(this.template);
+        const radioElement = element.querySelector("input");
+        radioElement.value = regionName;
+        radioElement.addEventListener("change", () => this.handleRegionChange(radioElement.value));
+        const spanElement = element.querySelector("span");
+        spanElement.textContent = regionName;
+        return element;
+    }
+    handleRegionChange(regionCode) {
+        this.regionCode = regionCode;
+        this.renderDetailRegion(regionCode);
     }
     renderDetailRegion(regionName) {
-        this.detailElement.innerHTML = "";
+        this.detailSelectElement.innerHTML = "";
         const detailRegionObject = bookStore.regions[regionName];
         for (const [key, value] of Object.entries(detailRegionObject)) {
             const optionEl = document.createElement("option");
             optionEl.textContent = key;
             optionEl.value = value;
-            this.detailElement.appendChild(optionEl);
+            this.detailSelectElement.appendChild(optionEl);
         }
-        const firstOptionElement = this.detailElement.querySelector("option");
+        const firstOptionElement = this.detailSelectElement.querySelector("option");
         firstOptionElement.selected = true;
-        this.alertDetailCode();
-        this.detailElement.addEventListener("change", this.alertDetailCode);
+        this.handleDetailSelectChange();
     }
 }
 //# sourceMappingURL=LibraryHeader.js.map

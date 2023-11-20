@@ -78,8 +78,8 @@ export default class Library extends HTMLElement {
     }
     handleRegionCodeChange() {
         this.showMessage("loading");
-        if (this._regionCode)
-            this.fetchLibrarySearch(this._regionCode);
+        if (this.regionCode)
+            this.fetchLibrarySearch(this.regionCode);
     }
 }
 //# sourceMappingURL=Library.js.map

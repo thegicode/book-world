@@ -90,6 +90,6 @@ export default class Library extends HTMLElement {
 
     private handleRegionCodeChange() {
         this.showMessage("loading");
-        if (this._regionCode) this.fetchLibrarySearch(this._regionCode);
+        if (this.regionCode) this.fetchLibrarySearch(this.regionCode);
     }
 }

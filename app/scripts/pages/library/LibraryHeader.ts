@@ -1,31 +1,54 @@
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore from "../../modules/BookStore";
-import { libraryElement } from "./constant";
+import { libraryElement } from "./selectors";
 
 export default class LibraryRegion extends HTMLElement {
-    private regionCode: string | null;
-    private detailElement!: HTMLSelectElement;
+    private regionCode: string | null = null;
+    private template: HTMLTemplateElement | null = null;
+    private detailSelectElement!: HTMLSelectElement;
 
     constructor() {
         super();
-        this.regionCode = null;
     }
 
     connectedCallback() {
-        this.detailElement = this.querySelector("select") as HTMLSelectElement;
+        this.template = document.querySelector(
+            "#tp-region"
+        ) as HTMLTemplateElement;
+        this.detailSelectElement = this.querySelector(
+            "select"
+        ) as HTMLSelectElement;
 
-        this.renderRegion();
+        this.renderFavoriteRegions();
+
+        this.detailSelectElement.addEventListener(
+            "change",
+            this.handleDetailSelectChange
+        );
     }
 
-    // disconnectedCallback() {}
+    disconnectedCallback() {
+        this.detailSelectElement.removeEventListener(
+            "change",
+            this.handleDetailSelectChange
+        );
+    }
 
-    private renderRegion() {
+    private renderFavoriteRegions() {
         const favoriteRegions = bookStore.regions;
 
         if (Object.keys(favoriteRegions).length === 0) return;
 
         const container = this.querySelector(".region") as HTMLElement;
-        const fragment = this.createRegionElement(favoriteRegions);
+        const fragment = new DocumentFragment();
+        for (const regionName of Object.keys(favoriteRegions)) {
+            const size = Object.keys(favoriteRegions[regionName]).length;
+            if (this.template && size > 0) {
+                const element = this.createElement(regionName) as HTMLElement;
+                fragment.appendChild(element);
+            }
+        }
+
         container.appendChild(fragment);
 
         if (!this.regionCode) {
@@ -37,54 +60,48 @@ export default class LibraryRegion extends HTMLElement {
         }
     }
 
-    private createRegionElement(favoriteRegions: IDetailRegionData) {
-        const template = document.querySelector(
-            "#tp-region"
-        ) as HTMLTemplateElement;
+    private createElement(regionName: string) {
+        if (!this.template) return;
 
-        const fragment = new DocumentFragment();
-        for (const regionName of Object.keys(favoriteRegions)) {
-            const size = Object.keys(favoriteRegions[regionName]).length;
-            if (template && size > 0) {
-                const element = cloneTemplate(template);
-                const radioElement =
-                    element.querySelector<HTMLInputElement>("input");
-                if (radioElement) radioElement.value = regionName;
+        const element = cloneTemplate(this.template);
+        const radioElement = element.querySelector("input") as HTMLInputElement;
 
-                radioElement?.addEventListener("change", () => {
-                    this.regionCode = radioElement.value;
-                    this.renderDetailRegion(radioElement.value);
-                });
+        radioElement.value = regionName;
+        radioElement.addEventListener("change", () =>
+            this.handleRegionChange(radioElement.value)
+        );
 
-                const spanElement = element.querySelector("span");
-                if (spanElement) spanElement.textContent = regionName;
-                fragment.appendChild(element);
-            }
-        }
-        return fragment;
+        const spanElement = element.querySelector("span") as HTMLSpanElement;
+        spanElement.textContent = regionName;
+
+        return element;
+    }
+
+    private handleRegionChange(regionCode: string) {
+        this.regionCode = regionCode;
+        this.renderDetailRegion(regionCode);
     }
 
     private renderDetailRegion(regionName: string) {
-        this.detailElement.innerHTML = "";
+        this.detailSelectElement.innerHTML = "";
 
         const detailRegionObject = bookStore.regions[regionName];
         for (const [key, value] of Object.entries(detailRegionObject)) {
             const optionEl = document.createElement("option");
             optionEl.textContent = key;
             optionEl.value = value;
-            this.detailElement.appendChild(optionEl);
+            this.detailSelectElement.appendChild(optionEl);
         }
-        const firstOptionElement = this.detailElement.querySelector(
+        const firstOptionElement = this.detailSelectElement.querySelector(
             "option"
         ) as HTMLOptionElement;
         firstOptionElement.selected = true;
-        this.alertDetailCode();
 
-        this.detailElement.addEventListener("change", this.alertDetailCode);
+        this.handleDetailSelectChange();
     }
 
-    private alertDetailCode = () => {
-        const { value } = this.detailElement;
+    private handleDetailSelectChange = () => {
+        const { value } = this.detailSelectElement;
         console.log("detailCdoe", value);
 
         if (libraryElement) libraryElement.regionCode = value;
