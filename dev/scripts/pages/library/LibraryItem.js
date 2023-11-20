@@ -5,12 +5,12 @@ export default class LibraryItem extends HTMLElement {
         this.checkbox = null;
         this.libCode = "";
         this.libName = "";
+        this.checkbox =
+            this.querySelector("[name=myLibrary]");
         this.onChange = this.onChange.bind(this);
     }
     connectedCallback() {
         var _a;
-        this.checkbox =
-            this.querySelector("[name=myLibrary]");
         this.render();
         (_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onChange);
     }
@@ -19,10 +19,12 @@ export default class LibraryItem extends HTMLElement {
         (_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onChange);
     }
     render() {
-        if (this.dataset.object === undefined || !this.checkbox)
+        const { data } = this;
+        if (data === null)
             return;
-        const data = JSON.parse(this.dataset.object);
         const { libCode, libName } = data;
+        this.libCode = libCode;
+        this.libName = libName;
         Object.entries(data).forEach(([key, value]) => {
             const element = this.querySelector(`.${key}`);
             if (element) {
@@ -32,16 +34,13 @@ export default class LibraryItem extends HTMLElement {
         const hoempageLink = this.querySelector(".homepage");
         if (hoempageLink)
             hoempageLink.href = data.homepage;
-        this.libCode = libCode;
-        this.libName = libName;
-        if (this.checkbox)
-            this.checkbox.checked = bookStore.hasLibrary(this.libCode);
+        if (this.checkbox) {
+            this.checkbox.checked = bookStore.hasLibrary(libCode);
+        }
     }
-    onChange(event) {
-        const target = event.target;
-        if (!target)
-            return;
-        if (target.checked) {
+    onChange() {
+        var _a;
+        if ((_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.checked) {
             bookStore.addLibrary(this.libCode, this.libName);
         }
         else {

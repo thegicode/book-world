@@ -1,24 +1,23 @@
-import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore from "../../modules/BookStore";
+import { libraryElement } from "./constant";
 
 export default class LibraryRegion extends HTMLElement {
-    private selectElement!: HTMLSelectElement;
+    private regionCode: string | null;
+    private detailElement!: HTMLSelectElement;
 
     constructor() {
         super();
+        this.regionCode = null;
     }
 
     connectedCallback() {
-        this.selectElement = this.querySelector("select") as HTMLSelectElement;
+        this.detailElement = this.querySelector("select") as HTMLSelectElement;
 
         this.renderRegion();
-        this.selectElement.addEventListener("change", this.onChangeDetail);
     }
 
-    disconnectedCallback() {
-        this.selectElement.removeEventListener("change", this.onChangeDetail);
-    }
+    // disconnectedCallback() {}
 
     private renderRegion() {
         const favoriteRegions = bookStore.regions;
@@ -26,17 +25,19 @@ export default class LibraryRegion extends HTMLElement {
         if (Object.keys(favoriteRegions).length === 0) return;
 
         const container = this.querySelector(".region") as HTMLElement;
-        const fragment = this.getRegionElements(favoriteRegions);
+        const fragment = this.createRegionElement(favoriteRegions);
         container.appendChild(fragment);
 
-        const firstInput = container.querySelector("input") as HTMLInputElement;
-        firstInput.checked = true;
-
-        this.renderDetailRegion(firstInput.value);
-        this.changeRegion();
+        if (!this.regionCode) {
+            const firstInput = container.querySelector(
+                "input"
+            ) as HTMLInputElement;
+            firstInput.checked = true;
+            this.renderDetailRegion(firstInput.value);
+        }
     }
 
-    private getRegionElements(favoriteRegions: IDetailRegionData) {
+    private createRegionElement(favoriteRegions: IDetailRegionData) {
         const template = document.querySelector(
             "#tp-region"
         ) as HTMLTemplateElement;
@@ -46,9 +47,15 @@ export default class LibraryRegion extends HTMLElement {
             const size = Object.keys(favoriteRegions[regionName]).length;
             if (template && size > 0) {
                 const element = cloneTemplate(template);
-                const inputElement =
+                const radioElement =
                     element.querySelector<HTMLInputElement>("input");
-                if (inputElement) inputElement.value = regionName;
+                if (radioElement) radioElement.value = regionName;
+
+                radioElement?.addEventListener("change", () => {
+                    this.regionCode = radioElement.value;
+                    this.renderDetailRegion(radioElement.value);
+                });
+
                 const spanElement = element.querySelector("span");
                 if (spanElement) spanElement.textContent = regionName;
                 fragment.appendChild(element);
@@ -57,39 +64,29 @@ export default class LibraryRegion extends HTMLElement {
         return fragment;
     }
 
-    private changeRegion() {
-        const regionRadios =
-            this.querySelectorAll<HTMLInputElement>("[name=region]");
-        regionRadios.forEach((radio) => {
-            radio.addEventListener("change", () => {
-                if (radio.checked) {
-                    const value = radio.value;
-                    this.renderDetailRegion(value);
-                }
-            });
-        });
-    }
-
     private renderDetailRegion(regionName: string) {
-        this.selectElement.innerHTML = "";
+        this.detailElement.innerHTML = "";
+
         const detailRegionObject = bookStore.regions[regionName];
         for (const [key, value] of Object.entries(detailRegionObject)) {
             const optionEl = document.createElement("option");
             optionEl.textContent = key;
             optionEl.value = value;
-            this.selectElement.appendChild(optionEl);
+            this.detailElement.appendChild(optionEl);
         }
-        const firstInput = this.selectElement.querySelector(
+        const firstOptionElement = this.detailElement.querySelector(
             "option"
         ) as HTMLOptionElement;
-        firstInput.selected = true;
-        this.onChangeDetail();
+        firstOptionElement.selected = true;
+        this.alertDetailCode();
+
+        this.detailElement.addEventListener("change", this.alertDetailCode);
     }
 
-    private onChangeDetail = () => {
-        const { value } = this.selectElement;
-        CustomEventEmitter.dispatch("set-detail-region", {
-            detailRegionCode: value,
-        });
+    private alertDetailCode = () => {
+        const { value } = this.detailElement;
+        console.log("detailCdoe", value);
+
+        if (libraryElement) libraryElement.regionCode = value;
     };
 }

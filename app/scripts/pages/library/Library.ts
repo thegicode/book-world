@@ -1,31 +1,28 @@
-import { CustomEventEmitter, CustomFetch } from "../../utils/index";
+import { CustomFetch } from "../../utils/index";
 import LibraryItem from "./LibraryItem";
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore from "../../modules/BookStore";
 
 export default class Library extends HTMLElement {
+    private _regionCode: string | null = null;
     private form?: HTMLFormElement;
     private readonly PAGE_SIZE = 20;
-    private readonly EVENT_NAME = "set-detail-region";
 
     constructor() {
         super();
-        this.handleDetailRegion = this.handleDetailRegion.bind(this);
+    }
+
+    set regionCode(value) {
+        this._regionCode = value;
+        this.handleRegionCodeChange();
+    }
+
+    get regionCode() {
+        return this._regionCode;
     }
 
     connectedCallback() {
         this.form = this.querySelector("form") as HTMLFormElement;
-        CustomEventEmitter.add(
-            this.EVENT_NAME,
-            this.handleDetailRegion as EventListener
-        );
-    }
-
-    disconnectedCallback() {
-        CustomEventEmitter.remove(
-            this.EVENT_NAME,
-            this.handleDetailRegion as EventListener
-        );
     }
 
     protected async fetchLibrarySearch(detailRegionCode: string) {
@@ -59,7 +56,7 @@ export default class Library extends HTMLElement {
             (fragment: DocumentFragment, lib: ILibrary) => {
                 if (template) {
                     const libraryItem = cloneTemplate<LibraryItem>(template);
-                    libraryItem.dataset.object = JSON.stringify(lib);
+                    libraryItem.data = lib;
 
                     if (bookStore.hasLibrary(lib.libCode)) {
                         libraryItem.dataset.has = "true";
@@ -91,10 +88,8 @@ export default class Library extends HTMLElement {
         }
     }
 
-    protected handleDetailRegion(
-        evt: ICustomEvent<{ detailRegionCode: string }>
-    ) {
+    private handleRegionCodeChange() {
         this.showMessage("loading");
-        this.fetchLibrarySearch(evt.detail.detailRegionCode);
+        if (this._regionCode) this.fetchLibrarySearch(this._regionCode);
     }
 }

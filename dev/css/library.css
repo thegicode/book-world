@@ -56,15 +56,15 @@ app-library a {
   color: #ffffb1;
 }
 
-library-region {
+library-header {
   display: block;
   padding: 10px 1rem;
   background-color: #f1fff4;
 }
-library-region .region label {
+library-header .region label {
   margin-right: 5px;
 }
-library-region .detailRegion {
+library-header .detailRegion {
   width: 100%;
   margin-top: 7px;
   padding: 10px 1rem;
@@ -75,7 +75,7 @@ library-region .detailRegion {
   font-size: 14px;
   color: #4a754a;
 }
-library-region .detailRegion:focus {
+library-header .detailRegion:focus {
   outline: none;
   border-color: #50ad50;
   color: #107214;

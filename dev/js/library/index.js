@@ -907,16 +907,18 @@
   var Library = class extends HTMLElement {
     constructor() {
       super();
+      this._regionCode = null;
       this.PAGE_SIZE = 20;
-      this.EVENT_NAME = "set-detail-region";
-      this.handleDetailRegion = this.handleDetailRegion.bind(this);
+    }
+    set regionCode(value) {
+      this._regionCode = value;
+      this.handleRegionCodeChange();
+    }
+    get regionCode() {
+      return this._regionCode;
     }
     connectedCallback() {
       this.form = this.querySelector("form");
-      CustomEventEmitter_default.add(this.EVENT_NAME, this.handleDetailRegion);
-    }
-    disconnectedCallback() {
-      CustomEventEmitter_default.remove(this.EVENT_NAME, this.handleDetailRegion);
     }
     fetchLibrarySearch(detailRegionCode) {
       return __awaiter2(this, void 0, void 0, function* () {
@@ -943,7 +945,7 @@
       const fragment = libraries.reduce((fragment2, lib) => {
         if (template) {
           const libraryItem = cloneTemplate(template);
-          libraryItem.dataset.object = JSON.stringify(lib);
+          libraryItem.data = lib;
           if (BookStore_default.hasLibrary(lib.libCode)) {
             libraryItem.dataset.has = "true";
             fragment2.prepend(libraryItem);
@@ -966,53 +968,60 @@
         this.form.appendChild(clone);
       }
     }
-    handleDetailRegion(evt) {
+    handleRegionCodeChange() {
       this.showMessage("loading");
-      this.fetchLibrarySearch(evt.detail.detailRegionCode);
+      if (this._regionCode)
+        this.fetchLibrarySearch(this._regionCode);
     }
   };
 
-  // dev/scripts/pages/library/LibraryRegion.js
+  // dev/scripts/pages/library/constant.js
+  var libraryElement = document.querySelector("app-library");
+
+  // dev/scripts/pages/library/LibraryHeader.js
   var LibraryRegion = class extends HTMLElement {
     constructor() {
       super();
-      this.onChangeDetail = () => {
-        const { value } = this.selectElement;
-        CustomEventEmitter_default.dispatch("set-detail-region", {
-          detailRegionCode: value
-        });
+      this.alertDetailCode = () => {
+        const { value } = this.detailElement;
+        console.log("detailCdoe", value);
+        if (libraryElement)
+          libraryElement.regionCode = value;
       };
+      this.regionCode = null;
     }
     connectedCallback() {
-      this.selectElement = this.querySelector("select");
+      this.detailElement = this.querySelector("select");
       this.renderRegion();
-      this.selectElement.addEventListener("change", this.onChangeDetail);
     }
-    disconnectedCallback() {
-      this.selectElement.removeEventListener("change", this.onChangeDetail);
-    }
+    // disconnectedCallback() {}
     renderRegion() {
       const favoriteRegions = BookStore_default.regions;
       if (Object.keys(favoriteRegions).length === 0)
         return;
       const container = this.querySelector(".region");
-      const fragment = this.getRegionElements(favoriteRegions);
+      const fragment = this.createRegionElement(favoriteRegions);
       container.appendChild(fragment);
-      const firstInput = container.querySelector("input");
-      firstInput.checked = true;
-      this.renderDetailRegion(firstInput.value);
-      this.changeRegion();
+      if (!this.regionCode) {
+        const firstInput = container.querySelector("input");
+        firstInput.checked = true;
+        this.renderDetailRegion(firstInput.value);
+      }
     }
-    getRegionElements(favoriteRegions) {
+    createRegionElement(favoriteRegions) {
       const template = document.querySelector("#tp-region");
       const fragment = new DocumentFragment();
       for (const regionName of Object.keys(favoriteRegions)) {
         const size = Object.keys(favoriteRegions[regionName]).length;
         if (template && size > 0) {
           const element = cloneTemplate(template);
-          const inputElement = element.querySelector("input");
-          if (inputElement)
-            inputElement.value = regionName;
+          const radioElement = element.querySelector("input");
+          if (radioElement)
+            radioElement.value = regionName;
+          radioElement === null || radioElement === void 0 ? void 0 : radioElement.addEventListener("change", () => {
+            this.regionCode = radioElement.value;
+            this.renderDetailRegion(radioElement.value);
+          });
           const spanElement = element.querySelector("span");
           if (spanElement)
             spanElement.textContent = regionName;
@@ -1021,29 +1030,19 @@
       }
       return fragment;
     }
-    changeRegion() {
-      const regionRadios = this.querySelectorAll("[name=region]");
-      regionRadios.forEach((radio) => {
-        radio.addEventListener("change", () => {
-          if (radio.checked) {
-            const value = radio.value;
-            this.renderDetailRegion(value);
-          }
-        });
-      });
-    }
     renderDetailRegion(regionName) {
-      this.selectElement.innerHTML = "";
+      this.detailElement.innerHTML = "";
       const detailRegionObject = BookStore_default.regions[regionName];
       for (const [key, value] of Object.entries(detailRegionObject)) {
         const optionEl = document.createElement("option");
         optionEl.textContent = key;
         optionEl.value = value;
-        this.selectElement.appendChild(optionEl);
+        this.detailElement.appendChild(optionEl);
       }
-      const firstInput = this.selectElement.querySelector("option");
-      firstInput.selected = true;
-      this.onChangeDetail();
+      const firstOptionElement = this.detailElement.querySelector("option");
+      firstOptionElement.selected = true;
+      this.alertDetailCode();
+      this.detailElement.addEventListener("change", this.alertDetailCode);
     }
   };
 
@@ -1054,11 +1053,11 @@
       this.checkbox = null;
       this.libCode = "";
       this.libName = "";
+      this.checkbox = this.querySelector("[name=myLibrary]");
       this.onChange = this.onChange.bind(this);
     }
     connectedCallback() {
       var _a;
-      this.checkbox = this.querySelector("[name=myLibrary]");
       this.render();
       (_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onChange);
     }
@@ -1067,10 +1066,12 @@
       (_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onChange);
     }
     render() {
-      if (this.dataset.object === void 0 || !this.checkbox)
+      const { data } = this;
+      if (data === null)
         return;
-      const data = JSON.parse(this.dataset.object);
       const { libCode, libName } = data;
+      this.libCode = libCode;
+      this.libName = libName;
       Object.entries(data).forEach(([key, value]) => {
         const element = this.querySelector(`.${key}`);
         if (element) {
@@ -1080,16 +1081,13 @@
       const hoempageLink = this.querySelector(".homepage");
       if (hoempageLink)
         hoempageLink.href = data.homepage;
-      this.libCode = libCode;
-      this.libName = libName;
-      if (this.checkbox)
-        this.checkbox.checked = BookStore_default.hasLibrary(this.libCode);
+      if (this.checkbox) {
+        this.checkbox.checked = BookStore_default.hasLibrary(libCode);
+      }
     }
-    onChange(event) {
-      const target = event.target;
-      if (!target)
-        return;
-      if (target.checked) {
+    onChange() {
+      var _a;
+      if ((_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.checked) {
         BookStore_default.addLibrary(this.libCode, this.libName);
       } else {
         BookStore_default.removeLibrary(this.libCode);
@@ -1100,7 +1098,7 @@
   // dev/scripts/pages/library/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-library", Library);
-  customElements.define("library-region", LibraryRegion);
+  customElements.define("library-header", LibraryRegion);
   customElements.define("library-item", LibraryItem);
 })();
 //# sourceMappingURL=index.js.map

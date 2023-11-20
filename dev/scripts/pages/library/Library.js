@@ -7,22 +7,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CustomEventEmitter, CustomFetch } from "../../utils/index";
+import { CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import bookStore from "../../modules/BookStore";
 export default class Library extends HTMLElement {
     constructor() {
         super();
+        this._regionCode = null;
         this.PAGE_SIZE = 20;
-        this.EVENT_NAME = "set-detail-region";
-        this.handleDetailRegion = this.handleDetailRegion.bind(this);
+    }
+    set regionCode(value) {
+        this._regionCode = value;
+        this.handleRegionCodeChange();
+    }
+    get regionCode() {
+        return this._regionCode;
     }
     connectedCallback() {
         this.form = this.querySelector("form");
-        CustomEventEmitter.add(this.EVENT_NAME, this.handleDetailRegion);
-    }
-    disconnectedCallback() {
-        CustomEventEmitter.remove(this.EVENT_NAME, this.handleDetailRegion);
     }
     fetchLibrarySearch(detailRegionCode) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -49,7 +51,7 @@ export default class Library extends HTMLElement {
         const fragment = libraries.reduce((fragment, lib) => {
             if (template) {
                 const libraryItem = cloneTemplate(template);
-                libraryItem.dataset.object = JSON.stringify(lib);
+                libraryItem.data = lib;
                 if (bookStore.hasLibrary(lib.libCode)) {
                     libraryItem.dataset.has = "true";
                     fragment.prepend(libraryItem);
@@ -74,9 +76,10 @@ export default class Library extends HTMLElement {
             this.form.appendChild(clone);
         }
     }
-    handleDetailRegion(evt) {
+    handleRegionCodeChange() {
         this.showMessage("loading");
-        this.fetchLibrarySearch(evt.detail.detailRegionCode);
+        if (this._regionCode)
+            this.fetchLibrarySearch(this._regionCode);
     }
 }
 //# sourceMappingURL=Library.js.map
