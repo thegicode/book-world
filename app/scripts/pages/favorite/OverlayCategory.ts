@@ -123,15 +123,11 @@ export default class OverlayCategory extends HTMLElement {
         if (!value || category === value) return;
 
         bookStore.renameCategory(category, value);
-        bookStore.renameCategorySort(category, value);
     }
 
     private handleDelete(cloned: HTMLLIElement, category: string) {
-        // const index = bookStore.categorySort.indexOf(category);
-
         cloned.remove();
         bookStore.deleteCategory(category);
-        bookStore.deleteCatgorySort(category);
     }
 
     private changeItem(cloned: HTMLLIElement) {
@@ -203,10 +199,6 @@ export default class OverlayCategory extends HTMLElement {
         this.list?.appendChild(cloned);
 
         this.addInput.value = "";
-
-        // CustomEventEmitter.dispatch("categoryAdded", {
-        //     category,
-        // });
     };
 
     private handleSubmit = (event: Event) => {

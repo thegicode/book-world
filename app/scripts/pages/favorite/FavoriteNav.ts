@@ -116,12 +116,10 @@ export default class FavoriteNav extends HTMLElement {
                 }
                 break;
             case "delete": {
-                const { name } = payload;
-                if (!name) return;
-                const index = bookStore.indexCategorySort(name);
-                if (index > 0) {
-                    const index = bookStore.categorySort.indexOf(name);
-                    this.nav?.querySelectorAll("a")[index].remove();
+                const name = payload.name as string;
+                const deletedIndex = bookStore.deleteCatgorySort(name);
+                if (deletedIndex > -1) {
+                    this.nav?.querySelectorAll("a")[deletedIndex].remove();
                 }
                 break;
             }

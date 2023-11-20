@@ -124,6 +124,8 @@ class BookStore {
         delete newCategory[prevName];
         this.category = newCategory;
 
+        this.renameCategorySort(prevName, newName);
+
         publishers.categoryUpdate.notify({ type: "rename", prevName, newName });
     }
 
@@ -148,11 +150,12 @@ class BookStore {
         publishers.categoryUpdate.notify({ type: "delete", name });
     }
 
-    deleteCatgorySort(name: string) {
+    deleteCatgorySort(name: string): number {
         const newCategorySort = this.categorySort;
         const index = newCategorySort.indexOf(name);
         newCategorySort.splice(index, 1);
         this.categorySort = newCategorySort;
+        return index;
     }
 
     changeCategory(draggedKey: string, targetKey: string) {

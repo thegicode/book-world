@@ -878,6 +878,7 @@
       newCategory[newName] = newCategory[prevName];
       delete newCategory[prevName];
       this.category = newCategory;
+      this.renameCategorySort(prevName, newName);
       publishers.categoryUpdate.notify({ type: "rename", prevName, newName });
     }
     renameCategorySort(prevName, newName) {
@@ -902,6 +903,7 @@
       const index = newCategorySort.indexOf(name);
       newCategorySort.splice(index, 1);
       this.categorySort = newCategorySort;
+      return index;
     }
     changeCategory(draggedKey, targetKey) {
       const newSort = this.categorySort;
@@ -1276,13 +1278,10 @@
           }
           break;
         case "delete": {
-          const { name } = payload;
-          if (!name)
-            return;
-          const index = BookStore_default.indexCategorySort(name);
-          if (index > 0) {
-            const index2 = BookStore_default.categorySort.indexOf(name);
-            (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[index2].remove();
+          const name = payload.name;
+          const deletedIndex = BookStore_default.deleteCatgorySort(name);
+          if (deletedIndex > -1) {
+            (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[deletedIndex].remove();
           }
           break;
         }
@@ -1551,12 +1550,10 @@
       if (!value || category === value)
         return;
       BookStore_default.renameCategory(category, value);
-      BookStore_default.renameCategorySort(category, value);
     }
     handleDelete(cloned, category) {
       cloned.remove();
       BookStore_default.deleteCategory(category);
-      BookStore_default.deleteCatgorySort(category);
     }
     changeItem(cloned) {
       const dragggerButton = cloned.querySelector(".dragger");

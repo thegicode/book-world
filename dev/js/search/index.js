@@ -905,6 +905,7 @@
       newCategory[newName] = newCategory[prevName];
       delete newCategory[prevName];
       this.category = newCategory;
+      this.renameCategorySort(prevName, newName);
       publishers.categoryUpdate.notify({ type: "rename", prevName, newName });
     }
     renameCategorySort(prevName, newName) {
@@ -929,6 +930,7 @@
       const index = newCategorySort.indexOf(name);
       newCategorySort.splice(index, 1);
       this.categorySort = newCategorySort;
+      return index;
     }
     changeCategory(draggedKey, targetKey) {
       const newSort = this.categorySort;

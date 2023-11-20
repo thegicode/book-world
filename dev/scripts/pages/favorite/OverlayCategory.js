@@ -22,9 +22,6 @@ export default class OverlayCategory extends HTMLElement {
             const cloned = this.createItem(category, index);
             (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
             this.addInput.value = "";
-            // CustomEventEmitter.dispatch("categoryAdded", {
-            //     category,
-            // });
         };
         this.handleSubmit = (event) => {
             event.preventDefault();
@@ -113,13 +110,10 @@ export default class OverlayCategory extends HTMLElement {
         if (!value || category === value)
             return;
         bookStore.renameCategory(category, value);
-        bookStore.renameCategorySort(category, value);
     }
     handleDelete(cloned, category) {
-        // const index = bookStore.categorySort.indexOf(category);
         cloned.remove();
         bookStore.deleteCategory(category);
-        bookStore.deleteCatgorySort(category);
     }
     changeItem(cloned) {
         const dragggerButton = cloned.querySelector(".dragger");

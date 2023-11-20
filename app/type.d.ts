@@ -11,6 +11,15 @@ interface IBook {
     publisher: string;
 }
 
+interface ICategoryUpdateProps {
+    type: string;
+    name?: string;
+    prevName?: string;
+    newName?: string;
+    targetIndex?: number;
+    draggedIndex?: number;
+}
+
 interface ILoanGroups {
     age: string;
     gender: string;
@@ -159,69 +168,11 @@ interface IPopularFetchParams {
     pageSize: string;
 }
 
-/* 작업중 */
-
-// interface IStoreState {
-//     favorites: TFavorites;
-//     libraries: TLibraries;
-//     regions: TRegions;
-//     categorySort: string[];
-// }
-
 interface IBookState {
-    category: TCategory;
-    libraries: TLibraries;
+    category: Record<string, string[]>;
+    categorySort: string[];
+    libraries: Record<string, string>;
     regions: Record<string, Record<string, string>>;
-    categorySort: TCategorySrot;
 }
 
-interface IStore {
-    storage: IBookState;
-    state: IBookState;
-    category: TCategory;
-    categorySort: TCategorySrot;
-    libraries: TLibraries;
-    regions: TRegions;
-
-    resetState(): void;
-
-    addCategory(name: string): void;
-    addCategorySort(name: string): void;
-    hasCategory(name: string): boolean;
-    renameCategory(prevName: string, newName: string): void;
-    renameCategorySort(prevName: string, newName: string): void;
-    deleteCategory(name: string): void;
-    changeCategory(draggedKey: string, targetKey: string): void;
-    addBookInCategory(name: string, isbn: string): void;
-    hasBookInCategory(name: string, isbn: string): boolean;
-    removeBookInCategory(name: string, isbn: string): void;
-
-    addLibrary(code: string, name: string): void;
-    hasLibrary(code: string): boolean;
-    removeLibrary(code: string): void;
-
-    addRegion(name: string): void;
-    removeRegion(name: string): void;
-
-    addDetailRegion(
-        regionName: string,
-        detailName: string,
-        detailCode: string
-    ): void;
-    removeDetailRegion(regionName: string, detailName: string): void;
-}
-
-type TCategory = Record<string, string[]>;
-type TCategorySrot = string[];
-type TLibraries = Record<string, string>;
-type TRegions = Record<string, Record<string, string>>;
 type TSubscriberCallback<T = undefined> = (payload?: T) => void;
-
-interface ICategoryUpdateProps {
-    type: string;
-    name?: string;
-    prevName?: string;
-    newName?: string;
-    targetIndex?: number;
-    draggedIndex?: number;
-}
