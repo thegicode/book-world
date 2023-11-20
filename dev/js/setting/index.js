@@ -1197,8 +1197,30 @@
   var SetStorage = class extends HTMLElement {
     constructor() {
       super();
-      this.storageButton = null;
+      this.saveButton = null;
+      this.defaultButton = null;
       this.resetButton = null;
+      this.savetStorage = () => {
+        const state = BookStore_default.storage;
+        if (!state)
+          return;
+        fetch(SAMPLE_JSON_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "appication/json"
+          },
+          body: JSON.stringify(BookStore_default.storage)
+        }).then(function(reponse) {
+          if (!reponse.ok) {
+            throw new Error("\uC11C\uBC84 \uC751\uB2F5 \uC624\uB958" + reponse.status);
+          }
+          return reponse.text();
+        }).then(function(responseText) {
+          console.log("\uB370\uC774\uD130\uAC00 \uC11C\uBC84\uC5D0 \uC131\uACF5\uC801\uC73C\uB85C \uC804\uC1A1\uB418\uC5C8\uC2B5\uB2C8\uB2E4.", responseText);
+        }).catch(function(error) {
+          console.error("\uB370\uC774\uD130 \uC804\uC1A1 \uC911 \uC624\uB958 \uBC1C\uC0DD:", error);
+        });
+      };
       this.setLocalStorageToBase = () => __awaiter3(this, void 0, void 0, function* () {
         try {
           const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
@@ -1214,24 +1236,21 @@
         BookStore_default.reset();
         this.updatePage();
       };
-    }
-    connectedCallback() {
-      this.setSelectors();
-      this.addEventListeners();
-    }
-    setSelectors() {
-      this.storageButton = this.querySelector(".localStorage button");
+      this.saveButton = this.querySelector(".saveStorage button");
+      this.defaultButton = this.querySelector(".localStorage button");
       this.resetButton = this.querySelector(".resetStorage button");
     }
-    addEventListeners() {
-      var _a, _b;
-      (_a = this.storageButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.setLocalStorageToBase);
-      (_b = this.resetButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.resetStorage);
+    connectedCallback() {
+      var _a, _b, _c;
+      (_a = this.saveButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.savetStorage);
+      (_b = this.defaultButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.setLocalStorageToBase);
+      (_c = this.resetButton) === null || _c === void 0 ? void 0 : _c.addEventListener("click", this.resetStorage);
     }
     disconnectedCallback() {
-      var _a, _b;
-      (_a = this.storageButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.setLocalStorageToBase);
-      (_b = this.resetButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.resetStorage);
+      var _a, _b, _c;
+      (_a = this.saveButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.savetStorage);
+      (_b = this.defaultButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.setLocalStorageToBase);
+      (_c = this.resetButton) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.resetStorage);
     }
     updatePage() {
       publishers.categoryBookUpdate.notify();

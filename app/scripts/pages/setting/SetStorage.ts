@@ -3,20 +3,17 @@ import bookStore, { publishers } from "../../modules/BookStore";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
 export default class SetStorage extends HTMLElement {
-    private storageButton: HTMLElement | null = null;
+    private saveButton: HTMLElement | null = null;
+    private defaultButton: HTMLElement | null = null;
     private resetButton: HTMLElement | null = null;
 
     constructor() {
         super();
-    }
 
-    connectedCallback() {
-        this.setSelectors();
-        this.addEventListeners();
-    }
-
-    private setSelectors() {
-        this.storageButton = this.querySelector(
+        this.saveButton = this.querySelector(
+            ".saveStorage button"
+        ) as HTMLElement;
+        this.defaultButton = this.querySelector(
             ".localStorage button"
         ) as HTMLElement;
         this.resetButton = this.querySelector(
@@ -24,8 +21,9 @@ export default class SetStorage extends HTMLElement {
         ) as HTMLElement;
     }
 
-    private addEventListeners() {
-        this.storageButton?.addEventListener(
+    connectedCallback() {
+        this.saveButton?.addEventListener("click", this.savetStorage);
+        this.defaultButton?.addEventListener(
             "click",
             this.setLocalStorageToBase
         );
@@ -33,12 +31,40 @@ export default class SetStorage extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.storageButton?.removeEventListener(
+        this.saveButton?.removeEventListener("click", this.savetStorage);
+        this.defaultButton?.removeEventListener(
             "click",
             this.setLocalStorageToBase
         );
         this.resetButton?.removeEventListener("click", this.resetStorage);
     }
+
+    private savetStorage = () => {
+        const state = bookStore.storage;
+        if (!state) return;
+        fetch(SAMPLE_JSON_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "appication/json",
+            },
+            body: JSON.stringify(bookStore.storage),
+        })
+            .then(function (reponse) {
+                if (!reponse.ok) {
+                    throw new Error("서버 응답 오류" + reponse.status);
+                }
+                return reponse.text();
+            })
+            .then(function (responseText: string) {
+                console.log(
+                    "데이터가 서버에 성공적으로 전송되었습니다.",
+                    responseText
+                );
+            })
+            .catch(function (error) {
+                console.error("데이터 전송 중 오류 발생:", error);
+            });
+    };
 
     private setLocalStorageToBase = async () => {
         try {
