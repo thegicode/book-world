@@ -1,4 +1,4 @@
-import bookStore, { publishers.categoryBookUpdate } from "../modules/BookStore";
+import bookStore, { publishers } from "../modules/BookStore";
 
 export default class NavGnb extends HTMLElement {
     PATHS: string[];

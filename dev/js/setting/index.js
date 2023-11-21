@@ -883,7 +883,7 @@
     return content.cloneNode(true);
   }
 
-  // dev/scripts/pages/setting/constant.js
+  // dev/scripts/pages/setting/constants.js
   var FETCH_REGION_DATA_EVENT = "fetch-region-data";
 
   // dev/scripts/pages/setting/SetRegion.js
