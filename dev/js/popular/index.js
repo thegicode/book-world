@@ -625,6 +625,15 @@
     }
   };
 
+  // dev/scripts/modules/actions.js
+  var publishers = {
+    bookStateUpdate: new Publisher(),
+    categoryUpdate: new Publisher(),
+    categoryBookUpdate: new Publisher(),
+    regionUpdate: new Publisher(),
+    detailRegionUpdate: new Publisher()
+  };
+
   // dev/scripts/modules/BookStore.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
@@ -635,13 +644,6 @@
     regions: {},
     category: {},
     categorySort: []
-  };
-  var publishers = {
-    bookStateUpdate: new Publisher(),
-    categoryUpdate: new Publisher(),
-    categoryBookUpdate: new Publisher(),
-    regionUpdate: new Publisher(),
-    detailRegionUpdate: new Publisher()
   };
   var BookStore = class {
     constructor() {

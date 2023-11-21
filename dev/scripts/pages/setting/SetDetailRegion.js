@@ -1,7 +1,8 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore, { publishers } from "../../modules/BookStore";
+import bookStore from "../../modules/BookStore";
 import { FETCH_REGION_DATA_EVENT } from "./constants";
+import { publishers } from "../../modules/actions";
 export default class SetDetailRegion extends HTMLElement {
     constructor() {
         super();

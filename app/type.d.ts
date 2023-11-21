@@ -179,4 +179,16 @@ interface IBookState {
     regions: Record<string, Record<string, string>>;
 }
 
+type TPublishers = {
+    bookStateUpdate: Publisher<undefined>;
+    categoryUpdate: Publisher<ICategoryUpdateProps>;
+    categoryBookUpdate: Publisher<undefined>;
+    regionUpdate: Publisher<undefined>;
+    detailRegionUpdate: Publisher<undefined>;
+};
 type TSubscriberCallback<T = undefined> = (payload?: T) => void;
+
+type TActionProps = (
+    type: keyof TPublishers,
+    params: ICategoryUpdateProps
+) => void;

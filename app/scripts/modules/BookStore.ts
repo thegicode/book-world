@@ -1,4 +1,4 @@
-import Publisher from "../utils/Publisher";
+import { publishers } from "./actions";
 
 const cloneDeep = <T>(obj: T): T => {
     return JSON.parse(JSON.stringify(obj));
@@ -11,16 +11,6 @@ const initialState: IBookState = {
     regions: {},
     category: {},
     categorySort: [],
-};
-
-export const publishers = {
-    bookStateUpdate: new Publisher(),
-
-    categoryUpdate: new Publisher<ICategoryUpdateProps>(),
-    categoryBookUpdate: new Publisher(),
-
-    regionUpdate: new Publisher(),
-    detailRegionUpdate: new Publisher(),
 };
 
 class BookStore {
@@ -105,6 +95,7 @@ class BookStore {
         newCategory[name] = [];
         this.category = newCategory;
 
+        // actions("categoryUpdate", { type: "add", payload: { name } });
         publishers.categoryUpdate.notify({ type: "add", payload: { name } });
     }
 

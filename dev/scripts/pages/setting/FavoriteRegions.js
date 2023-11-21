@@ -1,4 +1,5 @@
-import bookStore, { publishers } from "../../modules/BookStore";
+import { publishers } from "../../modules/actions";
+import bookStore from "../../modules/BookStore";
 export default class FavoriteRegions extends HTMLElement {
     constructor() {
         super();
