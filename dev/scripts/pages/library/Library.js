@@ -15,6 +15,7 @@ export default class Library extends HTMLElement {
         super();
         this._regionCode = null;
         this.PAGE_SIZE = 20;
+        this.template = document.querySelector("#tp-item");
     }
     set regionCode(value) {
         this._regionCode = value;
@@ -40,6 +41,9 @@ export default class Library extends HTMLElement {
         });
     }
     render(data) {
+        const { template } = this;
+        if (!template)
+            return;
         const { 
         // pageNo, pageSize, numFound, resultNum,
         libraries, } = data;
@@ -47,19 +51,16 @@ export default class Library extends HTMLElement {
             this.showMessage("notFound");
             return;
         }
-        const template = document.querySelector("#tp-item");
         const fragment = libraries.reduce((fragment, lib) => {
-            if (template) {
-                const libraryItem = cloneTemplate(template);
-                libraryItem.data = lib;
-                if (bookStore.hasLibrary(lib.libCode)) {
-                    libraryItem.dataset.has = "true";
-                    fragment.prepend(libraryItem);
-                    // fragment.insertBefore(libraryItem, fragment.firstChild);
-                }
-                else {
-                    fragment.appendChild(libraryItem);
-                }
+            const libraryItem = cloneTemplate(template);
+            libraryItem.data = lib;
+            if (bookStore.hasLibrary(lib.libCode)) {
+                libraryItem.dataset.has = "true";
+                fragment.prepend(libraryItem);
+                // fragment.insertBefore(libraryItem, fragment.firstChild);
+            }
+            else {
+                fragment.appendChild(libraryItem);
             }
             return fragment;
         }, new DocumentFragment());

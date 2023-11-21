@@ -7,9 +7,13 @@ export default class Library extends HTMLElement {
     private _regionCode: string | null = null;
     private form?: HTMLFormElement;
     private readonly PAGE_SIZE = 20;
+    private template: HTMLTemplateElement;
 
     constructor() {
         super();
+        this.template = document.querySelector(
+            "#tp-item"
+        ) as HTMLTemplateElement;
     }
 
     set regionCode(value) {
@@ -39,6 +43,9 @@ export default class Library extends HTMLElement {
     }
 
     protected render(data: ILibrarySearchByBookResult) {
+        const { template } = this;
+        if (!template) return;
+
         const {
             // pageNo, pageSize, numFound, resultNum,
             libraries,
@@ -49,22 +56,17 @@ export default class Library extends HTMLElement {
             return;
         }
 
-        const template = document.querySelector(
-            "#tp-item"
-        ) as HTMLTemplateElement;
         const fragment = libraries.reduce(
             (fragment: DocumentFragment, lib: ILibrary) => {
-                if (template) {
-                    const libraryItem = cloneTemplate<LibraryItem>(template);
-                    libraryItem.data = lib;
+                const libraryItem = cloneTemplate<LibraryItem>(template);
+                libraryItem.data = lib;
 
-                    if (bookStore.hasLibrary(lib.libCode)) {
-                        libraryItem.dataset.has = "true";
-                        fragment.prepend(libraryItem);
-                        // fragment.insertBefore(libraryItem, fragment.firstChild);
-                    } else {
-                        fragment.appendChild(libraryItem);
-                    }
+                if (bookStore.hasLibrary(lib.libCode)) {
+                    libraryItem.dataset.has = "true";
+                    fragment.prepend(libraryItem);
+                    // fragment.insertBefore(libraryItem, fragment.firstChild);
+                } else {
+                    fragment.appendChild(libraryItem);
                 }
                 return fragment;
             },

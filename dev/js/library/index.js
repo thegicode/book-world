@@ -909,6 +909,7 @@
       super();
       this._regionCode = null;
       this.PAGE_SIZE = 20;
+      this.template = document.querySelector("#tp-item");
     }
     set regionCode(value) {
       this._regionCode = value;
@@ -933,6 +934,9 @@
       });
     }
     render(data) {
+      const { template } = this;
+      if (!template)
+        return;
       const {
         // pageNo, pageSize, numFound, resultNum,
         libraries
@@ -941,17 +945,14 @@
         this.showMessage("notFound");
         return;
       }
-      const template = document.querySelector("#tp-item");
       const fragment = libraries.reduce((fragment2, lib) => {
-        if (template) {
-          const libraryItem = cloneTemplate(template);
-          libraryItem.data = lib;
-          if (BookStore_default.hasLibrary(lib.libCode)) {
-            libraryItem.dataset.has = "true";
-            fragment2.prepend(libraryItem);
-          } else {
-            fragment2.appendChild(libraryItem);
-          }
+        const libraryItem = cloneTemplate(template);
+        libraryItem.data = lib;
+        if (BookStore_default.hasLibrary(lib.libCode)) {
+          libraryItem.dataset.has = "true";
+          fragment2.prepend(libraryItem);
+        } else {
+          fragment2.appendChild(libraryItem);
         }
         return fragment2;
       }, new DocumentFragment());
