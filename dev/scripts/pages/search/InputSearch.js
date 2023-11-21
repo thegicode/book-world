@@ -1,5 +1,6 @@
-import { CustomEventEmitter } from "../../utils/index";
-import { SEARCH_PAGE_INIT } from "./constant";
+// import { CustomEventEmitter } from "../../utils/index";
+// import { SEARCH_PAGE_INIT } from "./constant";
+import { bookList } from "./selectors";
 export default class InputSearch extends HTMLElement {
     constructor() {
         super();
@@ -23,7 +24,8 @@ export default class InputSearch extends HTMLElement {
                 url.searchParams.set("keyword", keyword);
                 url.searchParams.set("sort", sort);
                 window.history.pushState({}, "", url.toString());
-                CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
+                bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
+                // CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
             }
         };
         this.initialize();

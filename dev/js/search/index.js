@@ -1162,8 +1162,9 @@
     }
   };
 
-  // dev/scripts/pages/search/constant.js
-  var SEARCH_PAGE_INIT = "search-page-init";
+  // dev/scripts/pages/search/selectors.js
+  var bookList = document.querySelector("book-list");
+  var searchInputElement = document.querySelector("input-search input[type='search']");
 
   // dev/scripts/pages/search/AppSearch.js
   var AppSearch = class extends HTMLElement {
@@ -1188,10 +1189,9 @@
       const params = new URLSearchParams(location.search);
       const keyword = params.get("keyword");
       const sort = params.get("sort") || "sim";
-      const searchElement = document.querySelector("input-search input[type='search']");
       if (keyword && sort) {
-        CustomEventEmitter_default.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
-        searchElement.value = keyword;
+        bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
+        searchInputElement.value = keyword;
       }
     }
   };
@@ -1220,7 +1220,7 @@
           url.searchParams.set("keyword", keyword);
           url.searchParams.set("sort", sort);
           window.history.pushState({}, "", url.toString());
-          CustomEventEmitter_default.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
+          bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
         }
       };
       this.initialize();
@@ -1281,23 +1281,34 @@
       this.paginationElement = this.querySelector(".paging-info");
       this.bookContainer = this.querySelector(".books");
       this.setupObserver();
-      CustomEventEmitter_default.add(SEARCH_PAGE_INIT, this.initializeSearchPage);
     }
     disconnectedCallback() {
       var _a;
       (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
-      CustomEventEmitter_default.remove(SEARCH_PAGE_INIT, this.initializeSearchPage);
     }
-    setupObserver() {
-      const target = this.querySelector(".observe");
-      this.observer = new Observer(target, this.retrieveBooks);
-    }
-    initializeSearchPage(event) {
-      const { keyword, sort } = event.detail;
+    initializeSearchPage(keyword, sort) {
       this.keyword = keyword;
       this.sortingOrder = sort;
       this.itemCount = 0;
       this.keyword ? this.renderBooks() : this.showDefaultMessage();
+    }
+    // initializeSearchPage(
+    //     event: ICustomEvent<{
+    //         keyword: string;
+    //         sort: string;
+    //     }>
+    // ) {
+    //     const { keyword, sort } = event.detail;
+    //     this.keyword = keyword;
+    //     this.sortingOrder = sort;
+    //     this.itemCount = 0;
+    //     // renderBooks: onSubmit으로 들어온 경우와 브라우저
+    //     // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
+    //     this.keyword ? this.renderBooks() : this.showDefaultMessage();
+    // }
+    setupObserver() {
+      const target = this.querySelector(".observe");
+      this.observer = new Observer(target, this.retrieveBooks);
     }
     renderBooks() {
       this.renderMessage("loading");

@@ -234,14 +234,6 @@ app-search {
   margin-right: 1rem;
 }
 
-.book-list {
-  flex: 1;
-  overflow: auto;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
 .paging-info {
   flex: none;
   display: flex;
@@ -268,6 +260,9 @@ app-search {
 .book-list {
   flex: 1;
   overflow: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .books {

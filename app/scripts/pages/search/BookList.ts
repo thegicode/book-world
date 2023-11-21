@@ -1,6 +1,6 @@
 import BookItem from "./BookItem";
-import { Observer, CustomFetch, CustomEventEmitter } from "../../utils/index";
-import { SEARCH_PAGE_INIT } from "./constant";
+import { Observer, CustomFetch } from "../../utils/index";
+// import { SEARCH_PAGE_INIT } from "./constant";
 
 export default class BookList extends HTMLElement {
     paginationElement!: HTMLElement;
@@ -24,34 +24,22 @@ export default class BookList extends HTMLElement {
         this.bookContainer = this.querySelector(".books") as HTMLElement;
         this.setupObserver();
 
-        CustomEventEmitter.add(
-            SEARCH_PAGE_INIT,
-            this.initializeSearchPage as EventListener
-        );
+        // CustomEventEmitter.add(
+        //     SEARCH_PAGE_INIT,
+        //     this.initializeSearchPage as EventListener
+        // );
     }
 
     disconnectedCallback() {
         this.observer?.disconnect();
 
-        CustomEventEmitter.remove(
-            SEARCH_PAGE_INIT,
-            this.initializeSearchPage as EventListener
-        );
+        // CustomEventEmitter.remove(
+        //     SEARCH_PAGE_INIT,
+        //     this.initializeSearchPage as EventListener
+        // );
     }
 
-    private setupObserver() {
-        const target = this.querySelector(".observe") as HTMLElement;
-        this.observer = new Observer(target, this.retrieveBooks);
-    }
-
-    private initializeSearchPage(
-        event: ICustomEvent<{
-            keyword: string;
-            sort: string;
-        }>
-    ) {
-        const { keyword, sort } = event.detail;
-
+    initializeSearchPage(keyword: string, sort: string) {
         this.keyword = keyword;
         this.sortingOrder = sort;
         this.itemCount = 0;
@@ -59,6 +47,28 @@ export default class BookList extends HTMLElement {
         // renderBooks: onSubmit으로 들어온 경우와 브라우저
         // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
         this.keyword ? this.renderBooks() : this.showDefaultMessage();
+    }
+
+    // initializeSearchPage(
+    //     event: ICustomEvent<{
+    //         keyword: string;
+    //         sort: string;
+    //     }>
+    // ) {
+    //     const { keyword, sort } = event.detail;
+
+    //     this.keyword = keyword;
+    //     this.sortingOrder = sort;
+    //     this.itemCount = 0;
+
+    //     // renderBooks: onSubmit으로 들어온 경우와 브라우저
+    //     // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
+    //     this.keyword ? this.renderBooks() : this.showDefaultMessage();
+    // }
+
+    private setupObserver() {
+        const target = this.querySelector(".observe") as HTMLElement;
+        this.observer = new Observer(target, this.retrieveBooks);
     }
 
     private renderBooks() {
