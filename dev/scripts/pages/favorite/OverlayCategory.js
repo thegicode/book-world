@@ -94,8 +94,10 @@ export default class OverlayCategory extends HTMLElement {
     }
     handleItemEvent(cloned, input, category) {
         var _a, _b;
-        (_a = cloned
-            .querySelector(".renameButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => this.handleRename(input, category));
+        (_a = cloned.querySelector(".renameButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+            const category = cloned.dataset.category;
+            this.handleRename(input, category, cloned);
+        });
         (_b = cloned
             .querySelector(".deleteButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => this.handleDelete(cloned, category));
         cloned.addEventListener("keydown", (event) => {
@@ -105,10 +107,11 @@ export default class OverlayCategory extends HTMLElement {
             }
         });
     }
-    handleRename(input, category) {
+    handleRename(input, category, cloned) {
         const value = input.value;
-        if (!value || category === value)
+        if (!value || category === value || !cloned)
             return;
+        cloned.dataset.category = value;
         bookStore.renameCategory(category, value);
     }
     handleDelete(cloned, category) {

@@ -6,7 +6,7 @@ export default class FavoriteNav extends HTMLElement {
         this.overlayCategory = document.querySelector("overlay-category");
         const params = new URLSearchParams(location.search);
         this.category = params.get("category");
-        this.handleSubscribe = this.handleSubscribe.bind(this);
+        this.handleCategoryChange = this.handleCategoryChange.bind(this);
     }
     connectedCallback() {
         if (this.category === null) {
@@ -16,10 +16,12 @@ export default class FavoriteNav extends HTMLElement {
         }
         this.render();
         this.overlayCatalog();
-        publishers.categoryUpdate.subscribe(this.handleSubscribe);
+        publishers.categoryUpdate.subscribe(this
+            .handleCategoryChange);
     }
     disconnectedCallback() {
-        publishers.categoryUpdate.unsubscribe(this.handleSubscribe);
+        publishers.categoryUpdate.unsubscribe(this
+            .handleCategoryChange);
     }
     render() {
         if (!this.nav)
@@ -62,9 +64,9 @@ export default class FavoriteNav extends HTMLElement {
             modal.hidden = Boolean(!modal.hidden);
         });
     }
-    handleSubscribe(payload) {
+    handleCategoryChange({ type, payload }) {
         var _a, _b, _c;
-        switch (payload.type) {
+        switch (type) {
             case "add":
                 {
                     const element = this.createItem(payload.name);
@@ -79,6 +81,7 @@ export default class FavoriteNav extends HTMLElement {
                     const newName = payload.newName;
                     const index = bookStore.categorySort.indexOf(prevName);
                     this.nav.querySelectorAll("a")[index].textContent = newName;
+                    bookStore.renameCategorySort(prevName, newName);
                     if (this.category === prevName) {
                         location.search = this.getUrl(newName);
                     }

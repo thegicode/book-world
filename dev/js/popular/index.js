@@ -710,7 +710,7 @@
       const newCategory = this.category;
       newCategory[name] = [];
       this.category = newCategory;
-      publishers.categoryUpdate.notify({ type: "add", name });
+      publishers.categoryUpdate.notify({ type: "add", payload: { name } });
     }
     addCategorySort(name) {
       const newCategorySort = this.categorySort;
@@ -725,8 +725,10 @@
       newCategory[newName] = newCategory[prevName];
       delete newCategory[prevName];
       this.category = newCategory;
-      this.renameCategorySort(prevName, newName);
-      publishers.categoryUpdate.notify({ type: "rename", prevName, newName });
+      publishers.categoryUpdate.notify({
+        type: "rename",
+        payload: { prevName, newName }
+      });
     }
     renameCategorySort(prevName, newName) {
       const newCategorySort = this.categorySort;
@@ -743,7 +745,7 @@
       const newFavorites = this.category;
       delete newFavorites[name];
       this.category = newFavorites;
-      publishers.categoryUpdate.notify({ type: "delete", name });
+      publishers.categoryUpdate.notify({ type: "delete", payload: { name } });
     }
     deleteCatgorySort(name) {
       const newCategorySort = this.categorySort;
@@ -761,8 +763,10 @@
       this.categorySort = newSort;
       publishers.categoryUpdate.notify({
         type: "change",
-        targetIndex,
-        draggedIndex
+        payload: {
+          targetIndex,
+          draggedIndex
+        }
       });
     }
     addBookInCategory(name, isbn) {

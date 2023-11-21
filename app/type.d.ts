@@ -11,13 +11,17 @@ interface IBook {
     publisher: string;
 }
 
-interface ICategoryUpdateProps {
-    type: string;
+interface ICategoryPayload {
     name?: string;
     prevName?: string;
     newName?: string;
     targetIndex?: number;
     draggedIndex?: number;
+}
+
+interface ICategoryUpdateProps {
+    type: string;
+    payload: ICategoryPayload;
 }
 
 interface ILoanGroups {

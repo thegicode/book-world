@@ -98,11 +98,10 @@ export default class OverlayCategory extends HTMLElement {
         input: HTMLInputElement,
         category: string
     ) {
-        cloned
-            .querySelector(".renameButton")
-            ?.addEventListener("click", () =>
-                this.handleRename(input, category)
-            );
+        cloned.querySelector(".renameButton")?.addEventListener("click", () => {
+            const category = cloned.dataset.category as string;
+            this.handleRename(input, category, cloned);
+        });
 
         cloned
             .querySelector(".deleteButton")
@@ -118,9 +117,15 @@ export default class OverlayCategory extends HTMLElement {
         });
     }
 
-    private handleRename(input: HTMLInputElement, category: string) {
+    private handleRename(
+        input: HTMLInputElement,
+        category: string,
+        cloned?: HTMLElement
+    ) {
         const value = input.value;
-        if (!value || category === value) return;
+        if (!value || category === value || !cloned) return;
+
+        cloned.dataset.category = value;
 
         bookStore.renameCategory(category, value);
     }

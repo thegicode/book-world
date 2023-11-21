@@ -863,7 +863,7 @@
       const newCategory = this.category;
       newCategory[name] = [];
       this.category = newCategory;
-      publishers.categoryUpdate.notify({ type: "add", name });
+      publishers.categoryUpdate.notify({ type: "add", payload: { name } });
     }
     addCategorySort(name) {
       const newCategorySort = this.categorySort;
@@ -878,8 +878,10 @@
       newCategory[newName] = newCategory[prevName];
       delete newCategory[prevName];
       this.category = newCategory;
-      this.renameCategorySort(prevName, newName);
-      publishers.categoryUpdate.notify({ type: "rename", prevName, newName });
+      publishers.categoryUpdate.notify({
+        type: "rename",
+        payload: { prevName, newName }
+      });
     }
     renameCategorySort(prevName, newName) {
       const newCategorySort = this.categorySort;
@@ -896,7 +898,7 @@
       const newFavorites = this.category;
       delete newFavorites[name];
       this.category = newFavorites;
-      publishers.categoryUpdate.notify({ type: "delete", name });
+      publishers.categoryUpdate.notify({ type: "delete", payload: { name } });
     }
     deleteCatgorySort(name) {
       const newCategorySort = this.categorySort;
@@ -914,8 +916,10 @@
       this.categorySort = newSort;
       publishers.categoryUpdate.notify({
         type: "change",
-        targetIndex,
-        draggedIndex
+        payload: {
+          targetIndex,
+          draggedIndex
+        }
       });
     }
     addBookInCategory(name, isbn) {
@@ -1199,7 +1203,7 @@
       this.overlayCategory = document.querySelector("overlay-category");
       const params = new URLSearchParams(location.search);
       this.category = params.get("category");
-      this.handleSubscribe = this.handleSubscribe.bind(this);
+      this.handleCategoryChange = this.handleCategoryChange.bind(this);
     }
     connectedCallback() {
       if (this.category === null) {
@@ -1209,10 +1213,10 @@
       }
       this.render();
       this.overlayCatalog();
-      publishers.categoryUpdate.subscribe(this.handleSubscribe);
+      publishers.categoryUpdate.subscribe(this.handleCategoryChange);
     }
     disconnectedCallback() {
-      publishers.categoryUpdate.unsubscribe(this.handleSubscribe);
+      publishers.categoryUpdate.unsubscribe(this.handleCategoryChange);
     }
     render() {
       if (!this.nav)
@@ -1255,9 +1259,9 @@
         modal.hidden = Boolean(!modal.hidden);
       });
     }
-    handleSubscribe(payload) {
+    handleCategoryChange({ type, payload }) {
       var _a, _b, _c;
-      switch (payload.type) {
+      switch (type) {
         case "add":
           {
             const element = this.createItem(payload.name);
@@ -1272,6 +1276,7 @@
             const newName = payload.newName;
             const index = BookStore_default.categorySort.indexOf(prevName);
             this.nav.querySelectorAll("a")[index].textContent = newName;
+            BookStore_default.renameCategorySort(prevName, newName);
             if (this.category === prevName) {
               location.search = this.getUrl(newName);
             }
@@ -1536,7 +1541,10 @@
     }
     handleItemEvent(cloned, input, category) {
       var _a, _b;
-      (_a = cloned.querySelector(".renameButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => this.handleRename(input, category));
+      (_a = cloned.querySelector(".renameButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+        const category2 = cloned.dataset.category;
+        this.handleRename(input, category2, cloned);
+      });
       (_b = cloned.querySelector(".deleteButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => this.handleDelete(cloned, category));
       cloned.addEventListener("keydown", (event) => {
         const input2 = event.target;
@@ -1545,10 +1553,11 @@
         }
       });
     }
-    handleRename(input, category) {
+    handleRename(input, category, cloned) {
       const value = input.value;
-      if (!value || category === value)
+      if (!value || category === value || !cloned)
         return;
+      cloned.dataset.category = value;
       BookStore_default.renameCategory(category, value);
     }
     handleDelete(cloned, category) {

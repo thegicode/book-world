@@ -17,7 +17,7 @@ export default class FavoriteNav extends HTMLElement {
         const params = new URLSearchParams(location.search);
         this.category = params.get("category");
 
-        this.handleSubscribe = this.handleSubscribe.bind(this);
+        this.handleCategoryChange = this.handleCategoryChange.bind(this);
     }
 
     connectedCallback() {
@@ -31,13 +31,15 @@ export default class FavoriteNav extends HTMLElement {
         this.overlayCatalog();
 
         publishers.categoryUpdate.subscribe(
-            this.handleSubscribe as TSubscriberCallback<ICategoryUpdateProps>
+            this
+                .handleCategoryChange as TSubscriberCallback<ICategoryUpdateProps>
         );
     }
 
     disconnectedCallback() {
         publishers.categoryUpdate.unsubscribe(
-            this.handleSubscribe as TSubscriberCallback<ICategoryUpdateProps>
+            this
+                .handleCategoryChange as TSubscriberCallback<ICategoryUpdateProps>
         );
     }
 
@@ -94,8 +96,8 @@ export default class FavoriteNav extends HTMLElement {
         });
     }
 
-    private handleSubscribe(payload: ICategoryUpdateProps) {
-        switch (payload.type) {
+    private handleCategoryChange({ type, payload }: ICategoryUpdateProps) {
+        switch (type) {
             case "add":
                 {
                     const element = this.createItem(payload.name as string);
@@ -109,6 +111,7 @@ export default class FavoriteNav extends HTMLElement {
                     const newName = payload.newName as string;
                     const index = bookStore.categorySort.indexOf(prevName);
                     this.nav.querySelectorAll("a")[index].textContent = newName;
+                    bookStore.renameCategorySort(prevName, newName);
 
                     if (this.category === prevName) {
                         location.search = this.getUrl(newName);

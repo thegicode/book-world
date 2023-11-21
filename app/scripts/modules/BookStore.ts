@@ -105,7 +105,7 @@ class BookStore {
         newCategory[name] = [];
         this.category = newCategory;
 
-        publishers.categoryUpdate.notify({ type: "add", name });
+        publishers.categoryUpdate.notify({ type: "add", payload: { name } });
     }
 
     addCategorySort(name: string) {
@@ -124,9 +124,10 @@ class BookStore {
         delete newCategory[prevName];
         this.category = newCategory;
 
-        this.renameCategorySort(prevName, newName);
-
-        publishers.categoryUpdate.notify({ type: "rename", prevName, newName });
+        publishers.categoryUpdate.notify({
+            type: "rename",
+            payload: { prevName, newName },
+        });
     }
 
     renameCategorySort(prevName: string, newName: string) {
@@ -147,7 +148,7 @@ class BookStore {
         delete newFavorites[name];
         this.category = newFavorites;
 
-        publishers.categoryUpdate.notify({ type: "delete", name });
+        publishers.categoryUpdate.notify({ type: "delete", payload: { name } });
     }
 
     deleteCatgorySort(name: string): number {
@@ -169,8 +170,10 @@ class BookStore {
 
         publishers.categoryUpdate.notify({
             type: "change",
-            targetIndex,
-            draggedIndex,
+            payload: {
+                targetIndex,
+                draggedIndex,
+            },
         });
     }
 
