@@ -15,7 +15,8 @@ export default class Library extends HTMLElement {
         super();
         this._regionCode = null;
         this.PAGE_SIZE = 20;
-        this.template = document.querySelector("#tp-item");
+        this.formElement = this.querySelector("form");
+        this.itemTemplate = document.querySelector("#tp-item");
     }
     set regionCode(value) {
         this._regionCode = value;
@@ -25,14 +26,20 @@ export default class Library extends HTMLElement {
         return this._regionCode;
     }
     connectedCallback() {
-        this.form = this.querySelector("form");
+        // start- library-header
     }
-    fetchLibrarySearch(detailRegionCode) {
+    handleRegionCodeChange() {
+        if (!this.regionCode)
+            return;
+        this.showMessage("loading");
+        this.fetchLibrarySearch(this.regionCode);
+    }
+    fetchLibrarySearch(regionCode) {
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `/library-search?dtl_region=${detailRegionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
+            const url = `/library-search?dtl_region=${regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
             try {
                 const data = yield CustomFetch.fetch(url);
-                this.render(data);
+                this.renderLibraryList(data);
             }
             catch (error) {
                 console.error(error);
@@ -40,10 +47,7 @@ export default class Library extends HTMLElement {
             }
         });
     }
-    render(data) {
-        const { template } = this;
-        if (!template)
-            return;
+    renderLibraryList(data) {
         const { 
         // pageNo, pageSize, numFound, resultNum,
         libraries, } = data;
@@ -51,36 +55,32 @@ export default class Library extends HTMLElement {
             this.showMessage("notFound");
             return;
         }
-        const fragment = libraries.reduce((fragment, lib) => {
-            const libraryItem = cloneTemplate(template);
-            libraryItem.data = lib;
-            if (bookStore.hasLibrary(lib.libCode)) {
-                libraryItem.dataset.has = "true";
-                fragment.prepend(libraryItem);
-                // fragment.insertBefore(libraryItem, fragment.firstChild);
-            }
-            else {
-                fragment.appendChild(libraryItem);
-            }
-            return fragment;
-        }, new DocumentFragment());
-        if (this.form) {
-            this.form.innerHTML = "";
-            this.form.appendChild(fragment);
+        const fragment = libraries.reduce((fragment, lib) => this.createLibraryItem(fragment, lib), new DocumentFragment());
+        if (this.formElement) {
+            this.formElement.innerHTML = "";
+            this.formElement.appendChild(fragment);
         }
+    }
+    createLibraryItem(fragment, lib) {
+        const libraryItem = cloneTemplate(this.itemTemplate);
+        libraryItem.data = lib;
+        if (bookStore.hasLibrary(lib.libCode)) {
+            libraryItem.dataset.has = "true";
+            fragment.prepend(libraryItem);
+            // fragment.insertBefore(libraryItem, fragment.firstChild);
+        }
+        else {
+            fragment.appendChild(libraryItem);
+        }
+        return fragment;
     }
     showMessage(type) {
         const template = document.querySelector(`#tp-${type}`);
-        if (template && this.form) {
-            this.form.innerHTML = "";
+        if (template && this.formElement) {
+            this.formElement.innerHTML = "";
             const clone = cloneTemplate(template);
-            this.form.appendChild(clone);
+            this.formElement.appendChild(clone);
         }
-    }
-    handleRegionCodeChange() {
-        this.showMessage("loading");
-        if (this.regionCode)
-            this.fetchLibrarySearch(this.regionCode);
     }
 }
 //# sourceMappingURL=Library.js.map
