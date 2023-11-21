@@ -4,7 +4,7 @@ export default class LibraryItem extends HTMLElement {
     protected checkbox: HTMLInputElement | null = null;
     private libCode = "";
     private libName = "";
-    data!: ILibrary;
+    data!: ILibraryData;
 
     constructor() {
         super();

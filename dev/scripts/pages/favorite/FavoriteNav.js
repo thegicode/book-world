@@ -1,5 +1,6 @@
-import { publishers } from "../../modules/actions";
+// import { publishers } from "../../modules/actions";
 import bookStore from "../../modules/BookStore";
+import bookStore2 from "../../modules/BookStore2";
 export default class FavoriteNav extends HTMLElement {
     constructor() {
         super();
@@ -17,19 +18,25 @@ export default class FavoriteNav extends HTMLElement {
         }
         this.render();
         this.overlayCatalog();
-        publishers.categoryUpdate.subscribe(this
+        bookStore2.categoryUpdateSubscribe(this
             .handleCategoryChange);
+        // publishers.categoryUpdate.subscribe(
+        //     this
+        //         .handleCategoryChange as TSubscriberCallback<ICategoryUpdateProps>
+        // );
     }
     disconnectedCallback() {
-        publishers.categoryUpdate.unsubscribe(this
-            .handleCategoryChange);
+        // publishers.categoryUpdate.unsubscribe(
+        //     this
+        //         .handleCategoryChange as TSubscriberCallback<ICategoryUpdateProps>
+        // );
     }
     render() {
         if (!this.nav)
             return;
         this.nav.innerHTML = "";
         const fragment = new DocumentFragment();
-        bookStore.categorySort.forEach((category) => {
+        bookStore2.getCategorySort().forEach((category) => {
             const el = this.createItem(category);
             fragment.appendChild(el);
         });
@@ -80,9 +87,11 @@ export default class FavoriteNav extends HTMLElement {
                         return;
                     const prevName = payload.prevName;
                     const newName = payload.newName;
-                    const index = bookStore.categorySort.indexOf(prevName);
+                    const index = bookStore2
+                        .getCategorySort()
+                        .indexOf(prevName);
                     this.nav.querySelectorAll("a")[index].textContent = newName;
-                    bookStore.renameCategorySort(prevName, newName);
+                    bookStore2.renameCategorySort(prevName, newName);
                     if (this.category === prevName) {
                         location.search = this.getUrl(newName);
                     }
@@ -90,7 +99,7 @@ export default class FavoriteNav extends HTMLElement {
                 break;
             case "delete": {
                 const name = payload.name;
-                const deletedIndex = bookStore.deleteCatgorySort(name);
+                const deletedIndex = bookStore2.deleteCategorySort(name);
                 if (deletedIndex > -1) {
                     (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[deletedIndex].remove();
                 }

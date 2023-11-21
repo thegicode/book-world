@@ -634,11 +634,13 @@
     detailRegionUpdate: new Publisher()
   };
 
+  // dev/scripts/modules/constants.js
+  var STORAGE_NAME = "BookWorld";
+
   // dev/scripts/modules/BookStore.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
-  var STORAGE_NAME = "BookWorld";
   var initialState = {
     libraries: {},
     regions: {},
@@ -676,6 +678,7 @@
       this.setStorage(newState);
       this.state = newState;
     }
+    // category
     get category() {
       return cloneDeep(this.state.category);
     }

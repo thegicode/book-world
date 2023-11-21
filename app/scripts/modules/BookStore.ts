@@ -1,10 +1,9 @@
 import { publishers } from "./actions";
+import { STORAGE_NAME } from "./constants";
 
 const cloneDeep = <T>(obj: T): T => {
     return JSON.parse(JSON.stringify(obj));
 };
-
-const STORAGE_NAME = "BookWorld";
 
 const initialState: IBookState = {
     libraries: {},
@@ -51,6 +50,8 @@ class BookStore {
         this.setStorage(newState);
         this.state = newState;
     }
+
+    // category
 
     get category() {
         return cloneDeep(this.state.category);

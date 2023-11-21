@@ -787,11 +787,13 @@
     detailRegionUpdate: new Publisher()
   };
 
+  // dev/scripts/modules/constants.js
+  var STORAGE_NAME = "BookWorld";
+
   // dev/scripts/modules/BookStore.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
-  var STORAGE_NAME = "BookWorld";
   var initialState = {
     libraries: {},
     regions: {},
@@ -829,6 +831,7 @@
       this.setStorage(newState);
       this.state = newState;
     }
+    // category
     get category() {
       return cloneDeep(this.state.category);
     }
@@ -1197,6 +1200,261 @@
     }
   };
 
+  // dev/scripts/modules/BookCategory.js
+  var BookCategory = class {
+    constructor(category, categorySort) {
+      this.categoryUpdatePublisher = new Publisher();
+      this.category = category;
+      this.categorySort = categorySort;
+    }
+    get() {
+      return Object.assign({}, this.category);
+    }
+    set(newCategory) {
+      this.category = newCategory;
+    }
+    getCategorySort() {
+      return [...this.categorySort];
+    }
+    setCategorySort(newSort) {
+      this.categorySort = newSort;
+    }
+    add(name) {
+      this.category[name] = [];
+      this.categoryUpdatePublisher.notify({ type: "add", payload: { name } });
+    }
+    addCategorySort(name) {
+      this.categorySort.push(name);
+    }
+    rename(prevName, newName) {
+      if (prevName in this.category) {
+        this.category[newName] = this.category[prevName];
+        delete this.category[prevName];
+        this.categoryUpdatePublisher.notify({
+          type: "rename",
+          payload: { prevName, newName }
+        });
+      }
+    }
+    renameCategorySort(prevName, newName) {
+      const index = this.categorySort.indexOf(prevName);
+      this.categorySort[index] = newName;
+    }
+    delete(name) {
+      delete this.category[name];
+      this.categoryUpdatePublisher.notify({
+        type: "delete",
+        payload: { name }
+      });
+    }
+    deleteCatgorySort(name) {
+      const index = this.categorySort.indexOf(name);
+      this.categorySort.splice(index, 1);
+      return index;
+    }
+    addBook(name, isbn) {
+      if (name in this.category) {
+        this.category[name].unshift(isbn);
+      }
+    }
+    hasBook(name, isbn) {
+      return name in this.category && this.category[name].includes(isbn);
+    }
+    removeBook(name, isbn) {
+      if (name in this.category) {
+        const index = this.category[name].indexOf(isbn);
+        if (index != -1) {
+          this.category[name].splice(index, 1);
+        }
+      }
+    }
+    subscribeCategoryUpdate(subscriber) {
+      this.categoryUpdatePublisher.subscribe(subscriber);
+    }
+  };
+
+  // dev/scripts/modules/Library.js
+  var Library = class {
+    constructor(libraries) {
+      this.libraries = libraries;
+    }
+    get() {
+      return Object.assign({}, this.libraries);
+    }
+    set(newLibries) {
+      this.libraries = newLibries;
+    }
+    add(code, name) {
+      this.libraries[code] = name;
+    }
+    remove(code) {
+      delete this.libraries[code];
+    }
+    has(code) {
+      return code in this.libraries;
+    }
+  };
+
+  // dev/scripts/modules/Region.js
+  var Region = class {
+    constructor(regions) {
+      this.regions = regions;
+    }
+    get() {
+      return Object.assign({}, this.regions);
+    }
+    set(nreRegions) {
+      this.regions = nreRegions;
+    }
+    add(name) {
+      this.regions[name] = {};
+    }
+    remove(name) {
+      delete this.regions[name];
+    }
+    addDetail(regionName, detailName, detailCode) {
+      if (regionName in this.regions) {
+        this.regions[regionName][detailName] = detailCode;
+      }
+    }
+    removeDetail(regionName, detailName) {
+      if (regionName in this.regions && detailName in this.regions[regionName]) {
+        delete this.regions[regionName][detailName];
+      }
+    }
+  };
+
+  // dev/scripts/modules/BookStore2.js
+  var cloneDeep2 = (obj) => {
+    return JSON.parse(JSON.stringify(obj));
+  };
+  var initialState2 = {
+    libraries: {},
+    regions: {},
+    category: {},
+    categorySort: []
+  };
+  var BookStore2 = class {
+    constructor() {
+      const state = this.loadStorage() || cloneDeep2(initialState2);
+      const { category, categorySort, libraries, regions } = state;
+      this.bookCategory = new BookCategory(category, categorySort);
+      this.library = new Library(libraries);
+      this.regions = new Region(regions);
+    }
+    // localStorage 관련
+    loadStorage() {
+      const storageData = localStorage.getItem(STORAGE_NAME);
+      return storageData ? JSON.parse(storageData) : null;
+    }
+    setStorage(newState) {
+      try {
+        localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    // state 관련
+    getState() {
+      return this.loadStorage();
+    }
+    setState(newState) {
+      this.setStorage(newState);
+      console.log("setStorage and loadStorage", this.loadStorage());
+    }
+    resetState() {
+      this.setStorage(initialState2);
+    }
+    // BookCategory 관련 메서드
+    getCategory() {
+      return this.bookCategory.get();
+    }
+    getCategorySort() {
+      return this.bookCategory.getCategorySort();
+    }
+    getCategoryKeys() {
+      return Object.keys(this.getCategory());
+    }
+    setCategory() {
+      const newState = this.getState();
+      newState.category = this.getCategory();
+      newState.categorySort = this.getCategorySort();
+      this.setState(newState);
+    }
+    addCategory(name) {
+      this.bookCategory.add(name);
+      this.bookCategory.addCategorySort(name);
+      this.setCategory();
+    }
+    renameCategory(prevName, newName) {
+      this.bookCategory.rename(prevName, newName);
+      this.setCategory();
+    }
+    renameCategorySort(prevName, newName) {
+      this.bookCategory.renameCategorySort(prevName, newName);
+      this.setCategory();
+    }
+    deleteCategory(name) {
+      this.bookCategory.delete(name);
+      this.setCategory();
+    }
+    deleteCategorySort(name) {
+      const index = this.bookCategory.deleteCatgorySort(name);
+      this.setCategory();
+      return index;
+    }
+    addBookCategory(name, isbn) {
+      this.bookCategory.addBook(name, isbn);
+    }
+    hasBookCategory(name, isbn) {
+      return this.bookCategory.hasBook(name, isbn);
+    }
+    removeBookCategory(name, isbn) {
+      this.bookCategory.removeBook(name, isbn);
+    }
+    // Library 관련 메서드
+    getLibraries() {
+      return this.library.get();
+    }
+    setLibraries(newLibries) {
+      this.library.set(newLibries);
+    }
+    addLibraries(code, name) {
+      this.library.add(code, name);
+    }
+    removeLibraries(code) {
+      this.library.remove(code);
+    }
+    hasLibrary(code) {
+      return this.library.has(code);
+    }
+    // Region 관련 메서드
+    getRegions() {
+      return this.regions.get();
+    }
+    setRegions(newRegions) {
+      this.regions.set(newRegions);
+    }
+    addRegion(name) {
+      this.regions.add(name);
+    }
+    removeRegion(name) {
+      this.regions.remove(name);
+    }
+    addDetailRegion(regionName, detailName, detailCode) {
+      this.regions.addDetail(regionName, detailName, detailCode);
+    }
+    removeDetailRegion(regionName, detailName) {
+      this.regions.removeDetail(regionName, detailName);
+    }
+    // subscribe
+    categoryUpdateSubscribe(subscriber) {
+      this.bookCategory.subscribeCategoryUpdate(subscriber);
+    }
+  };
+  var bookStore2 = new BookStore2();
+  var BookStore2_default = bookStore2;
+
   // dev/scripts/pages/favorite/FavoriteNav.js
   var FavoriteNav = class extends HTMLElement {
     constructor() {
@@ -1215,17 +1473,16 @@
       }
       this.render();
       this.overlayCatalog();
-      publishers.categoryUpdate.subscribe(this.handleCategoryChange);
+      BookStore2_default.categoryUpdateSubscribe(this.handleCategoryChange);
     }
     disconnectedCallback() {
-      publishers.categoryUpdate.unsubscribe(this.handleCategoryChange);
     }
     render() {
       if (!this.nav)
         return;
       this.nav.innerHTML = "";
       const fragment = new DocumentFragment();
-      BookStore_default.categorySort.forEach((category) => {
+      BookStore2_default.getCategorySort().forEach((category) => {
         const el = this.createItem(category);
         fragment.appendChild(el);
       });
@@ -1276,9 +1533,9 @@
               return;
             const prevName = payload.prevName;
             const newName = payload.newName;
-            const index = BookStore_default.categorySort.indexOf(prevName);
+            const index = BookStore2_default.getCategorySort().indexOf(prevName);
             this.nav.querySelectorAll("a")[index].textContent = newName;
-            BookStore_default.renameCategorySort(prevName, newName);
+            BookStore2_default.renameCategorySort(prevName, newName);
             if (this.category === prevName) {
               location.search = this.getUrl(newName);
             }
@@ -1286,7 +1543,7 @@
           break;
         case "delete": {
           const name = payload.name;
-          const deletedIndex = BookStore_default.deleteCatgorySort(name);
+          const deletedIndex = BookStore2_default.deleteCategorySort(name);
           if (deletedIndex > -1) {
             (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[deletedIndex].remove();
           }
@@ -1465,8 +1722,7 @@
           this.addInput.value = "";
           return;
         }
-        BookStore_default.addCategory(category);
-        BookStore_default.addCategorySort(category);
+        BookStore2_default.addCategory(category);
         const index = BookStore_default.categorySort.length;
         const cloned = this.createItem(category, index);
         (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
@@ -1520,7 +1776,7 @@
       if (!this.list)
         return;
       const fragment = new DocumentFragment();
-      BookStore_default.categorySort.forEach((category, index) => {
+      BookStore2_default.getCategoryKeys().forEach((category, index) => {
         const cloned = this.createItem(category, index);
         fragment.appendChild(cloned);
       });
@@ -1560,11 +1816,11 @@
       if (!value || category === value || !cloned)
         return;
       cloned.dataset.category = value;
-      BookStore_default.renameCategory(category, value);
+      BookStore2_default.renameCategory(category, value);
     }
     handleDelete(cloned, category) {
       cloned.remove();
-      BookStore_default.deleteCategory(category);
+      BookStore2_default.deleteCategory(category);
     }
     changeItem(cloned) {
       const dragggerButton = cloned.querySelector(".dragger");

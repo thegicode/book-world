@@ -67,7 +67,7 @@ interface IUsageAnalysisListData {
     readerRecBooks: IReaderBook[];
 }
 
-interface ILibrary {
+interface ILibraryData {
     address: string;
     homepage: string;
     libCode: string;
@@ -76,7 +76,7 @@ interface ILibrary {
 }
 
 interface ILibrarySearchByBookResult {
-    libraries: ILibrary[];
+    libraries: ILibraryData[];
 }
 
 interface IBookExist {
@@ -173,10 +173,10 @@ interface IPopularFetchParams {
 }
 
 interface IBookState {
-    category: Record<string, string[]>;
-    categorySort: string[];
-    libraries: Record<string, string>;
-    regions: Record<string, Record<string, string>>;
+    category: TBookCategories;
+    categorySort: TCategorySort;
+    libraries: TLibraries;
+    regions: TRegions;
 }
 
 type TPublishers = {
@@ -192,3 +192,11 @@ type TActionProps = (
     type: keyof TPublishers,
     params: ICategoryUpdateProps
 ) => void;
+
+type TBookCategories = Record<string, string[]>;
+
+type TLibraries = Record<string, string>;
+
+type TRegions = Record<string, Record<string, string>>;
+
+type TCategorySort = string[];

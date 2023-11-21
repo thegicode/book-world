@@ -1,4 +1,5 @@
 import bookStore from "../../modules/BookStore";
+import bookStore2 from "../../modules/BookStore2";
 import { cloneTemplate } from "../../utils/helpers";
 
 export default class OverlayCategory extends HTMLElement {
@@ -61,7 +62,8 @@ export default class OverlayCategory extends HTMLElement {
         if (!this.list) return;
 
         const fragment = new DocumentFragment();
-        bookStore.categorySort.forEach((category, index) => {
+
+        bookStore2.getCategoryKeys().forEach((category, index) => {
             const cloned = this.createItem(category, index);
             fragment.appendChild(cloned);
         });
@@ -127,12 +129,15 @@ export default class OverlayCategory extends HTMLElement {
 
         cloned.dataset.category = value;
 
-        bookStore.renameCategory(category, value);
+        bookStore2.renameCategory(category, value);
+
+        // bookStore2.renameCategory(category, value);
     }
 
     private handleDelete(cloned: HTMLLIElement, category: string) {
         cloned.remove();
-        bookStore.deleteCategory(category);
+        // bookStore.deleteCategory(category);
+        bookStore2.deleteCategory(category);
     }
 
     private changeItem(cloned: HTMLLIElement) {
@@ -196,8 +201,7 @@ export default class OverlayCategory extends HTMLElement {
             return;
         }
 
-        bookStore.addCategory(category);
-        bookStore.addCategorySort(category);
+        bookStore2.addCategory(category);
 
         const index = bookStore.categorySort.length;
         const cloned = this.createItem(category, index);

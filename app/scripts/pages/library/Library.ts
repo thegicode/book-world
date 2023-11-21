@@ -63,7 +63,7 @@ export default class Library extends HTMLElement {
         }
 
         const fragment = libraries.reduce(
-            (fragment: DocumentFragment, lib: ILibrary) =>
+            (fragment: DocumentFragment, lib: ILibraryData) =>
                 this.createLibraryItem(fragment, lib),
             new DocumentFragment()
         );
@@ -74,7 +74,7 @@ export default class Library extends HTMLElement {
         }
     }
 
-    private createLibraryItem(fragment: DocumentFragment, lib: ILibrary) {
+    private createLibraryItem(fragment: DocumentFragment, lib: ILibraryData) {
         const libraryItem = cloneTemplate<LibraryItem>(this.itemTemplate);
         libraryItem.data = lib;
 

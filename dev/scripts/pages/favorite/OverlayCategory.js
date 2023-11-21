@@ -1,4 +1,5 @@
 import bookStore from "../../modules/BookStore";
+import bookStore2 from "../../modules/BookStore2";
 import { cloneTemplate } from "../../utils/helpers";
 export default class OverlayCategory extends HTMLElement {
     constructor() {
@@ -16,8 +17,7 @@ export default class OverlayCategory extends HTMLElement {
                 this.addInput.value = "";
                 return;
             }
-            bookStore.addCategory(category);
-            bookStore.addCategorySort(category);
+            bookStore2.addCategory(category);
             const index = bookStore.categorySort.length;
             const cloned = this.createItem(category, index);
             (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
@@ -71,7 +71,7 @@ export default class OverlayCategory extends HTMLElement {
         if (!this.list)
             return;
         const fragment = new DocumentFragment();
-        bookStore.categorySort.forEach((category, index) => {
+        bookStore2.getCategoryKeys().forEach((category, index) => {
             const cloned = this.createItem(category, index);
             fragment.appendChild(cloned);
         });
@@ -112,11 +112,13 @@ export default class OverlayCategory extends HTMLElement {
         if (!value || category === value || !cloned)
             return;
         cloned.dataset.category = value;
-        bookStore.renameCategory(category, value);
+        bookStore2.renameCategory(category, value);
+        // bookStore2.renameCategory(category, value);
     }
     handleDelete(cloned, category) {
         cloned.remove();
-        bookStore.deleteCategory(category);
+        // bookStore.deleteCategory(category);
+        bookStore2.deleteCategory(category);
     }
     changeItem(cloned) {
         const dragggerButton = cloned.querySelector(".dragger");
