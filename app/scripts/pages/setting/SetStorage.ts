@@ -1,5 +1,4 @@
 import { CustomFetch } from "../../utils/index";
-// import { publishers } from "../../modules/actions";
 import bookStore2 from "../../modules/BookStore2";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
@@ -74,8 +73,6 @@ export default class SetStorage extends HTMLElement {
             bookStore2.setState(data);
 
             console.log("Saved local stronage by base data!");
-
-            // this.updatePage();
         } catch (error) {
             console.error(error);
             throw new Error("Fail to get storage sample data.");
@@ -84,12 +81,5 @@ export default class SetStorage extends HTMLElement {
 
     private resetStorage = () => {
         bookStore2.resetState();
-
-        // this.updatePage();
     };
-
-    // private updatePage() {
-    //     bookStore2.notifyBookUpdate();
-    //     bookStore2.notifyBookStateUpdate();
-    // }
 }

@@ -14,16 +14,11 @@ export default class FavoriteRegions extends HTMLElement {
 
         bookStore2.subscribeToBookStateUpdate(this.render);
         bookStore2.subscribeToDetailRegionUpdate(this.render);
-
-        // publishers.bookStateUpdate.subscribe(this.render);
-        // publishers.detailRegionUpdate.subscribe(this.render);
     }
 
     disconnectedCallback() {
         bookStore2.unsubscribeToBookStateUpdate(this.render);
         bookStore2.unsubscribeToDetailRegionUpdate(this.render);
-        // publishers.bookStateUpdate.unsubscribe(this.render);
-        // publishers.detailRegionUpdate.unsubscribe(this.render);
     }
 
     private render() {

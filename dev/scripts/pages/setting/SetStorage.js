@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CustomFetch } from "../../utils/index";
-// import { publishers } from "../../modules/actions";
 import bookStore2 from "../../modules/BookStore2";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
@@ -46,7 +45,6 @@ export default class SetStorage extends HTMLElement {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
                 bookStore2.setState(data);
                 console.log("Saved local stronage by base data!");
-                // this.updatePage();
             }
             catch (error) {
                 console.error(error);
@@ -55,7 +53,6 @@ export default class SetStorage extends HTMLElement {
         });
         this.resetStorage = () => {
             bookStore2.resetState();
-            // this.updatePage();
         };
         this.saveButton = this.querySelector(".saveStorage button");
         this.defaultButton = this.querySelector(".localStorage button");

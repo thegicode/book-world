@@ -1,7 +1,6 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import { FETCH_REGION_DATA_EVENT } from "./constants";
-// import { publishers } from "../../modules/actions";
 import bookStore2 from "../../modules/BookStore2";
 export default class SetDetailRegion extends HTMLElement {
     constructor() {
@@ -13,12 +12,10 @@ export default class SetDetailRegion extends HTMLElement {
     }
     connectedCallback() {
         bookStore2.subscribeToRegionUpdate(this.renderRegion);
-        // publishers.regionUpdate.subscribe(this.renderRegion);
         CustomEventEmitter.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     disconnectedCallback() {
         bookStore2.unsubscribeToRegionUpdate(this.renderRegion);
-        // publishers.regionUpdate.unsubscribe(this.renderRegion);
         CustomEventEmitter.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     setRegionData(event) {
