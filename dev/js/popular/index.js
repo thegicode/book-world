@@ -629,10 +629,22 @@
   var BookCategory = class {
     constructor(category, categorySort) {
       this.categoryUpdatePublisher = new Publisher();
-      this.categoryBookUpdatePublisher = new Publisher();
+      this.bookUpdatePublisher = new Publisher();
       this.category = category;
       this.categorySort = categorySort;
     }
+    // get categories(): TBookCategories {
+    //     return { ...this.categories };
+    // }
+    // set categories(newCategories: TBookCategories) {
+    //     this.categories = newCategories;
+    // }
+    // get keys(): TCategorySort {
+    //     return [...this.keys];
+    // }
+    // set keys(newKeys: TCategorySort) {
+    //     this.keys = newKeys;
+    // }
     get() {
       return Object.assign({}, this.category);
     }
@@ -666,6 +678,19 @@
       const index = this.categorySort.indexOf(prevName);
       this.categorySort[index] = newName;
     }
+    change(draggedKey, targetKey) {
+      const draggedIndex = this.categorySort.indexOf(draggedKey);
+      const targetIndex = this.categorySort.indexOf(targetKey);
+      this.categorySort[targetIndex] = draggedKey;
+      this.categorySort[draggedIndex] = targetKey;
+      this.categoryUpdatePublisher.notify({
+        type: "change",
+        payload: {
+          targetIndex,
+          draggedIndex
+        }
+      });
+    }
     delete(name) {
       delete this.category[name];
       this.categoryUpdatePublisher.notify({
@@ -678,11 +703,14 @@
       this.categorySort.splice(index, 1);
       return index;
     }
+    has(name) {
+      return name in this.category;
+    }
     addBook(name, isbn) {
       if (name in this.category) {
         this.category[name].unshift(isbn);
       }
-      this.categoryBookUpdatePublisher.notify();
+      this.bookUpdatePublisher.notify();
     }
     hasBook(name, isbn) {
       return name in this.category && this.category[name].includes(isbn);
@@ -694,13 +722,22 @@
           this.category[name].splice(index, 1);
         }
       }
-      this.categoryBookUpdatePublisher.notify();
+      this.bookUpdatePublisher.notify();
     }
     subscribeCategoryUpdate(subscriber) {
       this.categoryUpdatePublisher.subscribe(subscriber);
     }
-    subscribeCategoryBookUpdate(subscriber) {
-      this.categoryBookUpdatePublisher.subscribe(subscriber);
+    unsubscribeCategoryUpdate(subscriber) {
+      this.categoryUpdatePublisher.unsubscribe(subscriber);
+    }
+    subscribeBookUpdate(subscriber) {
+      this.bookUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeBookUpdate(subscriber) {
+      this.bookUpdatePublisher.unsubscribe(subscriber);
+    }
+    notifyBookUpdate() {
+      this.bookUpdatePublisher.notify();
     }
   };
 
@@ -732,6 +769,8 @@
   // dev/scripts/modules/Region.js
   var Region = class {
     constructor(regions) {
+      this.updatePublisher = new Publisher();
+      this.detailUpdatePublisher = new Publisher();
       this.regions = regions;
     }
     get() {
@@ -742,19 +781,35 @@
     }
     add(name) {
       this.regions[name] = {};
+      this.updatePublisher.notify();
     }
     remove(name) {
       delete this.regions[name];
+      this.updatePublisher.notify();
     }
     addDetail(regionName, detailName, detailCode) {
       if (regionName in this.regions) {
         this.regions[regionName][detailName] = detailCode;
       }
+      this.detailUpdatePublisher.notify();
     }
     removeDetail(regionName, detailName) {
       if (regionName in this.regions && detailName in this.regions[regionName]) {
         delete this.regions[regionName][detailName];
       }
+      this.detailUpdatePublisher.notify();
+    }
+    subscribeToUpdatePublisher(subscriber) {
+      this.updatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToUpdatePublisher(subscriber) {
+      this.updatePublisher.unsubscribe(subscriber);
+    }
+    subscribeToDetailUpdatePublisher(subscriber) {
+      this.detailUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToDetailUpdatePublisher(subscriber) {
+      this.detailUpdatePublisher.unsubscribe(subscriber);
     }
   };
 
@@ -770,6 +825,7 @@
   };
   var BookStore2 = class {
     constructor() {
+      this.bookStateUpdatePublisher = new Publisher();
       const state = this.loadStorage() || cloneDeep(initialState);
       const { category, categorySort, libraries, regions } = state;
       this.bookCategory = new BookCategory(category, categorySort);
@@ -792,12 +848,28 @@
     getState() {
       return this.loadStorage();
     }
+    // setState(newState: IBookState) {
+    //     // this.state = cloneDeep(newState);
+    //     this.setStorage(newState);
+    //     console.log("setStorage and loadStorage", this.loadStorage());
+    // }
     setState(newState) {
       this.setStorage(newState);
-      console.log("setStorage and loadStorage", this.loadStorage());
+      const { category, categorySort, libraries, regions } = newState;
+      this.bookCategory.set(category);
+      this.bookCategory.setCategorySort(categorySort);
+      this.library.set(libraries);
+      this.regions.set(regions);
+      this.bookStateUpdatePublisher.notify();
     }
     resetState() {
       this.setStorage(initialState);
+      const { category, categorySort, libraries, regions } = initialState;
+      this.bookCategory.set(category);
+      this.bookCategory.setCategorySort(categorySort);
+      this.library.set(libraries);
+      this.regions.set(regions);
+      this.bookStateUpdatePublisher.notify();
     }
     // BookCategory 관련 메서드
     getCategory() {
@@ -810,7 +882,7 @@
       const newState = this.getState();
       newState.category = this.getCategory();
       newState.categorySort = this.getCategorySort();
-      this.setState(newState);
+      this.setStorage(newState);
     }
     addCategory(name) {
       this.bookCategory.add(name);
@@ -834,6 +906,13 @@
       this.setCategory();
       return index;
     }
+    hasCategory(name) {
+      return this.bookCategory.has(name);
+    }
+    changeCategory(draggedKey, targetKey) {
+      this.bookCategory.change(draggedKey, targetKey);
+      this.setCategory();
+    }
     addBookCategory(name, isbn) {
       this.bookCategory.addBook(name, isbn);
       this.setCategory();
@@ -849,14 +928,18 @@
     getLibraries() {
       return this.library.get();
     }
-    setLibraries(newLibries) {
-      this.library.set(newLibries);
+    setLibraries() {
+      const newState = this.getState();
+      newState.libraries = this.getLibraries();
+      this.setStorage(newState);
     }
     addLibraries(code, name) {
       this.library.add(code, name);
+      this.setLibraries();
     }
     removeLibraries(code) {
       this.library.remove(code);
+      this.setLibraries();
     }
     hasLibrary(code) {
       return this.library.has(code);
@@ -865,27 +948,60 @@
     getRegions() {
       return this.regions.get();
     }
-    setRegions(newRegions) {
-      this.regions.set(newRegions);
+    setRegions() {
+      const newState = this.getState();
+      newState.regions = this.getRegions();
+      this.setStorage(newState);
     }
     addRegion(name) {
       this.regions.add(name);
+      this.setRegions();
     }
     removeRegion(name) {
       this.regions.remove(name);
+      this.setRegions();
     }
     addDetailRegion(regionName, detailName, detailCode) {
       this.regions.addDetail(regionName, detailName, detailCode);
+      this.setRegions();
     }
     removeDetailRegion(regionName, detailName) {
       this.regions.removeDetail(regionName, detailName);
+      this.setRegions();
     }
     // subscribe
     subscribeToCategoryUpdate(subscriber) {
       this.bookCategory.subscribeCategoryUpdate(subscriber);
     }
-    subscribeCategoryBookUpdate(subscriber) {
-      this.bookCategory.subscribeCategoryBookUpdate(subscriber);
+    unsubscribeToCategoryUpdate(subscriber) {
+      this.bookCategory.unsubscribeCategoryUpdate(subscriber);
+    }
+    subscribeBookUpdate(subscriber) {
+      this.bookCategory.subscribeBookUpdate(subscriber);
+    }
+    unsubscribeBookUpdate(subscriber) {
+      this.bookCategory.unsubscribeBookUpdate(subscriber);
+    }
+    notifyBookUpdate() {
+      this.bookCategory.notifyBookUpdate();
+    }
+    subscribeToBookStateUpdate(subscriber) {
+      this.bookStateUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToBookStateUpdate(subscriber) {
+      this.bookStateUpdatePublisher.unsubscribe(subscriber);
+    }
+    subscribeToRegionUpdate(subscriber) {
+      this.regions.subscribeToUpdatePublisher(subscriber);
+    }
+    unsubscribeToRegionUpdate(subscriber) {
+      this.regions.unsubscribeToUpdatePublisher(subscriber);
+    }
+    subscribeToDetailRegionUpdate(subscriber) {
+      this.regions.subscribeToDetailUpdatePublisher(subscriber);
+    }
+    unsubscribeToDetailRegionUpdate(subscriber) {
+      this.regions.unsubscribeToDetailUpdatePublisher(subscriber);
     }
   };
   var bookStore2 = new BookStore2();
@@ -907,7 +1023,10 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      BookStore2_default.subscribeCategoryBookUpdate(this.renderBookSize);
+      BookStore2_default.subscribeBookUpdate(this.renderBookSize);
+    }
+    disconnectedCallback() {
+      BookStore2_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
       return Object.values(BookStore2_default.getCategory()).reduce((sum, currentArray) => sum + currentArray.length, 0);

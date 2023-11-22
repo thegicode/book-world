@@ -1,4 +1,3 @@
-import bookStore from "../../modules/BookStore";
 import bookStore2 from "../../modules/BookStore2";
 import { cloneTemplate } from "../../utils/helpers";
 
@@ -130,13 +129,10 @@ export default class OverlayCategory extends HTMLElement {
         cloned.dataset.category = value;
 
         bookStore2.renameCategory(category, value);
-
-        // bookStore2.renameCategory(category, value);
     }
 
     private handleDelete(cloned: HTMLLIElement, category: string) {
         cloned.remove();
-        // bookStore.deleteCategory(category);
         bookStore2.deleteCategory(category);
     }
 
@@ -183,7 +179,7 @@ export default class OverlayCategory extends HTMLElement {
             const draggedKey = this.draggedItem.dataset.category;
             const targetKey = cloned.dataset.category;
             if (draggedKey && targetKey) {
-                bookStore.changeCategory(draggedKey, targetKey);
+                bookStore2.changeCategory(draggedKey, targetKey);
             }
             delete cloned.dataset.drag;
         });
@@ -195,7 +191,7 @@ export default class OverlayCategory extends HTMLElement {
         const category = this.addInput.value;
         if (!category) return;
 
-        if (bookStore.hasCategory(category)) {
+        if (bookStore2.hasCategory(category)) {
             alert("중복된 이름입니다.");
             this.addInput.value = "";
             return;
@@ -203,7 +199,7 @@ export default class OverlayCategory extends HTMLElement {
 
         bookStore2.addCategory(category);
 
-        const index = bookStore.categorySort.length;
+        const index = bookStore2.getCategorySort().length;
         const cloned = this.createItem(category, index);
         this.list?.appendChild(cloned);
 

@@ -629,10 +629,22 @@
   var BookCategory = class {
     constructor(category, categorySort) {
       this.categoryUpdatePublisher = new Publisher();
-      this.categoryBookUpdatePublisher = new Publisher();
+      this.bookUpdatePublisher = new Publisher();
       this.category = category;
       this.categorySort = categorySort;
     }
+    // get categories(): TBookCategories {
+    //     return { ...this.categories };
+    // }
+    // set categories(newCategories: TBookCategories) {
+    //     this.categories = newCategories;
+    // }
+    // get keys(): TCategorySort {
+    //     return [...this.keys];
+    // }
+    // set keys(newKeys: TCategorySort) {
+    //     this.keys = newKeys;
+    // }
     get() {
       return Object.assign({}, this.category);
     }
@@ -666,6 +678,19 @@
       const index = this.categorySort.indexOf(prevName);
       this.categorySort[index] = newName;
     }
+    change(draggedKey, targetKey) {
+      const draggedIndex = this.categorySort.indexOf(draggedKey);
+      const targetIndex = this.categorySort.indexOf(targetKey);
+      this.categorySort[targetIndex] = draggedKey;
+      this.categorySort[draggedIndex] = targetKey;
+      this.categoryUpdatePublisher.notify({
+        type: "change",
+        payload: {
+          targetIndex,
+          draggedIndex
+        }
+      });
+    }
     delete(name) {
       delete this.category[name];
       this.categoryUpdatePublisher.notify({
@@ -678,11 +703,14 @@
       this.categorySort.splice(index, 1);
       return index;
     }
+    has(name) {
+      return name in this.category;
+    }
     addBook(name, isbn) {
       if (name in this.category) {
         this.category[name].unshift(isbn);
       }
-      this.categoryBookUpdatePublisher.notify();
+      this.bookUpdatePublisher.notify();
     }
     hasBook(name, isbn) {
       return name in this.category && this.category[name].includes(isbn);
@@ -694,13 +722,22 @@
           this.category[name].splice(index, 1);
         }
       }
-      this.categoryBookUpdatePublisher.notify();
+      this.bookUpdatePublisher.notify();
     }
     subscribeCategoryUpdate(subscriber) {
       this.categoryUpdatePublisher.subscribe(subscriber);
     }
-    subscribeCategoryBookUpdate(subscriber) {
-      this.categoryBookUpdatePublisher.subscribe(subscriber);
+    unsubscribeCategoryUpdate(subscriber) {
+      this.categoryUpdatePublisher.unsubscribe(subscriber);
+    }
+    subscribeBookUpdate(subscriber) {
+      this.bookUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeBookUpdate(subscriber) {
+      this.bookUpdatePublisher.unsubscribe(subscriber);
+    }
+    notifyBookUpdate() {
+      this.bookUpdatePublisher.notify();
     }
   };
 
@@ -732,6 +769,8 @@
   // dev/scripts/modules/Region.js
   var Region = class {
     constructor(regions) {
+      this.updatePublisher = new Publisher();
+      this.detailUpdatePublisher = new Publisher();
       this.regions = regions;
     }
     get() {
@@ -742,19 +781,35 @@
     }
     add(name) {
       this.regions[name] = {};
+      this.updatePublisher.notify();
     }
     remove(name) {
       delete this.regions[name];
+      this.updatePublisher.notify();
     }
     addDetail(regionName, detailName, detailCode) {
       if (regionName in this.regions) {
         this.regions[regionName][detailName] = detailCode;
       }
+      this.detailUpdatePublisher.notify();
     }
     removeDetail(regionName, detailName) {
       if (regionName in this.regions && detailName in this.regions[regionName]) {
         delete this.regions[regionName][detailName];
       }
+      this.detailUpdatePublisher.notify();
+    }
+    subscribeToUpdatePublisher(subscriber) {
+      this.updatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToUpdatePublisher(subscriber) {
+      this.updatePublisher.unsubscribe(subscriber);
+    }
+    subscribeToDetailUpdatePublisher(subscriber) {
+      this.detailUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToDetailUpdatePublisher(subscriber) {
+      this.detailUpdatePublisher.unsubscribe(subscriber);
     }
   };
 
@@ -770,6 +825,7 @@
   };
   var BookStore2 = class {
     constructor() {
+      this.bookStateUpdatePublisher = new Publisher();
       const state = this.loadStorage() || cloneDeep(initialState);
       const { category, categorySort, libraries, regions } = state;
       this.bookCategory = new BookCategory(category, categorySort);
@@ -792,12 +848,28 @@
     getState() {
       return this.loadStorage();
     }
+    // setState(newState: IBookState) {
+    //     // this.state = cloneDeep(newState);
+    //     this.setStorage(newState);
+    //     console.log("setStorage and loadStorage", this.loadStorage());
+    // }
     setState(newState) {
       this.setStorage(newState);
-      console.log("setStorage and loadStorage", this.loadStorage());
+      const { category, categorySort, libraries, regions } = newState;
+      this.bookCategory.set(category);
+      this.bookCategory.setCategorySort(categorySort);
+      this.library.set(libraries);
+      this.regions.set(regions);
+      this.bookStateUpdatePublisher.notify();
     }
     resetState() {
       this.setStorage(initialState);
+      const { category, categorySort, libraries, regions } = initialState;
+      this.bookCategory.set(category);
+      this.bookCategory.setCategorySort(categorySort);
+      this.library.set(libraries);
+      this.regions.set(regions);
+      this.bookStateUpdatePublisher.notify();
     }
     // BookCategory 관련 메서드
     getCategory() {
@@ -810,7 +882,7 @@
       const newState = this.getState();
       newState.category = this.getCategory();
       newState.categorySort = this.getCategorySort();
-      this.setState(newState);
+      this.setStorage(newState);
     }
     addCategory(name) {
       this.bookCategory.add(name);
@@ -834,6 +906,13 @@
       this.setCategory();
       return index;
     }
+    hasCategory(name) {
+      return this.bookCategory.has(name);
+    }
+    changeCategory(draggedKey, targetKey) {
+      this.bookCategory.change(draggedKey, targetKey);
+      this.setCategory();
+    }
     addBookCategory(name, isbn) {
       this.bookCategory.addBook(name, isbn);
       this.setCategory();
@@ -849,14 +928,18 @@
     getLibraries() {
       return this.library.get();
     }
-    setLibraries(newLibries) {
-      this.library.set(newLibries);
+    setLibraries() {
+      const newState = this.getState();
+      newState.libraries = this.getLibraries();
+      this.setStorage(newState);
     }
     addLibraries(code, name) {
       this.library.add(code, name);
+      this.setLibraries();
     }
     removeLibraries(code) {
       this.library.remove(code);
+      this.setLibraries();
     }
     hasLibrary(code) {
       return this.library.has(code);
@@ -865,27 +948,60 @@
     getRegions() {
       return this.regions.get();
     }
-    setRegions(newRegions) {
-      this.regions.set(newRegions);
+    setRegions() {
+      const newState = this.getState();
+      newState.regions = this.getRegions();
+      this.setStorage(newState);
     }
     addRegion(name) {
       this.regions.add(name);
+      this.setRegions();
     }
     removeRegion(name) {
       this.regions.remove(name);
+      this.setRegions();
     }
     addDetailRegion(regionName, detailName, detailCode) {
       this.regions.addDetail(regionName, detailName, detailCode);
+      this.setRegions();
     }
     removeDetailRegion(regionName, detailName) {
       this.regions.removeDetail(regionName, detailName);
+      this.setRegions();
     }
     // subscribe
     subscribeToCategoryUpdate(subscriber) {
       this.bookCategory.subscribeCategoryUpdate(subscriber);
     }
-    subscribeCategoryBookUpdate(subscriber) {
-      this.bookCategory.subscribeCategoryBookUpdate(subscriber);
+    unsubscribeToCategoryUpdate(subscriber) {
+      this.bookCategory.unsubscribeCategoryUpdate(subscriber);
+    }
+    subscribeBookUpdate(subscriber) {
+      this.bookCategory.subscribeBookUpdate(subscriber);
+    }
+    unsubscribeBookUpdate(subscriber) {
+      this.bookCategory.unsubscribeBookUpdate(subscriber);
+    }
+    notifyBookUpdate() {
+      this.bookCategory.notifyBookUpdate();
+    }
+    subscribeToBookStateUpdate(subscriber) {
+      this.bookStateUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToBookStateUpdate(subscriber) {
+      this.bookStateUpdatePublisher.unsubscribe(subscriber);
+    }
+    subscribeToRegionUpdate(subscriber) {
+      this.regions.subscribeToUpdatePublisher(subscriber);
+    }
+    unsubscribeToRegionUpdate(subscriber) {
+      this.regions.unsubscribeToUpdatePublisher(subscriber);
+    }
+    subscribeToDetailRegionUpdate(subscriber) {
+      this.regions.subscribeToDetailUpdatePublisher(subscriber);
+    }
+    unsubscribeToDetailRegionUpdate(subscriber) {
+      this.regions.unsubscribeToDetailUpdatePublisher(subscriber);
     }
   };
   var bookStore2 = new BookStore2();
@@ -907,7 +1023,10 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      BookStore2_default.subscribeCategoryBookUpdate(this.renderBookSize);
+      BookStore2_default.subscribeBookUpdate(this.renderBookSize);
+    }
+    disconnectedCallback() {
+      BookStore2_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
       return Object.values(BookStore2_default.getCategory()).reduce((sum, currentArray) => sum + currentArray.length, 0);
@@ -950,211 +1069,6 @@
     return content.cloneNode(true);
   }
 
-  // dev/scripts/modules/actions.js
-  var publishers = {
-    bookStateUpdate: new Publisher(),
-    categoryUpdate: new Publisher(),
-    categoryBookUpdate: new Publisher(),
-    regionUpdate: new Publisher(),
-    detailRegionUpdate: new Publisher()
-  };
-
-  // dev/scripts/modules/BookStore.js
-  var cloneDeep2 = (obj) => {
-    return JSON.parse(JSON.stringify(obj));
-  };
-  var initialState2 = {
-    libraries: {},
-    regions: {},
-    category: {},
-    categorySort: []
-  };
-  var BookStore = class {
-    constructor() {
-      this.state = this.loadStorage() || cloneDeep2(initialState2);
-    }
-    loadStorage() {
-      try {
-        const storageData = localStorage.getItem(STORAGE_NAME);
-        return storageData ? JSON.parse(storageData) : null;
-      } catch (error) {
-        console.error(error);
-        throw new Error("Failed to get state from localStorage.");
-      }
-    }
-    setStorage(newState) {
-      try {
-        localStorage.setItem(STORAGE_NAME, JSON.stringify(newState));
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    reset() {
-      this.state = cloneDeep2(initialState2);
-      this.storage = cloneDeep2(initialState2);
-    }
-    get storage() {
-      return cloneDeep2(this.state);
-    }
-    set storage(newState) {
-      this.setStorage(newState);
-      this.state = newState;
-    }
-    // category
-    get category() {
-      return cloneDeep2(this.state.category);
-    }
-    set category(newCategory) {
-      const newState = this.storage;
-      newState.category = newCategory;
-      this.storage = newState;
-    }
-    get categorySort() {
-      return cloneDeep2(this.state.categorySort);
-    }
-    set categorySort(newSort) {
-      const newState = this.state;
-      newState.categorySort = newSort;
-      this.storage = newState;
-    }
-    get libraries() {
-      return cloneDeep2(this.state.libraries);
-    }
-    set libraries(newLibries) {
-      const newState = this.state;
-      newState.libraries = newLibries;
-      this.storage = newState;
-    }
-    get regions() {
-      return cloneDeep2(this.state.regions);
-    }
-    set regions(newRegions) {
-      const newState = this.state;
-      newState.regions = newRegions;
-      this.storage = newState;
-    }
-    addCategory(name) {
-      const newCategory = this.category;
-      newCategory[name] = [];
-      this.category = newCategory;
-      publishers.categoryUpdate.notify({ type: "add", payload: { name } });
-    }
-    addCategorySort(name) {
-      const newCategorySort = this.categorySort;
-      newCategorySort.push(name);
-      this.categorySort = newCategorySort;
-    }
-    hasCategory(name) {
-      return name in this.category;
-    }
-    renameCategory(prevName, newName) {
-      const newCategory = this.category;
-      newCategory[newName] = newCategory[prevName];
-      delete newCategory[prevName];
-      this.category = newCategory;
-      publishers.categoryUpdate.notify({
-        type: "rename",
-        payload: { prevName, newName }
-      });
-    }
-    renameCategorySort(prevName, newName) {
-      const newCategorySort = this.categorySort;
-      const index = this.indexCategorySort(prevName);
-      newCategorySort[index] = newName;
-      this.categorySort = newCategorySort;
-    }
-    indexCategorySort(name) {
-      const newCategorySort = this.categorySort;
-      const index = newCategorySort.indexOf(name);
-      return index;
-    }
-    deleteCategory(name) {
-      const newFavorites = this.category;
-      delete newFavorites[name];
-      this.category = newFavorites;
-      publishers.categoryUpdate.notify({ type: "delete", payload: { name } });
-    }
-    deleteCatgorySort(name) {
-      const newCategorySort = this.categorySort;
-      const index = newCategorySort.indexOf(name);
-      newCategorySort.splice(index, 1);
-      this.categorySort = newCategorySort;
-      return index;
-    }
-    changeCategory(draggedKey, targetKey) {
-      const newSort = this.categorySort;
-      const draggedIndex = newSort.indexOf(draggedKey);
-      const targetIndex = newSort.indexOf(targetKey);
-      newSort[targetIndex] = draggedKey;
-      newSort[draggedIndex] = targetKey;
-      this.categorySort = newSort;
-      publishers.categoryUpdate.notify({
-        type: "change",
-        payload: {
-          targetIndex,
-          draggedIndex
-        }
-      });
-    }
-    addBookInCategory(name, isbn) {
-      const newCategory = this.category;
-      newCategory[name].unshift(isbn);
-      this.category = newCategory;
-      publishers.categoryBookUpdate.notify();
-    }
-    hasBookInCategory(name, isbn) {
-      return this.category[name].includes(isbn);
-    }
-    removeBookInCategory(name, isbn) {
-      const newCategory = this.category;
-      const index = newCategory[name].indexOf(isbn);
-      if (index !== -1) {
-        newCategory[name].splice(index, 1);
-        this.category = newCategory;
-      }
-      publishers.categoryBookUpdate.notify();
-    }
-    addLibrary(code, name) {
-      const newLibries = this.libraries;
-      newLibries[code] = name;
-      this.libraries = newLibries;
-    }
-    removeLibrary(code) {
-      const newLibries = this.libraries;
-      delete newLibries[code];
-      this.libraries = newLibries;
-    }
-    hasLibrary(code) {
-      return code in this.libraries;
-    }
-    addRegion(name) {
-      const newRegion = this.regions;
-      newRegion[name] = {};
-      this.regions = newRegion;
-      publishers.regionUpdate.notify();
-    }
-    removeRegion(name) {
-      const newRegions = this.regions;
-      delete newRegions[name];
-      this.regions = newRegions;
-      publishers.regionUpdate.notify();
-    }
-    addDetailRegion(regionName, detailName, detailCode) {
-      const newRegions = this.regions;
-      newRegions[regionName][detailName] = detailCode;
-      this.regions = newRegions;
-      publishers.detailRegionUpdate.notify();
-    }
-    removeDetailRegion(regionName, detailName) {
-      const newRegions = this.regions;
-      delete newRegions[regionName][detailName];
-      this.regions = newRegions;
-      publishers.detailRegionUpdate.notify();
-    }
-  };
-  var bookStore = new BookStore();
-  var BookStore_default = bookStore;
-
   // dev/scripts/pages/setting/constants.js
   var FETCH_REGION_DATA_EVENT = "fetch-region-data";
 
@@ -1195,10 +1109,10 @@
     }
     connectedCallback() {
       this.fetchAndRender();
-      publishers.bookStateUpdate.subscribe(this.fetchAndRender);
+      BookStore2_default.subscribeToBookStateUpdate(this.fetchAndRender);
     }
     discinnectedCallback() {
-      publishers.bookStateUpdate.unsubscribe(this.fetchAndRender);
+      BookStore2_default.unsubscribeToBookStateUpdate(this.fetchAndRender);
     }
     fetchAndRender() {
       return __awaiter2(this, void 0, void 0, function* () {
@@ -1226,7 +1140,7 @@
       }
       const fragment = new DocumentFragment();
       const regionData = this.regionData["region"];
-      const favoriteRegions = Object.keys(BookStore_default.regions);
+      const favoriteRegions = Object.keys(BookStore2_default.getRegions());
       for (const [key, value] of Object.entries(regionData)) {
         const regionElement = this.createRegionElement(this.template, key, value, favoriteRegions);
         fragment.appendChild(regionElement);
@@ -1252,9 +1166,9 @@
         }
         const key = spanElement.textContent;
         if (checkbox.checked) {
-          BookStore_default.addRegion(key);
+          BookStore2_default.addRegion(key);
         } else {
-          BookStore_default.removeRegion(key);
+          BookStore2_default.removeRegion(key);
         }
       };
     }
@@ -1270,11 +1184,11 @@
       this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
-      publishers.regionUpdate.subscribe(this.renderRegion);
+      BookStore2_default.subscribeToRegionUpdate(this.renderRegion);
       CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     disconnectedCallback() {
-      publishers.regionUpdate.unsubscribe(this.renderRegion);
+      BookStore2_default.unsubscribeToRegionUpdate(this.renderRegion);
       CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     setRegionData(event) {
@@ -1283,7 +1197,7 @@
       this.renderRegion();
     }
     renderRegion() {
-      const favoriteRegions = Object.keys(BookStore_default.regions);
+      const favoriteRegions = Object.keys(BookStore2_default.getRegions());
       const container = this.querySelector(".regions");
       if (!container)
         return;
@@ -1325,7 +1239,7 @@
       const detailRegionsElement = this.querySelector(".detailRegions");
       if (!detailRegionsElement)
         return;
-      const regionObj = BookStore_default.regions[regionName];
+      const regionObj = BookStore2_default.getRegions()[regionName];
       const regionCodes = regionObj ? Object.values(regionObj) : [];
       const template = document.querySelector("#tp-detail-region");
       if (!template)
@@ -1372,8 +1286,8 @@
     }
     onChangeDetail() {
       const region = this.region;
-      if (!BookStore_default.regions[region]) {
-        BookStore_default.addRegion(region);
+      if (!BookStore2_default.getRegions()[region]) {
+        BookStore2_default.addRegion(region);
       }
       const checkboxes = document.querySelectorAll("[name=detailRegion]");
       checkboxes.forEach((checkbox) => {
@@ -1383,9 +1297,9 @@
           const labelElement = inputCheckbox.nextElementSibling;
           const label = (labelElement === null || labelElement === void 0 ? void 0 : labelElement.textContent) || "";
           if (inputCheckbox.checked) {
-            BookStore_default.addDetailRegion(region, label, value);
+            BookStore2_default.addDetailRegion(region, label, value);
           } else {
-            BookStore_default.removeDetailRegion(region, label);
+            BookStore2_default.removeDetailRegion(region, label);
           }
         });
       });
@@ -1402,18 +1316,18 @@
     connectedCallback() {
       this.container = this.querySelector(".favorites");
       this.render();
-      publishers.bookStateUpdate.subscribe(this.render);
-      publishers.detailRegionUpdate.subscribe(this.render);
+      BookStore2_default.subscribeToBookStateUpdate(this.render);
+      BookStore2_default.subscribeToDetailRegionUpdate(this.render);
     }
     disconnectedCallback() {
-      publishers.bookStateUpdate.unsubscribe(this.render);
-      publishers.detailRegionUpdate.unsubscribe(this.render);
+      BookStore2_default.unsubscribeToBookStateUpdate(this.render);
+      BookStore2_default.unsubscribeToDetailRegionUpdate(this.render);
     }
     render() {
       if (!this.container)
         return;
       this.container.innerHTML = "";
-      const { regions } = BookStore_default;
+      const regions = BookStore2_default.getRegions();
       for (const regionName in regions) {
         const detailRegions = Object.keys(regions[regionName]);
         if (detailRegions.length > 0) {
@@ -1473,7 +1387,7 @@
       this.defaultButton = null;
       this.resetButton = null;
       this.savetStorage = () => {
-        const state = BookStore_default.storage;
+        const state = BookStore2_default.getState();
         if (!state)
           return;
         fetch(SAMPLE_JSON_URL, {
@@ -1481,7 +1395,7 @@
           headers: {
             "Content-Type": "appication/json"
           },
-          body: JSON.stringify(BookStore_default.storage)
+          body: JSON.stringify(BookStore2_default.getState())
         }).then(function(reponse) {
           if (!reponse.ok) {
             throw new Error("\uC11C\uBC84 \uC751\uB2F5 \uC624\uB958" + reponse.status);
@@ -1496,17 +1410,15 @@
       this.setLocalStorageToBase = () => __awaiter3(this, void 0, void 0, function* () {
         try {
           const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
-          BookStore_default.storage = data;
+          BookStore2_default.setState(data);
           console.log("Saved local stronage by base data!");
-          this.updatePage();
         } catch (error) {
           console.error(error);
           throw new Error("Fail to get storage sample data.");
         }
       });
       this.resetStorage = () => {
-        BookStore_default.reset();
-        this.updatePage();
+        BookStore2_default.resetState();
       };
       this.saveButton = this.querySelector(".saveStorage button");
       this.defaultButton = this.querySelector(".localStorage button");
@@ -1523,10 +1435,6 @@
       (_a = this.saveButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.savetStorage);
       (_b = this.defaultButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.setLocalStorageToBase);
       (_c = this.resetButton) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.resetStorage);
-    }
-    updatePage() {
-      publishers.categoryBookUpdate.notify();
-      publishers.bookStateUpdate.notify();
     }
   };
 

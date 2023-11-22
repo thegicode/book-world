@@ -1,5 +1,3 @@
-// import { publishers } from "../../modules/actions";
-import bookStore from "../../modules/BookStore";
 import bookStore2 from "../../modules/BookStore2";
 export default class FavoriteNav extends HTMLElement {
     constructor() {
@@ -12,7 +10,7 @@ export default class FavoriteNav extends HTMLElement {
     }
     connectedCallback() {
         if (this.category === null) {
-            this.category = bookStore.categorySort[0];
+            this.category = bookStore2.getCategorySort()[0];
             const url = this.getUrl(this.category);
             location.search = url;
         }
@@ -20,16 +18,10 @@ export default class FavoriteNav extends HTMLElement {
         this.overlayCatalog();
         bookStore2.subscribeToCategoryUpdate(this
             .handleCategoryChange);
-        // publishers.categoryUpdate.subscribe(
-        //     this
-        //         .handleCategoryChange as TSubscriberCallback<ICategoryUpdateProps>
-        // );
     }
     disconnectedCallback() {
-        // publishers.categoryUpdate.unsubscribe(
-        //     this
-        //         .handleCategoryChange as TSubscriberCallback<ICategoryUpdateProps>
-        // );
+        bookStore2.unsubscribeToCategoryUpdate(this
+            .handleCategoryChange);
     }
     render() {
         if (!this.nav)
@@ -74,7 +66,6 @@ export default class FavoriteNav extends HTMLElement {
     }
     handleCategoryChange({ type, payload }) {
         var _a, _b, _c;
-        console.log("FavoriteNav > handleCategoryChange", type);
         switch (type) {
             case "add":
                 {

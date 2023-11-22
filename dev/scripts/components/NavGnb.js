@@ -14,7 +14,11 @@ export default class NavGnb extends HTMLElement {
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
-        bookStore2.subscribeCategoryBookUpdate(this.renderBookSize);
+        bookStore2.subscribeBookUpdate(this.renderBookSize);
+    }
+    disconnectedCallback() {
+        bookStore2.unsubscribeBookUpdate(this.renderBookSize);
+        //
     }
     get bookSize() {
         return Object.values(bookStore2.getCategory()).reduce((sum, currentArray) => sum + currentArray.length, 0);

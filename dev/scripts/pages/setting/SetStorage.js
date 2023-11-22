@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CustomFetch } from "../../utils/index";
-import bookStore from "../../modules/BookStore";
-import { publishers } from "../../modules/actions";
+// import { publishers } from "../../modules/actions";
+import bookStore2 from "../../modules/BookStore2";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
     constructor() {
@@ -18,7 +18,7 @@ export default class SetStorage extends HTMLElement {
         this.defaultButton = null;
         this.resetButton = null;
         this.savetStorage = () => {
-            const state = bookStore.storage;
+            const state = bookStore2.getState();
             if (!state)
                 return;
             fetch(SAMPLE_JSON_URL, {
@@ -26,7 +26,7 @@ export default class SetStorage extends HTMLElement {
                 headers: {
                     "Content-Type": "appication/json",
                 },
-                body: JSON.stringify(bookStore.storage),
+                body: JSON.stringify(bookStore2.getState()),
             })
                 .then(function (reponse) {
                 if (!reponse.ok) {
@@ -44,9 +44,9 @@ export default class SetStorage extends HTMLElement {
         this.setLocalStorageToBase = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
-                bookStore.storage = data;
+                bookStore2.setState(data);
                 console.log("Saved local stronage by base data!");
-                this.updatePage();
+                // this.updatePage();
             }
             catch (error) {
                 console.error(error);
@@ -54,8 +54,8 @@ export default class SetStorage extends HTMLElement {
             }
         });
         this.resetStorage = () => {
-            bookStore.reset();
-            this.updatePage();
+            bookStore2.resetState();
+            // this.updatePage();
         };
         this.saveButton = this.querySelector(".saveStorage button");
         this.defaultButton = this.querySelector(".localStorage button");
@@ -72,10 +72,6 @@ export default class SetStorage extends HTMLElement {
         (_a = this.saveButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.savetStorage);
         (_b = this.defaultButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.setLocalStorageToBase);
         (_c = this.resetButton) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.resetStorage);
-    }
-    updatePage() {
-        publishers.categoryBookUpdate.notify();
-        publishers.bookStateUpdate.notify();
     }
 }
 //# sourceMappingURL=SetStorage.js.map

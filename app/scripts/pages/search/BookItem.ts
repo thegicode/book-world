@@ -2,8 +2,8 @@ import {
     BookDescription,
     BookImage,
     LibraryBookExist,
-} from "../../components/index.js";
-import bookStore from "../../modules/BookStore";
+} from "../../components/index";
+import bookStore2 from "../../modules/BookStore2";
 
 export default class BookItem extends HTMLElement {
     private bookLibraryButton: HTMLButtonElement | null = null;
@@ -99,7 +99,7 @@ export default class BookItem extends HTMLElement {
         libraryBookNode?.onLibraryBookExist(
             this.bookLibraryButton,
             isbn,
-            bookStore.libraries
+            bookStore2.getLibraries()
         );
     };
 }

@@ -1,8 +1,7 @@
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore from "../../modules/BookStore";
 import { FETCH_REGION_DATA_EVENT } from "./constants";
-import { publishers } from "../../modules/actions";
+import bookStore2 from "../../modules/BookStore2";
 
 export default class SetRegion extends HTMLElement {
     private regionData: TotalRegions | null;
@@ -21,11 +20,13 @@ export default class SetRegion extends HTMLElement {
     connectedCallback() {
         this.fetchAndRender();
 
-        publishers.bookStateUpdate.subscribe(this.fetchAndRender);
+        bookStore2.subscribeToBookStateUpdate(this.fetchAndRender);
+        // publishers.bookStateUpdate.subscribe(this.fetchAndRender);
     }
 
     discinnectedCallback() {
-        publishers.bookStateUpdate.unsubscribe(this.fetchAndRender);
+        bookStore2.unsubscribeToBookStateUpdate(this.fetchAndRender);
+        // publishers.bookStateUpdate.unsubscribe(this.fetchAndRender);
     }
 
     private async fetchAndRender() {
@@ -61,7 +62,7 @@ export default class SetRegion extends HTMLElement {
         const fragment = new DocumentFragment();
 
         const regionData = this.regionData["region"];
-        const favoriteRegions = Object.keys(bookStore.regions);
+        const favoriteRegions = Object.keys(bookStore2.getRegions());
 
         for (const [key, value] of Object.entries(regionData)) {
             const regionElement = this.createRegionElement(
@@ -111,9 +112,9 @@ export default class SetRegion extends HTMLElement {
             const key = spanElement.textContent;
 
             if (checkbox.checked) {
-                bookStore.addRegion(key);
+                bookStore2.addRegion(key);
             } else {
-                bookStore.removeRegion(key);
+                bookStore2.removeRegion(key);
             }
         };
     }

@@ -2,10 +2,22 @@ import Publisher from "../utils/Publisher";
 export default class BookCategory {
     constructor(category, categorySort) {
         this.categoryUpdatePublisher = new Publisher();
-        this.categoryBookUpdatePublisher = new Publisher();
+        this.bookUpdatePublisher = new Publisher();
         this.category = category;
         this.categorySort = categorySort;
     }
+    // get categories(): TBookCategories {
+    //     return { ...this.categories };
+    // }
+    // set categories(newCategories: TBookCategories) {
+    //     this.categories = newCategories;
+    // }
+    // get keys(): TCategorySort {
+    //     return [...this.keys];
+    // }
+    // set keys(newKeys: TCategorySort) {
+    //     this.keys = newKeys;
+    // }
     get() {
         return Object.assign({}, this.category);
     }
@@ -39,6 +51,19 @@ export default class BookCategory {
         const index = this.categorySort.indexOf(prevName);
         this.categorySort[index] = newName;
     }
+    change(draggedKey, targetKey) {
+        const draggedIndex = this.categorySort.indexOf(draggedKey);
+        const targetIndex = this.categorySort.indexOf(targetKey);
+        this.categorySort[targetIndex] = draggedKey;
+        this.categorySort[draggedIndex] = targetKey;
+        this.categoryUpdatePublisher.notify({
+            type: "change",
+            payload: {
+                targetIndex,
+                draggedIndex,
+            },
+        });
+    }
     delete(name) {
         delete this.category[name];
         this.categoryUpdatePublisher.notify({
@@ -51,11 +76,14 @@ export default class BookCategory {
         this.categorySort.splice(index, 1);
         return index;
     }
+    has(name) {
+        return name in this.category;
+    }
     addBook(name, isbn) {
         if (name in this.category) {
             this.category[name].unshift(isbn);
         }
-        this.categoryBookUpdatePublisher.notify();
+        this.bookUpdatePublisher.notify();
     }
     hasBook(name, isbn) {
         return name in this.category && this.category[name].includes(isbn);
@@ -67,13 +95,22 @@ export default class BookCategory {
                 this.category[name].splice(index, 1);
             }
         }
-        this.categoryBookUpdatePublisher.notify();
+        this.bookUpdatePublisher.notify();
     }
     subscribeCategoryUpdate(subscriber) {
         this.categoryUpdatePublisher.subscribe(subscriber);
     }
-    subscribeCategoryBookUpdate(subscriber) {
-        this.categoryBookUpdatePublisher.subscribe(subscriber);
+    unsubscribeCategoryUpdate(subscriber) {
+        this.categoryUpdatePublisher.unsubscribe(subscriber);
+    }
+    subscribeBookUpdate(subscriber) {
+        this.bookUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeBookUpdate(subscriber) {
+        this.bookUpdatePublisher.unsubscribe(subscriber);
+    }
+    notifyBookUpdate() {
+        this.bookUpdatePublisher.notify();
     }
 }
 //# sourceMappingURL=BookCategory.js.map

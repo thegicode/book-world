@@ -1,6 +1,6 @@
 import { CustomFetch } from "../../utils/index";
-import bookStore from "../../modules/BookStore";
-import { publishers } from "../../modules/actions";
+// import { publishers } from "../../modules/actions";
+import bookStore2 from "../../modules/BookStore2";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
 export default class SetStorage extends HTMLElement {
@@ -41,14 +41,14 @@ export default class SetStorage extends HTMLElement {
     }
 
     private savetStorage = () => {
-        const state = bookStore.storage;
+        const state = bookStore2.getState();
         if (!state) return;
         fetch(SAMPLE_JSON_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "appication/json",
             },
-            body: JSON.stringify(bookStore.storage),
+            body: JSON.stringify(bookStore2.getState()),
         })
             .then(function (reponse) {
                 if (!reponse.ok) {
@@ -71,11 +71,11 @@ export default class SetStorage extends HTMLElement {
         try {
             const data = await CustomFetch.fetch<IBookState>(SAMPLE_JSON_URL);
 
-            bookStore.storage = data;
+            bookStore2.setState(data);
 
             console.log("Saved local stronage by base data!");
 
-            this.updatePage();
+            // this.updatePage();
         } catch (error) {
             console.error(error);
             throw new Error("Fail to get storage sample data.");
@@ -83,13 +83,13 @@ export default class SetStorage extends HTMLElement {
     };
 
     private resetStorage = () => {
-        bookStore.reset();
+        bookStore2.resetState();
 
-        this.updatePage();
+        // this.updatePage();
     };
 
-    private updatePage() {
-        publishers.categoryBookUpdate.notify();
-        publishers.bookStateUpdate.notify();
-    }
+    // private updatePage() {
+    //     bookStore2.notifyBookUpdate();
+    //     bookStore2.notifyBookStateUpdate();
+    // }
 }

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore from "../../modules/BookStore";
+import bookStore2 from "../../modules/BookStore2";
 export default class Library extends HTMLElement {
     constructor() {
         super();
@@ -64,7 +64,7 @@ export default class Library extends HTMLElement {
     createLibraryItem(fragment, lib) {
         const libraryItem = cloneTemplate(this.itemTemplate);
         libraryItem.data = lib;
-        if (bookStore.hasLibrary(lib.libCode)) {
+        if (bookStore2.hasLibrary(lib.libCode)) {
             libraryItem.dataset.has = "true";
             fragment.prepend(libraryItem);
             // fragment.insertBefore(libraryItem, fragment.firstChild);

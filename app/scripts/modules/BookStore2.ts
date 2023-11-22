@@ -1,3 +1,4 @@
+import Publisher from "../utils/Publisher";
 import BookCategory from "./BookCategory";
 import { STORAGE_NAME } from "./constants";
 import Library from "./Library";
@@ -18,6 +19,7 @@ class BookStore2 {
     private bookCategory: BookCategory;
     private library: Library;
     private regions: Region;
+    private bookStateUpdatePublisher: Publisher = new Publisher();
 
     constructor() {
         const state = this.loadStorage() || cloneDeep(initialState);
@@ -48,16 +50,35 @@ class BookStore2 {
         return this.loadStorage();
     }
 
+    // setState(newState: IBookState) {
+    //     // this.state = cloneDeep(newState);
+    //     this.setStorage(newState);
+
+    //     console.log("setStorage and loadStorage", this.loadStorage());
+    // }
+
     setState(newState: IBookState) {
-        // this.state = cloneDeep(newState);
         this.setStorage(newState);
 
-        console.log("setStorage and loadStorage", this.loadStorage());
+        const { category, categorySort, libraries, regions } = newState;
+        this.bookCategory.set(category);
+        this.bookCategory.setCategorySort(categorySort);
+        this.library.set(libraries);
+        this.regions.set(regions);
+
+        this.bookStateUpdatePublisher.notify();
     }
 
     resetState() {
-        // this.state = cloneDeep(initialState);
         this.setStorage(initialState);
+
+        const { category, categorySort, libraries, regions } = initialState;
+        this.bookCategory.set(category);
+        this.bookCategory.setCategorySort(categorySort);
+        this.library.set(libraries);
+        this.regions.set(regions);
+
+        this.bookStateUpdatePublisher.notify();
     }
 
     // BookCategory 관련 메서드
@@ -74,7 +95,7 @@ class BookStore2 {
         const newState = this.getState();
         newState.category = this.getCategory();
         newState.categorySort = this.getCategorySort();
-        this.setState(newState);
+        this.setStorage(newState);
     }
 
     addCategory(name: string) {
@@ -111,6 +132,16 @@ class BookStore2 {
         return index;
     }
 
+    hasCategory(name: string) {
+        return this.bookCategory.has(name);
+    }
+
+    changeCategory(draggedKey: string, targetKey: string) {
+        this.bookCategory.change(draggedKey, targetKey);
+
+        this.setCategory();
+    }
+
     addBookCategory(name: string, isbn: string) {
         this.bookCategory.addBook(name, isbn);
 
@@ -133,16 +164,22 @@ class BookStore2 {
         return this.library.get();
     }
 
-    setLibraries(newLibries: TLibraries) {
-        this.library.set(newLibries);
+    setLibraries() {
+        const newState = this.getState();
+        newState.libraries = this.getLibraries();
+        this.setStorage(newState);
     }
 
     addLibraries(code: string, name: string) {
         this.library.add(code, name);
+
+        this.setLibraries();
     }
 
     removeLibraries(code: string) {
         this.library.remove(code);
+
+        this.setLibraries();
     }
 
     hasLibrary(code: string) {
@@ -155,16 +192,22 @@ class BookStore2 {
         return this.regions.get();
     }
 
-    setRegions(newRegions: TRegions) {
-        this.regions.set(newRegions);
+    setRegions() {
+        const newState = this.getState();
+        newState.regions = this.getRegions();
+        this.setStorage(newState);
     }
 
     addRegion(name: string) {
         this.regions.add(name);
+
+        this.setRegions();
     }
 
     removeRegion(name: string) {
         this.regions.remove(name);
+
+        this.setRegions();
     }
 
     addDetailRegion(
@@ -173,10 +216,14 @@ class BookStore2 {
         detailCode: string
     ) {
         this.regions.addDetail(regionName, detailName, detailCode);
+
+        this.setRegions();
     }
 
     removeDetailRegion(regionName: string, detailName: string) {
         this.regions.removeDetail(regionName, detailName);
+
+        this.setRegions();
     }
 
     // subscribe
@@ -185,9 +232,41 @@ class BookStore2 {
     ) {
         this.bookCategory.subscribeCategoryUpdate(subscriber);
     }
+    unsubscribeToCategoryUpdate(
+        subscriber: (params: ICategoryUpdateProps) => void
+    ) {
+        this.bookCategory.unsubscribeCategoryUpdate(subscriber);
+    }
 
-    subscribeCategoryBookUpdate(subscriber: TSubscriberVoid) {
-        this.bookCategory.subscribeCategoryBookUpdate(subscriber);
+    subscribeBookUpdate(subscriber: TSubscriberVoid) {
+        this.bookCategory.subscribeBookUpdate(subscriber);
+    }
+    unsubscribeBookUpdate(subscriber: TSubscriberVoid) {
+        this.bookCategory.unsubscribeBookUpdate(subscriber);
+    }
+    notifyBookUpdate() {
+        this.bookCategory.notifyBookUpdate();
+    }
+
+    subscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
+        this.bookStateUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
+        this.bookStateUpdatePublisher.unsubscribe(subscriber);
+    }
+
+    subscribeToRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regions.subscribeToUpdatePublisher(subscriber);
+    }
+    unsubscribeToRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regions.unsubscribeToUpdatePublisher(subscriber);
+    }
+
+    subscribeToDetailRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regions.subscribeToDetailUpdatePublisher(subscriber);
+    }
+    unsubscribeToDetailRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regions.unsubscribeToDetailUpdatePublisher(subscriber);
     }
 }
 
