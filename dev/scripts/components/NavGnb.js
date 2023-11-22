@@ -1,5 +1,4 @@
-import { publishers } from "../modules/actions";
-import bookStore from "../modules/BookStore";
+import bookStore2 from "../modules/BookStore2";
 export default class NavGnb extends HTMLElement {
     constructor() {
         super();
@@ -15,10 +14,10 @@ export default class NavGnb extends HTMLElement {
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
-        publishers.categoryBookUpdate.subscribe(this.renderBookSize);
+        bookStore2.subscribeCategoryBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-        return Object.values(bookStore.category).reduce((sum, currentArray) => sum + currentArray.length, 0);
+        return Object.values(bookStore2.getCategory()).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
         const paths = this.PATHS;

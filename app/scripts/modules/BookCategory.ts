@@ -5,6 +5,7 @@ export default class BookCategory {
     private categorySort: TCategorySort;
     private categoryUpdatePublisher: Publisher<ICategoryUpdateProps> =
         new Publisher();
+    private categoryBookUpdatePublisher: Publisher = new Publisher();
 
     constructor(category: TBookCategories, categorySort: TCategorySort) {
         this.category = category;
@@ -72,6 +73,8 @@ export default class BookCategory {
         if (name in this.category) {
             this.category[name].unshift(isbn);
         }
+
+        this.categoryBookUpdatePublisher.notify();
     }
 
     hasBook(name: string, isbn: string) {
@@ -85,11 +88,19 @@ export default class BookCategory {
                 this.category[name].splice(index, 1);
             }
         }
+
+        this.categoryBookUpdatePublisher.notify();
     }
 
-    subscribeCategoryUpdate(subscriber: (data: ICategoryUpdateProps) => void) {
+    subscribeCategoryUpdate(
+        subscriber: (params: ICategoryUpdateProps) => void
+    ) {
         this.categoryUpdatePublisher.subscribe(
             subscriber as TSubscriberCallback<ICategoryUpdateProps>
         );
+    }
+
+    subscribeCategoryBookUpdate(subscriber: TSubscriberVoid) {
+        this.categoryBookUpdatePublisher.subscribe(subscriber);
     }
 }

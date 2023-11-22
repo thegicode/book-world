@@ -32,7 +32,7 @@ export default class FavoriteNav extends HTMLElement {
         this.render();
         this.overlayCatalog();
 
-        bookStore2.categoryUpdateSubscribe(
+        bookStore2.subscribeToCategoryUpdate(
             this
                 .handleCategoryChange as TSubscriberCallback<ICategoryUpdateProps>
         );
@@ -105,6 +105,7 @@ export default class FavoriteNav extends HTMLElement {
     }
 
     private handleCategoryChange({ type, payload }: ICategoryUpdateProps) {
+        console.log("FavoriteNav > handleCategoryChange", type);
         switch (type) {
             case "add":
                 {

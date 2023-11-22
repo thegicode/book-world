@@ -18,7 +18,7 @@ export default class FavoriteNav extends HTMLElement {
         }
         this.render();
         this.overlayCatalog();
-        bookStore2.categoryUpdateSubscribe(this
+        bookStore2.subscribeToCategoryUpdate(this
             .handleCategoryChange);
         // publishers.categoryUpdate.subscribe(
         //     this
@@ -74,6 +74,7 @@ export default class FavoriteNav extends HTMLElement {
     }
     handleCategoryChange({ type, payload }) {
         var _a, _b, _c;
+        console.log("FavoriteNav > handleCategoryChange", type);
         switch (type) {
             case "add":
                 {

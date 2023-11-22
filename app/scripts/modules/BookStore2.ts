@@ -70,10 +70,6 @@ class BookStore2 {
         return this.bookCategory.getCategorySort();
     }
 
-    getCategoryKeys() {
-        return Object.keys(this.getCategory());
-    }
-
     setCategory() {
         const newState = this.getState();
         newState.category = this.getCategory();
@@ -110,12 +106,15 @@ class BookStore2 {
 
     deleteCategorySort(name: string) {
         const index = this.bookCategory.deleteCatgorySort(name);
+
         this.setCategory();
         return index;
     }
 
     addBookCategory(name: string, isbn: string) {
         this.bookCategory.addBook(name, isbn);
+
+        this.setCategory();
     }
 
     hasBookCategory(name: string, isbn: string) {
@@ -124,6 +123,8 @@ class BookStore2 {
 
     removeBookCategory(name: string, isbn: string) {
         this.bookCategory.removeBook(name, isbn);
+
+        this.setCategory();
     }
 
     // Library 관련 메서드
@@ -179,8 +180,14 @@ class BookStore2 {
     }
 
     // subscribe
-    categoryUpdateSubscribe(subscriber: (data: ICategoryUpdateProps) => void) {
+    subscribeToCategoryUpdate(
+        subscriber: (params: ICategoryUpdateProps) => void
+    ) {
         this.bookCategory.subscribeCategoryUpdate(subscriber);
+    }
+
+    subscribeCategoryBookUpdate(subscriber: TSubscriberVoid) {
+        this.bookCategory.subscribeCategoryBookUpdate(subscriber);
     }
 }
 

@@ -200,3 +200,5 @@ type TLibraries = Record<string, string>;
 type TRegions = Record<string, Record<string, string>>;
 
 type TCategorySort = string[];
+
+type TSubscriberVoid = () => void;

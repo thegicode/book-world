@@ -63,7 +63,7 @@ export default class OverlayCategory extends HTMLElement {
 
         const fragment = new DocumentFragment();
 
-        bookStore2.getCategoryKeys().forEach((category, index) => {
+        bookStore2.getCategorySort().forEach((category, index) => {
             const cloned = this.createItem(category, index);
             fragment.appendChild(cloned);
         });

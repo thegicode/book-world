@@ -2,6 +2,7 @@ import Publisher from "../utils/Publisher";
 export default class BookCategory {
     constructor(category, categorySort) {
         this.categoryUpdatePublisher = new Publisher();
+        this.categoryBookUpdatePublisher = new Publisher();
         this.category = category;
         this.categorySort = categorySort;
     }
@@ -54,6 +55,7 @@ export default class BookCategory {
         if (name in this.category) {
             this.category[name].unshift(isbn);
         }
+        this.categoryBookUpdatePublisher.notify();
     }
     hasBook(name, isbn) {
         return name in this.category && this.category[name].includes(isbn);
@@ -65,9 +67,13 @@ export default class BookCategory {
                 this.category[name].splice(index, 1);
             }
         }
+        this.categoryBookUpdatePublisher.notify();
     }
     subscribeCategoryUpdate(subscriber) {
         this.categoryUpdatePublisher.subscribe(subscriber);
+    }
+    subscribeCategoryBookUpdate(subscriber) {
+        this.categoryBookUpdatePublisher.subscribe(subscriber);
     }
 }
 //# sourceMappingURL=BookCategory.js.map
