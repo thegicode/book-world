@@ -70,12 +70,10 @@ class BookModel {
     }
     renameFavorite(prevName, newName) {
         this.favoriteModel.rename(prevName, newName);
-        // this.favoriteModel.renameSortedFavoriteKeys(prevName, newName);
         this.setFavorites();
     }
     renameSortedFavoriteKey(prevName, newName) {
         this.favoriteModel.renameSortedKeys(prevName, newName);
-        // this.favoriteModel.renameSortedFavoriteKeys(prevName, newName);
         this.setFavorites();
     }
     deleteFavorite(name) {

@@ -25,7 +25,6 @@ class BookModel {
         const state = this.loadStorage() || cloneDeep(initialState);
 
         const { favorites, sortedFavoriteKeys, libraries, regions } = state;
-
         this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
         this.libraryModel = new LibraryModel(libraries);
         this.regionModel = new RegionModel(regions);
@@ -92,14 +91,12 @@ class BookModel {
 
     renameFavorite(prevName: string, newName: string) {
         this.favoriteModel.rename(prevName, newName);
-        // this.favoriteModel.renameSortedFavoriteKeys(prevName, newName);
 
         this.setFavorites();
     }
 
     renameSortedFavoriteKey(prevName: string, newName: string) {
         this.favoriteModel.renameSortedKeys(prevName, newName);
-        // this.favoriteModel.renameSortedFavoriteKeys(prevName, newName);
 
         this.setFavorites();
     }
