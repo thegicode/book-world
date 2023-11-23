@@ -57,7 +57,9 @@ export default class FavoriteModel {
 
     renameSortedKeys(prevName: string, newName: string) {
         const index = this._sortedKeys.indexOf(prevName);
-        this._sortedKeys[index] = newName;
+        if (index !== -1) {
+            this._sortedKeys[index] = newName;
+        }
     }
 
     change(draggedKey: string, targetKey: string) {
@@ -117,16 +119,12 @@ export default class FavoriteModel {
         this.bookUpdatePublisher.notify();
     }
 
-    subscribeFavoritesUpdate(
-        subscriber: (params: IFavoritesUpdateProps) => void
-    ) {
+    subscribeFavoritesUpdate(subscriber: TFavoritesUpdateSubscriber) {
         this.categoriesUpdatePublisher.subscribe(
             subscriber as TSubscriberCallback<IFavoritesUpdateProps>
         );
     }
-    unsubscribeFavoritesUpdate(
-        subscriber: (params: IFavoritesUpdateProps) => void
-    ) {
+    unsubscribeFavoritesUpdate(subscriber: TFavoritesUpdateSubscriber) {
         this.categoriesUpdatePublisher.unsubscribe(
             subscriber as TSubscriberCallback<IFavoritesUpdateProps>
         );

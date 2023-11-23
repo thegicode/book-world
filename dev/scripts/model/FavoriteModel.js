@@ -40,7 +40,9 @@ export default class FavoriteModel {
     }
     renameSortedKeys(prevName, newName) {
         const index = this._sortedKeys.indexOf(prevName);
-        this._sortedKeys[index] = newName;
+        if (index !== -1) {
+            this._sortedKeys[index] = newName;
+        }
     }
     change(draggedKey, targetKey) {
         const draggedIndex = this._sortedKeys.indexOf(draggedKey);

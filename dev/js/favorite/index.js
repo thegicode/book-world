@@ -823,7 +823,9 @@
     }
     renameSortedKeys(prevName, newName) {
       const index = this._sortedKeys.indexOf(prevName);
-      this._sortedKeys[index] = newName;
+      if (index !== -1) {
+        this._sortedKeys[index] = newName;
+      }
     }
     change(draggedKey, targetKey) {
       const draggedIndex = this._sortedKeys.indexOf(draggedKey);
@@ -968,6 +970,10 @@
     constructor() {
       this.bookStateUpdatePublisher = new Publisher();
       const state = this.loadStorage() || cloneDeep(initialState);
+      this.initializeModels(state);
+    }
+    // intialize
+    initializeModels(state) {
       const { favorites, sortedFavoriteKeys, libraries, regions } = state;
       this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
       this.libraryModel = new LibraryModel(libraries);

@@ -179,6 +179,8 @@ interface IBookState {
     regions: TRegions;
 }
 
+type TFavoritesUpdateSubscriber = (params: IFavoritesUpdateProps) => void;
+
 type TPublishers = {
     bookStateUpdate: Publisher<undefined>;
     categoryUpdate: Publisher<IFavoritesUpdateProps>;

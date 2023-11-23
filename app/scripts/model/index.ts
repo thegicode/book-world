@@ -23,7 +23,12 @@ class BookModel {
 
     constructor() {
         const state = this.loadStorage() || cloneDeep(initialState);
+        this.initializeModels(state);
+    }
 
+    // intialize
+
+    private initializeModels(state: IBookState) {
         const { favorites, sortedFavoriteKeys, libraries, regions } = state;
 
         this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
@@ -32,7 +37,7 @@ class BookModel {
     }
 
     // localStorage 관련
-    private loadStorage() {
+    private loadStorage(): IBookState | null {
         const storageData = localStorage.getItem(STORAGE_NAME);
         return storageData ? JSON.parse(storageData) : null;
     }
@@ -220,14 +225,10 @@ class BookModel {
         this.bookStateUpdatePublisher.unsubscribe(subscriber);
     }
 
-    subscribeToFavoritesUpdate(
-        subscriber: (params: IFavoritesUpdateProps) => void
-    ) {
+    subscribeToFavoritesUpdate(subscriber: TFavoritesUpdateSubscriber) {
         this.favoriteModel.subscribeFavoritesUpdate(subscriber);
     }
-    unsubscribeToFavoritesUpdate(
-        subscriber: (params: IFavoritesUpdateProps) => void
-    ) {
+    unsubscribeToFavoritesUpdate(subscriber: TFavoritesUpdateSubscriber) {
         this.favoriteModel.unsubscribeFavoritesUpdate(subscriber);
     }
 

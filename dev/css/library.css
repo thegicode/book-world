@@ -46,10 +46,10 @@ app-library a {
 }
 .gnb-item {
   flex: auto;
-  padding: 12px 0;
+  padding: 10px 0;
   text-decoration: none;
   color: #fff;
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
 }
 .gnb-item:hover, .gnb-item[aria-selected=true] {
