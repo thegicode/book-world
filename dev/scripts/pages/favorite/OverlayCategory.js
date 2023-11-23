@@ -8,17 +8,17 @@ export default class OverlayCategory extends HTMLElement {
             var _a;
             if (!this.addInput)
                 return;
-            const category = this.addInput.value;
-            if (!category)
+            const favorite = this.addInput.value;
+            if (!favorite)
                 return;
-            if (bookStore2.hasCategory(category)) {
+            if (bookStore2.hasFavorite(favorite)) {
                 alert("중복된 이름입니다.");
                 this.addInput.value = "";
                 return;
             }
-            bookStore2.addCategory(category);
-            const index = bookStore2.getCategorySort().length;
-            const cloned = this.createItem(category, index);
+            bookStore2.addfavorite(favorite);
+            const index = bookStore2.getSortedFavoriteKeys().length;
+            const cloned = this.createItem(favorite, index);
             (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
             this.addInput.value = "";
         };
@@ -70,52 +70,52 @@ export default class OverlayCategory extends HTMLElement {
         if (!this.list)
             return;
         const fragment = new DocumentFragment();
-        bookStore2.getCategorySort().forEach((category, index) => {
-            const cloned = this.createItem(category, index);
+        bookStore2.getSortedFavoriteKeys().forEach((favorite, index) => {
+            const cloned = this.createItem(favorite, index);
             fragment.appendChild(cloned);
         });
         this.list.appendChild(fragment);
     }
-    createItem(category, index) {
+    createItem(favorite, index) {
         if (this.template === null) {
             throw new Error("Template is null");
         }
         const cloned = cloneTemplate(this.template);
         cloned.dataset.index = index.toString();
-        cloned.dataset.category = category;
+        cloned.dataset.favorite = favorite;
         const input = cloned.querySelector("input[name='category']");
         if (input) {
-            input.value = category;
+            input.value = favorite;
         }
-        this.handleItemEvent(cloned, input, category);
+        this.handleItemEvent(cloned, input, favorite);
         this.changeItem(cloned);
         return cloned;
     }
-    handleItemEvent(cloned, input, category) {
+    handleItemEvent(cloned, input, favorite) {
         var _a, _b;
         (_a = cloned.querySelector(".renameButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-            const category = cloned.dataset.category;
-            this.handleRename(input, category, cloned);
+            const favorite = cloned.dataset.favorite;
+            this.handleRename(input, favorite, cloned);
         });
         (_b = cloned
-            .querySelector(".deleteButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => this.handleDelete(cloned, category));
+            .querySelector(".deleteButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => this.handleDelete(cloned, favorite));
         cloned.addEventListener("keydown", (event) => {
             const input = event.target;
             if (event.key === "Enter" && input.name === "category") {
-                this.handleRename(input, category);
+                this.handleRename(input, favorite);
             }
         });
     }
-    handleRename(input, category, cloned) {
+    handleRename(input, favorite, cloned) {
         const value = input.value;
-        if (!value || category === value || !cloned)
+        if (!value || favorite === value || !cloned)
             return;
-        cloned.dataset.category = value;
-        bookStore2.renameCategory(category, value);
+        cloned.dataset.favorite = value;
+        bookStore2.renameFavorite(favorite, value);
     }
-    handleDelete(cloned, category) {
+    handleDelete(cloned, favorite) {
         cloned.remove();
-        bookStore2.deleteCategory(category);
+        bookStore2.deleteFavorite(favorite);
     }
     changeItem(cloned) {
         const dragggerButton = cloned.querySelector(".dragger");
@@ -150,10 +150,10 @@ export default class OverlayCategory extends HTMLElement {
             if (!this.draggedItem || !this.list)
                 return;
             this.list.insertBefore(this.draggedItem, cloned);
-            const draggedKey = this.draggedItem.dataset.category;
-            const targetKey = cloned.dataset.category;
+            const draggedKey = this.draggedItem.dataset.favorite;
+            const targetKey = cloned.dataset.favorite;
             if (draggedKey && targetKey) {
-                bookStore2.changeCategory(draggedKey, targetKey);
+                bookStore2.changeFavorite(draggedKey, targetKey);
             }
             delete cloned.dataset.drag;
         });

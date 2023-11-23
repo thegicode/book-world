@@ -1,37 +1,37 @@
 import Publisher from "../utils/Publisher";
 
-export default class Region {
-    private regions: TRegions;
+export default class RegionModel {
+    private _regions: TRegions;
     private updatePublisher: Publisher = new Publisher();
     private detailUpdatePublisher: Publisher = new Publisher();
 
     constructor(regions: TRegions) {
-        this.regions = regions;
+        this._regions = regions;
     }
 
-    get() {
-        return { ...this.regions };
+    get regions() {
+        return { ...this._regions };
     }
 
-    set(nreRegions: TRegions) {
-        this.regions = nreRegions;
+    set regions(newRegions: TRegions) {
+        this._regions = newRegions;
     }
 
     add(name: string) {
-        this.regions[name] = {};
+        this._regions[name] = {};
 
         this.updatePublisher.notify();
     }
 
     remove(name: string) {
-        delete this.regions[name];
+        delete this._regions[name];
 
         this.updatePublisher.notify();
     }
 
     addDetail(regionName: string, detailName: string, detailCode: string) {
-        if (regionName in this.regions) {
-            this.regions[regionName][detailName] = detailCode;
+        if (regionName in this._regions) {
+            this._regions[regionName][detailName] = detailCode;
         }
 
         this.detailUpdatePublisher.notify();
@@ -39,10 +39,10 @@ export default class Region {
 
     removeDetail(regionName: string, detailName: string) {
         if (
-            regionName in this.regions &&
-            detailName in this.regions[regionName]
+            regionName in this._regions &&
+            detailName in this._regions[regionName]
         ) {
-            delete this.regions[regionName][detailName];
+            delete this._regions[regionName][detailName];
         }
 
         this.detailUpdatePublisher.notify();

@@ -19,7 +19,7 @@ interface ICategoryPayload {
     draggedIndex?: number;
 }
 
-interface ICategoryUpdateProps {
+interface IFavoritesUpdateProps {
     type: string;
     payload: ICategoryPayload;
 }
@@ -173,15 +173,15 @@ interface IPopularFetchParams {
 }
 
 interface IBookState {
-    category: TBookCategories;
-    categorySort: TCategorySort;
+    favorites: TFavoriteFavorites;
+    sortedFavoriteKeys: TSortedFavoriteKeys;
     libraries: TLibraries;
     regions: TRegions;
 }
 
 type TPublishers = {
     bookStateUpdate: Publisher<undefined>;
-    categoryUpdate: Publisher<ICategoryUpdateProps>;
+    categoryUpdate: Publisher<IFavoritesUpdateProps>;
     categoryBookUpdate: Publisher<undefined>;
     regionUpdate: Publisher<undefined>;
     detailRegionUpdate: Publisher<undefined>;
@@ -190,15 +190,15 @@ type TSubscriberCallback<T = undefined> = (payload?: T) => void;
 
 type TActionProps = (
     type: keyof TPublishers,
-    params: ICategoryUpdateProps
+    params: IFavoritesUpdateProps
 ) => void;
 
-type TBookCategories = Record<string, string[]>;
+type TFavoriteFavorites = Record<string, string[]>;
 
 type TLibraries = Record<string, string>;
 
 type TRegions = Record<string, Record<string, string>>;
 
-type TCategorySort = string[];
+type TSortedFavoriteKeys = string[];
 
 type TSubscriberVoid = () => void;

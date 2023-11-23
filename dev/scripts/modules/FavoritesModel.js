@@ -1,5 +1,5 @@
 import Publisher from "../utils/Publisher";
-export default class BookCategory {
+export default class FavoriteModel {
     constructor(favorites, sortedKeys) {
         this.favoritesUpdatePublisher = new Publisher();
         this.bookUpdatePublisher = new Publisher();
@@ -88,10 +88,10 @@ export default class BookCategory {
         }
         this.bookUpdatePublisher.notify();
     }
-    subscribeCategoryUpdate(subscriber) {
+    subscribeFavoritesUpdate(subscriber) {
         this.favoritesUpdatePublisher.subscribe(subscriber);
     }
-    unsubscribeCategoryUpdate(subscriber) {
+    unsubscribeFavoritesUpdate(subscriber) {
         this.favoritesUpdatePublisher.unsubscribe(subscriber);
     }
     subscribeBookUpdate(subscriber) {
@@ -100,8 +100,5 @@ export default class BookCategory {
     unsubscribeBookUpdate(subscriber) {
         this.bookUpdatePublisher.unsubscribe(subscriber);
     }
-    notifyBookUpdate() {
-        this.bookUpdatePublisher.notify();
-    }
 }
-//# sourceMappingURL=BookCategory.js.map
+//# sourceMappingURL=FavoritesModel.js.map

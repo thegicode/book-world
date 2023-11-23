@@ -1,34 +1,34 @@
-import Publisher from "../utils/Publisher";
-import BookCategory from "./BookCategory";
 import { STORAGE_NAME } from "./constants";
-import Library from "./Library";
-import Region from "./Region";
+import Publisher from "../utils/Publisher";
+import FavoriteModel from "./FavoriteModel";
+import LibraryModel from "./LibraryModel";
+import RegionModel from "./RegionModel";
 
 const cloneDeep = <T>(obj: T): T => {
     return JSON.parse(JSON.stringify(obj));
 };
 
 const initialState: IBookState = {
+    favorites: {},
+    sortedFavoriteKeys: [],
     libraries: {},
     regions: {},
-    category: {},
-    categorySort: [],
 };
 
 class BookStore2 {
-    private bookCategory: BookCategory;
-    private library: Library;
-    private regions: Region;
+    private favoriteModel: FavoriteModel;
+    private libraryModel: LibraryModel;
+    private regionModel: RegionModel;
     private bookStateUpdatePublisher: Publisher = new Publisher();
 
     constructor() {
         const state = this.loadStorage() || cloneDeep(initialState);
 
-        const { category, categorySort, libraries, regions } = state;
+        const { favorites, sortedFavoriteKeys, libraries, regions } = state;
 
-        this.bookCategory = new BookCategory(category, categorySort);
-        this.library = new Library(libraries);
-        this.regions = new Region(regions);
+        this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
+        this.libraryModel = new LibraryModel(libraries);
+        this.regionModel = new RegionModel(regions);
     }
 
     // localStorage 관련
@@ -50,118 +50,103 @@ class BookStore2 {
         return this.loadStorage();
     }
 
-    // setState(newState: IBookState) {
-    //     // this.state = cloneDeep(newState);
-    //     this.setStorage(newState);
-
-    //     console.log("setStorage and loadStorage", this.loadStorage());
-    // }
-
     setState(newState: IBookState) {
         this.setStorage(newState);
 
-        const { category, categorySort, libraries, regions } = newState;
-        this.bookCategory.set(category);
-        this.bookCategory.setCategorySort(categorySort);
-        this.library.set(libraries);
-        this.regions.set(regions);
+        const { favorites, sortedFavoriteKeys, libraries, regions } = newState;
+        this.favoriteModel.favorites = favorites;
+        this.favoriteModel.sortedKeys = sortedFavoriteKeys;
+        this.libraryModel.libraries = libraries;
+        this.regionModel.regions = regions;
 
         this.bookStateUpdatePublisher.notify();
     }
 
     resetState() {
-        this.setStorage(initialState);
-
-        const { category, categorySort, libraries, regions } = initialState;
-        this.bookCategory.set(category);
-        this.bookCategory.setCategorySort(categorySort);
-        this.library.set(libraries);
-        this.regions.set(regions);
-
-        this.bookStateUpdatePublisher.notify();
+        this.setState(initialState);
     }
 
-    // BookCategory 관련 메서드
+    // favorites 관련 메서드
 
-    getCategory() {
-        return this.bookCategory.get();
+    getFavorites() {
+        return this.favoriteModel.favorites;
     }
 
-    getCategorySort() {
-        return this.bookCategory.getCategorySort();
+    getSortedFavoriteKeys() {
+        return this.favoriteModel.sortedKeys;
     }
 
-    setCategory() {
+    setFavorites() {
         const newState = this.getState();
-        newState.category = this.getCategory();
-        newState.categorySort = this.getCategorySort();
+        newState.favorites = this.getFavorites();
+        newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
         this.setStorage(newState);
     }
 
-    addCategory(name: string) {
-        this.bookCategory.add(name);
-        this.bookCategory.addCategorySort(name);
+    addfavorite(name: string) {
+        this.favoriteModel.add(name);
+        this.favoriteModel.addSortedKeys(name);
 
-        this.setCategory();
+        this.setFavorites();
     }
 
-    renameCategory(prevName: string, newName: string) {
-        this.bookCategory.rename(prevName, newName);
-        // this.bookCategory.renameCategorySort(prevName, newName);
+    renameFavorite(prevName: string, newName: string) {
+        this.favoriteModel.rename(prevName, newName);
+        // this.favoriteModel.renameSortedFavoriteKeys(prevName, newName);
 
-        this.setCategory();
+        this.setFavorites();
     }
 
-    renameCategorySort(prevName: string, newName: string) {
-        this.bookCategory.renameCategorySort(prevName, newName);
-        // this.bookCategory.renameCategorySort(prevName, newName);
+    renameSortedFavoriteKey(prevName: string, newName: string) {
+        this.favoriteModel.renameSortedKeys(prevName, newName);
+        // this.favoriteModel.renameSortedFavoriteKeys(prevName, newName);
 
-        this.setCategory();
+        this.setFavorites();
     }
 
-    deleteCategory(name: string) {
-        this.bookCategory.delete(name);
+    deleteFavorite(name: string) {
+        this.favoriteModel.delete(name);
 
-        this.setCategory();
+        this.setFavorites();
     }
 
-    deleteCategorySort(name: string) {
-        const index = this.bookCategory.deleteCatgorySort(name);
+    deleteSortedFavoriteKey(name: string) {
+        const index = this.favoriteModel.deleteSortedKeys(name);
 
-        this.setCategory();
+        this.setFavorites();
         return index;
     }
 
-    hasCategory(name: string) {
-        return this.bookCategory.has(name);
+    hasFavorite(name: string) {
+        return this.favoriteModel.has(name);
     }
 
-    changeCategory(draggedKey: string, targetKey: string) {
-        this.bookCategory.change(draggedKey, targetKey);
+    changeFavorite(draggedKey: string, targetKey: string) {
+        this.favoriteModel.change(draggedKey, targetKey);
 
-        this.setCategory();
+        this.setFavorites();
     }
 
-    addBookCategory(name: string, isbn: string) {
-        this.bookCategory.addBook(name, isbn);
+    addFavoriteBook(name: string, isbn: string) {
+        this.favoriteModel.addBook(name, isbn);
 
-        this.setCategory();
+        this.setFavorites();
     }
 
-    hasBookCategory(name: string, isbn: string) {
-        return this.bookCategory.hasBook(name, isbn);
+    hasFavoriteBook(name: string, isbn: string) {
+        return this.favoriteModel.hasBook(name, isbn);
     }
 
-    removeBookCategory(name: string, isbn: string) {
-        this.bookCategory.removeBook(name, isbn);
+    removeFavoriteBook(name: string, isbn: string) {
+        this.favoriteModel.removeBook(name, isbn);
 
-        this.setCategory();
+        this.setFavorites();
     }
 
     // Library 관련 메서드
 
     getLibraries() {
-        return this.library.get();
+        return this.libraryModel.libraries;
     }
 
     setLibraries() {
@@ -171,25 +156,25 @@ class BookStore2 {
     }
 
     addLibraries(code: string, name: string) {
-        this.library.add(code, name);
+        this.libraryModel.add(code, name);
 
         this.setLibraries();
     }
 
     removeLibraries(code: string) {
-        this.library.remove(code);
+        this.libraryModel.remove(code);
 
         this.setLibraries();
     }
 
     hasLibrary(code: string) {
-        return this.library.has(code);
+        return this.libraryModel.has(code);
     }
 
     // Region 관련 메서드
 
     getRegions() {
-        return this.regions.get();
+        return this.regionModel.regions;
     }
 
     setRegions() {
@@ -199,13 +184,13 @@ class BookStore2 {
     }
 
     addRegion(name: string) {
-        this.regions.add(name);
+        this.regionModel.add(name);
 
         this.setRegions();
     }
 
     removeRegion(name: string) {
-        this.regions.remove(name);
+        this.regionModel.remove(name);
 
         this.setRegions();
     }
@@ -215,37 +200,34 @@ class BookStore2 {
         detailName: string,
         detailCode: string
     ) {
-        this.regions.addDetail(regionName, detailName, detailCode);
+        this.regionModel.addDetail(regionName, detailName, detailCode);
 
         this.setRegions();
     }
 
     removeDetailRegion(regionName: string, detailName: string) {
-        this.regions.removeDetail(regionName, detailName);
+        this.regionModel.removeDetail(regionName, detailName);
 
         this.setRegions();
     }
 
     // subscribe
-    subscribeToCategoryUpdate(
-        subscriber: (params: ICategoryUpdateProps) => void
+    subscribeToFavoritesUpdate(
+        subscriber: (params: IFavoritesUpdateProps) => void
     ) {
-        this.bookCategory.subscribeCategoryUpdate(subscriber);
+        this.favoriteModel.subscribeFavoritesUpdate(subscriber);
     }
-    unsubscribeToCategoryUpdate(
-        subscriber: (params: ICategoryUpdateProps) => void
+    unsubscribeToFavoritesUpdate(
+        subscriber: (params: IFavoritesUpdateProps) => void
     ) {
-        this.bookCategory.unsubscribeCategoryUpdate(subscriber);
+        this.favoriteModel.unsubscribeFavoritesUpdate(subscriber);
     }
 
     subscribeBookUpdate(subscriber: TSubscriberVoid) {
-        this.bookCategory.subscribeBookUpdate(subscriber);
+        this.favoriteModel.subscribeBookUpdate(subscriber);
     }
     unsubscribeBookUpdate(subscriber: TSubscriberVoid) {
-        this.bookCategory.unsubscribeBookUpdate(subscriber);
-    }
-    notifyBookUpdate() {
-        this.bookCategory.notifyBookUpdate();
+        this.favoriteModel.unsubscribeBookUpdate(subscriber);
     }
 
     subscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
@@ -256,17 +238,17 @@ class BookStore2 {
     }
 
     subscribeToRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regions.subscribeToUpdatePublisher(subscriber);
+        this.regionModel.subscribeToUpdatePublisher(subscriber);
     }
     unsubscribeToRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regions.unsubscribeToUpdatePublisher(subscriber);
+        this.regionModel.unsubscribeToUpdatePublisher(subscriber);
     }
 
     subscribeToDetailRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regions.subscribeToDetailUpdatePublisher(subscriber);
+        this.regionModel.subscribeToDetailUpdatePublisher(subscriber);
     }
     unsubscribeToDetailRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regions.unsubscribeToDetailUpdatePublisher(subscriber);
+        this.regionModel.unsubscribeToDetailUpdatePublisher(subscriber);
     }
 }
 

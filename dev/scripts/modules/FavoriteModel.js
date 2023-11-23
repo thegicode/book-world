@@ -1,16 +1,16 @@
 import Publisher from "../utils/Publisher";
-export default class BookCategory {
-    constructor(favorites, sortedKeys) {
-        this.favoritesUpdatePublisher = new Publisher();
+export default class FavoriteModel {
+    constructor(categories, sortedKeys) {
+        this.categoriesUpdatePublisher = new Publisher();
         this.bookUpdatePublisher = new Publisher();
-        this._favorites = favorites;
+        this._favorites = categories;
         this._sortedKeys = sortedKeys;
     }
     get favorites() {
         return Object.assign({}, this._favorites);
     }
-    set favorites(newFavorites) {
-        this._favorites = newFavorites;
+    set favorites(newCategories) {
+        this._favorites = newCategories;
     }
     get sortedKeys() {
         return [...this._sortedKeys];
@@ -20,7 +20,7 @@ export default class BookCategory {
     }
     add(name) {
         this._favorites[name] = [];
-        this.favoritesUpdatePublisher.notify({
+        this.categoriesUpdatePublisher.notify({
             type: "add",
             payload: { name },
         });
@@ -32,7 +32,7 @@ export default class BookCategory {
         if (prevName in this._favorites) {
             this._favorites[newName] = this._favorites[prevName];
             delete this._favorites[prevName];
-            this.favoritesUpdatePublisher.notify({
+            this.categoriesUpdatePublisher.notify({
                 type: "rename",
                 payload: { prevName, newName },
             });
@@ -47,7 +47,7 @@ export default class BookCategory {
         const targetIndex = this._sortedKeys.indexOf(targetKey);
         this._sortedKeys[targetIndex] = draggedKey;
         this._sortedKeys[draggedIndex] = targetKey;
-        this.favoritesUpdatePublisher.notify({
+        this.categoriesUpdatePublisher.notify({
             type: "change",
             payload: {
                 targetIndex,
@@ -57,7 +57,7 @@ export default class BookCategory {
     }
     delete(name) {
         delete this._favorites[name];
-        this.favoritesUpdatePublisher.notify({
+        this.categoriesUpdatePublisher.notify({
             type: "delete",
             payload: { name },
         });
@@ -88,11 +88,11 @@ export default class BookCategory {
         }
         this.bookUpdatePublisher.notify();
     }
-    subscribeCategoryUpdate(subscriber) {
-        this.favoritesUpdatePublisher.subscribe(subscriber);
+    subscribeFavoritesUpdate(subscriber) {
+        this.categoriesUpdatePublisher.subscribe(subscriber);
     }
-    unsubscribeCategoryUpdate(subscriber) {
-        this.favoritesUpdatePublisher.unsubscribe(subscriber);
+    unsubscribeFavoritesUpdate(subscriber) {
+        this.categoriesUpdatePublisher.unsubscribe(subscriber);
     }
     subscribeBookUpdate(subscriber) {
         this.bookUpdatePublisher.subscribe(subscriber);
@@ -100,8 +100,5 @@ export default class BookCategory {
     unsubscribeBookUpdate(subscriber) {
         this.bookUpdatePublisher.unsubscribe(subscriber);
     }
-    notifyBookUpdate() {
-        this.bookUpdatePublisher.notify();
-    }
 }
-//# sourceMappingURL=BookCategory.js.map
+//# sourceMappingURL=FavoriteModel.js.map

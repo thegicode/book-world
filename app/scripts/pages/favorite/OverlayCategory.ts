@@ -62,15 +62,15 @@ export default class OverlayCategory extends HTMLElement {
 
         const fragment = new DocumentFragment();
 
-        bookStore2.getCategorySort().forEach((category, index) => {
-            const cloned = this.createItem(category, index);
+        bookStore2.getSortedFavoriteKeys().forEach((favorite, index) => {
+            const cloned = this.createItem(favorite, index);
             fragment.appendChild(cloned);
         });
 
         this.list.appendChild(fragment);
     }
 
-    private createItem(category: string, index: number) {
+    private createItem(favorite: string, index: number) {
         if (this.template === null) {
             throw new Error("Template is null");
         }
@@ -78,16 +78,16 @@ export default class OverlayCategory extends HTMLElement {
         const cloned = cloneTemplate<HTMLLIElement>(this.template);
 
         cloned.dataset.index = index.toString();
-        cloned.dataset.category = category;
+        cloned.dataset.favorite = favorite;
 
         const input = cloned.querySelector(
             "input[name='category']"
         ) as HTMLInputElement;
         if (input) {
-            input.value = category;
+            input.value = favorite;
         }
 
-        this.handleItemEvent(cloned, input, category);
+        this.handleItemEvent(cloned, input, favorite);
 
         this.changeItem(cloned);
 
@@ -97,43 +97,43 @@ export default class OverlayCategory extends HTMLElement {
     private handleItemEvent(
         cloned: HTMLLIElement,
         input: HTMLInputElement,
-        category: string
+        favorite: string
     ) {
         cloned.querySelector(".renameButton")?.addEventListener("click", () => {
-            const category = cloned.dataset.category as string;
-            this.handleRename(input, category, cloned);
+            const favorite = cloned.dataset.favorite as string;
+            this.handleRename(input, favorite, cloned);
         });
 
         cloned
             .querySelector(".deleteButton")
             ?.addEventListener("click", () =>
-                this.handleDelete(cloned, category)
+                this.handleDelete(cloned, favorite)
             );
 
         cloned.addEventListener("keydown", (event: KeyboardEvent) => {
             const input = event.target as HTMLInputElement;
             if (event.key === "Enter" && input.name === "category") {
-                this.handleRename(input, category);
+                this.handleRename(input, favorite);
             }
         });
     }
 
     private handleRename(
         input: HTMLInputElement,
-        category: string,
+        favorite: string,
         cloned?: HTMLElement
     ) {
         const value = input.value;
-        if (!value || category === value || !cloned) return;
+        if (!value || favorite === value || !cloned) return;
 
-        cloned.dataset.category = value;
+        cloned.dataset.favorite = value;
 
-        bookStore2.renameCategory(category, value);
+        bookStore2.renameFavorite(favorite, value);
     }
 
-    private handleDelete(cloned: HTMLLIElement, category: string) {
+    private handleDelete(cloned: HTMLLIElement, favorite: string) {
         cloned.remove();
-        bookStore2.deleteCategory(category);
+        bookStore2.deleteFavorite(favorite);
     }
 
     private changeItem(cloned: HTMLLIElement) {
@@ -176,10 +176,10 @@ export default class OverlayCategory extends HTMLElement {
             if (!this.draggedItem || !this.list) return;
 
             this.list.insertBefore(this.draggedItem, cloned);
-            const draggedKey = this.draggedItem.dataset.category;
-            const targetKey = cloned.dataset.category;
+            const draggedKey = this.draggedItem.dataset.favorite;
+            const targetKey = cloned.dataset.favorite;
             if (draggedKey && targetKey) {
-                bookStore2.changeCategory(draggedKey, targetKey);
+                bookStore2.changeFavorite(draggedKey, targetKey);
             }
             delete cloned.dataset.drag;
         });
@@ -188,19 +188,19 @@ export default class OverlayCategory extends HTMLElement {
     private handleClickAdd = () => {
         if (!this.addInput) return;
 
-        const category = this.addInput.value;
-        if (!category) return;
+        const favorite = this.addInput.value;
+        if (!favorite) return;
 
-        if (bookStore2.hasCategory(category)) {
+        if (bookStore2.hasFavorite(favorite)) {
             alert("중복된 이름입니다.");
             this.addInput.value = "";
             return;
         }
 
-        bookStore2.addCategory(category);
+        bookStore2.addfavorite(favorite);
 
-        const index = bookStore2.getCategorySort().length;
-        const cloned = this.createItem(category, index);
+        const index = bookStore2.getSortedFavoriteKeys().length;
+        const cloned = this.createItem(favorite, index);
         this.list?.appendChild(cloned);
 
         this.addInput.value = "";

@@ -53,7 +53,7 @@ export default class CategorySelector extends HTMLElement {
         container.className = "category";
         container.hidden = true;
         bookStore2
-            .getCategorySort()
+            .getSortedFavoriteKeys()
             .forEach((category: string) =>
                 this.createCategoryItem(container, category, this.isbn || "")
             );
@@ -80,7 +80,7 @@ export default class CategorySelector extends HTMLElement {
     private createCheckbox(category: string, ISBN: string) {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        if (bookStore2.hasBookCategory(category, ISBN)) {
+        if (bookStore2.hasFavoriteBook(category, ISBN)) {
             checkbox.checked = true;
         }
 
@@ -96,12 +96,12 @@ export default class CategorySelector extends HTMLElement {
         category: string,
         ISBN: string
     ) {
-        const isBookInCategory = bookStore2.hasBookCategory(category, ISBN);
+        const isBookInCategory = bookStore2.hasFavoriteBook(category, ISBN);
 
         if (isBookInCategory) {
-            bookStore2.removeBookCategory(category, ISBN);
+            bookStore2.removeFavoriteBook(category, ISBN);
         } else {
-            bookStore2.addBookCategory(category, ISBN);
+            bookStore2.addFavoriteBook(category, ISBN);
         }
 
         checkbox.checked = !isBookInCategory;

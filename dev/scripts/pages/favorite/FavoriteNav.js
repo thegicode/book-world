@@ -10,17 +10,17 @@ export default class FavoriteNav extends HTMLElement {
     }
     connectedCallback() {
         if (this.category === null) {
-            this.category = bookStore2.getCategorySort()[0];
+            this.category = bookStore2.getSortedFavoriteKeys()[0];
             const url = this.getUrl(this.category);
             location.search = url;
         }
         this.render();
         this.overlayCatalog();
-        bookStore2.subscribeToCategoryUpdate(this
+        bookStore2.subscribeToFavoritesUpdate(this
             .handleCategoryChange);
     }
     disconnectedCallback() {
-        bookStore2.unsubscribeToCategoryUpdate(this
+        bookStore2.unsubscribeToFavoritesUpdate(this
             .handleCategoryChange);
     }
     render() {
@@ -28,7 +28,7 @@ export default class FavoriteNav extends HTMLElement {
             return;
         this.nav.innerHTML = "";
         const fragment = new DocumentFragment();
-        bookStore2.getCategorySort().forEach((category) => {
+        bookStore2.getSortedFavoriteKeys().forEach((category) => {
             const el = this.createItem(category);
             fragment.appendChild(el);
         });
@@ -80,10 +80,10 @@ export default class FavoriteNav extends HTMLElement {
                     const prevName = payload.prevName;
                     const newName = payload.newName;
                     const index = bookStore2
-                        .getCategorySort()
+                        .getSortedFavoriteKeys()
                         .indexOf(prevName);
                     this.nav.querySelectorAll("a")[index].textContent = newName;
-                    bookStore2.renameCategorySort(prevName, newName);
+                    bookStore2.renameSortedFavoriteKey(prevName, newName);
                     if (this.category === prevName) {
                         location.search = this.getUrl(newName);
                     }
@@ -91,7 +91,7 @@ export default class FavoriteNav extends HTMLElement {
                 break;
             case "delete": {
                 const name = payload.name;
-                const deletedIndex = bookStore2.deleteCategorySort(name);
+                const deletedIndex = bookStore2.deleteSortedFavoriteKey(name);
                 if (deletedIndex > -1) {
                     (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[deletedIndex].remove();
                 }

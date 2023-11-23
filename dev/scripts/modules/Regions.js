@@ -45,4 +45,4 @@ export default class Regions {
         this.detailUpdatePublisher.unsubscribe(subscriber);
     }
 }
-//# sourceMappingURL=Region.js.map
+//# sourceMappingURL=Regions.js.map
