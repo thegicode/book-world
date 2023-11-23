@@ -16,10 +16,6 @@ class BookModel {
     constructor() {
         this.bookStateUpdatePublisher = new Publisher();
         const state = this.loadStorage() || cloneDeep(initialState);
-        this.initializeModels(state);
-    }
-    // intialize
-    initializeModels(state) {
         const { favorites, sortedFavoriteKeys, libraries, regions } = state;
         this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
         this.libraryModel = new LibraryModel(libraries);

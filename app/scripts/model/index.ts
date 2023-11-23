@@ -23,12 +23,7 @@ class BookModel {
 
     constructor() {
         const state = this.loadStorage() || cloneDeep(initialState);
-        this.initializeModels(state);
-    }
 
-    // intialize
-
-    private initializeModels(state: IBookState) {
         const { favorites, sortedFavoriteKeys, libraries, regions } = state;
 
         this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
@@ -37,7 +32,7 @@ class BookModel {
     }
 
     // localStorage 관련
-    private loadStorage(): IBookState | null {
+    private loadStorage() {
         const storageData = localStorage.getItem(STORAGE_NAME);
         return storageData ? JSON.parse(storageData) : null;
     }
