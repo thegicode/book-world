@@ -762,7 +762,7 @@
     }
   };
 
-  // dev/scripts/modules/constants.js
+  // dev/scripts/model/constants.js
   var STORAGE_NAME = "BookWorld";
 
   // dev/scripts/utils/Publisher.js
@@ -781,7 +781,7 @@
     }
   };
 
-  // dev/scripts/modules/FavoriteModel.js
+  // dev/scripts/model/FavoriteModel.js
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -885,7 +885,7 @@
     }
   };
 
-  // dev/scripts/modules/LibraryModel.js
+  // dev/scripts/model/LibraryModel.js
   var LibraryModel = class {
     constructor(libraries) {
       this._libraries = libraries;
@@ -907,7 +907,7 @@
     }
   };
 
-  // dev/scripts/modules/RegionModel.js
+  // dev/scripts/model/RegionModel.js
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -954,7 +954,7 @@
     }
   };
 
-  // dev/scripts/modules/BookStore2.js
+  // dev/scripts/model/index.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -964,7 +964,7 @@
     libraries: {},
     regions: {}
   };
-  var BookStore2 = class {
+  var BookModel = class {
     constructor() {
       this.bookStateUpdatePublisher = new Publisher();
       const state = this.loadStorage() || cloneDeep(initialState);
@@ -1131,8 +1131,8 @@
       this.regionModel.unsubscribeToDetailUpdatePublisher(subscriber);
     }
   };
-  var bookStore2 = new BookStore2();
-  var BookStore2_default = bookStore2;
+  var bookModel = new BookModel();
+  var model_default = bookModel;
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
@@ -1150,13 +1150,13 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      BookStore2_default.subscribeBookUpdate(this.renderBookSize);
+      model_default.subscribeBookUpdate(this.renderBookSize);
     }
     disconnectedCallback() {
-      BookStore2_default.unsubscribeBookUpdate(this.renderBookSize);
+      model_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(BookStore2_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -1228,24 +1228,24 @@
       const container = document.createElement("div");
       container.className = "category";
       container.hidden = true;
-      BookStore2_default.getSortedFavoriteKeys().forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      model_default.getSortedFavoriteKeys().forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
       return container;
     }
     createCheckbox(category, ISBN) {
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
-      if (BookStore2_default.hasFavoriteBook(category, ISBN)) {
+      if (model_default.hasFavoriteBook(category, ISBN)) {
         checkbox.checked = true;
       }
       checkbox.addEventListener("change", () => this.onChange(checkbox, category, ISBN));
       return checkbox;
     }
     onChange(checkbox, category, ISBN) {
-      const isBookInCategory = BookStore2_default.hasFavoriteBook(category, ISBN);
+      const isBookInCategory = model_default.hasFavoriteBook(category, ISBN);
       if (isBookInCategory) {
-        BookStore2_default.removeFavoriteBook(category, ISBN);
+        model_default.removeFavoriteBook(category, ISBN);
       } else {
-        BookStore2_default.addFavoriteBook(category, ISBN);
+        model_default.addFavoriteBook(category, ISBN);
       }
       checkbox.checked = !isBookInCategory;
     }
@@ -1314,7 +1314,7 @@
       this.locationCategory = params.get("category");
     }
     connectedCallback() {
-      const categorySort = BookStore2_default.getSortedFavoriteKeys();
+      const categorySort = model_default.getSortedFavoriteKeys();
       if (categorySort.length === 0) {
         this.renderMessage("\uAD00\uC2EC \uCE74\uD14C\uACE0\uB9AC\uB97C \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.");
         return;
@@ -1327,7 +1327,7 @@
     render(key) {
       const fragment = new DocumentFragment();
       this.booksElement.innerHTML = "";
-      const data = BookStore2_default.getFavorites()[key];
+      const data = model_default.getFavorites()[key];
       if (data.length === 0) {
         this.renderMessage("\uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
         return;
@@ -1364,23 +1364,23 @@
     }
     connectedCallback() {
       if (this.category === null) {
-        this.category = BookStore2_default.getSortedFavoriteKeys()[0];
+        this.category = model_default.getSortedFavoriteKeys()[0];
         const url = this.getUrl(this.category);
         location.search = url;
       }
       this.render();
       this.overlayCatalog();
-      BookStore2_default.subscribeToFavoritesUpdate(this.handleCategoryChange);
+      model_default.subscribeToFavoritesUpdate(this.handleCategoryChange);
     }
     disconnectedCallback() {
-      BookStore2_default.unsubscribeToFavoritesUpdate(this.handleCategoryChange);
+      model_default.unsubscribeToFavoritesUpdate(this.handleCategoryChange);
     }
     render() {
       if (!this.nav)
         return;
       this.nav.innerHTML = "";
       const fragment = new DocumentFragment();
-      BookStore2_default.getSortedFavoriteKeys().forEach((category) => {
+      model_default.getSortedFavoriteKeys().forEach((category) => {
         const el = this.createItem(category);
         fragment.appendChild(el);
       });
@@ -1431,9 +1431,9 @@
               return;
             const prevName = payload.prevName;
             const newName = payload.newName;
-            const index = BookStore2_default.getSortedFavoriteKeys().indexOf(prevName);
+            const index = model_default.getSortedFavoriteKeys().indexOf(prevName);
             this.nav.querySelectorAll("a")[index].textContent = newName;
-            BookStore2_default.renameSortedFavoriteKey(prevName, newName);
+            model_default.renameSortedFavoriteKey(prevName, newName);
             if (this.category === prevName) {
               location.search = this.getUrl(newName);
             }
@@ -1441,7 +1441,7 @@
           break;
         case "delete": {
           const name = payload.name;
-          const deletedIndex = BookStore2_default.deleteSortedFavoriteKey(name);
+          const deletedIndex = model_default.deleteSortedFavoriteKey(name);
           if (deletedIndex > -1) {
             (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[deletedIndex].remove();
           }
@@ -1560,7 +1560,7 @@
       const anchorEl = this.querySelector("a");
       if (anchorEl)
         anchorEl.href = `/book?isbn=${data.book.isbn13}`;
-      if (this.libraryButton && Object.keys(BookStore2_default.getLibraries()).length === 0) {
+      if (this.libraryButton && Object.keys(model_default.getLibraries()).length === 0) {
         this.libraryButton.hidden = true;
       }
       this.removeLoading();
@@ -1574,7 +1574,7 @@
     onLibrary() {
       const isbn = this.dataset.isbn;
       if (this.libraryBookExist && this.libraryButton) {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, BookStore2_default.getLibraries());
+        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, model_default.getLibraries());
         if (this.libraryButton) {
           this.libraryButton.hidden = true;
         }
@@ -1615,13 +1615,13 @@
         const favorite = this.addInput.value;
         if (!favorite)
           return;
-        if (BookStore2_default.hasFavorite(favorite)) {
+        if (model_default.hasFavorite(favorite)) {
           alert("\uC911\uBCF5\uB41C \uC774\uB984\uC785\uB2C8\uB2E4.");
           this.addInput.value = "";
           return;
         }
-        BookStore2_default.addfavorite(favorite);
-        const index = BookStore2_default.getSortedFavoriteKeys().length;
+        model_default.addfavorite(favorite);
+        const index = model_default.getSortedFavoriteKeys().length;
         const cloned = this.createItem(favorite, index);
         (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
         this.addInput.value = "";
@@ -1674,7 +1674,7 @@
       if (!this.list)
         return;
       const fragment = new DocumentFragment();
-      BookStore2_default.getSortedFavoriteKeys().forEach((favorite, index) => {
+      model_default.getSortedFavoriteKeys().forEach((favorite, index) => {
         const cloned = this.createItem(favorite, index);
         fragment.appendChild(cloned);
       });
@@ -1714,11 +1714,11 @@
       if (!value || favorite === value || !cloned)
         return;
       cloned.dataset.favorite = value;
-      BookStore2_default.renameFavorite(favorite, value);
+      model_default.renameFavorite(favorite, value);
     }
     handleDelete(cloned, favorite) {
       cloned.remove();
-      BookStore2_default.deleteFavorite(favorite);
+      model_default.deleteFavorite(favorite);
     }
     changeItem(cloned) {
       const dragggerButton = cloned.querySelector(".dragger");
@@ -1753,7 +1753,7 @@
         const draggedKey = this.draggedItem.dataset.favorite;
         const targetKey = cloned.dataset.favorite;
         if (draggedKey && targetKey) {
-          BookStore2_default.changeFavorite(draggedKey, targetKey);
+          model_default.changeFavorite(draggedKey, targetKey);
         }
         delete cloned.dataset.drag;
       });

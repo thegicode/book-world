@@ -1,4 +1,4 @@
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 
 export default class FavoriteRegions extends HTMLElement {
     private container: HTMLElement | null = null;
@@ -12,20 +12,20 @@ export default class FavoriteRegions extends HTMLElement {
         this.container = this.querySelector(".favorites") as HTMLElement;
         this.render();
 
-        bookStore2.subscribeToBookStateUpdate(this.render);
-        bookStore2.subscribeToDetailRegionUpdate(this.render);
+        bookModel.subscribeToBookStateUpdate(this.render);
+        bookModel.subscribeToDetailRegionUpdate(this.render);
     }
 
     disconnectedCallback() {
-        bookStore2.unsubscribeToBookStateUpdate(this.render);
-        bookStore2.unsubscribeToDetailRegionUpdate(this.render);
+        bookModel.unsubscribeToBookStateUpdate(this.render);
+        bookModel.unsubscribeToDetailRegionUpdate(this.render);
     }
 
     private render() {
         if (!this.container) return;
 
         this.container.innerHTML = "";
-        const regions = bookStore2.getRegions();
+        const regions = bookModel.getRegions();
         for (const regionName in regions) {
             const detailRegions = Object.keys(regions[regionName]);
             if (detailRegions.length > 0) {

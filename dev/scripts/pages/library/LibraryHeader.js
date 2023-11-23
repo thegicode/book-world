@@ -1,6 +1,6 @@
 import { cloneTemplate } from "../../utils/helpers";
 import { libraryElement } from "./selectors";
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 export default class LibraryRegion extends HTMLElement {
     constructor() {
         super();
@@ -22,7 +22,7 @@ export default class LibraryRegion extends HTMLElement {
         this.detailSelectElement.removeEventListener("change", this.handleDetailSelectChange);
     }
     renderFavoriteRegions() {
-        const favoriteRegions = bookStore2.getRegions();
+        const favoriteRegions = bookModel.getRegions();
         if (Object.keys(favoriteRegions).length === 0)
             return;
         const container = this.querySelector(".region");
@@ -58,7 +58,7 @@ export default class LibraryRegion extends HTMLElement {
     }
     renderDetailRegion(regionName) {
         this.detailSelectElement.innerHTML = "";
-        const detailRegionObject = bookStore2.getRegions()[regionName];
+        const detailRegionObject = bookModel.getRegions()[regionName];
         for (const [key, value] of Object.entries(detailRegionObject)) {
             const optionEl = document.createElement("option");
             optionEl.textContent = key;

@@ -1,4 +1,4 @@
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 import { cloneTemplate } from "../../utils/helpers";
 
 export default class OverlayCategory extends HTMLElement {
@@ -62,7 +62,7 @@ export default class OverlayCategory extends HTMLElement {
 
         const fragment = new DocumentFragment();
 
-        bookStore2.getSortedFavoriteKeys().forEach((favorite, index) => {
+        bookModel.getSortedFavoriteKeys().forEach((favorite, index) => {
             const cloned = this.createItem(favorite, index);
             fragment.appendChild(cloned);
         });
@@ -128,12 +128,12 @@ export default class OverlayCategory extends HTMLElement {
 
         cloned.dataset.favorite = value;
 
-        bookStore2.renameFavorite(favorite, value);
+        bookModel.renameFavorite(favorite, value);
     }
 
     private handleDelete(cloned: HTMLLIElement, favorite: string) {
         cloned.remove();
-        bookStore2.deleteFavorite(favorite);
+        bookModel.deleteFavorite(favorite);
     }
 
     private changeItem(cloned: HTMLLIElement) {
@@ -179,7 +179,7 @@ export default class OverlayCategory extends HTMLElement {
             const draggedKey = this.draggedItem.dataset.favorite;
             const targetKey = cloned.dataset.favorite;
             if (draggedKey && targetKey) {
-                bookStore2.changeFavorite(draggedKey, targetKey);
+                bookModel.changeFavorite(draggedKey, targetKey);
             }
             delete cloned.dataset.drag;
         });
@@ -191,15 +191,15 @@ export default class OverlayCategory extends HTMLElement {
         const favorite = this.addInput.value;
         if (!favorite) return;
 
-        if (bookStore2.hasFavorite(favorite)) {
+        if (bookModel.hasFavorite(favorite)) {
             alert("중복된 이름입니다.");
             this.addInput.value = "";
             return;
         }
 
-        bookStore2.addfavorite(favorite);
+        bookModel.addfavorite(favorite);
 
-        const index = bookStore2.getSortedFavoriteKeys().length;
+        const index = bookModel.getSortedFavoriteKeys().length;
         const cloned = this.createItem(favorite, index);
         this.list?.appendChild(cloned);
 

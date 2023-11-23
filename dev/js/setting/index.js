@@ -609,7 +609,7 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // dev/scripts/modules/constants.js
+  // dev/scripts/model/constants.js
   var STORAGE_NAME = "BookWorld";
 
   // dev/scripts/utils/Publisher.js
@@ -628,7 +628,7 @@
     }
   };
 
-  // dev/scripts/modules/FavoriteModel.js
+  // dev/scripts/model/FavoriteModel.js
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -732,7 +732,7 @@
     }
   };
 
-  // dev/scripts/modules/LibraryModel.js
+  // dev/scripts/model/LibraryModel.js
   var LibraryModel = class {
     constructor(libraries) {
       this._libraries = libraries;
@@ -754,7 +754,7 @@
     }
   };
 
-  // dev/scripts/modules/RegionModel.js
+  // dev/scripts/model/RegionModel.js
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -801,7 +801,7 @@
     }
   };
 
-  // dev/scripts/modules/BookStore2.js
+  // dev/scripts/model/index.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -811,7 +811,7 @@
     libraries: {},
     regions: {}
   };
-  var BookStore2 = class {
+  var BookModel = class {
     constructor() {
       this.bookStateUpdatePublisher = new Publisher();
       const state = this.loadStorage() || cloneDeep(initialState);
@@ -978,8 +978,8 @@
       this.regionModel.unsubscribeToDetailUpdatePublisher(subscriber);
     }
   };
-  var bookStore2 = new BookStore2();
-  var BookStore2_default = bookStore2;
+  var bookModel = new BookModel();
+  var model_default = bookModel;
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
@@ -997,13 +997,13 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      BookStore2_default.subscribeBookUpdate(this.renderBookSize);
+      model_default.subscribeBookUpdate(this.renderBookSize);
     }
     disconnectedCallback() {
-      BookStore2_default.unsubscribeBookUpdate(this.renderBookSize);
+      model_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(BookStore2_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -1083,10 +1083,10 @@
     }
     connectedCallback() {
       this.fetchAndRender();
-      BookStore2_default.subscribeToBookStateUpdate(this.fetchAndRender);
+      model_default.subscribeToBookStateUpdate(this.fetchAndRender);
     }
     discinnectedCallback() {
-      BookStore2_default.unsubscribeToBookStateUpdate(this.fetchAndRender);
+      model_default.unsubscribeToBookStateUpdate(this.fetchAndRender);
     }
     fetchAndRender() {
       return __awaiter2(this, void 0, void 0, function* () {
@@ -1114,7 +1114,7 @@
       }
       const fragment = new DocumentFragment();
       const regionData = this.regionData["region"];
-      const favoriteRegions = Object.keys(BookStore2_default.getRegions());
+      const favoriteRegions = Object.keys(model_default.getRegions());
       for (const [key, value] of Object.entries(regionData)) {
         const regionElement = this.createRegionElement(this.template, key, value, favoriteRegions);
         fragment.appendChild(regionElement);
@@ -1140,9 +1140,9 @@
         }
         const key = spanElement.textContent;
         if (checkbox.checked) {
-          BookStore2_default.addRegion(key);
+          model_default.addRegion(key);
         } else {
-          BookStore2_default.removeRegion(key);
+          model_default.removeRegion(key);
         }
       };
     }
@@ -1158,11 +1158,11 @@
       this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
-      BookStore2_default.subscribeToRegionUpdate(this.renderRegion);
+      model_default.subscribeToRegionUpdate(this.renderRegion);
       CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     disconnectedCallback() {
-      BookStore2_default.unsubscribeToRegionUpdate(this.renderRegion);
+      model_default.unsubscribeToRegionUpdate(this.renderRegion);
       CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     setRegionData(event) {
@@ -1171,7 +1171,7 @@
       this.renderRegion();
     }
     renderRegion() {
-      const favoriteRegions = Object.keys(BookStore2_default.getRegions());
+      const favoriteRegions = Object.keys(model_default.getRegions());
       const container = this.querySelector(".regions");
       if (!container)
         return;
@@ -1213,7 +1213,7 @@
       const detailRegionsElement = this.querySelector(".detailRegions");
       if (!detailRegionsElement)
         return;
-      const regionObj = BookStore2_default.getRegions()[regionName];
+      const regionObj = model_default.getRegions()[regionName];
       const regionCodes = regionObj ? Object.values(regionObj) : [];
       const template = document.querySelector("#tp-detail-region");
       if (!template)
@@ -1260,8 +1260,8 @@
     }
     onChangeDetail() {
       const region = this.region;
-      if (!BookStore2_default.getRegions()[region]) {
-        BookStore2_default.addRegion(region);
+      if (!model_default.getRegions()[region]) {
+        model_default.addRegion(region);
       }
       const checkboxes = document.querySelectorAll("[name=detailRegion]");
       checkboxes.forEach((checkbox) => {
@@ -1271,9 +1271,9 @@
           const labelElement = inputCheckbox.nextElementSibling;
           const label = (labelElement === null || labelElement === void 0 ? void 0 : labelElement.textContent) || "";
           if (inputCheckbox.checked) {
-            BookStore2_default.addDetailRegion(region, label, value);
+            model_default.addDetailRegion(region, label, value);
           } else {
-            BookStore2_default.removeDetailRegion(region, label);
+            model_default.removeDetailRegion(region, label);
           }
         });
       });
@@ -1290,18 +1290,18 @@
     connectedCallback() {
       this.container = this.querySelector(".favorites");
       this.render();
-      BookStore2_default.subscribeToBookStateUpdate(this.render);
-      BookStore2_default.subscribeToDetailRegionUpdate(this.render);
+      model_default.subscribeToBookStateUpdate(this.render);
+      model_default.subscribeToDetailRegionUpdate(this.render);
     }
     disconnectedCallback() {
-      BookStore2_default.unsubscribeToBookStateUpdate(this.render);
-      BookStore2_default.unsubscribeToDetailRegionUpdate(this.render);
+      model_default.unsubscribeToBookStateUpdate(this.render);
+      model_default.unsubscribeToDetailRegionUpdate(this.render);
     }
     render() {
       if (!this.container)
         return;
       this.container.innerHTML = "";
-      const regions = BookStore2_default.getRegions();
+      const regions = model_default.getRegions();
       for (const regionName in regions) {
         const detailRegions = Object.keys(regions[regionName]);
         if (detailRegions.length > 0) {
@@ -1361,7 +1361,7 @@
       this.defaultButton = null;
       this.resetButton = null;
       this.savetStorage = () => {
-        const state = BookStore2_default.getState();
+        const state = model_default.getState();
         if (!state)
           return;
         fetch(SAMPLE_JSON_URL, {
@@ -1369,7 +1369,7 @@
           headers: {
             "Content-Type": "appication/json"
           },
-          body: JSON.stringify(BookStore2_default.getState())
+          body: JSON.stringify(model_default.getState())
         }).then(function(reponse) {
           if (!reponse.ok) {
             throw new Error("\uC11C\uBC84 \uC751\uB2F5 \uC624\uB958" + reponse.status);
@@ -1384,7 +1384,7 @@
       this.setLocalStorageToBase = () => __awaiter3(this, void 0, void 0, function* () {
         try {
           const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
-          BookStore2_default.setState(data);
+          model_default.setState(data);
           console.log("Saved local stronage by base data!");
         } catch (error) {
           console.error(error);
@@ -1392,7 +1392,7 @@
         }
       });
       this.resetStorage = () => {
-        BookStore2_default.resetState();
+        model_default.resetState();
       };
       this.saveButton = this.querySelector(".saveStorage button");
       this.defaultButton = this.querySelector(".localStorage button");

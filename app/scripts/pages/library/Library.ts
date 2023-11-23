@@ -1,7 +1,7 @@
 import { CustomFetch } from "../../utils/index";
 import LibraryItem from "./LibraryItem";
 import { cloneTemplate } from "../../utils/helpers";
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 
 export default class Library extends HTMLElement {
     private _regionCode: string | null = null;
@@ -78,7 +78,7 @@ export default class Library extends HTMLElement {
         const libraryItem = cloneTemplate<LibraryItem>(this.itemTemplate);
         libraryItem.data = lib;
 
-        if (bookStore2.hasLibrary(lib.libCode)) {
+        if (bookModel.hasLibrary(lib.libCode)) {
             libraryItem.dataset.has = "true";
             fragment.prepend(libraryItem);
             // fragment.insertBefore(libraryItem, fragment.firstChild);

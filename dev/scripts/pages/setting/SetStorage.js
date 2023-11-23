@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { CustomFetch } from "../../utils/index";
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 export default class SetStorage extends HTMLElement {
     constructor() {
@@ -17,7 +17,7 @@ export default class SetStorage extends HTMLElement {
         this.defaultButton = null;
         this.resetButton = null;
         this.savetStorage = () => {
-            const state = bookStore2.getState();
+            const state = bookModel.getState();
             if (!state)
                 return;
             fetch(SAMPLE_JSON_URL, {
@@ -25,7 +25,7 @@ export default class SetStorage extends HTMLElement {
                 headers: {
                     "Content-Type": "appication/json",
                 },
-                body: JSON.stringify(bookStore2.getState()),
+                body: JSON.stringify(bookModel.getState()),
             })
                 .then(function (reponse) {
                 if (!reponse.ok) {
@@ -43,7 +43,7 @@ export default class SetStorage extends HTMLElement {
         this.setLocalStorageToBase = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
-                bookStore2.setState(data);
+                bookModel.setState(data);
                 console.log("Saved local stronage by base data!");
             }
             catch (error) {
@@ -52,7 +52,7 @@ export default class SetStorage extends HTMLElement {
             }
         });
         this.resetStorage = () => {
-            bookStore2.resetState();
+            bookModel.resetState();
         };
         this.saveButton = this.querySelector(".saveStorage button");
         this.defaultButton = this.querySelector(".localStorage button");

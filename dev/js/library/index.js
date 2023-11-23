@@ -609,7 +609,7 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // dev/scripts/modules/constants.js
+  // dev/scripts/model/constants.js
   var STORAGE_NAME = "BookWorld";
 
   // dev/scripts/utils/Publisher.js
@@ -628,7 +628,7 @@
     }
   };
 
-  // dev/scripts/modules/FavoriteModel.js
+  // dev/scripts/model/FavoriteModel.js
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -732,7 +732,7 @@
     }
   };
 
-  // dev/scripts/modules/LibraryModel.js
+  // dev/scripts/model/LibraryModel.js
   var LibraryModel = class {
     constructor(libraries) {
       this._libraries = libraries;
@@ -754,7 +754,7 @@
     }
   };
 
-  // dev/scripts/modules/RegionModel.js
+  // dev/scripts/model/RegionModel.js
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -801,7 +801,7 @@
     }
   };
 
-  // dev/scripts/modules/BookStore2.js
+  // dev/scripts/model/index.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -811,7 +811,7 @@
     libraries: {},
     regions: {}
   };
-  var BookStore2 = class {
+  var BookModel = class {
     constructor() {
       this.bookStateUpdatePublisher = new Publisher();
       const state = this.loadStorage() || cloneDeep(initialState);
@@ -978,8 +978,8 @@
       this.regionModel.unsubscribeToDetailUpdatePublisher(subscriber);
     }
   };
-  var bookStore2 = new BookStore2();
-  var BookStore2_default = bookStore2;
+  var bookModel = new BookModel();
+  var model_default = bookModel;
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
@@ -997,13 +997,13 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      BookStore2_default.subscribeBookUpdate(this.renderBookSize);
+      model_default.subscribeBookUpdate(this.renderBookSize);
     }
     disconnectedCallback() {
-      BookStore2_default.unsubscribeBookUpdate(this.renderBookSize);
+      model_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(BookStore2_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -1117,7 +1117,7 @@
     createLibraryItem(fragment, lib) {
       const libraryItem = cloneTemplate(this.itemTemplate);
       libraryItem.data = lib;
-      if (BookStore2_default.hasLibrary(lib.libCode)) {
+      if (model_default.hasLibrary(lib.libCode)) {
         libraryItem.dataset.has = "true";
         fragment.prepend(libraryItem);
       } else {
@@ -1160,7 +1160,7 @@
       this.detailSelectElement.removeEventListener("change", this.handleDetailSelectChange);
     }
     renderFavoriteRegions() {
-      const favoriteRegions = BookStore2_default.getRegions();
+      const favoriteRegions = model_default.getRegions();
       if (Object.keys(favoriteRegions).length === 0)
         return;
       const container = this.querySelector(".region");
@@ -1196,7 +1196,7 @@
     }
     renderDetailRegion(regionName) {
       this.detailSelectElement.innerHTML = "";
-      const detailRegionObject = BookStore2_default.getRegions()[regionName];
+      const detailRegionObject = model_default.getRegions()[regionName];
       for (const [key, value] of Object.entries(detailRegionObject)) {
         const optionEl = document.createElement("option");
         optionEl.textContent = key;
@@ -1245,15 +1245,15 @@
       if (hoempageLink)
         hoempageLink.href = data.homepage;
       if (this.checkbox) {
-        this.checkbox.checked = BookStore2_default.hasLibrary(libCode);
+        this.checkbox.checked = model_default.hasLibrary(libCode);
       }
     }
     onChange() {
       var _a;
       if ((_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.checked) {
-        BookStore2_default.addLibraries(this.libCode, this.libName);
+        model_default.addLibraries(this.libCode, this.libName);
       } else {
-        BookStore2_default.removeLibraries(this.libCode);
+        model_default.removeLibraries(this.libCode);
       }
     }
   };

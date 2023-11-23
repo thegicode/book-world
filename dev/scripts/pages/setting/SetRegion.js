@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { CustomEventEmitter, CustomFetch } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import { FETCH_REGION_DATA_EVENT } from "./constants";
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 export default class SetRegion extends HTMLElement {
     constructor() {
         super();
@@ -20,12 +20,10 @@ export default class SetRegion extends HTMLElement {
     }
     connectedCallback() {
         this.fetchAndRender();
-        bookStore2.subscribeToBookStateUpdate(this.fetchAndRender);
-        // publishers.bookStateUpdate.subscribe(this.fetchAndRender);
+        bookModel.subscribeToBookStateUpdate(this.fetchAndRender);
     }
     discinnectedCallback() {
-        bookStore2.unsubscribeToBookStateUpdate(this.fetchAndRender);
-        // publishers.bookStateUpdate.unsubscribe(this.fetchAndRender);
+        bookModel.unsubscribeToBookStateUpdate(this.fetchAndRender);
     }
     fetchAndRender() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -54,7 +52,7 @@ export default class SetRegion extends HTMLElement {
         }
         const fragment = new DocumentFragment();
         const regionData = this.regionData["region"];
-        const favoriteRegions = Object.keys(bookStore2.getRegions());
+        const favoriteRegions = Object.keys(bookModel.getRegions());
         for (const [key, value] of Object.entries(regionData)) {
             const regionElement = this.createRegionElement(this.template, key, value, favoriteRegions);
             fragment.appendChild(regionElement);
@@ -80,10 +78,10 @@ export default class SetRegion extends HTMLElement {
             }
             const key = spanElement.textContent;
             if (checkbox.checked) {
-                bookStore2.addRegion(key);
+                bookModel.addRegion(key);
             }
             else {
-                bookStore2.removeRegion(key);
+                bookModel.removeRegion(key);
             }
         };
     }

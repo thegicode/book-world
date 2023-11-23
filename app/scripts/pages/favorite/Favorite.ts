@@ -1,4 +1,4 @@
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 import { cloneTemplate } from "../../utils/helpers";
 
 export default class Favorite extends HTMLElement {
@@ -20,7 +20,7 @@ export default class Favorite extends HTMLElement {
     }
 
     connectedCallback() {
-        const categorySort = bookStore2.getSortedFavoriteKeys();
+        const categorySort = bookModel.getSortedFavoriteKeys();
         if (categorySort.length === 0) {
             this.renderMessage("관심 카테고리를 등록해주세요.");
             return;
@@ -37,7 +37,7 @@ export default class Favorite extends HTMLElement {
     private render(key: string) {
         const fragment = new DocumentFragment();
         this.booksElement.innerHTML = "";
-        const data = bookStore2.getFavorites()[key];
+        const data = bookModel.getFavorites()[key];
 
         if (data.length === 0) {
             this.renderMessage("관심책이 없습니다.");

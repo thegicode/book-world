@@ -19,7 +19,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import { CustomFetch } from "../../utils/index";
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super();
@@ -82,7 +82,7 @@ export default class FavoriteItem extends HTMLElement {
         if (anchorEl)
             anchorEl.href = `/book?isbn=${data.book.isbn13}`;
         if (this.libraryButton &&
-            Object.keys(bookStore2.getLibraries()).length === 0) {
+            Object.keys(bookModel.getLibraries()).length === 0) {
             this.libraryButton.hidden = true;
         }
         this.removeLoading();
@@ -97,7 +97,7 @@ export default class FavoriteItem extends HTMLElement {
     onLibrary() {
         const isbn = this.dataset.isbn;
         if (this.libraryBookExist && this.libraryButton) {
-            this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookStore2.getLibraries());
+            this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookModel.getLibraries());
             if (this.libraryButton) {
                 this.libraryButton.hidden = true;
             }

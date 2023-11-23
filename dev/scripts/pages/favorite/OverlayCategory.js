@@ -1,4 +1,4 @@
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 import { cloneTemplate } from "../../utils/helpers";
 export default class OverlayCategory extends HTMLElement {
     constructor() {
@@ -11,13 +11,13 @@ export default class OverlayCategory extends HTMLElement {
             const favorite = this.addInput.value;
             if (!favorite)
                 return;
-            if (bookStore2.hasFavorite(favorite)) {
+            if (bookModel.hasFavorite(favorite)) {
                 alert("중복된 이름입니다.");
                 this.addInput.value = "";
                 return;
             }
-            bookStore2.addfavorite(favorite);
-            const index = bookStore2.getSortedFavoriteKeys().length;
+            bookModel.addfavorite(favorite);
+            const index = bookModel.getSortedFavoriteKeys().length;
             const cloned = this.createItem(favorite, index);
             (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
             this.addInput.value = "";
@@ -70,7 +70,7 @@ export default class OverlayCategory extends HTMLElement {
         if (!this.list)
             return;
         const fragment = new DocumentFragment();
-        bookStore2.getSortedFavoriteKeys().forEach((favorite, index) => {
+        bookModel.getSortedFavoriteKeys().forEach((favorite, index) => {
             const cloned = this.createItem(favorite, index);
             fragment.appendChild(cloned);
         });
@@ -111,11 +111,11 @@ export default class OverlayCategory extends HTMLElement {
         if (!value || favorite === value || !cloned)
             return;
         cloned.dataset.favorite = value;
-        bookStore2.renameFavorite(favorite, value);
+        bookModel.renameFavorite(favorite, value);
     }
     handleDelete(cloned, favorite) {
         cloned.remove();
-        bookStore2.deleteFavorite(favorite);
+        bookModel.deleteFavorite(favorite);
     }
     changeItem(cloned) {
         const dragggerButton = cloned.querySelector(".dragger");
@@ -153,7 +153,7 @@ export default class OverlayCategory extends HTMLElement {
             const draggedKey = this.draggedItem.dataset.favorite;
             const targetKey = cloned.dataset.favorite;
             if (draggedKey && targetKey) {
-                bookStore2.changeFavorite(draggedKey, targetKey);
+                bookModel.changeFavorite(draggedKey, targetKey);
             }
             delete cloned.dataset.drag;
         });

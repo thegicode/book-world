@@ -1,4 +1,4 @@
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 export default class FavoriteNav extends HTMLElement {
     constructor() {
         super();
@@ -10,17 +10,17 @@ export default class FavoriteNav extends HTMLElement {
     }
     connectedCallback() {
         if (this.category === null) {
-            this.category = bookStore2.getSortedFavoriteKeys()[0];
+            this.category = bookModel.getSortedFavoriteKeys()[0];
             const url = this.getUrl(this.category);
             location.search = url;
         }
         this.render();
         this.overlayCatalog();
-        bookStore2.subscribeToFavoritesUpdate(this
+        bookModel.subscribeToFavoritesUpdate(this
             .handleCategoryChange);
     }
     disconnectedCallback() {
-        bookStore2.unsubscribeToFavoritesUpdate(this
+        bookModel.unsubscribeToFavoritesUpdate(this
             .handleCategoryChange);
     }
     render() {
@@ -28,7 +28,7 @@ export default class FavoriteNav extends HTMLElement {
             return;
         this.nav.innerHTML = "";
         const fragment = new DocumentFragment();
-        bookStore2.getSortedFavoriteKeys().forEach((category) => {
+        bookModel.getSortedFavoriteKeys().forEach((category) => {
             const el = this.createItem(category);
             fragment.appendChild(el);
         });
@@ -79,11 +79,11 @@ export default class FavoriteNav extends HTMLElement {
                         return;
                     const prevName = payload.prevName;
                     const newName = payload.newName;
-                    const index = bookStore2
+                    const index = bookModel
                         .getSortedFavoriteKeys()
                         .indexOf(prevName);
                     this.nav.querySelectorAll("a")[index].textContent = newName;
-                    bookStore2.renameSortedFavoriteKey(prevName, newName);
+                    bookModel.renameSortedFavoriteKey(prevName, newName);
                     if (this.category === prevName) {
                         location.search = this.getUrl(newName);
                     }
@@ -91,7 +91,7 @@ export default class FavoriteNav extends HTMLElement {
                 break;
             case "delete": {
                 const name = payload.name;
-                const deletedIndex = bookStore2.deleteSortedFavoriteKey(name);
+                const deletedIndex = bookModel.deleteSortedFavoriteKey(name);
                 if (deletedIndex > -1) {
                     (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[deletedIndex].remove();
                 }

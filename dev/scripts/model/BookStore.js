@@ -184,4 +184,4 @@ class BookStore {
 }
 const bookStore = new BookStore();
 export default bookStore;
-//# sourceMappingURL=BookStore2.js.map
+//# sourceMappingURL=BookStore.js.map

@@ -1,5 +1,5 @@
 import { CustomFetch } from "../../utils/index";
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
 export default class SetStorage extends HTMLElement {
@@ -40,14 +40,14 @@ export default class SetStorage extends HTMLElement {
     }
 
     private savetStorage = () => {
-        const state = bookStore2.getState();
+        const state = bookModel.getState();
         if (!state) return;
         fetch(SAMPLE_JSON_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "appication/json",
             },
-            body: JSON.stringify(bookStore2.getState()),
+            body: JSON.stringify(bookModel.getState()),
         })
             .then(function (reponse) {
                 if (!reponse.ok) {
@@ -70,7 +70,7 @@ export default class SetStorage extends HTMLElement {
         try {
             const data = await CustomFetch.fetch<IBookState>(SAMPLE_JSON_URL);
 
-            bookStore2.setState(data);
+            bookModel.setState(data);
 
             console.log("Saved local stronage by base data!");
         } catch (error) {
@@ -80,6 +80,6 @@ export default class SetStorage extends HTMLElement {
     };
 
     private resetStorage = () => {
-        bookStore2.resetState();
+        bookModel.resetState();
     };
 }

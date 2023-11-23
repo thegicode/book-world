@@ -9,7 +9,7 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 export default class BookItem extends HTMLElement {
     constructor() {
         super();
@@ -17,7 +17,7 @@ export default class BookItem extends HTMLElement {
         this.onLibraryButtonClick = () => {
             const isbn = this.dataset.isbn || "";
             const libraryBookNode = this.querySelector("library-book-exist");
-            libraryBookNode === null || libraryBookNode === void 0 ? void 0 : libraryBookNode.onLibraryBookExist(this.bookLibraryButton, isbn, bookStore2.getLibraries());
+            libraryBookNode === null || libraryBookNode === void 0 ? void 0 : libraryBookNode.onLibraryBookExist(this.bookLibraryButton, isbn, bookModel.getLibraries());
         };
         this.initializeEventHandlers();
     }

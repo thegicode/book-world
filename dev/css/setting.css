@@ -21,6 +21,7 @@ button:disabled {
 .gnb {
   display: flex;
   justify-content: space-evenly;
+  padding: 0 10px;
   background-color: #37824a;
 }
 .gnb-item {

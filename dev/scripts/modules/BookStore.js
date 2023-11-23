@@ -1,27 +1,30 @@
-import { publishers } from "./actions";
 import { STORAGE_NAME } from "./constants";
+import Publisher from "../utils/Publisher";
+import FavoriteModel from "./FavoriteModel";
+import LibraryModel from "./LibraryModel";
+import RegionModel from "./RegionModel";
 const cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
 };
 const initialState = {
+    favorites: {},
+    sortedFavoriteKeys: [],
     libraries: {},
     regions: {},
-    category: {},
-    categorySort: [],
 };
 class BookStore {
     constructor() {
-        this.state = this.loadStorage() || cloneDeep(initialState);
+        this.bookStateUpdatePublisher = new Publisher();
+        const state = this.loadStorage() || cloneDeep(initialState);
+        const { favorites, sortedFavoriteKeys, libraries, regions } = state;
+        this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
+        this.libraryModel = new LibraryModel(libraries);
+        this.regionModel = new RegionModel(regions);
     }
+    // localStorage 관련
     loadStorage() {
-        try {
-            const storageData = localStorage.getItem(STORAGE_NAME);
-            return storageData ? JSON.parse(storageData) : null;
-        }
-        catch (error) {
-            console.error(error);
-            throw new Error("Failed to get state from localStorage.");
-        }
+        const storageData = localStorage.getItem(STORAGE_NAME);
+        return storageData ? JSON.parse(storageData) : null;
     }
     setStorage(newState) {
         try {
@@ -31,170 +34,154 @@ class BookStore {
             console.error(error);
         }
     }
-    reset() {
-        this.state = cloneDeep(initialState);
-        this.storage = cloneDeep(initialState);
+    // state 관련
+    getState() {
+        return this.loadStorage();
     }
-    get storage() {
-        return cloneDeep(this.state);
-    }
-    set storage(newState) {
+    setState(newState) {
         this.setStorage(newState);
-        this.state = newState;
+        const { favorites, sortedFavoriteKeys, libraries, regions } = newState;
+        this.favoriteModel.favorites = favorites;
+        this.favoriteModel.sortedKeys = sortedFavoriteKeys;
+        this.libraryModel.libraries = libraries;
+        this.regionModel.regions = regions;
+        this.bookStateUpdatePublisher.notify();
     }
-    // category
-    get category() {
-        return cloneDeep(this.state.category);
+    resetState() {
+        this.setState(initialState);
     }
-    set category(newCategory) {
-        const newState = this.storage;
-        newState.category = newCategory;
-        this.storage = newState;
+    // favorites 관련 메서드
+    getFavorites() {
+        return this.favoriteModel.favorites;
     }
-    get categorySort() {
-        return cloneDeep(this.state.categorySort);
+    getSortedFavoriteKeys() {
+        return this.favoriteModel.sortedKeys;
     }
-    set categorySort(newSort) {
-        const newState = this.state;
-        newState.categorySort = newSort;
-        this.storage = newState;
+    setFavorites() {
+        const newState = this.getState();
+        newState.favorites = this.getFavorites();
+        newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
+        this.setStorage(newState);
     }
-    get libraries() {
-        return cloneDeep(this.state.libraries);
+    addfavorite(name) {
+        this.favoriteModel.add(name);
+        this.favoriteModel.addSortedKeys(name);
+        this.setFavorites();
     }
-    set libraries(newLibries) {
-        const newState = this.state;
-        newState.libraries = newLibries;
-        this.storage = newState;
+    renameFavorite(prevName, newName) {
+        this.favoriteModel.rename(prevName, newName);
+        // this.favoriteModel.renameSortedFavoriteKeys(prevName, newName);
+        this.setFavorites();
     }
-    get regions() {
-        return cloneDeep(this.state.regions);
+    renameSortedFavoriteKey(prevName, newName) {
+        this.favoriteModel.renameSortedKeys(prevName, newName);
+        // this.favoriteModel.renameSortedFavoriteKeys(prevName, newName);
+        this.setFavorites();
     }
-    set regions(newRegions) {
-        const newState = this.state;
-        newState.regions = newRegions;
-        this.storage = newState;
+    deleteFavorite(name) {
+        this.favoriteModel.delete(name);
+        this.setFavorites();
     }
-    addCategory(name) {
-        const newCategory = this.category;
-        newCategory[name] = [];
-        this.category = newCategory;
-        // actions("categoryUpdate", { type: "add", payload: { name } });
-        publishers.categoryUpdate.notify({ type: "add", payload: { name } });
-    }
-    addCategorySort(name) {
-        const newCategorySort = this.categorySort;
-        newCategorySort.push(name);
-        this.categorySort = newCategorySort;
-    }
-    hasCategory(name) {
-        return name in this.category;
-    }
-    renameCategory(prevName, newName) {
-        const newCategory = this.category;
-        newCategory[newName] = newCategory[prevName];
-        delete newCategory[prevName];
-        this.category = newCategory;
-        publishers.categoryUpdate.notify({
-            type: "rename",
-            payload: { prevName, newName },
-        });
-    }
-    renameCategorySort(prevName, newName) {
-        const newCategorySort = this.categorySort;
-        const index = this.indexCategorySort(prevName);
-        newCategorySort[index] = newName;
-        this.categorySort = newCategorySort;
-    }
-    indexCategorySort(name) {
-        const newCategorySort = this.categorySort;
-        const index = newCategorySort.indexOf(name);
+    deleteSortedFavoriteKey(name) {
+        const index = this.favoriteModel.deleteSortedKeys(name);
+        this.setFavorites();
         return index;
     }
-    deleteCategory(name) {
-        const newFavorites = this.category;
-        delete newFavorites[name];
-        this.category = newFavorites;
-        publishers.categoryUpdate.notify({ type: "delete", payload: { name } });
+    hasFavorite(name) {
+        return this.favoriteModel.has(name);
     }
-    deleteCatgorySort(name) {
-        const newCategorySort = this.categorySort;
-        const index = newCategorySort.indexOf(name);
-        newCategorySort.splice(index, 1);
-        this.categorySort = newCategorySort;
-        return index;
+    changeFavorite(draggedKey, targetKey) {
+        this.favoriteModel.change(draggedKey, targetKey);
+        this.setFavorites();
     }
-    changeCategory(draggedKey, targetKey) {
-        const newSort = this.categorySort;
-        const draggedIndex = newSort.indexOf(draggedKey);
-        const targetIndex = newSort.indexOf(targetKey);
-        newSort[targetIndex] = draggedKey;
-        newSort[draggedIndex] = targetKey;
-        this.categorySort = newSort;
-        publishers.categoryUpdate.notify({
-            type: "change",
-            payload: {
-                targetIndex,
-                draggedIndex,
-            },
-        });
+    addFavoriteBook(name, isbn) {
+        this.favoriteModel.addBook(name, isbn);
+        this.setFavorites();
     }
-    addBookInCategory(name, isbn) {
-        const newCategory = this.category;
-        newCategory[name].unshift(isbn);
-        this.category = newCategory;
-        publishers.categoryBookUpdate.notify();
+    hasFavoriteBook(name, isbn) {
+        return this.favoriteModel.hasBook(name, isbn);
     }
-    hasBookInCategory(name, isbn) {
-        return this.category[name].includes(isbn);
+    removeFavoriteBook(name, isbn) {
+        this.favoriteModel.removeBook(name, isbn);
+        this.setFavorites();
     }
-    removeBookInCategory(name, isbn) {
-        const newCategory = this.category;
-        const index = newCategory[name].indexOf(isbn);
-        if (index !== -1) {
-            newCategory[name].splice(index, 1);
-            this.category = newCategory;
-        }
-        publishers.categoryBookUpdate.notify();
+    // Library 관련 메서드
+    getLibraries() {
+        return this.libraryModel.libraries;
     }
-    addLibrary(code, name) {
-        const newLibries = this.libraries;
-        newLibries[code] = name;
-        this.libraries = newLibries;
+    setLibraries() {
+        const newState = this.getState();
+        newState.libraries = this.getLibraries();
+        this.setStorage(newState);
     }
-    removeLibrary(code) {
-        const newLibries = this.libraries;
-        delete newLibries[code];
-        this.libraries = newLibries;
+    addLibraries(code, name) {
+        this.libraryModel.add(code, name);
+        this.setLibraries();
+    }
+    removeLibraries(code) {
+        this.libraryModel.remove(code);
+        this.setLibraries();
     }
     hasLibrary(code) {
-        return code in this.libraries;
+        return this.libraryModel.has(code);
+    }
+    // Region 관련 메서드
+    getRegions() {
+        return this.regionModel.regions;
+    }
+    setRegions() {
+        const newState = this.getState();
+        newState.regions = this.getRegions();
+        this.setStorage(newState);
     }
     addRegion(name) {
-        const newRegion = this.regions;
-        newRegion[name] = {};
-        this.regions = newRegion;
-        publishers.regionUpdate.notify();
+        this.regionModel.add(name);
+        this.setRegions();
     }
     removeRegion(name) {
-        const newRegions = this.regions;
-        delete newRegions[name];
-        this.regions = newRegions;
-        publishers.regionUpdate.notify();
+        this.regionModel.remove(name);
+        this.setRegions();
     }
     addDetailRegion(regionName, detailName, detailCode) {
-        const newRegions = this.regions;
-        newRegions[regionName][detailName] = detailCode;
-        this.regions = newRegions;
-        publishers.detailRegionUpdate.notify();
+        this.regionModel.addDetail(regionName, detailName, detailCode);
+        this.setRegions();
     }
     removeDetailRegion(regionName, detailName) {
-        const newRegions = this.regions;
-        delete newRegions[regionName][detailName];
-        this.regions = newRegions;
-        publishers.detailRegionUpdate.notify();
+        this.regionModel.removeDetail(regionName, detailName);
+        this.setRegions();
+    }
+    // subscribe
+    subscribeToFavoritesUpdate(subscriber) {
+        this.favoriteModel.subscribeFavoritesUpdate(subscriber);
+    }
+    unsubscribeToFavoritesUpdate(subscriber) {
+        this.favoriteModel.unsubscribeFavoritesUpdate(subscriber);
+    }
+    subscribeBookUpdate(subscriber) {
+        this.favoriteModel.subscribeBookUpdate(subscriber);
+    }
+    unsubscribeBookUpdate(subscriber) {
+        this.favoriteModel.unsubscribeBookUpdate(subscriber);
+    }
+    subscribeToBookStateUpdate(subscriber) {
+        this.bookStateUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToBookStateUpdate(subscriber) {
+        this.bookStateUpdatePublisher.unsubscribe(subscriber);
+    }
+    subscribeToRegionUpdate(subscriber) {
+        this.regionModel.subscribeToUpdatePublisher(subscriber);
+    }
+    unsubscribeToRegionUpdate(subscriber) {
+        this.regionModel.unsubscribeToUpdatePublisher(subscriber);
+    }
+    subscribeToDetailRegionUpdate(subscriber) {
+        this.regionModel.subscribeToDetailUpdatePublisher(subscriber);
+    }
+    unsubscribeToDetailRegionUpdate(subscriber) {
+        this.regionModel.unsubscribeToDetailUpdatePublisher(subscriber);
     }
 }
 const bookStore = new BookStore();
 export default bookStore;
-//# sourceMappingURL=BookStore.js.map
+//# sourceMappingURL=bookStore.js.map

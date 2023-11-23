@@ -1,4 +1,4 @@
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 export default class LibraryItem extends HTMLElement {
     constructor() {
         super();
@@ -35,16 +35,16 @@ export default class LibraryItem extends HTMLElement {
         if (hoempageLink)
             hoempageLink.href = data.homepage;
         if (this.checkbox) {
-            this.checkbox.checked = bookStore2.hasLibrary(libCode);
+            this.checkbox.checked = bookModel.hasLibrary(libCode);
         }
     }
     onChange() {
         var _a;
         if ((_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.checked) {
-            bookStore2.addLibraries(this.libCode, this.libName);
+            bookModel.addLibraries(this.libCode, this.libName);
         }
         else {
-            bookStore2.removeLibraries(this.libCode);
+            bookModel.removeLibraries(this.libCode);
         }
     }
 }

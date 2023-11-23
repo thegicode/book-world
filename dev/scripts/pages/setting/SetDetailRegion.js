@@ -1,7 +1,7 @@
 import { CustomEventEmitter } from "../../utils/index";
 import { cloneTemplate } from "../../utils/helpers";
 import { FETCH_REGION_DATA_EVENT } from "./constants";
-import bookStore2 from "../../modules/BookStore2";
+import bookModel from "../../model";
 export default class SetDetailRegion extends HTMLElement {
     constructor() {
         super();
@@ -11,11 +11,11 @@ export default class SetDetailRegion extends HTMLElement {
         this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
-        bookStore2.subscribeToRegionUpdate(this.renderRegion);
+        bookModel.subscribeToRegionUpdate(this.renderRegion);
         CustomEventEmitter.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     disconnectedCallback() {
-        bookStore2.unsubscribeToRegionUpdate(this.renderRegion);
+        bookModel.unsubscribeToRegionUpdate(this.renderRegion);
         CustomEventEmitter.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     setRegionData(event) {
@@ -24,7 +24,7 @@ export default class SetDetailRegion extends HTMLElement {
         this.renderRegion();
     }
     renderRegion() {
-        const favoriteRegions = Object.keys(bookStore2.getRegions());
+        const favoriteRegions = Object.keys(bookModel.getRegions());
         const container = this.querySelector(".regions");
         if (!container)
             return;
@@ -66,7 +66,7 @@ export default class SetDetailRegion extends HTMLElement {
         const detailRegionsElement = this.querySelector(".detailRegions");
         if (!detailRegionsElement)
             return;
-        const regionObj = bookStore2.getRegions()[regionName];
+        const regionObj = bookModel.getRegions()[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
         const template = document.querySelector("#tp-detail-region");
         if (!template)
@@ -114,8 +114,8 @@ export default class SetDetailRegion extends HTMLElement {
     }
     onChangeDetail() {
         const region = this.region;
-        if (!bookStore2.getRegions()[region]) {
-            bookStore2.addRegion(region);
+        if (!bookModel.getRegions()[region]) {
+            bookModel.addRegion(region);
         }
         const checkboxes = document.querySelectorAll("[name=detailRegion]");
         checkboxes.forEach((checkbox) => {
@@ -125,10 +125,10 @@ export default class SetDetailRegion extends HTMLElement {
                 const labelElement = inputCheckbox.nextElementSibling;
                 const label = (labelElement === null || labelElement === void 0 ? void 0 : labelElement.textContent) || "";
                 if (inputCheckbox.checked) {
-                    bookStore2.addDetailRegion(region, label, value);
+                    bookModel.addDetailRegion(region, label, value);
                 }
                 else {
-                    bookStore2.removeDetailRegion(region, label);
+                    bookModel.removeDetailRegion(region, label);
                 }
             });
         });

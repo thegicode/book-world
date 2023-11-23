@@ -1,4 +1,4 @@
-import bookStore2 from "../modules/BookStore2";
+import bookModel from "../model";
 export default class CategorySelector extends HTMLElement {
     constructor() {
         super();
@@ -48,7 +48,7 @@ export default class CategorySelector extends HTMLElement {
         const container = document.createElement("div");
         container.className = "category";
         container.hidden = true;
-        bookStore2
+        bookModel
             .getSortedFavoriteKeys()
             .forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
         return container;
@@ -56,19 +56,19 @@ export default class CategorySelector extends HTMLElement {
     createCheckbox(category, ISBN) {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        if (bookStore2.hasFavoriteBook(category, ISBN)) {
+        if (bookModel.hasFavoriteBook(category, ISBN)) {
             checkbox.checked = true;
         }
         checkbox.addEventListener("change", () => this.onChange(checkbox, category, ISBN));
         return checkbox;
     }
     onChange(checkbox, category, ISBN) {
-        const isBookInCategory = bookStore2.hasFavoriteBook(category, ISBN);
+        const isBookInCategory = bookModel.hasFavoriteBook(category, ISBN);
         if (isBookInCategory) {
-            bookStore2.removeFavoriteBook(category, ISBN);
+            bookModel.removeFavoriteBook(category, ISBN);
         }
         else {
-            bookStore2.addFavoriteBook(category, ISBN);
+            bookModel.addFavoriteBook(category, ISBN);
         }
         checkbox.checked = !isBookInCategory;
     }

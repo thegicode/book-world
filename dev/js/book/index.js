@@ -609,7 +609,7 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // dev/scripts/modules/constants.js
+  // dev/scripts/model/constants.js
   var STORAGE_NAME = "BookWorld";
 
   // dev/scripts/utils/Publisher.js
@@ -628,7 +628,7 @@
     }
   };
 
-  // dev/scripts/modules/FavoriteModel.js
+  // dev/scripts/model/FavoriteModel.js
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -732,7 +732,7 @@
     }
   };
 
-  // dev/scripts/modules/LibraryModel.js
+  // dev/scripts/model/LibraryModel.js
   var LibraryModel = class {
     constructor(libraries) {
       this._libraries = libraries;
@@ -754,7 +754,7 @@
     }
   };
 
-  // dev/scripts/modules/RegionModel.js
+  // dev/scripts/model/RegionModel.js
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -801,7 +801,7 @@
     }
   };
 
-  // dev/scripts/modules/BookStore2.js
+  // dev/scripts/model/index.js
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -811,7 +811,7 @@
     libraries: {},
     regions: {}
   };
-  var BookStore2 = class {
+  var BookModel = class {
     constructor() {
       this.bookStateUpdatePublisher = new Publisher();
       const state = this.loadStorage() || cloneDeep(initialState);
@@ -978,8 +978,8 @@
       this.regionModel.unsubscribeToDetailUpdatePublisher(subscriber);
     }
   };
-  var bookStore2 = new BookStore2();
-  var BookStore2_default = bookStore2;
+  var bookModel = new BookModel();
+  var model_default = bookModel;
 
   // dev/scripts/components/NavGnb.js
   var NavGnb = class extends HTMLElement {
@@ -997,13 +997,13 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      BookStore2_default.subscribeBookUpdate(this.renderBookSize);
+      model_default.subscribeBookUpdate(this.renderBookSize);
     }
     disconnectedCallback() {
-      BookStore2_default.unsubscribeBookUpdate(this.renderBookSize);
+      model_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(BookStore2_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -1075,24 +1075,24 @@
       const container = document.createElement("div");
       container.className = "category";
       container.hidden = true;
-      BookStore2_default.getSortedFavoriteKeys().forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      model_default.getSortedFavoriteKeys().forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
       return container;
     }
     createCheckbox(category, ISBN) {
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
-      if (BookStore2_default.hasFavoriteBook(category, ISBN)) {
+      if (model_default.hasFavoriteBook(category, ISBN)) {
         checkbox.checked = true;
       }
       checkbox.addEventListener("change", () => this.onChange(checkbox, category, ISBN));
       return checkbox;
     }
     onChange(checkbox, category, ISBN) {
-      const isBookInCategory = BookStore2_default.hasFavoriteBook(category, ISBN);
+      const isBookInCategory = model_default.hasFavoriteBook(category, ISBN);
       if (isBookInCategory) {
-        BookStore2_default.removeFavoriteBook(category, ISBN);
+        model_default.removeFavoriteBook(category, ISBN);
       } else {
-        BookStore2_default.addFavoriteBook(category, ISBN);
+        model_default.addFavoriteBook(category, ISBN);
       }
       checkbox.checked = !isBookInCategory;
     }
@@ -1355,7 +1355,7 @@
     }
     fetchList(isbn) {
       return __awaiter3(this, void 0, void 0, function* () {
-        const favoriteLibraries = BookStore2_default.getRegions();
+        const favoriteLibraries = model_default.getRegions();
         if (Object.entries(favoriteLibraries).length === 0)
           return;
         for (const regionName in favoriteLibraries) {
