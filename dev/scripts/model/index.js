@@ -151,6 +151,12 @@ class BookModel {
         this.setRegions();
     }
     // subscribe
+    subscribeToBookStateUpdate(subscriber) {
+        this.bookStateUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToBookStateUpdate(subscriber) {
+        this.bookStateUpdatePublisher.unsubscribe(subscriber);
+    }
     subscribeToFavoritesUpdate(subscriber) {
         this.favoriteModel.subscribeFavoritesUpdate(subscriber);
     }
@@ -162,12 +168,6 @@ class BookModel {
     }
     unsubscribeBookUpdate(subscriber) {
         this.favoriteModel.unsubscribeBookUpdate(subscriber);
-    }
-    subscribeToBookStateUpdate(subscriber) {
-        this.bookStateUpdatePublisher.subscribe(subscriber);
-    }
-    unsubscribeToBookStateUpdate(subscriber) {
-        this.bookStateUpdatePublisher.unsubscribe(subscriber);
     }
     subscribeToRegionUpdate(subscriber) {
         this.regionModel.subscribeToUpdatePublisher(subscriber);

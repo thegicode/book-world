@@ -213,6 +213,13 @@ class BookModel {
 
     // subscribe
 
+    subscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
+        this.bookStateUpdatePublisher.subscribe(subscriber);
+    }
+    unsubscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
+        this.bookStateUpdatePublisher.unsubscribe(subscriber);
+    }
+
     subscribeToFavoritesUpdate(
         subscriber: (params: IFavoritesUpdateProps) => void
     ) {
@@ -229,13 +236,6 @@ class BookModel {
     }
     unsubscribeBookUpdate(subscriber: TSubscriberVoid) {
         this.favoriteModel.unsubscribeBookUpdate(subscriber);
-    }
-
-    subscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
-        this.bookStateUpdatePublisher.subscribe(subscriber);
-    }
-    unsubscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
-        this.bookStateUpdatePublisher.unsubscribe(subscriber);
     }
 
     subscribeToRegionUpdate(subscriber: TSubscriberVoid) {
