@@ -1,0 +1,1 @@
+{"version":3,"file":"LoadingComponent.js","sourceRoot":"","sources":["../../../app/scripts/components/LoadingComponent.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,OAAO,gBAAiB,SAAQ,WAAW;IACrD;QACI,KAAK,EAAE,CAAC;IACZ,CAAC;IAED,IAAI;QACA,IAAI,CAAC,eAAe,CAAC,QAAQ,CAAC,CAAC;IACnC,CAAC;IAED,IAAI;QACA,IAAI,CAAC,YAAY,CAAC,QAAQ,EAAE,EAAE,CAAC,CAAC;IACpC,CAAC;CACJ"}

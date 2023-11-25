@@ -19,17 +19,20 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import { CustomFetch } from "../../utils/index";
+import { LoadingComponent, } from "../../components/index";
 import bookModel from "../../model";
+customElements.define("loading-component", LoadingComponent);
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super();
+        this.loadingComponent =
+            this.querySelector("loading-component");
     }
     connectedCallback() {
         var _a;
         this.libraryButton = this.querySelector(".library-button");
         this.hideButton = this.querySelector(".hide-button");
         this.libraryBookExist = this.querySelector("library-book-exist");
-        this.loading();
         this.fetchData(this.dataset.isbn);
         this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
         (_a = this.hideButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onHideLibrary.bind(this));
@@ -40,7 +43,9 @@ export default class FavoriteItem extends HTMLElement {
         (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
     }
     fetchData(isbn) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
             const url = `/usage-analysis-list?isbn13=${isbn}`;
             try {
                 const data = yield CustomFetch.fetch(url);
@@ -51,6 +56,7 @@ export default class FavoriteItem extends HTMLElement {
                 console.error(error);
                 throw new Error(`Fail to get usage analysis list.`);
             }
+            (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
         });
     }
     render(data) {
@@ -85,10 +91,8 @@ export default class FavoriteItem extends HTMLElement {
             Object.keys(bookModel.getLibraries()).length === 0) {
             this.libraryButton.hidden = true;
         }
-        this.removeLoading();
     }
     errorRender() {
-        this.removeLoading();
         this.dataset.fail = "true";
         this.querySelector("h4").textContent = `ISBN : ${this.dataset.isbn}`;
         this.querySelector(".authors").textContent =
@@ -117,12 +121,6 @@ export default class FavoriteItem extends HTMLElement {
         if (this.hideButton) {
             this.hideButton.hidden = true;
         }
-    }
-    loading() {
-        this.dataset.loading = "true";
-    }
-    removeLoading() {
-        delete this.dataset.loading;
     }
 }
 //# sourceMappingURL=FavoriteItem.js.map

@@ -19,22 +19,17 @@ export default class BookItem extends HTMLElement {
             const libraryBookNode = this.querySelector("library-book-exist");
             libraryBookNode === null || libraryBookNode === void 0 ? void 0 : libraryBookNode.onLibraryBookExist(this.bookLibraryButton, isbn, bookModel.getLibraries());
         };
-        this.initializeEventHandlers();
     }
     connectedCallback() {
-        this.populateBookData();
-    }
-    disconnectedCallback() {
-        this.removeEventHandlers();
-    }
-    initializeEventHandlers() {
         var _a;
         this.bookLibraryButton = this.querySelector(".library-button");
         (_a = this.bookLibraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
+        this.populateBookData();
     }
-    removeEventHandlers() {
+    disconnectedCallback() {
         var _a;
-        (_a = this.bookLibraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibraryButtonClick);
+        this.bookLibraryButton = this.querySelector(".library-button");
+        (_a = this.bookLibraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
     }
     populateBookData() {
         if (!this.bookData) {

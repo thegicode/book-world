@@ -3,17 +3,23 @@ import {
     BookDescription,
     BookImage,
     LibraryBookExist,
+    LoadingComponent,
 } from "../../components/index";
 import bookModel from "../../model";
+
+customElements.define("loading-component", LoadingComponent);
 
 export default class FavoriteItem extends HTMLElement {
     protected libraryButton?: HTMLButtonElement;
     protected bookData: IUsageAnalysisResult | undefined;
+    private loadingComponent: LoadingComponent | null;
     hideButton?: HTMLButtonElement | null;
     libraryBookExist?: LibraryBookExist | null;
 
     constructor() {
         super();
+        this.loadingComponent =
+            this.querySelector<LoadingComponent>("loading-component");
     }
 
     connectedCallback() {
@@ -22,8 +28,6 @@ export default class FavoriteItem extends HTMLElement {
         ) as HTMLButtonElement;
         this.hideButton = this.querySelector(".hide-button");
         this.libraryBookExist = this.querySelector("library-book-exist");
-
-        this.loading();
 
         this.fetchData(this.dataset.isbn as string);
 
@@ -40,6 +44,8 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     protected async fetchData(isbn: string) {
+        this.loadingComponent?.show();
+
         const url = `/usage-analysis-list?isbn13=${isbn}`;
         try {
             const data = await CustomFetch.fetch<IUsageAnalysisResult>(url);
@@ -49,6 +55,8 @@ export default class FavoriteItem extends HTMLElement {
             console.error(error);
             throw new Error(`Fail to get usage analysis list.`);
         }
+
+        this.loadingComponent?.hide();
     }
 
     protected render(data: IUsageAnalysisResult) {
@@ -90,12 +98,9 @@ export default class FavoriteItem extends HTMLElement {
         ) {
             this.libraryButton.hidden = true;
         }
-
-        this.removeLoading();
     }
 
     private errorRender() {
-        this.removeLoading();
         this.dataset.fail = "true";
         (
             this.querySelector("h4") as HTMLElement
@@ -137,11 +142,11 @@ export default class FavoriteItem extends HTMLElement {
         }
     }
 
-    private loading() {
-        this.dataset.loading = "true";
-    }
+    // private loading() {
+    //     if (this.loadingComponent) this.loadingComponent.hidden = false;
+    // }
 
-    private removeLoading() {
-        delete this.dataset.loading;
-    }
+    // private removeLoading() {
+    //     if (this.loadingComponent) this.loadingComponent.hidden = true;
+    // }
 }

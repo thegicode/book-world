@@ -11,27 +11,21 @@ export default class BookItem extends HTMLElement {
 
     constructor() {
         super();
-        this.initializeEventHandlers();
     }
 
     connectedCallback() {
-        this.populateBookData();
-    }
-
-    disconnectedCallback() {
-        this.removeEventHandlers();
-    }
-
-    private initializeEventHandlers() {
         this.bookLibraryButton = this.querySelector(".library-button");
         this.bookLibraryButton?.addEventListener(
             "click",
             this.onLibraryButtonClick
         );
+
+        this.populateBookData();
     }
 
-    private removeEventHandlers() {
-        this.bookLibraryButton?.removeEventListener(
+    disconnectedCallback() {
+        this.bookLibraryButton = this.querySelector(".library-button");
+        this.bookLibraryButton?.addEventListener(
             "click",
             this.onLibraryButtonClick
         );
