@@ -1,4 +1,5 @@
 // import { BookImage } from "../../components/index";
+import { LoadingComponent } from "../../components";
 import { CustomEventEmitter, CustomFetch } from "../../utils";
 import { cloneTemplate, getCurrentDates } from "../../utils/helpers";
 
@@ -6,7 +7,7 @@ export default class Popular extends HTMLElement {
     itemTemplate: HTMLTemplateElement | null;
     body: HTMLHtmlElement | null;
     list: HTMLElement | null;
-    loading: HTMLElement | null;
+    private loadingComponent: LoadingComponent | null;
     params: IPopularFetchParams | null;
 
     constructor() {
@@ -15,12 +16,12 @@ export default class Popular extends HTMLElement {
         this.itemTemplate = document.querySelector("#tp-popular-item");
         this.body = this.querySelector(".popular-body");
         this.list = this.querySelector(".popular-list");
-        this.loading = document.querySelector(".popular-loading");
+        this.loadingComponent =
+            this.querySelector<LoadingComponent>("loading-component");
+
         this.onRequestPopular = this.onRequestPopular.bind(this);
         this.onClickPageNav = this.onClickPageNav.bind(this);
         this.params = null;
-
-        // console.log(BookImage);
     }
 
     connectedCallback() {
@@ -63,8 +64,9 @@ export default class Popular extends HTMLElement {
     }
 
     async fetch(params: IPopularFetchParams): Promise<void> {
+        this.loadingComponent?.show();
+
         if (this.body && this.list) {
-            this.body.dataset.loading = "true";
             this.list.innerHTML = "";
         }
 
@@ -89,6 +91,8 @@ export default class Popular extends HTMLElement {
             console.error(error);
             throw new Error(`Fail to get library search by book.`);
         }
+
+        this.loadingComponent?.hide();
     }
 
     render({ data, resultNum }: IPopularBookResponse) {
@@ -104,10 +108,6 @@ export default class Popular extends HTMLElement {
         });
 
         this.list.appendChild(fragment);
-
-        if (this.body) {
-            this.body.dataset.loading = "false";
-        }
     }
 
     createItem(item: IPopularBook) {

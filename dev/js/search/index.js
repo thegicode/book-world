@@ -1324,6 +1324,20 @@
     }
   };
 
+  // dev/scripts/components/LoadingComponent.js
+  var LoadingComponent = class extends HTMLElement {
+    constructor() {
+      super();
+    }
+    show() {
+      this.removeAttribute("hidden");
+    }
+    hide() {
+      this.setAttribute("hidden", "");
+    }
+  };
+  customElements.define("loading-component", LoadingComponent);
+
   // dev/scripts/pages/search/selectors.js
   var bookList = document.querySelector("book-list");
   var searchInputElement = document.querySelector("input-search input[type='search']");
@@ -1436,6 +1450,7 @@
   var BookList = class extends HTMLElement {
     constructor() {
       super();
+      this.loadingComponent = this.querySelector("loading-component");
       this.retrieveBooks = this.retrieveBooks.bind(this);
       this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
@@ -1473,7 +1488,6 @@
       this.observer = new Observer(target, this.retrieveBooks);
     }
     renderBooks() {
-      this.renderMessage("loading");
       this.bookContainer.innerHTML = "";
       this.retrieveBooks();
     }
@@ -1482,9 +1496,11 @@
       this.renderMessage("message");
     }
     retrieveBooks() {
+      var _a, _b;
       return __awaiter3(this, void 0, void 0, function* () {
         if (!this.keyword || !this.sortingOrder)
           return;
+        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
         const encodedKeyword = encodeURIComponent(this.keyword);
         const searchUrl = `/search-naver-book?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
         try {
@@ -1497,6 +1513,7 @@
             console.error("An unexpected error occurred");
           }
         }
+        (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
       });
     }
     renderBookList(data) {

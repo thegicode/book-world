@@ -4,7 +4,6 @@ import {
     LibraryBookExist,
     NavGnb,
     BookImage,
-    // LoadingComponent,
 } from "../../components/index";
 
 import Favorite from "./Favorite";
@@ -21,4 +20,3 @@ customElements.define("library-book-exist", LibraryBookExist);
 customElements.define("category-selector", CategorySelector);
 customElements.define("book-image", BookImage);
 customElements.define("overlay-category", OverlayCategory);
-// customElements.define("loading-component", LoadingComponent);

@@ -7,8 +7,6 @@ import {
 } from "../../components/index";
 import bookModel from "../../model";
 
-customElements.define("loading-component", LoadingComponent);
-
 export default class FavoriteItem extends HTMLElement {
     protected libraryButton?: HTMLButtonElement;
     protected bookData: IUsageAnalysisResult | undefined;

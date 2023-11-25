@@ -1,10 +1,12 @@
 import BookItem from "./BookItem";
 import { Observer, CustomFetch } from "../../utils/index";
+import { LoadingComponent } from "../../components";
 // import { SEARCH_PAGE_INIT } from "./constant";
 
 export default class BookList extends HTMLElement {
     paginationElement!: HTMLElement;
     bookContainer!: HTMLElement;
+    loadingComponent: LoadingComponent | null;
     observer?: Observer;
     keyword?: string;
     sortingOrder?: string;
@@ -12,6 +14,9 @@ export default class BookList extends HTMLElement {
 
     constructor() {
         super();
+
+        this.loadingComponent =
+            this.querySelector<LoadingComponent>("loading-component");
 
         this.retrieveBooks = this.retrieveBooks.bind(this);
         this.initializeSearchPage = this.initializeSearchPage.bind(this);
@@ -72,7 +77,6 @@ export default class BookList extends HTMLElement {
     }
 
     private renderBooks() {
-        this.renderMessage("loading");
         this.bookContainer.innerHTML = "";
         this.retrieveBooks();
     }
@@ -84,6 +88,8 @@ export default class BookList extends HTMLElement {
 
     private async retrieveBooks(): Promise<void> {
         if (!this.keyword || !this.sortingOrder) return;
+
+        this.loadingComponent?.show();
 
         const encodedKeyword = encodeURIComponent(this.keyword);
         const searchUrl = `/search-naver-book?keyword=${encodedKeyword}&display=${10}&start=${
@@ -104,6 +110,8 @@ export default class BookList extends HTMLElement {
                 console.error("An unexpected error occurred");
             }
         }
+
+        this.loadingComponent?.hide();
     }
 
     private renderBookList(data: ISearchNaverBookResult): void {

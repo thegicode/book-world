@@ -19,9 +19,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import { CustomFetch } from "../../utils/index";
-import { LoadingComponent, } from "../../components/index";
 import bookModel from "../../model";
-customElements.define("loading-component", LoadingComponent);
 export default class FavoriteItem extends HTMLElement {
     constructor() {
         super();

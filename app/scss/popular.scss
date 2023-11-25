@@ -1,6 +1,7 @@
 @import "./base/_reset.scss";
 @import "./components/_gnb.scss";
 @import "./components/_category-selector.scss";
+@import "./components/loading.scss";
 
 .root {
     display: flex;
@@ -168,15 +169,7 @@ popular-header {
     flex: 1;
     overflow: auto;
 
-    .popular-loading {
-        display: none;
-    }
-    &[data-loading="true"] {
-        position: relative;
-        .popular-loading {
-            display: flex;
-        }
-    }
+    position: relative;
 }
 
 .popular-list {
@@ -235,16 +228,4 @@ popular-header {
         right: 10px;
         bottom: 10px;
     }
-}
-
-.popular-loading {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fff;
 }

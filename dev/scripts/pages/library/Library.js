@@ -15,8 +15,10 @@ export default class Library extends HTMLElement {
         super();
         this._regionCode = null;
         this.PAGE_SIZE = 20;
-        this.formElement = this.querySelector("form");
+        this.listElement = this.querySelector(".library-list");
         this.itemTemplate = document.querySelector("#tp-item");
+        this.loadingComponent =
+            this.querySelector("loading-component");
     }
     set regionCode(value) {
         this._regionCode = value;
@@ -31,11 +33,14 @@ export default class Library extends HTMLElement {
     handleRegionCodeChange() {
         if (!this.regionCode)
             return;
-        this.showMessage("loading");
         this.fetchLibrarySearch(this.regionCode);
     }
     fetchLibrarySearch(regionCode) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.listElement)
+                this.listElement.innerHTML = "";
+            (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
             const url = `/library-search?dtl_region=${regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
             try {
                 const data = yield CustomFetch.fetch(url);
@@ -45,9 +50,12 @@ export default class Library extends HTMLElement {
                 console.error(error);
                 throw new Error("Fail to get library search data.");
             }
+            (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
         });
     }
     renderLibraryList(data) {
+        if (!this.listElement)
+            return;
         const { 
         // pageNo, pageSize, numFound, resultNum,
         libraries, } = data;
@@ -56,10 +64,7 @@ export default class Library extends HTMLElement {
             return;
         }
         const fragment = libraries.reduce((fragment, lib) => this.createLibraryItem(fragment, lib), new DocumentFragment());
-        if (this.formElement) {
-            this.formElement.innerHTML = "";
-            this.formElement.appendChild(fragment);
-        }
+        this.listElement.appendChild(fragment);
     }
     createLibraryItem(fragment, lib) {
         const libraryItem = cloneTemplate(this.itemTemplate);
@@ -76,10 +81,10 @@ export default class Library extends HTMLElement {
     }
     showMessage(type) {
         const template = document.querySelector(`#tp-${type}`);
-        if (template && this.formElement) {
-            this.formElement.innerHTML = "";
+        if (template && this.listElement) {
+            this.listElement.innerHTML = "";
             const clone = cloneTemplate(template);
-            this.formElement.appendChild(clone);
+            this.listElement.appendChild(clone);
         }
     }
 }

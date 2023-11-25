@@ -1298,7 +1298,7 @@
   };
 
   // dev/scripts/components/LoadingComponent.js
-  var loadingComponent = class extends HTMLElement {
+  var LoadingComponent = class extends HTMLElement {
     constructor() {
       super();
     }
@@ -1309,6 +1309,7 @@
       this.setAttribute("hidden", "");
     }
   };
+  customElements.define("loading-component", LoadingComponent);
 
   // dev/scripts/utils/helpers.js
   function cloneTemplate(template) {
@@ -1518,7 +1519,6 @@
       }
     return t;
   };
-  customElements.define("loading-component", loadingComponent);
   var FavoriteItem = class extends HTMLElement {
     constructor() {
       super();

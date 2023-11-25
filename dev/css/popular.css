@@ -84,6 +84,25 @@ category-selector .category span {
   color: #666;
 }
 
+loading-component {
+  display: block;
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  font-size: 14px;
+  color: gray;
+}
+loading-component[hidden] {
+  display: none;
+}
+
 .root {
   display: flex;
   flex-direction: column;
@@ -234,15 +253,7 @@ popular-header .filterButton {
 .popular-body {
   flex: 1;
   overflow: auto;
-}
-.popular-body .popular-loading {
-  display: none;
-}
-.popular-body[data-loading=true] {
   position: relative;
-}
-.popular-body[data-loading=true] .popular-loading {
-  display: flex;
 }
 
 .popular-list {
@@ -295,18 +306,6 @@ popular-header .filterButton {
 .popular-item category-selector {
   right: 10px;
   bottom: 10px;
-}
-
-.popular-loading {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
 }
 
 /*# sourceMappingURL=popular.css.map */

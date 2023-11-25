@@ -12,6 +12,8 @@ import { Observer, CustomFetch } from "../../utils/index";
 export default class BookList extends HTMLElement {
     constructor() {
         super();
+        this.loadingComponent =
+            this.querySelector("loading-component");
         this.retrieveBooks = this.retrieveBooks.bind(this);
         this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
@@ -59,7 +61,6 @@ export default class BookList extends HTMLElement {
         this.observer = new Observer(target, this.retrieveBooks);
     }
     renderBooks() {
-        this.renderMessage("loading");
         this.bookContainer.innerHTML = "";
         this.retrieveBooks();
     }
@@ -68,9 +69,11 @@ export default class BookList extends HTMLElement {
         this.renderMessage("message");
     }
     retrieveBooks() {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.keyword || !this.sortingOrder)
                 return;
+            (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
             const encodedKeyword = encodeURIComponent(this.keyword);
             const searchUrl = `/search-naver-book?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
             // console.log("fetch-search: ", searchUrl);
@@ -86,6 +89,7 @@ export default class BookList extends HTMLElement {
                     console.error("An unexpected error occurred");
                 }
             }
+            (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
         });
     }
     renderBookList(data) {

@@ -27,7 +27,10 @@
                     <select class="detailRegion"></select>
                 </library-header>
 
-                <form></form>
+                <form class="library-body">
+                    <div class="library-list"></div>
+                    <loading-component>Loading...</loading-component>
+                </form>
             </app-library>
         </div>
 
@@ -68,10 +71,6 @@
                     </label>
                 </div>
             </library-item>
-        </template>
-
-        <template id="tp-loading">
-            <div class="loading">불러오는 중입니다.</div>
         </template>
 
         <template id="tp-notFound">

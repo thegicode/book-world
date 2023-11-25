@@ -2,20 +2,24 @@ import { CustomFetch } from "../../utils/index";
 import LibraryItem from "./LibraryItem";
 import { cloneTemplate } from "../../utils/helpers";
 import bookModel from "../../model";
+import { LoadingComponent } from "../../components";
 
 export default class Library extends HTMLElement {
     private _regionCode: string | null = null;
     private readonly PAGE_SIZE = 20;
-    private formElement?: HTMLFormElement;
+    private listElement?: HTMLElement;
     private itemTemplate: HTMLTemplateElement;
+    private loadingComponent: LoadingComponent | null;
 
     constructor() {
         super();
 
-        this.formElement = this.querySelector("form") as HTMLFormElement;
+        this.listElement = this.querySelector(".library-list") as HTMLElement;
         this.itemTemplate = document.querySelector(
             "#tp-item"
         ) as HTMLTemplateElement;
+        this.loadingComponent =
+            this.querySelector<LoadingComponent>("loading-component");
     }
 
     set regionCode(value) {
@@ -34,11 +38,13 @@ export default class Library extends HTMLElement {
     private handleRegionCodeChange() {
         if (!this.regionCode) return;
 
-        this.showMessage("loading");
         this.fetchLibrarySearch(this.regionCode);
     }
 
     protected async fetchLibrarySearch(regionCode: string) {
+        if (this.listElement) this.listElement.innerHTML = "";
+        this.loadingComponent?.show();
+
         const url = `/library-search?dtl_region=${regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
         try {
             const data = await CustomFetch.fetch<ILibrarySearchByBookResult>(
@@ -49,9 +55,12 @@ export default class Library extends HTMLElement {
             console.error(error);
             throw new Error("Fail to get library search data.");
         }
+
+        this.loadingComponent?.hide();
     }
 
     protected renderLibraryList(data: ILibrarySearchByBookResult) {
+        if (!this.listElement) return;
         const {
             // pageNo, pageSize, numFound, resultNum,
             libraries,
@@ -68,10 +77,7 @@ export default class Library extends HTMLElement {
             new DocumentFragment()
         );
 
-        if (this.formElement) {
-            this.formElement.innerHTML = "";
-            this.formElement.appendChild(fragment);
-        }
+        this.listElement.appendChild(fragment);
     }
 
     private createLibraryItem(fragment: DocumentFragment, lib: ILibraryData) {
@@ -93,10 +99,10 @@ export default class Library extends HTMLElement {
             `#tp-${type}`
         ) as HTMLTemplateElement;
 
-        if (template && this.formElement) {
-            this.formElement.innerHTML = "";
+        if (template && this.listElement) {
+            this.listElement.innerHTML = "";
             const clone = cloneTemplate(template);
-            this.formElement.appendChild(clone);
+            this.listElement.appendChild(clone);
         }
     }
 }

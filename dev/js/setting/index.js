@@ -1029,6 +1029,20 @@
     }
   };
 
+  // dev/scripts/components/LoadingComponent.js
+  var LoadingComponent = class extends HTMLElement {
+    constructor() {
+      super();
+    }
+    show() {
+      this.removeAttribute("hidden");
+    }
+    hide() {
+      this.setAttribute("hidden", "");
+    }
+  };
+  customElements.define("loading-component", LoadingComponent);
+
   // dev/scripts/pages/setting/AppSetting.js
   var AppSetting = class extends HTMLElement {
     constructor() {

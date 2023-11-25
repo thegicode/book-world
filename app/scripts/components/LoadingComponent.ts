@@ -1,4 +1,4 @@
-export default class loadingComponent extends HTMLElement {
+export default class LoadingComponent extends HTMLElement {
     constructor() {
         super();
     }
@@ -11,3 +11,5 @@ export default class loadingComponent extends HTMLElement {
         this.setAttribute("hidden", "");
     }
 }
+
+customElements.define("loading-component", LoadingComponent);

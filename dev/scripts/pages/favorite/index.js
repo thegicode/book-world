@@ -1,6 +1,4 @@
-import { BookDescription, CategorySelector, LibraryBookExist, NavGnb, BookImage,
-// LoadingComponent,
- } from "../../components/index";
+import { BookDescription, CategorySelector, LibraryBookExist, NavGnb, BookImage, } from "../../components/index";
 import Favorite from "./Favorite";
 import FavoriteNav from "./FavoriteNav";
 import FavoriteItem from "./FavoriteItem";
@@ -14,5 +12,4 @@ customElements.define("library-book-exist", LibraryBookExist);
 customElements.define("category-selector", CategorySelector);
 customElements.define("book-image", BookImage);
 customElements.define("overlay-category", OverlayCategory);
-// customElements.define("loading-component", LoadingComponent);
 //# sourceMappingURL=index.js.map

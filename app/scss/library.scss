@@ -1,4 +1,6 @@
 @import "./base/_reset.scss";
+@import "./components/_gnb.scss";
+@import "./components/loading";
 
 h2 {
     margin: 0;
@@ -13,13 +15,17 @@ h2 {
 
 app-library {
     overflow: auto;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
     color: #4f4f4f;
+
     a {
         color: #4f4f4f;
     }
 }
-
-@import "./components/_gnb.scss";
 
 library-header {
     display: block;
@@ -49,6 +55,11 @@ library-header {
             background-color: #f8f8b1c9;
         }
     }
+}
+
+.library-body {
+    flex: 1;
+    position: relative;
 }
 
 library-item {
@@ -96,7 +107,6 @@ library-item {
     }
 }
 
-.loading,
 .notFound {
     margin: 1rem;
     text-align: center;

@@ -1029,6 +1029,20 @@
     }
   };
 
+  // dev/scripts/components/LoadingComponent.js
+  var LoadingComponent = class extends HTMLElement {
+    constructor() {
+      super();
+    }
+    show() {
+      this.removeAttribute("hidden");
+    }
+    hide() {
+      this.setAttribute("hidden", "");
+    }
+  };
+  customElements.define("loading-component", LoadingComponent);
+
   // dev/scripts/utils/helpers.js
   function cloneTemplate(template) {
     const content = template.content.firstElementChild;
@@ -1071,8 +1085,9 @@
       super();
       this._regionCode = null;
       this.PAGE_SIZE = 20;
-      this.formElement = this.querySelector("form");
+      this.listElement = this.querySelector(".library-list");
       this.itemTemplate = document.querySelector("#tp-item");
+      this.loadingComponent = this.querySelector("loading-component");
     }
     set regionCode(value) {
       this._regionCode = value;
@@ -1086,11 +1101,14 @@
     handleRegionCodeChange() {
       if (!this.regionCode)
         return;
-      this.showMessage("loading");
       this.fetchLibrarySearch(this.regionCode);
     }
     fetchLibrarySearch(regionCode) {
+      var _a, _b;
       return __awaiter2(this, void 0, void 0, function* () {
+        if (this.listElement)
+          this.listElement.innerHTML = "";
+        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
         const url = `/library-search?dtl_region=${regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
         try {
           const data = yield CustomFetch_default.fetch(url);
@@ -1099,9 +1117,12 @@
           console.error(error);
           throw new Error("Fail to get library search data.");
         }
+        (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
       });
     }
     renderLibraryList(data) {
+      if (!this.listElement)
+        return;
       const {
         // pageNo, pageSize, numFound, resultNum,
         libraries
@@ -1111,10 +1132,7 @@
         return;
       }
       const fragment = libraries.reduce((fragment2, lib) => this.createLibraryItem(fragment2, lib), new DocumentFragment());
-      if (this.formElement) {
-        this.formElement.innerHTML = "";
-        this.formElement.appendChild(fragment);
-      }
+      this.listElement.appendChild(fragment);
     }
     createLibraryItem(fragment, lib) {
       const libraryItem = cloneTemplate(this.itemTemplate);
@@ -1129,10 +1147,10 @@
     }
     showMessage(type) {
       const template = document.querySelector(`#tp-${type}`);
-      if (template && this.formElement) {
-        this.formElement.innerHTML = "";
+      if (template && this.listElement) {
+        this.listElement.innerHTML = "";
         const clone = cloneTemplate(template);
-        this.formElement.appendChild(clone);
+        this.listElement.appendChild(clone);
       }
     }
   };

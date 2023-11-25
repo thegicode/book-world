@@ -18,7 +18,6 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-// import { BookImage } from "../../components/index";
 import { CustomEventEmitter, CustomFetch } from "../../utils";
 import { cloneTemplate, getCurrentDates } from "../../utils/helpers";
 export default class Popular extends HTMLElement {
@@ -27,11 +26,11 @@ export default class Popular extends HTMLElement {
         this.itemTemplate = document.querySelector("#tp-popular-item");
         this.body = this.querySelector(".popular-body");
         this.list = this.querySelector(".popular-list");
-        this.loading = document.querySelector(".popular-loading");
+        this.loadingComponent =
+            this.querySelector("loading-component");
         this.onRequestPopular = this.onRequestPopular.bind(this);
         this.onClickPageNav = this.onClickPageNav.bind(this);
         this.params = null;
-        // console.log(BookImage);
     }
     connectedCallback() {
         const { currentYear, currentMonth, currentDay } = getCurrentDates();
@@ -56,9 +55,10 @@ export default class Popular extends HTMLElement {
         CustomEventEmitter.remove("clickPageNav", this.onClickPageNav);
     }
     fetch(params) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
             if (this.body && this.list) {
-                this.body.dataset.loading = "true";
                 this.list.innerHTML = "";
             }
             const searchParams = new URLSearchParams(Object.entries(params)
@@ -78,6 +78,7 @@ export default class Popular extends HTMLElement {
                 console.error(error);
                 throw new Error(`Fail to get library search by book.`);
             }
+            (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
         });
     }
     render({ data, resultNum }) {
@@ -90,9 +91,6 @@ export default class Popular extends HTMLElement {
             cloned && fragment.appendChild(cloned);
         });
         this.list.appendChild(fragment);
-        if (this.body) {
-            this.body.dataset.loading = "false";
-        }
     }
     createItem(item) {
         const { 

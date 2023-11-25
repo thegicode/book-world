@@ -1144,6 +1144,20 @@
     }
   };
 
+  // dev/scripts/components/LoadingComponent.js
+  var LoadingComponent = class extends HTMLElement {
+    constructor() {
+      super();
+    }
+    show() {
+      this.removeAttribute("hidden");
+    }
+    hide() {
+      this.setAttribute("hidden", "");
+    }
+  };
+  customElements.define("loading-component", LoadingComponent);
+
   // dev/scripts/utils/helpers.js
   function cloneTemplate(template) {
     const content = template.content.firstElementChild;

@@ -164,6 +164,25 @@ book-image .thumb {
   border: 1px solid #e8e8e8;
 }
 
+loading-component {
+  display: block;
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  font-size: 14px;
+  color: gray;
+}
+loading-component[hidden] {
+  display: none;
+}
+
 .root {
   display: flex;
   flex-direction: column;

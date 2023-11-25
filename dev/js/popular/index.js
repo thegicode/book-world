@@ -1100,6 +1100,20 @@
     }
   };
 
+  // dev/scripts/components/LoadingComponent.js
+  var LoadingComponent = class extends HTMLElement {
+    constructor() {
+      super();
+    }
+    show() {
+      this.removeAttribute("hidden");
+    }
+    hide() {
+      this.setAttribute("hidden", "");
+    }
+  };
+  customElements.define("loading-component", LoadingComponent);
+
   // dev/scripts/utils/helpers.js
   function getCurrentDates() {
     const currentDate = /* @__PURE__ */ new Date();
@@ -1167,7 +1181,7 @@
       this.itemTemplate = document.querySelector("#tp-popular-item");
       this.body = this.querySelector(".popular-body");
       this.list = this.querySelector(".popular-list");
-      this.loading = document.querySelector(".popular-loading");
+      this.loadingComponent = this.querySelector("loading-component");
       this.onRequestPopular = this.onRequestPopular.bind(this);
       this.onClickPageNav = this.onClickPageNav.bind(this);
       this.params = null;
@@ -1195,9 +1209,10 @@
       CustomEventEmitter_default.remove("clickPageNav", this.onClickPageNav);
     }
     fetch(params) {
+      var _a, _b;
       return __awaiter2(this, void 0, void 0, function* () {
+        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
         if (this.body && this.list) {
-          this.body.dataset.loading = "true";
           this.list.innerHTML = "";
         }
         const searchParams = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== void 0).map(([key, value]) => [key, String(value)]));
@@ -1214,6 +1229,7 @@
           console.error(error);
           throw new Error(`Fail to get library search by book.`);
         }
+        (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
       });
     }
     render({ data, resultNum }) {
@@ -1226,9 +1242,6 @@
         cloned && fragment.appendChild(cloned);
       });
       this.list.appendChild(fragment);
-      if (this.body) {
-        this.body.dataset.loading = "false";
-      }
     }
     createItem(item) {
       const {
