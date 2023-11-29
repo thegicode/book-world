@@ -45,11 +45,12 @@ class BookModel {
     }
 
     // state 관련
-    getState() {
+
+    get state() {
         return this.loadStorage();
     }
 
-    setState(newState: IBookState) {
+    set state(newState: IBookState) {
         this.setStorage(newState);
 
         const { favorites, sortedFavoriteKeys, libraries, regions } = newState;
@@ -62,7 +63,7 @@ class BookModel {
     }
 
     resetState() {
-        this.setState(initialState);
+        this.state = initialState;
     }
 
     // favorites 관련 메서드
@@ -76,7 +77,7 @@ class BookModel {
     }
 
     setFavorites() {
-        const newState = this.getState();
+        const newState = this.state;
         newState.favorites = this.getFavorites();
         newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
         this.setStorage(newState);
@@ -147,7 +148,7 @@ class BookModel {
     }
 
     setLibraries() {
-        const newState = this.getState();
+        const newState = this.state;
         newState.libraries = this.getLibraries();
         this.setStorage(newState);
     }
@@ -175,7 +176,7 @@ class BookModel {
     }
 
     setRegions() {
-        const newState = this.getState();
+        const newState = this.state;
         newState.regions = this.getRegions();
         this.setStorage(newState);
     }

@@ -270,10 +270,10 @@
       }
     }
     // state 관련
-    getState() {
+    get state() {
       return this.loadStorage();
     }
-    setState(newState) {
+    set state(newState) {
       this.setStorage(newState);
       const { favorites, sortedFavoriteKeys, libraries, regions } = newState;
       this.favoriteModel.favorites = favorites;
@@ -283,7 +283,7 @@
       this.bookStateUpdatePublisher.notify();
     }
     resetState() {
-      this.setState(initialState);
+      this.state = initialState;
     }
     // favorites 관련 메서드
     getFavorites() {
@@ -293,7 +293,7 @@
       return this.favoriteModel.sortedKeys;
     }
     setFavorites() {
-      const newState = this.getState();
+      const newState = this.state;
       newState.favorites = this.getFavorites();
       newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
       this.setStorage(newState);
@@ -343,7 +343,7 @@
       return this.libraryModel.libraries;
     }
     setLibraries() {
-      const newState = this.getState();
+      const newState = this.state;
       newState.libraries = this.getLibraries();
       this.setStorage(newState);
     }
@@ -363,7 +363,7 @@
       return this.regionModel.regions;
     }
     setRegions() {
-      const newState = this.getState();
+      const newState = this.state;
       newState.regions = this.getRegions();
       this.setStorage(newState);
     }

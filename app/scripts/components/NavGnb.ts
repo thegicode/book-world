@@ -1,7 +1,7 @@
 import bookModel from "../model";
 
 export default class NavGnb extends HTMLElement {
-    PATHS: string[];
+    private PATHS: string[];
 
     constructor() {
         super();

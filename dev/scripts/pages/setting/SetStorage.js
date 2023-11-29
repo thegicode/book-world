@@ -17,7 +17,7 @@ export default class SetStorage extends HTMLElement {
         this.defaultButton = null;
         this.resetButton = null;
         this.savetStorage = () => {
-            const state = bookModel.getState();
+            const state = bookModel.state;
             if (!state)
                 return;
             fetch(SAMPLE_JSON_URL, {
@@ -25,7 +25,7 @@ export default class SetStorage extends HTMLElement {
                 headers: {
                     "Content-Type": "appication/json",
                 },
-                body: JSON.stringify(bookModel.getState()),
+                body: JSON.stringify(state),
             })
                 .then(function (reponse) {
                 if (!reponse.ok) {
@@ -43,7 +43,7 @@ export default class SetStorage extends HTMLElement {
         this.setLocalStorageToBase = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
-                bookModel.setState(data);
+                bookModel.state = data;
                 console.log("Saved local stronage by base data!");
             }
             catch (error) {

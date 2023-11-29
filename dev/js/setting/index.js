@@ -226,10 +226,10 @@
       }
     }
     // state 관련
-    getState() {
+    get state() {
       return this.loadStorage();
     }
-    setState(newState) {
+    set state(newState) {
       this.setStorage(newState);
       const { favorites, sortedFavoriteKeys, libraries, regions } = newState;
       this.favoriteModel.favorites = favorites;
@@ -239,7 +239,7 @@
       this.bookStateUpdatePublisher.notify();
     }
     resetState() {
-      this.setState(initialState);
+      this.state = initialState;
     }
     // favorites 관련 메서드
     getFavorites() {
@@ -249,7 +249,7 @@
       return this.favoriteModel.sortedKeys;
     }
     setFavorites() {
-      const newState = this.getState();
+      const newState = this.state;
       newState.favorites = this.getFavorites();
       newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
       this.setStorage(newState);
@@ -299,7 +299,7 @@
       return this.libraryModel.libraries;
     }
     setLibraries() {
-      const newState = this.getState();
+      const newState = this.state;
       newState.libraries = this.getLibraries();
       this.setStorage(newState);
     }
@@ -319,7 +319,7 @@
       return this.regionModel.regions;
     }
     setRegions() {
-      const newState = this.getState();
+      const newState = this.state;
       newState.regions = this.getRegions();
       this.setStorage(newState);
     }
@@ -1377,7 +1377,7 @@
       this.defaultButton = null;
       this.resetButton = null;
       this.savetStorage = () => {
-        const state = model_default.getState();
+        const state = model_default.state;
         if (!state)
           return;
         fetch(SAMPLE_JSON_URL, {
@@ -1385,7 +1385,7 @@
           headers: {
             "Content-Type": "appication/json"
           },
-          body: JSON.stringify(model_default.getState())
+          body: JSON.stringify(state)
         }).then(function(reponse) {
           if (!reponse.ok) {
             throw new Error("\uC11C\uBC84 \uC751\uB2F5 \uC624\uB958" + reponse.status);
@@ -1400,7 +1400,7 @@
       this.setLocalStorageToBase = () => __awaiter3(this, void 0, void 0, function* () {
         try {
           const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
-          model_default.setState(data);
+          model_default.state = data;
           console.log("Saved local stronage by base data!");
         } catch (error) {
           console.error(error);
