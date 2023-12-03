@@ -23,7 +23,7 @@ export function cloneTemplate<T extends HTMLElement>(
 }
 
 export function fillElementsWithData<T>(data: T, container: HTMLElement) {
-    Object.entries(data as Record<string, number>).forEach(([key, value]) => {
+    Object.entries(data as Record<string, unknown>).forEach(([key, value]) => {
         const element = container.querySelector(`.${key}`) as HTMLElement;
         element.textContent = String(value);
     });
