@@ -2,6 +2,8 @@ import BookItem from "./BookItem";
 import { Observer, CustomFetch } from "../../utils/index";
 import { LoadingComponent } from "../../components";
 // import { SEARCH_PAGE_INIT } from "./constant";
+import { URL } from "../../utils/constants";
+import { cloneTemplate } from "../../utils/helpers";
 
 export default class BookList extends HTMLElement {
     paginationElement!: HTMLElement;
@@ -15,6 +17,10 @@ export default class BookList extends HTMLElement {
     constructor() {
         super();
 
+        this.paginationElement = this.querySelector(
+            ".paging-info"
+        ) as HTMLElement;
+        this.bookContainer = this.querySelector(".books") as HTMLElement;
         this.loadingComponent =
             this.querySelector<LoadingComponent>("loading-component");
 
@@ -23,10 +29,6 @@ export default class BookList extends HTMLElement {
     }
 
     connectedCallback() {
-        this.paginationElement = this.querySelector(
-            ".paging-info"
-        ) as HTMLElement;
-        this.bookContainer = this.querySelector(".books") as HTMLElement;
         this.setupObserver();
 
         // CustomEventEmitter.add(
@@ -44,9 +46,9 @@ export default class BookList extends HTMLElement {
         // );
     }
 
-    initializeSearchPage(keyword: string, sort: string) {
+    initializeSearchPage(keyword: string, sortValue: string) {
         this.keyword = keyword;
-        this.sortingOrder = sort;
+        this.sortingOrder = sortValue;
         this.itemCount = 0;
 
         // renderBooks: onSubmit으로 들어온 경우와 브라우저
@@ -92,7 +94,9 @@ export default class BookList extends HTMLElement {
         this.loadingComponent?.show();
 
         const encodedKeyword = encodeURIComponent(this.keyword);
-        const searchUrl = `/search-naver-book?keyword=${encodedKeyword}&display=${10}&start=${
+        const searchUrl = `${
+            URL.search
+        }?keyword=${encodedKeyword}&display=${10}&start=${
             this.itemCount + 1
         }&sort=${this.sortingOrder}`;
 
@@ -114,9 +118,11 @@ export default class BookList extends HTMLElement {
         this.loadingComponent?.hide();
     }
 
-    private renderBookList(data: ISearchNaverBookResult): void {
-        const { total, display, items } = data;
-
+    private renderBookList({
+        total,
+        display,
+        items,
+    }: ISearchNaverBookResult): void {
         if (total === 0) {
             this.renderMessage("notFound");
             return;
@@ -153,11 +159,10 @@ export default class BookList extends HTMLElement {
         ) as HTMLTemplateElement;
 
         items.forEach((item, index) => {
-            const clonedNode = template.content.cloneNode(true) as HTMLElement;
-            const bookItem = clonedNode.querySelector("book-item") as BookItem;
-            bookItem.bookData = item;
+            const bookItem = cloneTemplate(template) as BookItem;
+            bookItem.data = item;
             bookItem.dataset.index = (this.itemCount + index).toString();
-            fragment.appendChild(clonedNode);
+            fragment.appendChild(bookItem);
         });
 
         this.bookContainer.appendChild(fragment);

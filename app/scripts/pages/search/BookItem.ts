@@ -1,99 +1,75 @@
-import {
-    BookDescription,
-    BookImage,
-    LibraryBookExist,
-} from "../../components/index";
+import { LibraryBookExist } from "../../components/index";
 import bookModel from "../../model";
+import renderBookItem from "./renderBooItem";
 
 export default class BookItem extends HTMLElement {
-    private bookLibraryButton: HTMLButtonElement | null = null;
-    bookData!: ISearchBook;
+    private libraryButton: HTMLButtonElement | null = null;
+    private libraryExistComponent: LibraryBookExist | null = null;
+
+    data!: ISearchBook; // 렌더링 되기전에 BookList에서  할당
 
     constructor() {
         super();
+
+        this.libraryButton = this.querySelector(".library-button");
+        this.libraryExistComponent =
+            this.querySelector<LibraryBookExist>("library-book-exist");
+
+        this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }
 
     connectedCallback() {
-        this.bookLibraryButton = this.querySelector(".library-button");
-        this.bookLibraryButton?.addEventListener(
-            "click",
-            this.onLibraryButtonClick
-        );
-
-        this.populateBookData();
-    }
-
-    disconnectedCallback() {
-        this.bookLibraryButton = this.querySelector(".library-button");
-        this.bookLibraryButton?.addEventListener(
-            "click",
-            this.onLibraryButtonClick
-        );
-    }
-
-    private populateBookData() {
-        if (!this.bookData) {
+        if (!this.data) {
             console.error("Book data is not provided");
             return;
         }
 
-        this.updateBookElements(this.bookData);
+        this.addListeners();
+        this.render();
     }
 
-    private updateBookElements(bookData: ISearchBook) {
-        const {
-            image,
-            isbn,
-            link,
-            pubdate,
-            ...otherData // author,  description,  discount,  publisher, title,
-        } = bookData;
+    disconnectedCallback() {
+        this.removeListeners();
+    }
 
-        const title = bookData.title;
+    private addListeners() {
+        this.libraryButton?.addEventListener(
+            "click",
+            this.onLibraryButtonClick
+        );
+    }
 
-        const imageNode = this.querySelector<BookImage>("book-image");
-        if (imageNode) {
-            imageNode.dataset.object = JSON.stringify({
-                bookImageURL: image,
-                bookname: title,
-            });
-        }
+    private removeListeners() {
+        this.libraryButton?.removeEventListener(
+            "click",
+            this.onLibraryButtonClick
+        );
+    }
 
-        const linkNode = this.querySelector(".link") as HTMLAnchorElement;
-        if (linkNode) linkNode.href = link;
+    private render() {
+        const { discount, pubdate, ...others } = this.data;
 
-        const date = `${pubdate.substring(0, 4)}.${pubdate.substring(
+        const _pubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(
             4,
             6
         )}.${pubdate.substring(6)}`;
-        const pubdateNode = this.querySelector(".pubdate") as HTMLElement;
-        if (pubdateNode) pubdateNode.textContent = date;
 
-        Object.entries(otherData).forEach(([key, value]) => {
-            if (key === "description") {
-                const descNode =
-                    this.querySelector<BookDescription>("book-description");
-                if (descNode) descNode.data = value as string;
-            } else {
-                const element = this.querySelector(`.${key}`) as HTMLElement;
-                if (element) element.textContent = value as string;
-            }
-        });
+        const renderData = {
+            ...others,
+            discount: Number(discount).toLocaleString(),
+            pubdate: _pubdate,
+        };
 
-        const anchorEl = this.querySelector("a") as HTMLAnchorElement;
-        if (anchorEl) anchorEl.href = `/book?isbn=${isbn}`;
-
-        this.dataset.isbn = isbn;
+        renderBookItem(this, renderData);
     }
 
-    private onLibraryButtonClick = () => {
+    // 도서관 소장 | 대출 조회
+    private onLibraryButtonClick() {
         const isbn = this.dataset.isbn || "";
-        const libraryBookNode =
-            this.querySelector<LibraryBookExist>("library-book-exist");
-        libraryBookNode?.onLibraryBookExist(
-            this.bookLibraryButton,
+        this.libraryExistComponent?.onLibraryBookExist(
+            this.libraryButton,
             isbn,
             bookModel.getLibraries()
         );
-    };
+    }
 }

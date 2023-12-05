@@ -1399,25 +1399,44 @@
           bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
         }
       };
-      this.initialize();
+      this.form = this.querySelector("form");
+      this.input = this.querySelector("input[type='search']");
     }
     connectedCallback() {
       var _a, _b;
       (_a = this.form) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", this.onSubmit);
-      const radios = (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort;
-      radios.forEach((radio) => {
+      (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort.forEach((radio) => {
         radio.addEventListener("change", this.handleRadioChange);
       });
     }
     disconnectedCallback() {
-      var _a;
+      var _a, _b;
       (_a = this.form) === null || _a === void 0 ? void 0 : _a.removeEventListener("submit", this.onSubmit);
-    }
-    initialize() {
-      this.form = this.querySelector("form");
-      this.input = this.querySelector("input[type='search']");
+      (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort.forEach((radio) => {
+        radio.removeEventListener("change", this.handleRadioChange);
+      });
     }
   };
+
+  // dev/scripts/utils/constants.js
+  var URL2 = {
+    search: "/search-naver-book"
+  };
+
+  // dev/scripts/utils/helpers.js
+  function cloneTemplate(template) {
+    const content = template.content.firstElementChild;
+    if (!content) {
+      throw new Error("Template content is empty");
+    }
+    return content.cloneNode(true);
+  }
+  function fillElementsWithData(data, container) {
+    Object.entries(data).forEach(([key, value]) => {
+      const element = container.querySelector(`.${key}`);
+      element.textContent = String(value);
+    });
+  }
 
   // dev/scripts/pages/search/BookList.js
   var __awaiter3 = function(thisArg, _arguments, P, generator) {
@@ -1450,22 +1469,22 @@
   var BookList = class extends HTMLElement {
     constructor() {
       super();
+      this.paginationElement = this.querySelector(".paging-info");
+      this.bookContainer = this.querySelector(".books");
       this.loadingComponent = this.querySelector("loading-component");
       this.retrieveBooks = this.retrieveBooks.bind(this);
       this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
     connectedCallback() {
-      this.paginationElement = this.querySelector(".paging-info");
-      this.bookContainer = this.querySelector(".books");
       this.setupObserver();
     }
     disconnectedCallback() {
       var _a;
       (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
     }
-    initializeSearchPage(keyword, sort) {
+    initializeSearchPage(keyword, sortValue) {
       this.keyword = keyword;
-      this.sortingOrder = sort;
+      this.sortingOrder = sortValue;
       this.itemCount = 0;
       this.keyword ? this.renderBooks() : this.showDefaultMessage();
     }
@@ -1502,7 +1521,7 @@
           return;
         (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
         const encodedKeyword = encodeURIComponent(this.keyword);
-        const searchUrl = `/search-naver-book?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
+        const searchUrl = `${URL2.search}?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
         try {
           const data = yield CustomFetch_default.fetch(searchUrl);
           this.renderBookList(data);
@@ -1516,9 +1535,8 @@
         (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
       });
     }
-    renderBookList(data) {
+    renderBookList({ total, display, items }) {
       var _a;
-      const { total, display, items } = data;
       if (total === 0) {
         this.renderMessage("notFound");
         return;
@@ -1546,11 +1564,10 @@
       const fragment = new DocumentFragment();
       const template = document.querySelector("#tp-book-item");
       items.forEach((item, index) => {
-        const clonedNode = template.content.cloneNode(true);
-        const bookItem = clonedNode.querySelector("book-item");
-        bookItem.bookData = item;
+        const bookItem = cloneTemplate(template);
+        bookItem.data = item;
         bookItem.dataset.index = (this.itemCount + index).toString();
-        fragment.appendChild(clonedNode);
+        fragment.appendChild(bookItem);
       });
       this.bookContainer.appendChild(fragment);
     }
@@ -1563,8 +1580,39 @@
     }
   };
 
-  // dev/scripts/pages/search/BookItem.js
+  // dev/scripts/pages/search/renderBooItem.js
   var __rest = function(s, e) {
+    var t = {};
+    for (var p in s)
+      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+          t[p[i]] = s[p[i]];
+      }
+    return t;
+  };
+  function renderBookItem(bookItem, data) {
+    const { description, image, isbn, link, title } = data, otherData = __rest(data, ["description", "image", "isbn", "link", "title"]);
+    const imageEl = bookItem.querySelector("book-image");
+    imageEl.dataset.object = JSON.stringify({
+      bookImageURL: image,
+      bookname: title
+    });
+    const linkEl = bookItem.querySelector(".link");
+    linkEl.href = link;
+    const descriptionEl = bookItem.querySelector("book-description");
+    if (descriptionEl)
+      descriptionEl.data = description;
+    const anchorEl = bookItem.querySelector("a");
+    anchorEl.href = `/book?isbn=${isbn}`;
+    fillElementsWithData(Object.assign(Object.assign({}, otherData), { title }), bookItem);
+    bookItem.dataset.isbn = isbn;
+  }
+
+  // dev/scripts/pages/search/BookItem.js
+  var __rest2 = function(s, e) {
     var t = {};
     for (var p in s)
       if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -1579,63 +1627,42 @@
   var BookItem = class extends HTMLElement {
     constructor() {
       super();
-      this.bookLibraryButton = null;
-      this.onLibraryButtonClick = () => {
-        const isbn = this.dataset.isbn || "";
-        const libraryBookNode = this.querySelector("library-book-exist");
-        libraryBookNode === null || libraryBookNode === void 0 ? void 0 : libraryBookNode.onLibraryBookExist(this.bookLibraryButton, isbn, model_default.getLibraries());
-      };
+      this.libraryButton = null;
+      this.libraryExistComponent = null;
+      this.libraryButton = this.querySelector(".library-button");
+      this.libraryExistComponent = this.querySelector("library-book-exist");
+      this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }
     connectedCallback() {
-      var _a;
-      this.bookLibraryButton = this.querySelector(".library-button");
-      (_a = this.bookLibraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
-      this.populateBookData();
-    }
-    disconnectedCallback() {
-      var _a;
-      this.bookLibraryButton = this.querySelector(".library-button");
-      (_a = this.bookLibraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
-    }
-    populateBookData() {
-      if (!this.bookData) {
+      if (!this.data) {
         console.error("Book data is not provided");
         return;
       }
-      this.updateBookElements(this.bookData);
+      this.addListeners();
+      this.render();
     }
-    updateBookElements(bookData) {
-      const { image, isbn, link, pubdate } = bookData, otherData = __rest(bookData, ["image", "isbn", "link", "pubdate"]);
-      const title = bookData.title;
-      const imageNode = this.querySelector("book-image");
-      if (imageNode) {
-        imageNode.dataset.object = JSON.stringify({
-          bookImageURL: image,
-          bookname: title
-        });
-      }
-      const linkNode = this.querySelector(".link");
-      if (linkNode)
-        linkNode.href = link;
-      const date = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
-      const pubdateNode = this.querySelector(".pubdate");
-      if (pubdateNode)
-        pubdateNode.textContent = date;
-      Object.entries(otherData).forEach(([key, value]) => {
-        if (key === "description") {
-          const descNode = this.querySelector("book-description");
-          if (descNode)
-            descNode.data = value;
-        } else {
-          const element = this.querySelector(`.${key}`);
-          if (element)
-            element.textContent = value;
-        }
-      });
-      const anchorEl = this.querySelector("a");
-      if (anchorEl)
-        anchorEl.href = `/book?isbn=${isbn}`;
-      this.dataset.isbn = isbn;
+    disconnectedCallback() {
+      this.removeListeners();
+    }
+    addListeners() {
+      var _a;
+      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
+    }
+    removeListeners() {
+      var _a;
+      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibraryButtonClick);
+    }
+    render() {
+      const _a = this.data, { discount, pubdate } = _a, others = __rest2(_a, ["discount", "pubdate"]);
+      const _pubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
+      const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: _pubdate });
+      renderBookItem(this, renderData);
+    }
+    // 도서관 소장 | 대출 조회
+    onLibraryButtonClick() {
+      var _a;
+      const isbn = this.dataset.isbn || "";
+      (_a = this.libraryExistComponent) === null || _a === void 0 ? void 0 : _a.onLibraryBookExist(this.libraryButton, isbn, model_default.getLibraries());
     }
   };
 

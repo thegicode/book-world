@@ -9,17 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Observer, CustomFetch } from "../../utils/index";
 // import { SEARCH_PAGE_INIT } from "./constant";
+import { URL } from "../../utils/constants";
+import { cloneTemplate } from "../../utils/helpers";
 export default class BookList extends HTMLElement {
     constructor() {
         super();
+        this.paginationElement = this.querySelector(".paging-info");
+        this.bookContainer = this.querySelector(".books");
         this.loadingComponent =
             this.querySelector("loading-component");
         this.retrieveBooks = this.retrieveBooks.bind(this);
         this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
     connectedCallback() {
-        this.paginationElement = this.querySelector(".paging-info");
-        this.bookContainer = this.querySelector(".books");
         this.setupObserver();
         // CustomEventEmitter.add(
         //     SEARCH_PAGE_INIT,
@@ -34,9 +36,9 @@ export default class BookList extends HTMLElement {
         //     this.initializeSearchPage as EventListener
         // );
     }
-    initializeSearchPage(keyword, sort) {
+    initializeSearchPage(keyword, sortValue) {
         this.keyword = keyword;
-        this.sortingOrder = sort;
+        this.sortingOrder = sortValue;
         this.itemCount = 0;
         // renderBooks: onSubmit으로 들어온 경우와 브라우저
         // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
@@ -75,7 +77,7 @@ export default class BookList extends HTMLElement {
                 return;
             (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
             const encodedKeyword = encodeURIComponent(this.keyword);
-            const searchUrl = `/search-naver-book?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
+            const searchUrl = `${URL.search}?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
             // console.log("fetch-search: ", searchUrl);
             try {
                 const data = yield CustomFetch.fetch(searchUrl);
@@ -92,9 +94,8 @@ export default class BookList extends HTMLElement {
             (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
         });
     }
-    renderBookList(data) {
+    renderBookList({ total, display, items, }) {
         var _a;
-        const { total, display, items } = data;
         if (total === 0) {
             this.renderMessage("notFound");
             return;
@@ -122,11 +123,10 @@ export default class BookList extends HTMLElement {
         const fragment = new DocumentFragment();
         const template = document.querySelector("#tp-book-item");
         items.forEach((item, index) => {
-            const clonedNode = template.content.cloneNode(true);
-            const bookItem = clonedNode.querySelector("book-item");
-            bookItem.bookData = item;
+            const bookItem = cloneTemplate(template);
+            bookItem.data = item;
             bookItem.dataset.index = (this.itemCount + index).toString();
-            fragment.appendChild(clonedNode);
+            fragment.appendChild(bookItem);
         });
         this.bookContainer.appendChild(fragment);
     }

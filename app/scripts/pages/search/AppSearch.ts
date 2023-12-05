@@ -11,6 +11,7 @@ export default class AppSearch extends HTMLElement {
 
     connectedCallback() {
         this.renderBookList();
+
         this.boundPopStateHandler = this.onPopState.bind(this);
         window.addEventListener("popstate", this.boundPopStateHandler);
     }

@@ -8,27 +8,25 @@ export default class InputSearch extends HTMLElement {
 
     constructor() {
         super();
-        this.initialize();
+
+        this.form = this.querySelector("form") as HTMLFormElement;
+        this.input = this.querySelector(
+            "input[type='search']"
+        ) as HTMLInputElement;
     }
 
     connectedCallback() {
         this.form?.addEventListener("submit", this.onSubmit);
-
-        const radios = this.form?.sort;
-        radios.forEach((radio: HTMLInputElement) => {
+        this.form?.sort.forEach((radio: HTMLInputElement) => {
             radio.addEventListener("change", this.handleRadioChange);
         });
     }
 
     disconnectedCallback() {
         this.form?.removeEventListener("submit", this.onSubmit);
-    }
-
-    private initialize() {
-        this.form = this.querySelector("form") as HTMLFormElement;
-        this.input = this.querySelector(
-            "input[type='search']"
-        ) as HTMLInputElement;
+        this.form?.sort.forEach((radio: HTMLInputElement) => {
+            radio.removeEventListener("change", this.handleRadioChange);
+        });
     }
 
     private handleRadioChange = () => {

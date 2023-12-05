@@ -28,23 +28,22 @@ export default class InputSearch extends HTMLElement {
                 // CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
             }
         };
-        this.initialize();
+        this.form = this.querySelector("form");
+        this.input = this.querySelector("input[type='search']");
     }
     connectedCallback() {
         var _a, _b;
         (_a = this.form) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", this.onSubmit);
-        const radios = (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort;
-        radios.forEach((radio) => {
+        (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort.forEach((radio) => {
             radio.addEventListener("change", this.handleRadioChange);
         });
     }
     disconnectedCallback() {
-        var _a;
+        var _a, _b;
         (_a = this.form) === null || _a === void 0 ? void 0 : _a.removeEventListener("submit", this.onSubmit);
-    }
-    initialize() {
-        this.form = this.querySelector("form");
-        this.input = this.querySelector("input[type='search']");
+        (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort.forEach((radio) => {
+            radio.removeEventListener("change", this.handleRadioChange);
+        });
     }
 }
 //# sourceMappingURL=InputSearch.js.map
