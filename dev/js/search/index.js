@@ -1418,25 +1418,101 @@
     }
   };
 
-  // dev/scripts/utils/constants.js
-  var URL2 = {
-    search: "/search-naver-book"
-  };
-
   // dev/scripts/utils/helpers.js
-  function cloneTemplate(template) {
-    const content = template.content.firstElementChild;
-    if (!content) {
-      throw new Error("Template content is empty");
-    }
-    return content.cloneNode(true);
-  }
   function fillElementsWithData(data, container) {
     Object.entries(data).forEach(([key, value]) => {
       const element = container.querySelector(`.${key}`);
       element.textContent = String(value);
     });
   }
+
+  // dev/scripts/pages/search/renderBooItem.js
+  var __rest = function(s, e) {
+    var t = {};
+    for (var p in s)
+      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+          t[p[i]] = s[p[i]];
+      }
+    return t;
+  };
+  function renderBookItem(bookItem, data) {
+    const { description, image, isbn, link, title } = data, otherData = __rest(data, ["description", "image", "isbn", "link", "title"]);
+    const imageEl = bookItem.querySelector("book-image");
+    imageEl.dataset.object = JSON.stringify({
+      bookImageURL: image,
+      bookname: title
+    });
+    const linkEl = bookItem.querySelector(".link");
+    linkEl.href = link;
+    const descriptionEl = bookItem.querySelector("book-description");
+    if (descriptionEl)
+      descriptionEl.data = description;
+    const anchorEl = bookItem.querySelector("a");
+    anchorEl.href = `/book?isbn=${isbn}`;
+    fillElementsWithData(Object.assign(Object.assign({}, otherData), { title }), bookItem);
+    bookItem.dataset.isbn = isbn;
+  }
+
+  // dev/scripts/pages/search/BookItem.js
+  var __rest2 = function(s, e) {
+    var t = {};
+    for (var p in s)
+      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+          t[p[i]] = s[p[i]];
+      }
+    return t;
+  };
+  var BookItem = class extends HTMLElement {
+    constructor(data) {
+      super();
+      this.libraryButton = null;
+      this.libraryExistComponent = null;
+      this.data = data;
+      this.libraryButton = this.querySelector(".library-button");
+      this.libraryExistComponent = this.querySelector("library-book-exist");
+      this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
+    }
+    connectedCallback() {
+      this.addListeners();
+      this.render();
+    }
+    disconnectedCallback() {
+      this.removeListeners();
+    }
+    addListeners() {
+      var _a;
+      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
+    }
+    removeListeners() {
+      var _a;
+      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibraryButtonClick);
+    }
+    render() {
+      const _a = this.data, { discount, pubdate } = _a, others = __rest2(_a, ["discount", "pubdate"]);
+      const _pubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
+      const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: _pubdate });
+      renderBookItem(this, renderData);
+    }
+    // 도서관 소장 | 대출 조회
+    onLibraryButtonClick() {
+      var _a;
+      const isbn = this.dataset.isbn || "";
+      (_a = this.libraryExistComponent) === null || _a === void 0 ? void 0 : _a.onLibraryBookExist(this.libraryButton, isbn, model_default.getLibraries());
+    }
+  };
+
+  // dev/scripts/utils/constants.js
+  var URL2 = {
+    search: "/search-naver-book"
+  };
 
   // dev/scripts/pages/search/BookList.js
   var __awaiter3 = function(thisArg, _arguments, P, generator) {
@@ -1563,9 +1639,10 @@
     appendBookItems(items) {
       const fragment = new DocumentFragment();
       const template = document.querySelector("#tp-book-item");
-      items.forEach((item, index) => {
-        const bookItem = cloneTemplate(template);
-        bookItem.data = item;
+      items.forEach((data, index) => {
+        const bookItem = new BookItem(data);
+        const cloned = template.content.cloneNode(true);
+        bookItem.appendChild(cloned);
         bookItem.dataset.index = (this.itemCount + index).toString();
         fragment.appendChild(bookItem);
       });
@@ -1577,92 +1654,6 @@
         return;
       this.bookContainer.innerHTML = "";
       this.bookContainer.appendChild(messageTemplate.content.cloneNode(true));
-    }
-  };
-
-  // dev/scripts/pages/search/renderBooItem.js
-  var __rest = function(s, e) {
-    var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  };
-  function renderBookItem(bookItem, data) {
-    const { description, image, isbn, link, title } = data, otherData = __rest(data, ["description", "image", "isbn", "link", "title"]);
-    const imageEl = bookItem.querySelector("book-image");
-    imageEl.dataset.object = JSON.stringify({
-      bookImageURL: image,
-      bookname: title
-    });
-    const linkEl = bookItem.querySelector(".link");
-    linkEl.href = link;
-    const descriptionEl = bookItem.querySelector("book-description");
-    if (descriptionEl)
-      descriptionEl.data = description;
-    const anchorEl = bookItem.querySelector("a");
-    anchorEl.href = `/book?isbn=${isbn}`;
-    fillElementsWithData(Object.assign(Object.assign({}, otherData), { title }), bookItem);
-    bookItem.dataset.isbn = isbn;
-  }
-
-  // dev/scripts/pages/search/BookItem.js
-  var __rest2 = function(s, e) {
-    var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  };
-  var BookItem = class extends HTMLElement {
-    constructor() {
-      super();
-      this.libraryButton = null;
-      this.libraryExistComponent = null;
-      this.libraryButton = this.querySelector(".library-button");
-      this.libraryExistComponent = this.querySelector("library-book-exist");
-      this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
-    }
-    connectedCallback() {
-      if (!this.data) {
-        console.error("Book data is not provided");
-        return;
-      }
-      this.addListeners();
-      this.render();
-    }
-    disconnectedCallback() {
-      this.removeListeners();
-    }
-    addListeners() {
-      var _a;
-      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
-    }
-    removeListeners() {
-      var _a;
-      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibraryButtonClick);
-    }
-    render() {
-      const _a = this.data, { discount, pubdate } = _a, others = __rest2(_a, ["discount", "pubdate"]);
-      const _pubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
-      const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: _pubdate });
-      renderBookItem(this, renderData);
-    }
-    // 도서관 소장 | 대출 조회
-    onLibraryButtonClick() {
-      var _a;
-      const isbn = this.dataset.isbn || "";
-      (_a = this.libraryExistComponent) === null || _a === void 0 ? void 0 : _a.onLibraryBookExist(this.libraryButton, isbn, model_default.getLibraries());
     }
   };
 

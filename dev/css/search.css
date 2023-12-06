@@ -295,13 +295,13 @@ app-search {
   color: #666;
 }
 
-.book {
+book-item {
   position: relative;
   display: block;
   border-bottom: 1px solid #ccc;
   text-align: left;
 }
-.book .book-summary {
+book-item .book-summary {
   position: relative;
   margin: 1rem 1rem 7px;
   display: flex;
@@ -309,24 +309,24 @@ app-search {
   font-size: 14px;
   color: #333;
 }
-.book .book-summary p {
+book-item .book-summary p {
   margin: 7px 0;
 }
-.book .book-info {
+book-item .book-info {
   margin: 0;
   padding: 0;
   list-style: none;
   color: #666;
 }
-.book .book-info .title {
+book-item .book-info .title {
   margin-bottom: 10px;
   font-size: 1rem;
   color: #333;
 }
-.book .book-info li {
+book-item .book-info li {
   margin-bottom: 5px;
 }
-.book .book-info .link {
+book-item .book-info .link {
   display: inline-block;
   padding: 5px 10px;
   border-radius: 5px;
@@ -335,45 +335,45 @@ app-search {
   text-decoration: none;
   color: #555;
 }
-.book .book-info .link:hover {
+book-item .book-info .link:hover {
   background-color: rgba(10, 100, 200, 0.05);
 }
-.book book-image {
+book-item book-image {
   border: 1px solid transparent;
 }
-.book book-image[data-fail=true] .book-image {
+book-item book-image[data-fail=true] .book-image {
   width: 120px;
   height: 130px;
 }
-.book book-image .thumb {
+book-item book-image .thumb {
   width: 120px;
 }
-.book a:hover .thumb {
+book-item a:hover .thumb {
   border-color: #000;
 }
-.book book-description {
+book-item book-description {
   margin: 0 1rem;
 }
-.book .actions {
+book-item .actions {
   margin: 1rem;
 }
-.book .actions button {
+book-item .actions button {
   border-radius: 7px;
   border: 1px solid #eee;
   background-color: transparent;
   padding: 7px 1rem;
 }
-.book .actions button[data-selected=true] {
+book-item .actions button[data-selected=true] {
   color: green;
 }
-.book .actions button[data-selected=true] svg {
+book-item .actions button[data-selected=true] svg {
   fill: green;
 }
-.book .actions svg {
+book-item .actions svg {
   fill: #999;
   margin-right: 5px;
 }
-.book .actions .library-button {
+book-item .actions .library-button {
   width: 100%;
   margin-top: 10px;
   text-align: center;

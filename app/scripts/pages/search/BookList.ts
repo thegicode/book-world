@@ -1,9 +1,7 @@
 import BookItem from "./BookItem";
 import { Observer, CustomFetch } from "../../utils/index";
 import { LoadingComponent } from "../../components";
-// import { SEARCH_PAGE_INIT } from "./constant";
 import { URL } from "../../utils/constants";
-import { cloneTemplate } from "../../utils/helpers";
 
 export default class BookList extends HTMLElement {
     paginationElement!: HTMLElement;
@@ -158,9 +156,10 @@ export default class BookList extends HTMLElement {
             "#tp-book-item"
         ) as HTMLTemplateElement;
 
-        items.forEach((item, index) => {
-            const bookItem = cloneTemplate(template) as BookItem;
-            bookItem.data = item;
+        items.forEach((data, index) => {
+            const bookItem = new BookItem(data);
+            const cloned = template.content.cloneNode(true);
+            bookItem.appendChild(cloned);
             bookItem.dataset.index = (this.itemCount + index).toString();
             fragment.appendChild(bookItem);
         });

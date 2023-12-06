@@ -7,10 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import BookItem from "./BookItem";
 import { Observer, CustomFetch } from "../../utils/index";
-// import { SEARCH_PAGE_INIT } from "./constant";
 import { URL } from "../../utils/constants";
-import { cloneTemplate } from "../../utils/helpers";
 export default class BookList extends HTMLElement {
     constructor() {
         super();
@@ -122,9 +121,10 @@ export default class BookList extends HTMLElement {
     appendBookItems(items) {
         const fragment = new DocumentFragment();
         const template = document.querySelector("#tp-book-item");
-        items.forEach((item, index) => {
-            const bookItem = cloneTemplate(template);
-            bookItem.data = item;
+        items.forEach((data, index) => {
+            const bookItem = new BookItem(data);
+            const cloned = template.content.cloneNode(true);
+            bookItem.appendChild(cloned);
             bookItem.dataset.index = (this.itemCount + index).toString();
             fragment.appendChild(bookItem);
         });

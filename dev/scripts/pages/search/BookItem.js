@@ -12,20 +12,17 @@ var __rest = (this && this.__rest) || function (s, e) {
 import bookModel from "../../model";
 import renderBookItem from "./renderBooItem";
 export default class BookItem extends HTMLElement {
-    constructor() {
+    constructor(data) {
         super();
         this.libraryButton = null;
         this.libraryExistComponent = null;
+        this.data = data;
         this.libraryButton = this.querySelector(".library-button");
         this.libraryExistComponent =
             this.querySelector("library-book-exist");
         this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }
     connectedCallback() {
-        if (!this.data) {
-            console.error("Book data is not provided");
-            return;
-        }
         this.addListeners();
         this.render();
     }

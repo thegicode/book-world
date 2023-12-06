@@ -3,13 +3,14 @@ import bookModel from "../../model";
 import renderBookItem from "./renderBooItem";
 
 export default class BookItem extends HTMLElement {
+    private data: ISearchBook;
     private libraryButton: HTMLButtonElement | null = null;
     private libraryExistComponent: LibraryBookExist | null = null;
 
-    data!: ISearchBook; // 렌더링 되기전에 BookList에서  할당
-
-    constructor() {
+    constructor(data: ISearchBook) {
         super();
+
+        this.data = data;
 
         this.libraryButton = this.querySelector(".library-button");
         this.libraryExistComponent =
@@ -19,11 +20,6 @@ export default class BookItem extends HTMLElement {
     }
 
     connectedCallback() {
-        if (!this.data) {
-            console.error("Book data is not provided");
-            return;
-        }
-
         this.addListeners();
         this.render();
     }
