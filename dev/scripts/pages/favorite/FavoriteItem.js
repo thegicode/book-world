@@ -7,120 +7,75 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 import { CustomFetch } from "../../utils/index";
 import bookModel from "../../model";
+import FavoriteItemView from "./FavoriteItemView";
 export default class FavoriteItem extends HTMLElement {
     constructor(isbn) {
         super();
-        this.libraryButton = null;
         this.loadingComponent = null;
+        this.libraryButton = null;
         this._isbn = null;
         this._isbn = isbn;
+        this.view = new FavoriteItemView(this);
     }
     connectedCallback() {
-        var _a, _b;
         this.loadingComponent = this.querySelector("loading-component");
         this.libraryButton = this.querySelector(".library-button");
         this.hideButton = this.querySelector(".hide-button");
         this.libraryBookExist = this.querySelector("library-book-exist");
-        this.fetchData(this._isbn);
+        this.addEvents();
+        this.fetchData();
+    }
+    disconnectedCallback() {
+        this.removeEvents();
+    }
+    get isbn() {
+        return this._isbn;
+    }
+    addEvents() {
+        var _a, _b;
         (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibrary.bind(this));
         (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary.bind(this));
     }
-    disconnectedCallback() {
+    removeEvents() {
         var _a, _b;
         (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
         (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
     }
-    fetchData(isbn) {
+    fetchData() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const url = `/usage-analysis-list?isbn13=${isbn}`;
+            const url = `/usage-analysis-list?isbn13=${this._isbn}`;
             try {
                 const data = yield CustomFetch.fetch(url);
-                this.render(data);
+                this.renderView(data);
             }
             catch (error) {
-                this.errorRender();
+                this.view.renderError();
                 console.error(error);
                 throw new Error(`Fail to get usage analysis list.`);
             }
             (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.hide();
         });
     }
-    render(data) {
-        this.bookData = data;
-        const _a = data.book, { bookImageURL } = _a, otherData = __rest(_a, ["bookImageURL"])
-        // bookname, isbn13, authors,  class_nm,  class_no, description, loanCnt,  publication_year, publisher,
-        ;
-        const bookname = data.book.bookname;
-        const imageNode = this.querySelector("book-image");
-        if (imageNode) {
-            imageNode.data = {
-                bookImageURL,
-                bookname,
-            };
-        }
-        Object.entries(otherData).forEach(([key, value]) => {
-            if (key === "description") {
-                const descNode = this.querySelector("book-description");
-                if (descNode)
-                    descNode.data = value;
-            }
-            else {
-                const element = this.querySelector(`.${key}`);
-                if (element)
-                    element.textContent = value;
-            }
-        });
-        const anchorEl = this.querySelector("a");
-        if (anchorEl)
-            anchorEl.href = `/book?isbn=${data.book.isbn13}`;
-        if (this.libraryButton &&
-            Object.keys(bookModel.getLibraries()).length === 0) {
-            this.libraryButton.hidden = true;
-        }
-    }
-    errorRender() {
-        this.dataset.fail = "true";
-        this.querySelector("h4").textContent = `ISBN : ${this._isbn}`;
-        this.querySelector(".authors").textContent =
-            "정보가 없습니다.";
+    renderView(data) {
+        const newData = data.book;
+        delete newData.vol;
+        this.view.render(newData);
     }
     onLibrary() {
         const isbn = this._isbn;
         if (this.libraryBookExist && this.libraryButton) {
             this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookModel.getLibraries());
-            if (this.libraryButton) {
-                this.libraryButton.hidden = true;
-            }
-            if (this.hideButton) {
-                this.hideButton.hidden = false;
-            }
+            this.view.updateOnLibrary();
         }
     }
     onHideLibrary() {
         var _a;
         const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
         list.innerHTML = "";
-        if (this.libraryButton) {
-            this.libraryButton.disabled = false;
-            this.libraryButton.hidden = false;
-        }
-        if (this.hideButton) {
-            this.hideButton.hidden = true;
-        }
+        this.view.updateOnHideLibrary();
     }
 }
 //# sourceMappingURL=FavoriteItem.js.map

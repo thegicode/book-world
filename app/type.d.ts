@@ -9,6 +9,7 @@ interface IBook {
     loanCnt: string;
     publication_year: string;
     publisher: string;
+    vol?: string;
 }
 
 interface ICategoryPayload {
