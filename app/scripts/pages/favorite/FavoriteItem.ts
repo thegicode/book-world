@@ -8,28 +8,30 @@ import {
 import bookModel from "../../model";
 
 export default class FavoriteItem extends HTMLElement {
-    protected libraryButton?: HTMLButtonElement;
+    protected libraryButton?: HTMLButtonElement | null = null;
     protected bookData: IUsageAnalysisResult | undefined;
-    private loadingComponent: LoadingComponent | null;
-    hideButton?: HTMLButtonElement | null;
-    libraryBookExist?: LibraryBookExist | null;
+    private loadingComponent: LoadingComponent | null = null;
+    private hideButton?: HTMLButtonElement | null;
+    private libraryBookExist?: LibraryBookExist | null;
+    private _isbn: string | null = null;
 
-    constructor() {
+    constructor(isbn: string) {
         super();
-        this.loadingComponent =
-            this.querySelector<LoadingComponent>("loading-component");
+        this._isbn = isbn;
     }
 
     connectedCallback() {
-        this.libraryButton = this.querySelector(
-            ".library-button"
-        ) as HTMLButtonElement;
+        this.loadingComponent = this.querySelector("loading-component");
+        this.libraryButton = this.querySelector(".library-button");
         this.hideButton = this.querySelector(".hide-button");
         this.libraryBookExist = this.querySelector("library-book-exist");
 
-        this.fetchData(this.dataset.isbn as string);
+        this.fetchData(this._isbn as string);
 
-        this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
+        this.libraryButton?.addEventListener(
+            "click",
+            this.onLibrary.bind(this)
+        );
         this.hideButton?.addEventListener(
             "click",
             this.onHideLibrary.bind(this)
@@ -42,8 +44,6 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     protected async fetchData(isbn: string) {
-        this.loadingComponent?.show();
-
         const url = `/usage-analysis-list?isbn13=${isbn}`;
         try {
             const data = await CustomFetch.fetch<IUsageAnalysisResult>(url);
@@ -102,13 +102,13 @@ export default class FavoriteItem extends HTMLElement {
         this.dataset.fail = "true";
         (
             this.querySelector("h4") as HTMLElement
-        ).textContent = `ISBN : ${this.dataset.isbn}`;
+        ).textContent = `ISBN : ${this._isbn}`;
         (this.querySelector(".authors") as HTMLElement).textContent =
             "정보가 없습니다.";
     }
 
     private onLibrary() {
-        const isbn = this.dataset.isbn as string;
+        const isbn = this._isbn as string;
         if (this.libraryBookExist && this.libraryButton) {
             this.libraryBookExist.onLibraryBookExist(
                 this.libraryButton,

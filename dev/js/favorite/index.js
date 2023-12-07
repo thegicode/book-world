@@ -1320,14 +1320,151 @@
     return content.cloneNode(true);
   }
 
+  // dev/scripts/pages/favorite/FavoriteItem.js
+  var __awaiter3 = function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P ? value : new P(function(resolve) {
+        resolve(value);
+      });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+  };
+  var __rest = function(s, e) {
+    var t = {};
+    for (var p in s)
+      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+          t[p[i]] = s[p[i]];
+      }
+    return t;
+  };
+  var FavoriteItem = class extends HTMLElement {
+    constructor(isbn) {
+      super();
+      this.libraryButton = null;
+      this.loadingComponent = null;
+      this._isbn = null;
+      this._isbn = isbn;
+    }
+    connectedCallback() {
+      var _a, _b;
+      this.loadingComponent = this.querySelector("loading-component");
+      this.libraryButton = this.querySelector(".library-button");
+      this.hideButton = this.querySelector(".hide-button");
+      this.libraryBookExist = this.querySelector("library-book-exist");
+      this.fetchData(this._isbn);
+      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibrary.bind(this));
+      (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary.bind(this));
+    }
+    disconnectedCallback() {
+      var _a, _b;
+      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
+      (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
+    }
+    fetchData(isbn) {
+      var _a;
+      return __awaiter3(this, void 0, void 0, function* () {
+        const url = `/usage-analysis-list?isbn13=${isbn}`;
+        try {
+          const data = yield CustomFetch_default.fetch(url);
+          this.render(data);
+        } catch (error) {
+          this.errorRender();
+          console.error(error);
+          throw new Error(`Fail to get usage analysis list.`);
+        }
+        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.hide();
+      });
+    }
+    render(data) {
+      this.bookData = data;
+      const _a = data.book, { bookImageURL } = _a, otherData = __rest(_a, ["bookImageURL"]);
+      const bookname = data.book.bookname;
+      const imageNode = this.querySelector("book-image");
+      if (imageNode) {
+        imageNode.data = {
+          bookImageURL,
+          bookname
+        };
+      }
+      Object.entries(otherData).forEach(([key, value]) => {
+        if (key === "description") {
+          const descNode = this.querySelector("book-description");
+          if (descNode)
+            descNode.data = value;
+        } else {
+          const element = this.querySelector(`.${key}`);
+          if (element)
+            element.textContent = value;
+        }
+      });
+      const anchorEl = this.querySelector("a");
+      if (anchorEl)
+        anchorEl.href = `/book?isbn=${data.book.isbn13}`;
+      if (this.libraryButton && Object.keys(model_default.getLibraries()).length === 0) {
+        this.libraryButton.hidden = true;
+      }
+    }
+    errorRender() {
+      this.dataset.fail = "true";
+      this.querySelector("h4").textContent = `ISBN : ${this._isbn}`;
+      this.querySelector(".authors").textContent = "\uC815\uBCF4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.";
+    }
+    onLibrary() {
+      const isbn = this._isbn;
+      if (this.libraryBookExist && this.libraryButton) {
+        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, model_default.getLibraries());
+        if (this.libraryButton) {
+          this.libraryButton.hidden = true;
+        }
+        if (this.hideButton) {
+          this.hideButton.hidden = false;
+        }
+      }
+    }
+    onHideLibrary() {
+      var _a;
+      const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
+      list.innerHTML = "";
+      if (this.libraryButton) {
+        this.libraryButton.disabled = false;
+        this.libraryButton.hidden = false;
+      }
+      if (this.hideButton) {
+        this.hideButton.hidden = true;
+      }
+    }
+  };
+
   // dev/scripts/pages/favorite/Favorite.js
   var Favorite = class extends HTMLElement {
     constructor() {
       super();
       this.booksElement = this.querySelector(".favorite-books");
-      this.template = document.querySelector("#tp-favorite-item");
-      const params = new URLSearchParams(location.search);
-      this.locationCategory = params.get("category");
+      this.itemTemplate = document.querySelector("#tp-favorite-item");
+      this.locationCategory = new URLSearchParams(location.search).get("category");
     }
     connectedCallback() {
       const categorySort = model_default.getSortedFavoriteKeys();
@@ -1341,26 +1478,28 @@
     disconnectedCallback() {
     }
     render(key) {
-      const fragment = new DocumentFragment();
+      if (!this.booksElement)
+        return;
       this.booksElement.innerHTML = "";
       const data = model_default.getFavorites()[key];
       if (data.length === 0) {
         this.renderMessage("\uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
         return;
       }
+      const fragment = new DocumentFragment();
       data.forEach((isbn) => {
-        if (this.template === null) {
-          throw Error("Template is null");
-        }
-        const el = cloneTemplate(this.template);
-        el.dataset.isbn = isbn;
-        fragment.appendChild(el);
+        if (!this.itemTemplate)
+          return;
+        const favoriteItem = new FavoriteItem(isbn);
+        const cloned = this.itemTemplate.content.cloneNode(true);
+        favoriteItem.appendChild(cloned);
+        fragment.appendChild(favoriteItem);
       });
       this.booksElement.appendChild(fragment);
     }
     renderMessage(message) {
       const template = document.querySelector("#tp-message");
-      if (template) {
+      if (template && this.booksElement) {
         const element = cloneTemplate(template);
         element.textContent = message;
         this.booksElement.appendChild(element);
@@ -1475,141 +1614,6 @@
             navLinks[targetIndex].replaceWith(draggedEl);
           }
         }
-      }
-    }
-  };
-
-  // dev/scripts/pages/favorite/FavoriteItem.js
-  var __awaiter3 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
-  var __rest = function(s, e) {
-    var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  };
-  var FavoriteItem = class extends HTMLElement {
-    constructor() {
-      super();
-      this.loadingComponent = this.querySelector("loading-component");
-    }
-    connectedCallback() {
-      var _a;
-      this.libraryButton = this.querySelector(".library-button");
-      this.hideButton = this.querySelector(".hide-button");
-      this.libraryBookExist = this.querySelector("library-book-exist");
-      this.fetchData(this.dataset.isbn);
-      this.libraryButton.addEventListener("click", this.onLibrary.bind(this));
-      (_a = this.hideButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onHideLibrary.bind(this));
-    }
-    disconnectedCallback() {
-      var _a, _b;
-      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
-      (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
-    }
-    fetchData(isbn) {
-      var _a, _b;
-      return __awaiter3(this, void 0, void 0, function* () {
-        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
-        const url = `/usage-analysis-list?isbn13=${isbn}`;
-        try {
-          const data = yield CustomFetch_default.fetch(url);
-          this.render(data);
-        } catch (error) {
-          this.errorRender();
-          console.error(error);
-          throw new Error(`Fail to get usage analysis list.`);
-        }
-        (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
-      });
-    }
-    render(data) {
-      this.bookData = data;
-      const _a = data.book, { bookImageURL } = _a, otherData = __rest(_a, ["bookImageURL"]);
-      const bookname = data.book.bookname;
-      const imageNode = this.querySelector("book-image");
-      if (imageNode) {
-        imageNode.data = {
-          bookImageURL,
-          bookname
-        };
-      }
-      Object.entries(otherData).forEach(([key, value]) => {
-        if (key === "description") {
-          const descNode = this.querySelector("book-description");
-          if (descNode)
-            descNode.data = value;
-        } else {
-          const element = this.querySelector(`.${key}`);
-          if (element)
-            element.textContent = value;
-        }
-      });
-      const anchorEl = this.querySelector("a");
-      if (anchorEl)
-        anchorEl.href = `/book?isbn=${data.book.isbn13}`;
-      if (this.libraryButton && Object.keys(model_default.getLibraries()).length === 0) {
-        this.libraryButton.hidden = true;
-      }
-    }
-    errorRender() {
-      this.dataset.fail = "true";
-      this.querySelector("h4").textContent = `ISBN : ${this.dataset.isbn}`;
-      this.querySelector(".authors").textContent = "\uC815\uBCF4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.";
-    }
-    onLibrary() {
-      const isbn = this.dataset.isbn;
-      if (this.libraryBookExist && this.libraryButton) {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, model_default.getLibraries());
-        if (this.libraryButton) {
-          this.libraryButton.hidden = true;
-        }
-        if (this.hideButton) {
-          this.hideButton.hidden = false;
-        }
-      }
-    }
-    onHideLibrary() {
-      var _a;
-      const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
-      list.innerHTML = "";
-      if (this.libraryButton) {
-        this.libraryButton.disabled = false;
-        this.libraryButton.hidden = false;
-      }
-      if (this.hideButton) {
-        this.hideButton.hidden = true;
       }
     }
   };
@@ -1773,9 +1777,9 @@
 
   // dev/scripts/pages/favorite/index.js
   customElements.define("nav-gnb", NavGnb);
+  customElements.define("favorite-item", FavoriteItem);
   customElements.define("app-favorite", Favorite);
   customElements.define("favorite-nav", FavoriteNav);
-  customElements.define("favorite-item", FavoriteItem);
   customElements.define("book-description", BookDescription);
   customElements.define("library-book-exist", LibraryBookExist);
   customElements.define("category-selector", CategorySelector);

@@ -1,12 +1,12 @@
 import bookModel from "../../model";
 import { cloneTemplate } from "../../utils/helpers";
+import FavoriteItem from "./FavoriteItem";
 export default class Favorite extends HTMLElement {
     constructor() {
         super();
         this.booksElement = this.querySelector(".favorite-books");
-        this.template = document.querySelector("#tp-favorite-item");
-        const params = new URLSearchParams(location.search);
-        this.locationCategory = params.get("category");
+        this.itemTemplate = document.querySelector("#tp-favorite-item");
+        this.locationCategory = new URLSearchParams(location.search).get("category");
     }
     connectedCallback() {
         const categorySort = bookModel.getSortedFavoriteKeys();
@@ -21,26 +21,28 @@ export default class Favorite extends HTMLElement {
         //
     }
     render(key) {
-        const fragment = new DocumentFragment();
+        if (!this.booksElement)
+            return;
         this.booksElement.innerHTML = "";
         const data = bookModel.getFavorites()[key];
         if (data.length === 0) {
             this.renderMessage("관심책이 없습니다.");
             return;
         }
+        const fragment = new DocumentFragment();
         data.forEach((isbn) => {
-            if (this.template === null) {
-                throw Error("Template is null");
-            }
-            const el = cloneTemplate(this.template);
-            el.dataset.isbn = isbn;
-            fragment.appendChild(el);
+            if (!this.itemTemplate)
+                return;
+            const favoriteItem = new FavoriteItem(isbn);
+            const cloned = this.itemTemplate.content.cloneNode(true);
+            favoriteItem.appendChild(cloned);
+            fragment.appendChild(favoriteItem);
         });
         this.booksElement.appendChild(fragment);
     }
     renderMessage(message) {
         const template = document.querySelector("#tp-message");
-        if (template) {
+        if (template && this.booksElement) {
             const element = cloneTemplate(template);
             element.textContent = message;
             this.booksElement.appendChild(element);

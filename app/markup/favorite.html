@@ -51,42 +51,42 @@
         </overlay-category>
 
         <template id="tp-favorite-item">
-            <favorite-item>
-                <div class="book-summary">
-                    <a href=""> <book-image></book-image> </a>
-                    <ul class="book-info">
-                        <li class="bookname"></li>
-                        <li class="authors"></li>
-                        <li class="class_nm"></li>
-                        <li>주제분류 : <span class="class_no"></span></li>
-                        <li>ISBN : <span class="isbn13"></span></li>
-                        <li>출판사 : <span class="publisher"></span></li>
-                        <li>
-                            출판년도 :
-                            <span class="publication_year"></span>
-                        </li>
-                        <li>대출권수 : <span class="loanCnt"></span></li>
-                    </ul>
+            <!-- <favorite-item> -->
+            <div class="book-summary">
+                <a href=""> <book-image></book-image> </a>
+                <ul class="book-info">
+                    <li class="bookname"></li>
+                    <li class="authors"></li>
+                    <li class="class_nm"></li>
+                    <li>주제분류 : <span class="class_no"></span></li>
+                    <li>ISBN : <span class="isbn13"></span></li>
+                    <li>출판사 : <span class="publisher"></span></li>
+                    <li>
+                        출판년도 :
+                        <span class="publication_year"></span>
+                    </li>
+                    <li>대출권수 : <span class="loanCnt"></span></li>
+                </ul>
 
-                    <category-selector></category-selector>
-                </div>
-                <book-description></book-description>
+                <category-selector></category-selector>
+            </div>
+            <book-description></book-description>
 
-                <div class="favorite-actions">
-                    <!-- <category-selector></category-selector> -->
-                    <button type="button" class="library-button">
-                        도서관 소장 | 대출 조회
-                    </button>
-                    <button type="button" class="hide-button" hidden>
-                        대출정보 접기
-                    </button>
-                </div>
+            <div class="favorite-actions">
+                <!-- <category-selector></category-selector> -->
+                <button type="button" class="library-button">
+                    도서관 소장 | 대출 조회
+                </button>
+                <button type="button" class="hide-button" hidden>
+                    대출정보 접기
+                </button>
+            </div>
 
-                <library-book-exist>
-                    <ul class="library-list"></ul>
-                </library-book-exist>
-                <loading-component hidden>Loading...</loading-component>
-            </favorite-item>
+            <library-book-exist>
+                <ul class="library-list"></ul>
+            </library-book-exist>
+            <loading-component>Loading...</loading-component>
+            <!-- </favorite-item> -->
         </template>
 
         <template id="tp-message">
