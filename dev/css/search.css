@@ -84,7 +84,7 @@ library-book-exist .library-list {
 }
 library-book-exist .library-item {
   display: flex;
-  padding: 5px 0;
+  padding: 3px 0;
   font-size: 12px;
   color: #666;
 }
@@ -361,7 +361,7 @@ book-item .actions button {
   border-radius: 7px;
   border: 1px solid #eee;
   background-color: transparent;
-  padding: 7px 1rem;
+  padding: 5px 1rem;
 }
 book-item .actions button[data-selected=true] {
   color: green;
@@ -377,6 +377,7 @@ book-item .actions .library-button {
   width: 100%;
   margin-top: 10px;
   text-align: center;
+  font-size: 12px;
   color: #666;
 }
 

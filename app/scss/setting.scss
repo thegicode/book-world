@@ -10,6 +10,7 @@
 app-setting {
     overflow: auto;
     height: 100%;
+    color: #4f4f4f;
 }
 
 h1 {
@@ -17,7 +18,8 @@ h1 {
 }
 
 .title {
-    margin: 0;
+    margin: 0 0 10px;
+    font-size: 1.3rem;
 }
 .section {
     display: block;
@@ -34,6 +36,9 @@ set-region {
         flex-wrap: wrap;
         margin-top: 10px;
         label {
+            display: flex;
+            align-items: center;
+            gap: 3px;
             width: 50%;
             font-size: 14px;
         }
@@ -42,18 +47,18 @@ set-region {
 
 favorite-regions {
     .favorites {
-        margin: 5px 0;
-        padding: 1rem;
+        margin: 10px 0 0;
+        // padding: 1rem;
         border-radius: 10px;
         // border: 3px solid #c6e7b6;
-        background-color: #f2f2f2;
+        // background-color: #f2f2f2;
     }
     h3 {
         margin: 0;
         font-size: 14px;
     }
     p {
-        margin: 5px 0 0;
+        margin: 5px 0 0 10px;
         font-size: 14px;
     }
     p + h3 {
@@ -63,15 +68,43 @@ favorite-regions {
 
 set-detail-region {
     .regions {
-        padding: 10px 0;
+        margin-bottom: 15px;
         label {
-            margin-right: 10px;
+            position: relative;
+            margin-right: 5px;
+            cursor: pointer;
+            input[type="radio"] {
+                position: absolute;
+                top: -100rem;
+                visibility: hidden;
+            }
+            span {
+                padding: 3px 10px;
+                border-radius: 5px;
+                border: 1px solid #e6e6e6;
+                background: #f8f8f8;
+                font-size: 12px;
+                color: #666;
+                &:hover {
+                    border-color: #d6d6d6;
+                    background-color: #efeeee;
+                    color: #4f4f4f;
+                }
+            }
+            input[type="radio"]:checked + span {
+                border-color: #4c7677;
+                background: #548b8c;
+                color: #efefef;
+            }
         }
     }
     .detailRegions {
         display: flex;
         flex-wrap: wrap;
         label {
+            display: flex;
+            align-items: center;
+            gap: 3px;
             width: 50%;
             margin-bottom: 5px;
             font-size: 14px;
@@ -82,12 +115,23 @@ set-detail-region {
 set-storage {
     padding: 1rem;
 
+    button {
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        font-size: 12px;
+        color: #4f4f4f;
+    }
+
     textarea {
         width: 100%;
         height: 100px;
         margin-top: 10px;
     }
-    .resetStorage {
-        padding-top: 1rem;
+
+    .saveStorage {
+        margin-bottom: 10px;
+    }
+    .localStorage {
+        margin-bottom: 10px;
     }
 }

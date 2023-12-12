@@ -46,6 +46,7 @@ button:disabled {
 app-setting {
   overflow: auto;
   height: 100%;
+  color: #4f4f4f;
 }
 
 h1 {
@@ -53,7 +54,8 @@ h1 {
 }
 
 .title {
-  margin: 0;
+  margin: 0 0 10px;
+  font-size: 1.3rem;
 }
 
 .section {
@@ -71,22 +73,23 @@ set-region .regions {
   margin-top: 10px;
 }
 set-region .regions label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   width: 50%;
   font-size: 14px;
 }
 
 favorite-regions .favorites {
-  margin: 5px 0;
-  padding: 1rem;
+  margin: 10px 0 0;
   border-radius: 10px;
-  background-color: #f2f2f2;
 }
 favorite-regions h3 {
   margin: 0;
   font-size: 14px;
 }
 favorite-regions p {
-  margin: 5px 0 0;
+  margin: 5px 0 0 10px;
   font-size: 14px;
 }
 favorite-regions p + h3 {
@@ -94,16 +97,44 @@ favorite-regions p + h3 {
 }
 
 set-detail-region .regions {
-  padding: 10px 0;
+  margin-bottom: 15px;
 }
 set-detail-region .regions label {
-  margin-right: 10px;
+  position: relative;
+  margin-right: 5px;
+  cursor: pointer;
+}
+set-detail-region .regions label input[type=radio] {
+  position: absolute;
+  top: -100rem;
+  visibility: hidden;
+}
+set-detail-region .regions label span {
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: 1px solid #e6e6e6;
+  background: #f8f8f8;
+  font-size: 12px;
+  color: #666;
+}
+set-detail-region .regions label span:hover {
+  border-color: #d6d6d6;
+  background-color: #efeeee;
+  color: #4f4f4f;
+}
+set-detail-region .regions label input[type=radio]:checked + span {
+  border-color: #4c7677;
+  background: #548b8c;
+  color: #efefef;
 }
 set-detail-region .detailRegions {
   display: flex;
   flex-wrap: wrap;
 }
 set-detail-region .detailRegions label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   width: 50%;
   margin-bottom: 5px;
   font-size: 14px;
@@ -112,13 +143,22 @@ set-detail-region .detailRegions label {
 set-storage {
   padding: 1rem;
 }
+set-storage button {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  color: #4f4f4f;
+}
 set-storage textarea {
   width: 100%;
   height: 100px;
   margin-top: 10px;
 }
-set-storage .resetStorage {
-  padding-top: 1rem;
+set-storage .saveStorage {
+  margin-bottom: 10px;
+}
+set-storage .localStorage {
+  margin-bottom: 10px;
 }
 
 /*# sourceMappingURL=setting.css.map */

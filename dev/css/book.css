@@ -46,7 +46,7 @@ library-book-exist .library-list {
 }
 library-book-exist .library-item {
   display: flex;
-  padding: 5px 0;
+  padding: 3px 0;
   font-size: 12px;
   color: #666;
 }
@@ -268,7 +268,7 @@ app-book .library-search-by-book li[data-available=true] {
   background-color: rgba(184, 207, 143, 0.1);
 }
 app-book .library-search-by-book li[data-available=true] .loanAvailable {
-  color: #a52fb2;
+  color: #c823da;
 }
 app-book .library-search-by-book a {
   color: #333;
