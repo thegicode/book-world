@@ -1327,10 +1327,12 @@
     constructor() {
       super();
       this.container = null;
+      this.template = null;
       this.render = this.render.bind(this);
     }
     connectedCallback() {
       this.container = this.querySelector(".favorites");
+      this.template = this.querySelector("#tp-favorites-stored");
       this.render();
       model_default.subscribeToBookStateUpdate(this.render);
       model_default.subscribeToDetailRegionUpdate(this.render);
@@ -1344,27 +1346,33 @@
         return;
       this.container.innerHTML = "";
       const regions = model_default.getRegions();
-      for (const regionName in regions) {
-        const detailRegions = Object.keys(regions[regionName]);
-        if (detailRegions.length > 0) {
-          const titleElement = document.createElement("h3");
-          titleElement.textContent = regionName;
-          this.container.appendChild(titleElement);
-          this.container.appendChild(this.renderDetail(detailRegions));
-        }
+      const fragment = new DocumentFragment();
+      for (const [name, detailRegions] of Object.entries(regions)) {
+        const itemElement = this.createElement(name, detailRegions);
+        fragment.appendChild(itemElement);
       }
+      this.container.appendChild(fragment);
+    }
+    createElement(name, detailRegions) {
+      var _a;
+      if (!this.template)
+        return;
+      const itemElement = cloneTemplate(this.template);
+      const titleElement = itemElement.querySelector(".subTitle");
+      titleElement.textContent = name;
+      const regions = this.renderDetail(detailRegions);
+      (_a = itemElement.querySelector(".regions")) === null || _a === void 0 ? void 0 : _a.appendChild(regions);
+      return itemElement;
     }
     renderDetail(detailRegions) {
       const fragment = new DocumentFragment();
-      detailRegions.forEach((name) => {
+      for (const [region, code] of Object.entries(detailRegions)) {
         const element = document.createElement("span");
-        element.textContent = name;
+        element.textContent = region;
+        element.dataset.code = code;
         fragment.appendChild(element);
-      });
-      const container = document.createElement("div");
-      container.className = "favorites-item";
-      container.appendChild(fragment);
-      return container;
+      }
+      return fragment;
     }
   };
 

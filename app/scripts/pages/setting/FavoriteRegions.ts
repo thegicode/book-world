@@ -1,7 +1,9 @@
 import bookModel from "../../model";
+import { cloneTemplate } from "../../utils/helpers";
 
 export default class FavoriteRegions extends HTMLElement {
     private container: HTMLElement | null = null;
+    private template: HTMLTemplateElement | null = null;
 
     constructor() {
         super();
@@ -9,7 +11,9 @@ export default class FavoriteRegions extends HTMLElement {
     }
 
     connectedCallback() {
-        this.container = this.querySelector(".favorites") as HTMLElement;
+        this.container = this.querySelector(".favorites");
+        this.template = this.querySelector("#tp-favorites-stored");
+
         this.render();
 
         bookModel.subscribeToBookStateUpdate(this.render);
@@ -26,28 +30,38 @@ export default class FavoriteRegions extends HTMLElement {
 
         this.container.innerHTML = "";
         const regions = bookModel.getRegions();
-        for (const regionName in regions) {
-            const detailRegions = Object.keys(regions[regionName]);
-            if (detailRegions.length > 0) {
-                const titleElement = document.createElement("h3");
-                titleElement.textContent = regionName;
-                this.container.appendChild(titleElement);
-                this.container.appendChild(this.renderDetail(detailRegions));
-            }
+
+        const fragment = new DocumentFragment();
+        for (const [name, detailRegions] of Object.entries(regions)) {
+            const itemElement = this.createElement(
+                name,
+                detailRegions
+            ) as HTMLElement;
+            fragment.appendChild(itemElement);
         }
+        this.container.appendChild(fragment);
     }
 
-    private renderDetail(detailRegions: string[]) {
-        const fragment = new DocumentFragment();
-        detailRegions.forEach((name) => {
-            const element = document.createElement("span");
-            element.textContent = name;
-            fragment.appendChild(element);
-        });
+    private createElement(name: string, detailRegions: IRegionData) {
+        if (!this.template) return;
+        const itemElement = cloneTemplate(this.template);
+        const titleElement = itemElement.querySelector(
+            ".subTitle"
+        ) as HTMLElement;
+        titleElement.textContent = name;
+        const regions = this.renderDetail(detailRegions);
+        itemElement.querySelector(".regions")?.appendChild(regions);
+        return itemElement;
+    }
 
-        const container = document.createElement("div");
-        container.className = "favorites-item";
-        container.appendChild(fragment);
-        return container;
+    private renderDetail(detailRegions: IRegionData) {
+        const fragment = new DocumentFragment();
+        for (const [region, code] of Object.entries(detailRegions)) {
+            const element = document.createElement("span");
+            element.textContent = region;
+            element.dataset.code = code;
+            fragment.appendChild(element);
+        }
+        return fragment;
     }
 }
