@@ -15,16 +15,13 @@ export default class BookItem extends HTMLElement {
     constructor(data) {
         super();
         this.libraryButton = null;
-        this.libraryExistComponent = null;
         this.data = data;
-        this.libraryButton = this.querySelector(".library-button");
-        this.libraryExistComponent =
-            this.querySelector("library-book-exist");
         this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }
     connectedCallback() {
+        this.renderView();
+        this.libraryButton = this.querySelector(".library-button");
         this.addListeners();
-        this.render();
     }
     disconnectedCallback() {
         this.removeListeners();
@@ -37,7 +34,7 @@ export default class BookItem extends HTMLElement {
         var _a;
         (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibraryButtonClick);
     }
-    render() {
+    renderView() {
         const _a = this.data, { discount, pubdate } = _a, others = __rest(_a, ["discount", "pubdate"]);
         const _pubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
         const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: _pubdate });
@@ -45,9 +42,9 @@ export default class BookItem extends HTMLElement {
     }
     // 도서관 소장 | 대출 조회
     onLibraryButtonClick() {
-        var _a;
         const isbn = this.dataset.isbn || "";
-        (_a = this.libraryExistComponent) === null || _a === void 0 ? void 0 : _a.onLibraryBookExist(this.libraryButton, isbn, bookModel.getLibraries());
+        const libraryBookExist = this.querySelector("library-book-exist");
+        libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookModel.getLibraries());
     }
 }
 //# sourceMappingURL=BookItem.js.map
