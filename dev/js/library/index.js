@@ -128,6 +128,7 @@
   // dev/scripts/model/LibraryModel.js
   var LibraryModel = class {
     constructor(libraries) {
+      this.publisher = new Publisher();
       this._libraries = libraries;
     }
     get libraries() {
@@ -138,12 +139,31 @@
     }
     add(code, name) {
       this._libraries[code] = name;
+      this.publisher.notify({
+        type: "add",
+        payload: {
+          code,
+          name
+        }
+      });
     }
     remove(code) {
       delete this._libraries[code];
+      this.publisher.notify({
+        type: "delete",
+        payload: {
+          code
+        }
+      });
     }
     has(code) {
       return code in this._libraries;
+    }
+    subscribeUpdate(subscriber) {
+      this.publisher.subscribe(subscriber);
+    }
+    unsubscribeUpdate(subscriber) {
+      this.publisher.subscribe(subscriber);
     }
   };
 
@@ -357,6 +377,12 @@
     }
     unsubscribeBookUpdate(subscriber) {
       this.favoriteModel.unsubscribeBookUpdate(subscriber);
+    }
+    subscribeLibraryUpdate(subscriber) {
+      this.libraryModel.subscribeUpdate(subscriber);
+    }
+    unsubscribeLibraryUpdate(subscriber) {
+      this.libraryModel.unsubscribeUpdate(subscriber);
     }
     subscribeToRegionUpdate(subscriber) {
       this.regionModel.subscribeToUpdatePublisher(subscriber);
@@ -1155,6 +1181,86 @@
     }
   };
 
+  // dev/scripts/pages/library/LibraryStored.js
+  var LibraryStored = class extends HTMLElement {
+    constructor() {
+      super();
+      this.template = null;
+      this.listElement = null;
+      this.subscribeUpdate = this.subscribeUpdate.bind(this);
+    }
+    connectedCallback() {
+      this.template = this.querySelector("#tp-stored-item");
+      console.log(this.template);
+      this.listElement = this.querySelector("ul");
+      if (!this.listElement)
+        return;
+      this.render();
+      model_default.subscribeLibraryUpdate(this.subscribeUpdate);
+    }
+    disconnectedCallback() {
+      model_default.unsubscribeLibraryUpdate(this.subscribeUpdate);
+    }
+    render() {
+      if (!this.listElement)
+        return;
+      const libraries = model_default.getLibraries();
+      const fragment = new DocumentFragment();
+      for (const [code, name] of Object.entries(libraries)) {
+        const element = this.createElement(code, name);
+        if (!element)
+          return;
+        fragment.appendChild(element);
+      }
+      this.listElement.appendChild(fragment);
+    }
+    createElement(code, name) {
+      if (!this.template)
+        return;
+      const element = cloneTemplate(this.template);
+      element.querySelector(".name").textContent = name;
+      element.dataset.library = code;
+      this.addEvents(element);
+      return element;
+    }
+    addEvents(element) {
+      const cancelButton = element.querySelector(".cancelButton");
+      cancelButton.addEventListener("click", () => {
+        const code = element.dataset.library;
+        if (!code)
+          return;
+        model_default.removeLibraries(code);
+      });
+    }
+    subscribeUpdate({ type, payload }) {
+      switch (type) {
+        case "add":
+          this.add(payload);
+          break;
+        case "delete":
+          this.delete(payload.code);
+          break;
+        default:
+          console.error("Unknown type");
+      }
+    }
+    add({ code, name }) {
+      if (!this.listElement || !name)
+        return;
+      const element = this.createElement(code, name);
+      this.listElement.appendChild(element);
+    }
+    delete(code) {
+      if (!this.listElement)
+        return;
+      for (const element of this.listElement.querySelectorAll("li")) {
+        if (element.dataset.library === code) {
+          element.remove();
+        }
+      }
+    }
+  };
+
   // dev/scripts/pages/library/selectors.js
   var libraryElement = document.querySelector("app-library");
   var loadingComponent = document.querySelector("loading-component");
@@ -1282,6 +1388,7 @@
   // dev/scripts/pages/library/index.js
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-library", Library);
+  customElements.define("library-stored", LibraryStored);
   customElements.define("library-header", LibraryRegion);
   customElements.define("library-item", LibraryItem);
 })();

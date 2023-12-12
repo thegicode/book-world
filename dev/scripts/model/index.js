@@ -167,6 +167,12 @@ class BookModel {
     unsubscribeBookUpdate(subscriber) {
         this.favoriteModel.unsubscribeBookUpdate(subscriber);
     }
+    subscribeLibraryUpdate(subscriber) {
+        this.libraryModel.subscribeUpdate(subscriber);
+    }
+    unsubscribeLibraryUpdate(subscriber) {
+        this.libraryModel.unsubscribeUpdate(subscriber);
+    }
     subscribeToRegionUpdate(subscriber) {
         this.regionModel.subscribeToUpdatePublisher(subscriber);
     }

@@ -232,6 +232,13 @@ class BookModel {
         this.favoriteModel.unsubscribeBookUpdate(subscriber);
     }
 
+    subscribeLibraryUpdate(subscriber: TLibrarysUpdateSubscriber) {
+        this.libraryModel.subscribeUpdate(subscriber);
+    }
+    unsubscribeLibraryUpdate(subscriber: TLibrarysUpdateSubscriber) {
+        this.libraryModel.unsubscribeUpdate(subscriber);
+    }
+
     subscribeToRegionUpdate(subscriber: TSubscriberVoid) {
         this.regionModel.subscribeToUpdatePublisher(subscriber);
     }

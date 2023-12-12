@@ -389,6 +389,8 @@ book-item .actions .library-button {
 .notFound {
   margin-top: 2rem;
   text-align: center;
+  font-size: 12px;
+  color: #666;
 }
 
 /*# sourceMappingURL=search.css.map */

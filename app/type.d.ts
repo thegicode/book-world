@@ -200,6 +200,18 @@ type TFavoriteFavorites = Record<string, string[]>;
 
 type TLibraries = Record<string, string>;
 
+type TLibraryPayload = {
+    code: string;
+    name?: string;
+};
+
+type TLibraryUpdateProps = {
+    type: string;
+    payload: TLibraryPayload;
+};
+
+type TLibrarysUpdateSubscriber = (params: TLibraryUpdateProps) => void;
+
 type TRegions = Record<string, Record<string, string>>;
 
 type TSortedFavoriteKeys = string[];

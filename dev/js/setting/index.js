@@ -128,6 +128,7 @@
   // dev/scripts/model/LibraryModel.js
   var LibraryModel = class {
     constructor(libraries) {
+      this.publisher = new Publisher();
       this._libraries = libraries;
     }
     get libraries() {
@@ -138,12 +139,31 @@
     }
     add(code, name) {
       this._libraries[code] = name;
+      this.publisher.notify({
+        type: "add",
+        payload: {
+          code,
+          name
+        }
+      });
     }
     remove(code) {
       delete this._libraries[code];
+      this.publisher.notify({
+        type: "delete",
+        payload: {
+          code
+        }
+      });
     }
     has(code) {
       return code in this._libraries;
+    }
+    subscribeUpdate(subscriber) {
+      this.publisher.subscribe(subscriber);
+    }
+    unsubscribeUpdate(subscriber) {
+      this.publisher.subscribe(subscriber);
     }
   };
 
@@ -357,6 +377,12 @@
     }
     unsubscribeBookUpdate(subscriber) {
       this.favoriteModel.unsubscribeBookUpdate(subscriber);
+    }
+    subscribeLibraryUpdate(subscriber) {
+      this.libraryModel.subscribeUpdate(subscriber);
+    }
+    unsubscribeLibraryUpdate(subscriber) {
+      this.libraryModel.unsubscribeUpdate(subscriber);
     }
     subscribeToRegionUpdate(subscriber) {
       this.regionModel.subscribeToUpdatePublisher(subscriber);
@@ -1324,20 +1350,21 @@
           const titleElement = document.createElement("h3");
           titleElement.textContent = regionName;
           this.container.appendChild(titleElement);
-          this.renderDetail(detailRegions);
+          this.container.appendChild(this.renderDetail(detailRegions));
         }
       }
     }
     renderDetail(detailRegions) {
-      if (!this.container)
-        return;
       const fragment = new DocumentFragment();
       detailRegions.forEach((name) => {
-        const element = document.createElement("p");
+        const element = document.createElement("span");
         element.textContent = name;
         fragment.appendChild(element);
       });
-      this.container.appendChild(fragment);
+      const container = document.createElement("div");
+      container.className = "favorites-item";
+      container.appendChild(fragment);
+      return container;
     }
   };
 

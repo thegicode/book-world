@@ -32,20 +32,22 @@ export default class FavoriteRegions extends HTMLElement {
                 const titleElement = document.createElement("h3");
                 titleElement.textContent = regionName;
                 this.container.appendChild(titleElement);
-                this.renderDetail(detailRegions);
+                this.container.appendChild(this.renderDetail(detailRegions));
             }
         }
     }
 
     private renderDetail(detailRegions: string[]) {
-        if (!this.container) return;
-
         const fragment = new DocumentFragment();
         detailRegions.forEach((name) => {
-            const element = document.createElement("p");
+            const element = document.createElement("span");
             element.textContent = name;
             fragment.appendChild(element);
         });
-        this.container.appendChild(fragment);
+
+        const container = document.createElement("div");
+        container.className = "favorites-item";
+        container.appendChild(fragment);
+        return container;
     }
 }

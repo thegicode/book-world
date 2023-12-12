@@ -22,6 +22,19 @@
         <div class="root">
             <nav-gnb></nav-gnb>
             <app-library>
+                <library-stored>
+                    <h3 class="title">저장된 관심 도서관</h3>
+                    <ul class="libries"></ul>
+                    <template id="tp-stored-item">
+                        <li>
+                            <span class="name"></span>
+                            <button type="button" class="cancelButton">
+                                해제
+                            </button>
+                        </li>
+                    </template>
+                </library-stored>
+
                 <library-header>
                     <div class="region"></div>
                     <select class="detailRegion"></select>
