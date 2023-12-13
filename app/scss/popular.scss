@@ -214,8 +214,22 @@ popular-header {
         margin: 0;
         padding: 0;
         list-style: none;
+        font-size: 12px;
+        color: #767676;
         li {
-            margin-bottom: 6px;
+            padding-bottom: 6px;
+            span {
+                margin-left: 5px;
+            }
+        }
+        .bookname {
+            padding-bottom: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #417f80;
+        }
+        .bookDtlUrl {
+            color: #767676;
         }
     }
 
