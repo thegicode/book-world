@@ -50,45 +50,26 @@
 
   // dev/scripts/components/BookImage.js
   var BookImage = class extends HTMLElement {
-    constructor() {
+    constructor(url, name) {
       super();
-      this.imgElement = document.createElement("img");
-      this.imgElement.className = "thumb";
-      this.imgContainer = document.createElement("div");
-      this.imgContainer.className = "book-image";
-      this.imgElement.onerror = this.handleImageError.bind(this);
+      this.image = null;
+      this.render(url, name);
     }
-    // 즐겨찾기, 상세
-    set data(objectData) {
-      const jsonData = JSON.stringify(objectData);
-      if (this.dataset.object !== jsonData) {
-        this.dataset.object = jsonData;
-        this.render();
-      }
+    // connectedCallback() {}
+    render(url, name) {
+      const imagge = document.createElement("img");
+      imagge.className = "thumb";
+      imagge.src = url;
+      imagge.alt = name;
+      imagge.onerror = this.onError.bind(this);
+      this.image = imagge;
+      this.appendChild(imagge);
     }
-    connectedCallback() {
-      if (!this.imgElement.src && this.dataset.object) {
-        this.render();
-      }
-    }
-    // search : dataset
-    render() {
-      const data = this.dataset.object ? JSON.parse(this.dataset.object) : null;
-      if (data && "bookImageURL" in data && "bookname" in data) {
-        const { bookImageURL, bookname } = data;
-        this.imgElement.src = bookImageURL;
-        this.imgElement.alt = bookname;
-        this.imgContainer.appendChild(this.imgElement);
-        this.appendChild(this.imgContainer);
-      }
-    }
-    handleImageError() {
+    onError() {
+      var _a;
       this.dataset.fail = "true";
-      console.error(`Failed to load image: ${this.imgElement.src}`);
-      this.imgElement.remove();
-      if (!this.imgContainer.hasChildNodes()) {
-        this.imgContainer.remove();
-      }
+      console.error(`Failed to load image`);
+      (_a = this.image) === null || _a === void 0 ? void 0 : _a.remove();
     }
   };
 
@@ -1371,11 +1352,8 @@
     }
     render(_a) {
       var { bookImageURL, bookname, description, isbn13 } = _a, otherData = __rest(_a, ["bookImageURL", "bookname", "description", "isbn13"]);
-      const imageNode = this.control.querySelector("book-image");
-      imageNode.data = {
-        bookImageURL,
-        bookname
-      };
+      const linkElement = this.control.querySelector(".book-summary a");
+      linkElement.appendChild(new BookImage(bookImageURL, bookname));
       const descNode = this.control.querySelector("book-description");
       descNode.data = description;
       const anchorEl = this.control.querySelector("a");
@@ -1522,29 +1500,29 @@
         this.renderMessage("\uAD00\uC2EC \uCE74\uD14C\uACE0\uB9AC\uB97C \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.");
         return;
       }
-      const key = this.locationCategory || categorySort[0];
-      this.render(key);
+      const categoryName = this.locationCategory || categorySort[0];
+      this.render(categoryName);
     }
     disconnectedCallback() {
     }
-    render(key) {
+    render(categoryName) {
       if (!this.booksElement)
         return;
       this.booksElement.innerHTML = "";
-      const data = model_default.favorites[key];
-      if (data.length === 0) {
+      const isbns = model_default.favorites[categoryName];
+      if (isbns.length === 0) {
         this.renderMessage("\uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
         return;
       }
       const fragment = new DocumentFragment();
-      data.forEach((isbn) => {
+      for (const isbn of isbns) {
         if (!this.itemTemplate)
           return;
         const favoriteItem = new FavoriteItem(isbn);
         const cloned = this.itemTemplate.content.cloneNode(true);
         favoriteItem.appendChild(cloned);
         fragment.appendChild(favoriteItem);
-      });
+      }
       this.booksElement.appendChild(fragment);
     }
     renderMessage(message) {
@@ -1826,6 +1804,7 @@
   };
 
   // dev/scripts/pages/favorite/index.js
+  customElements.define("book-image", BookImage);
   customElements.define("nav-gnb", NavGnb);
   customElements.define("favorite-item", FavoriteItem);
   customElements.define("app-favorite", Favorite);
@@ -1833,7 +1812,6 @@
   customElements.define("book-description", BookDescription);
   customElements.define("library-book-exist", LibraryBookExist);
   customElements.define("category-selector", CategorySelector);
-  customElements.define("book-image", BookImage);
   customElements.define("overlay-category", OverlayCategory);
 })();
 //# sourceMappingURL=index.js.map

@@ -9,16 +9,15 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+import { BookImage } from "../../components";
 import { fillElementsWithData } from "../../utils/helpers";
 export default function renderBookItem(bookItem, data) {
     const { description, image, isbn, link, title } = data, otherData = __rest(data, ["description", "image", "isbn", "link", "title"]) // author, discount, pubdate, publisher
     ;
     // 썸네일 이미지
-    const imageEl = bookItem.querySelector("book-image");
-    imageEl.dataset.object = JSON.stringify({
-        bookImageURL: image,
-        bookname: title,
-    });
+    const summaryLinkElement = bookItem.querySelector(".book-summary a");
+    const bookImage = new BookImage(image, title);
+    summaryLinkElement.appendChild(bookImage);
     // 네이버 바로가기
     const linkEl = bookItem.querySelector(".link");
     linkEl.href = link;

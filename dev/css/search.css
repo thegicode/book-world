@@ -153,15 +153,20 @@ book-image {
   display: flex;
   justify-content: center;
 }
+book-image .thumb {
+  width: 120px;
+  border: 1px solid #e8e8e8;
+}
 book-image[data-fail=true] {
   box-sizing: border-box;
   width: 120px;
-  height: 120px;
+  height: 170px;
   border: 1px solid #eaeaea;
   background-color: #f8f8f8;
 }
-book-image .thumb {
-  border: 1px solid #e8e8e8;
+
+a:hover book-image .thumb {
+  border-color: #48dfc2;
 }
 
 loading-component {
@@ -337,19 +342,6 @@ book-item .book-info .link {
 }
 book-item .book-info .link:hover {
   background-color: rgba(10, 100, 200, 0.05);
-}
-book-item book-image {
-  border: 1px solid transparent;
-}
-book-item book-image[data-fail=true] .book-image {
-  width: 120px;
-  height: 130px;
-}
-book-item book-image .thumb {
-  width: 120px;
-}
-book-item a:hover .thumb {
-  border-color: #000;
 }
 book-item book-description {
   margin: 0 1rem;

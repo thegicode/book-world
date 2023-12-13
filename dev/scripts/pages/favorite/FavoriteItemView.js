@@ -9,6 +9,7 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+import { BookImage } from "../../components";
 import bookModel from "../../model";
 import { fillElementsWithData } from "../../utils/helpers";
 export default class FavoriteItemView {
@@ -17,11 +18,8 @@ export default class FavoriteItemView {
     }
     render(_a) {
         var { bookImageURL, bookname, description, isbn13 } = _a, otherData = __rest(_a, ["bookImageURL", "bookname", "description", "isbn13"]);
-        const imageNode = this.control.querySelector("book-image");
-        imageNode.data = {
-            bookImageURL,
-            bookname,
-        };
+        const linkElement = this.control.querySelector(".book-summary a");
+        linkElement.appendChild(new BookImage(bookImageURL, bookname));
         const descNode = this.control.querySelector("book-description");
         descNode.data = description;
         const anchorEl = this.control.querySelector("a");

@@ -180,23 +180,6 @@ book-item {
         }
     }
 
-    book-image {
-        &[data-fail="true"] {
-            .book-image {
-                width: 120px;
-                height: 130px;
-            }
-        }
-        .thumb {
-            width: 120px;
-        }
-        border: 1px solid transparent;
-    }
-
-    a:hover .thumb {
-        border-color: #000;
-    }
-
     book-description {
         margin: 0 1rem;
     }

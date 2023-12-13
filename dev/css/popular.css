@@ -84,6 +84,26 @@ category-selector .category span {
   color: #666;
 }
 
+book-image {
+  display: flex;
+  justify-content: center;
+}
+book-image .thumb {
+  width: 120px;
+  border: 1px solid #e8e8e8;
+}
+book-image[data-fail=true] {
+  box-sizing: border-box;
+  width: 120px;
+  height: 170px;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+}
+
+a:hover book-image .thumb {
+  border-color: #48dfc2;
+}
+
 loading-component {
   display: block;
   position: absolute;
@@ -270,14 +290,8 @@ popular-header .filterButton {
   padding: 10px;
   border-bottom: 1px solid #ddd;
 }
-.popular-item .thumb {
+.popular-item .link {
   position: relative;
-}
-.popular-item .thumb img {
-  border: 1px solid transparent;
-}
-.popular-item .thumb:hover img {
-  border-color: #000;
 }
 .popular-item .bookImage {
   width: 120px;

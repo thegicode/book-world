@@ -83,12 +83,18 @@ export default class Book extends HTMLElement {
 
         (this.querySelector(".bookname") as HTMLElement).innerHTML = bookNames;
 
-        const bookImageElement = this.querySelector<BookImage>("book-image");
-        if (!bookImageElement) return;
-        bookImageElement.data = {
-            bookImageURL,
-            bookname,
-        };
+        // const bookImageElement = this.querySelector<BookImage>("book-image");
+        // if (!bookImageElement) return;
+        // bookImageElement.data = {
+        //     bookImageURL,
+        //     bookname,
+        // };
+
+        const bookImage = new BookImage(bookImageURL, bookname);
+        const bookImageContainer = this.querySelector(
+            ".book-image-container"
+        ) as HTMLElement;
+        bookImageContainer.appendChild(bookImage);
 
         fillElementsWithData(otherData, this);
     }

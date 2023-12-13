@@ -24,33 +24,33 @@ export default class Favorite extends HTMLElement {
             return;
         }
 
-        const key = this.locationCategory || categorySort[0];
-        this.render(key);
+        const categoryName = this.locationCategory || categorySort[0];
+        this.render(categoryName);
     }
 
     disconnectedCallback() {
         //
     }
 
-    private render(key: string) {
+    private render(categoryName: string) {
         if (!this.booksElement) return;
         this.booksElement.innerHTML = "";
 
-        const data = bookModel.favorites[key];
-        if (data.length === 0) {
+        const isbns = bookModel.favorites[categoryName];
+        if (isbns.length === 0) {
             this.renderMessage("관심책이 없습니다.");
             return;
         }
 
         const fragment = new DocumentFragment();
-        data.forEach((isbn: string) => {
+        for (const isbn of isbns) {
             if (!this.itemTemplate) return;
 
             const favoriteItem = new FavoriteItem(isbn);
             const cloned = this.itemTemplate.content.cloneNode(true);
             favoriteItem.appendChild(cloned);
             fragment.appendChild(favoriteItem);
-        });
+        }
 
         this.booksElement.appendChild(fragment);
     }

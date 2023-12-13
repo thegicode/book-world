@@ -1,6 +1,7 @@
 @import "./base/_reset.scss";
 @import "./components/_gnb.scss";
 @import "./components/_category-selector.scss";
+@import "./components/_book-image.scss";
 @import "./components/loading.scss";
 
 .root {
@@ -187,14 +188,8 @@ popular-header {
     padding: 10px;
     border-bottom: 1px solid #ddd;
 
-    .thumb {
+    .link {
         position: relative;
-        img {
-            border: 1px solid transparent;
-        }
-        &:hover img {
-            border-color: #000;
-        }
     }
 
     .bookImage {

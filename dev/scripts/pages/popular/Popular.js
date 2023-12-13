@@ -18,6 +18,8 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+// import { BookImage } from "../../components/index";
+import { BookImage } from "../../components";
 import { CustomEventEmitter, CustomFetch } from "../../utils";
 import { cloneTemplate, getCurrentDates } from "../../utils/helpers";
 export default class Popular extends HTMLElement {
@@ -107,11 +109,9 @@ export default class Popular extends HTMLElement {
         }
         const cloned = cloneTemplate(this.itemTemplate);
         cloned.dataset.isbn = isbn;
-        const imageNode = cloned.querySelector("img");
-        if (imageNode) {
-            imageNode.src = bookImageURL;
-            imageNode.alt = bookname;
-        }
+        const bookImage = new BookImage(bookImageURL, bookname);
+        const linkEl = cloned.querySelector(".link");
+        linkEl.insertBefore(bookImage, linkEl.querySelector(".ranking"));
         const bookDtlUrlNode = cloned.querySelector(".bookDtlUrl");
         if (bookDtlUrlNode) {
             bookDtlUrlNode.href = bookDtlUrl;

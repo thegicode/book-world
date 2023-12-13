@@ -18,6 +18,7 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+import { BookImage } from "../../components/index";
 import { CustomFetch } from "../../utils/index";
 import { cloneTemplate, fillElementsWithData } from "../../utils/helpers";
 export default class Book extends HTMLElement {
@@ -74,13 +75,15 @@ export default class Book extends HTMLElement {
             .map((item) => `<p>${item}</p>`)
             .join("");
         this.querySelector(".bookname").innerHTML = bookNames;
-        const bookImageElement = this.querySelector("book-image");
-        if (!bookImageElement)
-            return;
-        bookImageElement.data = {
-            bookImageURL,
-            bookname,
-        };
+        // const bookImageElement = this.querySelector<BookImage>("book-image");
+        // if (!bookImageElement) return;
+        // bookImageElement.data = {
+        //     bookImageURL,
+        //     bookname,
+        // };
+        const bookImage = new BookImage(bookImageURL, bookname);
+        const bookImageContainer = this.querySelector(".book-image-container");
+        bookImageContainer.appendChild(bookImage);
         fillElementsWithData(otherData, this);
     }
     renderLoanHistory(loanHistory) {

@@ -17,11 +17,10 @@ export default class FavoriteItemView {
         isbn13,
         ...otherData
     }: IBook) {
-        const imageNode = this.control.querySelector("book-image") as BookImage;
-        imageNode.data = {
-            bookImageURL,
-            bookname,
-        };
+        const linkElement = this.control.querySelector(
+            ".book-summary a"
+        ) as HTMLElement;
+        linkElement.appendChild(new BookImage(bookImageURL, bookname));
 
         const descNode = this.control.querySelector(
             "book-description"

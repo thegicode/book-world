@@ -13,11 +13,11 @@ export default function renderBookItem(bookItem: BookItem, data: ISearchBook) {
     } = data;
 
     // 썸네일 이미지
-    const imageEl = bookItem.querySelector("book-image") as BookImage;
-    imageEl.dataset.object = JSON.stringify({
-        bookImageURL: image,
-        bookname: title,
-    });
+    const summaryLinkElement = bookItem.querySelector(
+        ".book-summary a"
+    ) as HTMLAnchorElement;
+    const bookImage = new BookImage(image, title);
+    summaryLinkElement.appendChild(bookImage);
 
     // 네이버 바로가기
     const linkEl = bookItem.querySelector(".link") as HTMLAnchorElement;

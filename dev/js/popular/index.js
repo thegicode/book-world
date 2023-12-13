@@ -1,5 +1,30 @@
 "use strict";
 (() => {
+  // dev/scripts/components/BookImage.js
+  var BookImage = class extends HTMLElement {
+    constructor(url, name) {
+      super();
+      this.image = null;
+      this.render(url, name);
+    }
+    // connectedCallback() {}
+    render(url, name) {
+      const imagge = document.createElement("img");
+      imagge.className = "thumb";
+      imagge.src = url;
+      imagge.alt = name;
+      imagge.onerror = this.onError.bind(this);
+      this.image = imagge;
+      this.appendChild(imagge);
+    }
+    onError() {
+      var _a;
+      this.dataset.fail = "true";
+      console.error(`Failed to load image`);
+      (_a = this.image) === null || _a === void 0 ? void 0 : _a.remove();
+    }
+  };
+
   // dev/scripts/model/constants.js
   var STORAGE_NAME = "BookWorld";
 
@@ -1283,11 +1308,9 @@
       }
       const cloned = cloneTemplate(this.itemTemplate);
       cloned.dataset.isbn = isbn;
-      const imageNode = cloned.querySelector("img");
-      if (imageNode) {
-        imageNode.src = bookImageURL;
-        imageNode.alt = bookname;
-      }
+      const bookImage = new BookImage(bookImageURL, bookname);
+      const linkEl = cloned.querySelector(".link");
+      linkEl.insertBefore(bookImage, linkEl.querySelector(".ranking"));
       const bookDtlUrlNode = cloned.querySelector(".bookDtlUrl");
       if (bookDtlUrlNode) {
         bookDtlUrlNode.href = bookDtlUrl;
@@ -1591,6 +1614,7 @@
   };
 
   // dev/scripts/pages/popular/index.js
+  customElements.define("book-image", BookImage);
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-popular", Popular);
   customElements.define("popular-header", PopularHeader);

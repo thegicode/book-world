@@ -12,6 +12,7 @@ import BookList from "./BookList";
 import BookItem from "./BookItem";
 // import TestElement from './TestElement'
 
+customElements.define("book-image", BookImage);
 customElements.define("nav-gnb", NavGnb);
 customElements.define("book-list", BookList);
 customElements.define("app-search", AppSearch);
@@ -20,6 +21,5 @@ customElements.define("book-item", BookItem);
 customElements.define("book-description", BookDescription);
 customElements.define("library-book-exist", LibraryBookExist);
 customElements.define("category-selector", CategorySelector);
-customElements.define("book-image", BookImage);
 
 // customElements.define('test-element', TestElement)

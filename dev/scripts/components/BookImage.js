@@ -1,45 +1,24 @@
 export default class BookImage extends HTMLElement {
-    constructor() {
+    constructor(url, name) {
         super();
-        this.imgElement = document.createElement("img");
-        this.imgElement.className = "thumb";
-        this.imgContainer = document.createElement("div");
-        this.imgContainer.className = "book-image";
-        this.imgElement.onerror = this.handleImageError.bind(this);
+        this.image = null;
+        this.render(url, name);
     }
-    // 즐겨찾기, 상세
-    set data(objectData) {
-        const jsonData = JSON.stringify(objectData);
-        if (this.dataset.object !== jsonData) {
-            this.dataset.object = jsonData;
-            this.render();
-        }
+    // connectedCallback() {}
+    render(url, name) {
+        const imagge = document.createElement("img");
+        imagge.className = "thumb";
+        imagge.src = url;
+        imagge.alt = name;
+        imagge.onerror = this.onError.bind(this);
+        this.image = imagge;
+        this.appendChild(imagge);
     }
-    connectedCallback() {
-        if (!this.imgElement.src && this.dataset.object) {
-            this.render();
-        }
-    }
-    // search : dataset
-    render() {
-        const data = this.dataset.object
-            ? JSON.parse(this.dataset.object)
-            : null;
-        if (data && "bookImageURL" in data && "bookname" in data) {
-            const { bookImageURL, bookname } = data;
-            this.imgElement.src = bookImageURL;
-            this.imgElement.alt = bookname;
-            this.imgContainer.appendChild(this.imgElement);
-            this.appendChild(this.imgContainer);
-        }
-    }
-    handleImageError() {
+    onError() {
+        var _a;
         this.dataset.fail = "true";
-        console.error(`Failed to load image: ${this.imgElement.src}`);
-        this.imgElement.remove();
-        if (!this.imgContainer.hasChildNodes()) {
-            this.imgContainer.remove(); // 컨테이너 제거 처리 추가
-        }
+        console.error(`Failed to load image`);
+        (_a = this.image) === null || _a === void 0 ? void 0 : _a.remove();
     }
 }
 //# sourceMappingURL=BookImage.js.map
