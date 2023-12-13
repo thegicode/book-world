@@ -10,7 +10,7 @@ export default class FavoriteNav extends HTMLElement {
     }
     connectedCallback() {
         if (this.category === null) {
-            this.category = bookModel.getSortedFavoriteKeys()[0];
+            this.category = bookModel.sortedFavoriteKeys[0];
             const url = this.getUrl(this.category);
             location.search = url;
         }
@@ -28,7 +28,7 @@ export default class FavoriteNav extends HTMLElement {
             return;
         this.nav.innerHTML = "";
         const fragment = new DocumentFragment();
-        bookModel.getSortedFavoriteKeys().forEach((category) => {
+        bookModel.sortedFavoriteKeys.forEach((category) => {
             const el = this.createItem(category);
             fragment.appendChild(el);
         });
@@ -79,9 +79,7 @@ export default class FavoriteNav extends HTMLElement {
                         return;
                     const prevName = payload.prevName;
                     const newName = payload.newName;
-                    const index = bookModel
-                        .getSortedFavoriteKeys()
-                        .indexOf(prevName);
+                    const index = bookModel.sortedFavoriteKeys.indexOf(prevName);
                     this.nav.querySelectorAll("a")[index].textContent = newName;
                     bookModel.renameSortedFavoriteKey(prevName, newName);
                     if (this.category === prevName) {

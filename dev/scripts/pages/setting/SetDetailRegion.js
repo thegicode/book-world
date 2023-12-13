@@ -24,7 +24,7 @@ export default class SetDetailRegion extends HTMLElement {
         this.renderRegion();
     }
     renderRegion() {
-        const favoriteRegions = Object.keys(bookModel.getRegions());
+        const favoriteRegions = Object.keys(bookModel.regions);
         const container = this.querySelector(".regions");
         if (!container)
             return;
@@ -66,7 +66,7 @@ export default class SetDetailRegion extends HTMLElement {
         const detailRegionsElement = this.querySelector(".detailRegions");
         if (!detailRegionsElement)
             return;
-        const regionObj = bookModel.getRegions()[regionName];
+        const regionObj = bookModel.regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
         const template = document.querySelector("#tp-detail-region");
         if (!template)
@@ -114,7 +114,7 @@ export default class SetDetailRegion extends HTMLElement {
     }
     onChangeDetail() {
         const region = this.region;
-        if (!bookModel.getRegions()[region]) {
+        if (!bookModel.regions[region]) {
             bookModel.addRegion(region);
         }
         const checkboxes = document.querySelectorAll("[name=detailRegion]");

@@ -48,9 +48,7 @@ export default class CategorySelector extends HTMLElement {
         const container = document.createElement("div");
         container.className = "category";
         container.hidden = true;
-        bookModel
-            .getSortedFavoriteKeys()
-            .forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+        bookModel.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
         return container;
     }
     createCheckbox(category, ISBN) {

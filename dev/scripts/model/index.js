@@ -47,20 +47,26 @@ class BookModel {
         this.regionModel.regions = regions;
         this.bookStateUpdatePublisher.notify();
     }
+    get favorites() {
+        return this.favoriteModel.favorites;
+    }
+    get sortedFavoriteKeys() {
+        return this.favoriteModel.sortedKeys;
+    }
+    get libraries() {
+        return this.libraryModel.libraries;
+    }
+    get regions() {
+        return this.regionModel.regions;
+    }
     resetState() {
         this.state = initialState;
     }
     // favorites 관련 메서드
-    getFavorites() {
-        return this.favoriteModel.favorites;
-    }
-    getSortedFavoriteKeys() {
-        return this.favoriteModel.sortedKeys;
-    }
     setFavorites() {
         const newState = this.state;
-        newState.favorites = this.getFavorites();
-        newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
+        newState.favorites = this.favorites;
+        newState.sortedFavoriteKeys = this.sortedFavoriteKeys;
         this.setStorage(newState);
     }
     addfavorite(name) {
@@ -104,12 +110,9 @@ class BookModel {
         this.setFavorites();
     }
     // Library 관련 메서드
-    getLibraries() {
-        return this.libraryModel.libraries;
-    }
     setLibraries() {
         const newState = this.state;
-        newState.libraries = this.getLibraries();
+        newState.libraries = this.libraries;
         this.setStorage(newState);
     }
     addLibraries(code, name) {
@@ -124,12 +127,9 @@ class BookModel {
         return this.libraryModel.has(code);
     }
     // Region 관련 메서드
-    getRegions() {
-        return this.regionModel.regions;
-    }
     setRegions() {
         const newState = this.state;
-        newState.regions = this.getRegions();
+        newState.regions = this.regions;
         this.setStorage(newState);
     }
     addRegion(name) {

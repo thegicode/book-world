@@ -65,7 +65,7 @@ export default class BookItem extends HTMLElement {
         libraryBookExist.onLibraryBookExist(
             this.libraryButton,
             isbn,
-            bookModel.getLibraries()
+            bookModel.libraries
         );
     }
 }

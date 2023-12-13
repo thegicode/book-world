@@ -22,7 +22,7 @@ export default class FavoriteNav extends HTMLElement {
 
     connectedCallback() {
         if (this.category === null) {
-            this.category = bookModel.getSortedFavoriteKeys()[0];
+            this.category = bookModel.sortedFavoriteKeys[0];
             const url = this.getUrl(this.category);
             location.search = url;
         }
@@ -49,7 +49,7 @@ export default class FavoriteNav extends HTMLElement {
 
         const fragment = new DocumentFragment();
 
-        bookModel.getSortedFavoriteKeys().forEach((category: string) => {
+        bookModel.sortedFavoriteKeys.forEach((category: string) => {
             const el = this.createItem(category);
             fragment.appendChild(el);
         });
@@ -110,9 +110,8 @@ export default class FavoriteNav extends HTMLElement {
                     if (!this.nav) return;
                     const prevName = payload.prevName as string;
                     const newName = payload.newName as string;
-                    const index = bookModel
-                        .getSortedFavoriteKeys()
-                        .indexOf(prevName);
+                    const index =
+                        bookModel.sortedFavoriteKeys.indexOf(prevName);
                     this.nav.querySelectorAll("a")[index].textContent = newName;
                     bookModel.renameSortedFavoriteKey(prevName, newName);
 

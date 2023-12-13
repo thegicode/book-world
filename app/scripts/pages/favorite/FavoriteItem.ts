@@ -79,7 +79,7 @@ export default class FavoriteItem extends HTMLElement {
             this.libraryBookExist.onLibraryBookExist(
                 this.libraryButton,
                 isbn,
-                bookModel.getLibraries()
+                bookModel.libraries
             );
 
             this.view.updateOnLibrary();

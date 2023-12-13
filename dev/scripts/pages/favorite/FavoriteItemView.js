@@ -30,7 +30,7 @@ export default class FavoriteItemView {
             isbn13 });
         fillElementsWithData(others, this.control);
         if (this.control.libraryButton &&
-            Object.keys(bookModel.getLibraries()).length === 0) {
+            Object.keys(bookModel.libraries).length === 0) {
             this.control.libraryButton.hidden = true;
         }
     }

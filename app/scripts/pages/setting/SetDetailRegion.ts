@@ -36,7 +36,7 @@ export default class SetDetailRegion extends HTMLElement {
     }
 
     private renderRegion() {
-        const favoriteRegions = Object.keys(bookModel.getRegions());
+        const favoriteRegions = Object.keys(bookModel.regions);
 
         const container = this.querySelector(".regions") as HTMLElement;
         if (!container) return;
@@ -93,7 +93,7 @@ export default class SetDetailRegion extends HTMLElement {
         ) as HTMLElement;
         if (!detailRegionsElement) return;
 
-        const regionObj = bookModel.getRegions()[regionName];
+        const regionObj = bookModel.regions[regionName];
         const regionCodes = regionObj ? Object.values(regionObj) : [];
 
         const template = document.querySelector(
@@ -161,7 +161,7 @@ export default class SetDetailRegion extends HTMLElement {
     private onChangeDetail() {
         const region = this.region;
 
-        if (!bookModel.getRegions()[region]) {
+        if (!bookModel.regions[region]) {
             bookModel.addRegion(region);
         }
         const checkboxes = document.querySelectorAll("[name=detailRegion]");

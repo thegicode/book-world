@@ -17,7 +17,7 @@ export default class OverlayCategory extends HTMLElement {
                 return;
             }
             bookModel.addfavorite(favorite);
-            const index = bookModel.getSortedFavoriteKeys().length;
+            const index = bookModel.sortedFavoriteKeys.length;
             const cloned = this.createItem(favorite, index);
             (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
             this.addInput.value = "";
@@ -70,7 +70,7 @@ export default class OverlayCategory extends HTMLElement {
         if (!this.list)
             return;
         const fragment = new DocumentFragment();
-        bookModel.getSortedFavoriteKeys().forEach((favorite, index) => {
+        bookModel.sortedFavoriteKeys.forEach((favorite, index) => {
             const cloned = this.createItem(favorite, index);
             fragment.appendChild(cloned);
         });

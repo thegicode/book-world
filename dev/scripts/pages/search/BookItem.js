@@ -44,7 +44,7 @@ export default class BookItem extends HTMLElement {
     onLibraryButtonClick() {
         const isbn = this.dataset.isbn || "";
         const libraryBookExist = this.querySelector("library-book-exist");
-        libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookModel.getLibraries());
+        libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookModel.libraries);
     }
 }
 //# sourceMappingURL=BookItem.js.map

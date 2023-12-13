@@ -21,7 +21,7 @@ export default class NavGnb extends HTMLElement {
         //
     }
     get bookSize() {
-        return Object.values(bookModel.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+        return Object.values(bookModel.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
         const paths = this.PATHS;

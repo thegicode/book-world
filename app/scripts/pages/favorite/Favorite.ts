@@ -18,7 +18,7 @@ export default class Favorite extends HTMLElement {
     }
 
     connectedCallback() {
-        const categorySort = bookModel.getSortedFavoriteKeys();
+        const categorySort = bookModel.sortedFavoriteKeys;
         if (categorySort.length === 0) {
             this.renderMessage("관심 카테고리를 등록해주세요.");
             return;
@@ -36,7 +36,7 @@ export default class Favorite extends HTMLElement {
         if (!this.booksElement) return;
         this.booksElement.innerHTML = "";
 
-        const data = bookModel.getFavorites()[key];
+        const data = bookModel.favorites[key];
         if (data.length === 0) {
             this.renderMessage("관심책이 없습니다.");
             return;

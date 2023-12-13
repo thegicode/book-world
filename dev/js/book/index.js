@@ -302,20 +302,26 @@
       this.regionModel.regions = regions;
       this.bookStateUpdatePublisher.notify();
     }
+    get favorites() {
+      return this.favoriteModel.favorites;
+    }
+    get sortedFavoriteKeys() {
+      return this.favoriteModel.sortedKeys;
+    }
+    get libraries() {
+      return this.libraryModel.libraries;
+    }
+    get regions() {
+      return this.regionModel.regions;
+    }
     resetState() {
       this.state = initialState;
     }
     // favorites 관련 메서드
-    getFavorites() {
-      return this.favoriteModel.favorites;
-    }
-    getSortedFavoriteKeys() {
-      return this.favoriteModel.sortedKeys;
-    }
     setFavorites() {
       const newState = this.state;
-      newState.favorites = this.getFavorites();
-      newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
+      newState.favorites = this.favorites;
+      newState.sortedFavoriteKeys = this.sortedFavoriteKeys;
       this.setStorage(newState);
     }
     addfavorite(name) {
@@ -359,12 +365,9 @@
       this.setFavorites();
     }
     // Library 관련 메서드
-    getLibraries() {
-      return this.libraryModel.libraries;
-    }
     setLibraries() {
       const newState = this.state;
-      newState.libraries = this.getLibraries();
+      newState.libraries = this.libraries;
       this.setStorage(newState);
     }
     addLibraries(code, name) {
@@ -379,12 +382,9 @@
       return this.libraryModel.has(code);
     }
     // Region 관련 메서드
-    getRegions() {
-      return this.regionModel.regions;
-    }
     setRegions() {
       const newState = this.state;
-      newState.regions = this.getRegions();
+      newState.regions = this.regions;
       this.setStorage(newState);
     }
     addRegion(name) {
@@ -492,7 +492,7 @@
       const container = document.createElement("div");
       container.className = "category";
       container.hidden = true;
-      model_default.getSortedFavoriteKeys().forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      model_default.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
       return container;
     }
     createCheckbox(category, ISBN) {
@@ -1146,7 +1146,7 @@
       model_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -1397,7 +1397,7 @@
     }
     fetchList(isbn) {
       return __awaiter3(this, void 0, void 0, function* () {
-        const favoriteLibraries = model_default.getRegions();
+        const favoriteLibraries = model_default.regions;
         if (Object.entries(favoriteLibraries).length === 0)
           return;
         for (const regionName in favoriteLibraries) {

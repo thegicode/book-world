@@ -40,7 +40,7 @@ export default class FavoriteItemView {
 
         if (
             this.control.libraryButton &&
-            Object.keys(bookModel.getLibraries()).length === 0
+            Object.keys(bookModel.libraries).length === 0
         ) {
             this.control.libraryButton.hidden = true;
         }

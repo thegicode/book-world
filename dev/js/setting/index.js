@@ -258,20 +258,26 @@
       this.regionModel.regions = regions;
       this.bookStateUpdatePublisher.notify();
     }
+    get favorites() {
+      return this.favoriteModel.favorites;
+    }
+    get sortedFavoriteKeys() {
+      return this.favoriteModel.sortedKeys;
+    }
+    get libraries() {
+      return this.libraryModel.libraries;
+    }
+    get regions() {
+      return this.regionModel.regions;
+    }
     resetState() {
       this.state = initialState;
     }
     // favorites 관련 메서드
-    getFavorites() {
-      return this.favoriteModel.favorites;
-    }
-    getSortedFavoriteKeys() {
-      return this.favoriteModel.sortedKeys;
-    }
     setFavorites() {
       const newState = this.state;
-      newState.favorites = this.getFavorites();
-      newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
+      newState.favorites = this.favorites;
+      newState.sortedFavoriteKeys = this.sortedFavoriteKeys;
       this.setStorage(newState);
     }
     addfavorite(name) {
@@ -315,12 +321,9 @@
       this.setFavorites();
     }
     // Library 관련 메서드
-    getLibraries() {
-      return this.libraryModel.libraries;
-    }
     setLibraries() {
       const newState = this.state;
-      newState.libraries = this.getLibraries();
+      newState.libraries = this.libraries;
       this.setStorage(newState);
     }
     addLibraries(code, name) {
@@ -335,12 +338,9 @@
       return this.libraryModel.has(code);
     }
     // Region 관련 메서드
-    getRegions() {
-      return this.regionModel.regions;
-    }
     setRegions() {
       const newState = this.state;
-      newState.regions = this.getRegions();
+      newState.regions = this.regions;
       this.setStorage(newState);
     }
     addRegion(name) {
@@ -1031,7 +1031,7 @@
       model_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -1156,7 +1156,7 @@
       }
       const fragment = new DocumentFragment();
       const regionData = this.regionData["region"];
-      const favoriteRegions = Object.keys(model_default.getRegions());
+      const favoriteRegions = Object.keys(model_default.regions);
       for (const [key, value] of Object.entries(regionData)) {
         const regionElement = this.createRegionElement(this.template, key, value, favoriteRegions);
         fragment.appendChild(regionElement);
@@ -1213,7 +1213,7 @@
       this.renderRegion();
     }
     renderRegion() {
-      const favoriteRegions = Object.keys(model_default.getRegions());
+      const favoriteRegions = Object.keys(model_default.regions);
       const container = this.querySelector(".regions");
       if (!container)
         return;
@@ -1255,7 +1255,7 @@
       const detailRegionsElement = this.querySelector(".detailRegions");
       if (!detailRegionsElement)
         return;
-      const regionObj = model_default.getRegions()[regionName];
+      const regionObj = model_default.regions[regionName];
       const regionCodes = regionObj ? Object.values(regionObj) : [];
       const template = document.querySelector("#tp-detail-region");
       if (!template)
@@ -1302,7 +1302,7 @@
     }
     onChangeDetail() {
       const region = this.region;
-      if (!model_default.getRegions()[region]) {
+      if (!model_default.regions[region]) {
         model_default.addRegion(region);
       }
       const checkboxes = document.querySelectorAll("[name=detailRegion]");
@@ -1345,7 +1345,7 @@
       if (!this.container)
         return;
       this.container.innerHTML = "";
-      const regions = model_default.getRegions();
+      const regions = model_default.regions;
       const fragment = new DocumentFragment();
       for (const [name, detailRegions] of Object.entries(regions)) {
         const itemElement = this.createElement(name, detailRegions);

@@ -22,7 +22,7 @@ export default class LibraryStored extends HTMLElement {
     render() {
         if (!this.listElement)
             return;
-        const libraries = bookModel.getLibraries();
+        const libraries = bookModel.libraries;
         const fragment = new DocumentFragment();
         for (const [code, name] of Object.entries(libraries)) {
             const element = this.createElement(code, name);

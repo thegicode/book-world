@@ -52,11 +52,9 @@ export default class CategorySelector extends HTMLElement {
         const container = document.createElement("div");
         container.className = "category";
         container.hidden = true;
-        bookModel
-            .getSortedFavoriteKeys()
-            .forEach((category: string) =>
-                this.createCategoryItem(container, category, this.isbn || "")
-            );
+        bookModel.sortedFavoriteKeys.forEach((category: string) =>
+            this.createCategoryItem(container, category, this.isbn || "")
+        );
         return container;
     }
 

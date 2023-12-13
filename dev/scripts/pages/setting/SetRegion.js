@@ -52,7 +52,7 @@ export default class SetRegion extends HTMLElement {
         }
         const fragment = new DocumentFragment();
         const regionData = this.regionData["region"];
-        const favoriteRegions = Object.keys(bookModel.getRegions());
+        const favoriteRegions = Object.keys(bookModel.regions);
         for (const [key, value] of Object.entries(regionData)) {
             const regionElement = this.createRegionElement(this.template, key, value, favoriteRegions);
             fragment.appendChild(regionElement);

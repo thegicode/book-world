@@ -67,7 +67,7 @@ export default class FavoriteItem extends HTMLElement {
     onLibrary() {
         const isbn = this._isbn;
         if (this.libraryBookExist && this.libraryButton) {
-            this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookModel.getLibraries());
+            this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookModel.libraries);
             this.view.updateOnLibrary();
         }
     }

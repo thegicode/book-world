@@ -22,7 +22,7 @@ export default class FavoriteRegions extends HTMLElement {
         if (!this.container)
             return;
         this.container.innerHTML = "";
-        const regions = bookModel.getRegions();
+        const regions = bookModel.regions;
         const fragment = new DocumentFragment();
         for (const [name, detailRegions] of Object.entries(regions)) {
             const itemElement = this.createElement(name, detailRegions);

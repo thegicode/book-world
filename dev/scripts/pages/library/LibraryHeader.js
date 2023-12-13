@@ -22,7 +22,7 @@ export default class LibraryRegion extends HTMLElement {
         this.detailSelectElement.removeEventListener("change", this.handleDetailSelectChange);
     }
     renderFavoriteRegions() {
-        const favoriteRegions = bookModel.getRegions();
+        const favoriteRegions = bookModel.regions;
         if (Object.keys(favoriteRegions).length === 0)
             return;
         const container = this.querySelector(".region");
@@ -58,7 +58,7 @@ export default class LibraryRegion extends HTMLElement {
     }
     renderDetailRegion(regionName) {
         this.detailSelectElement.innerHTML = "";
-        const detailRegionObject = bookModel.getRegions()[regionName];
+        const detailRegionObject = bookModel.regions[regionName];
         for (const [key, value] of Object.entries(detailRegionObject)) {
             const optionEl = document.createElement("option");
             optionEl.textContent = key;

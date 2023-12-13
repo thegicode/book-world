@@ -258,20 +258,26 @@
       this.regionModel.regions = regions;
       this.bookStateUpdatePublisher.notify();
     }
+    get favorites() {
+      return this.favoriteModel.favorites;
+    }
+    get sortedFavoriteKeys() {
+      return this.favoriteModel.sortedKeys;
+    }
+    get libraries() {
+      return this.libraryModel.libraries;
+    }
+    get regions() {
+      return this.regionModel.regions;
+    }
     resetState() {
       this.state = initialState;
     }
     // favorites 관련 메서드
-    getFavorites() {
-      return this.favoriteModel.favorites;
-    }
-    getSortedFavoriteKeys() {
-      return this.favoriteModel.sortedKeys;
-    }
     setFavorites() {
       const newState = this.state;
-      newState.favorites = this.getFavorites();
-      newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
+      newState.favorites = this.favorites;
+      newState.sortedFavoriteKeys = this.sortedFavoriteKeys;
       this.setStorage(newState);
     }
     addfavorite(name) {
@@ -315,12 +321,9 @@
       this.setFavorites();
     }
     // Library 관련 메서드
-    getLibraries() {
-      return this.libraryModel.libraries;
-    }
     setLibraries() {
       const newState = this.state;
-      newState.libraries = this.getLibraries();
+      newState.libraries = this.libraries;
       this.setStorage(newState);
     }
     addLibraries(code, name) {
@@ -335,12 +338,9 @@
       return this.libraryModel.has(code);
     }
     // Region 관련 메서드
-    getRegions() {
-      return this.regionModel.regions;
-    }
     setRegions() {
       const newState = this.state;
-      newState.regions = this.getRegions();
+      newState.regions = this.regions;
       this.setStorage(newState);
     }
     addRegion(name) {
@@ -1031,7 +1031,7 @@
       model_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -1204,7 +1204,7 @@
     render() {
       if (!this.listElement)
         return;
-      const libraries = model_default.getLibraries();
+      const libraries = model_default.libraries;
       const fragment = new DocumentFragment();
       for (const [code, name] of Object.entries(libraries)) {
         const element = this.createElement(code, name);
@@ -1287,7 +1287,7 @@
       this.detailSelectElement.removeEventListener("change", this.handleDetailSelectChange);
     }
     renderFavoriteRegions() {
-      const favoriteRegions = model_default.getRegions();
+      const favoriteRegions = model_default.regions;
       if (Object.keys(favoriteRegions).length === 0)
         return;
       const container = this.querySelector(".region");
@@ -1323,7 +1323,7 @@
     }
     renderDetailRegion(regionName) {
       this.detailSelectElement.innerHTML = "";
-      const detailRegionObject = model_default.getRegions()[regionName];
+      const detailRegionObject = model_default.regions[regionName];
       for (const [key, value] of Object.entries(detailRegionObject)) {
         const optionEl = document.createElement("option");
         optionEl.textContent = key;

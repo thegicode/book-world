@@ -350,20 +350,26 @@
       this.regionModel.regions = regions;
       this.bookStateUpdatePublisher.notify();
     }
+    get favorites() {
+      return this.favoriteModel.favorites;
+    }
+    get sortedFavoriteKeys() {
+      return this.favoriteModel.sortedKeys;
+    }
+    get libraries() {
+      return this.libraryModel.libraries;
+    }
+    get regions() {
+      return this.regionModel.regions;
+    }
     resetState() {
       this.state = initialState;
     }
     // favorites 관련 메서드
-    getFavorites() {
-      return this.favoriteModel.favorites;
-    }
-    getSortedFavoriteKeys() {
-      return this.favoriteModel.sortedKeys;
-    }
     setFavorites() {
       const newState = this.state;
-      newState.favorites = this.getFavorites();
-      newState.sortedFavoriteKeys = this.getSortedFavoriteKeys();
+      newState.favorites = this.favorites;
+      newState.sortedFavoriteKeys = this.sortedFavoriteKeys;
       this.setStorage(newState);
     }
     addfavorite(name) {
@@ -407,12 +413,9 @@
       this.setFavorites();
     }
     // Library 관련 메서드
-    getLibraries() {
-      return this.libraryModel.libraries;
-    }
     setLibraries() {
       const newState = this.state;
-      newState.libraries = this.getLibraries();
+      newState.libraries = this.libraries;
       this.setStorage(newState);
     }
     addLibraries(code, name) {
@@ -427,12 +430,9 @@
       return this.libraryModel.has(code);
     }
     // Region 관련 메서드
-    getRegions() {
-      return this.regionModel.regions;
-    }
     setRegions() {
       const newState = this.state;
-      newState.regions = this.getRegions();
+      newState.regions = this.regions;
       this.setStorage(newState);
     }
     addRegion(name) {
@@ -540,7 +540,7 @@
       const container = document.createElement("div");
       container.className = "category";
       container.hidden = true;
-      model_default.getSortedFavoriteKeys().forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      model_default.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
       return container;
     }
     createCheckbox(category, ISBN) {
@@ -1299,7 +1299,7 @@
       model_default.unsubscribeBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.getFavorites()).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
       const paths = this.PATHS;
@@ -1385,7 +1385,7 @@
         isbn13
       });
       fillElementsWithData(others, this.control);
-      if (this.control.libraryButton && Object.keys(model_default.getLibraries()).length === 0) {
+      if (this.control.libraryButton && Object.keys(model_default.libraries).length === 0) {
         this.control.libraryButton.hidden = true;
       }
     }
@@ -1496,7 +1496,7 @@
     onLibrary() {
       const isbn = this._isbn;
       if (this.libraryBookExist && this.libraryButton) {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, model_default.getLibraries());
+        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, model_default.libraries);
         this.view.updateOnLibrary();
       }
     }
@@ -1517,7 +1517,7 @@
       this.locationCategory = new URLSearchParams(location.search).get("category");
     }
     connectedCallback() {
-      const categorySort = model_default.getSortedFavoriteKeys();
+      const categorySort = model_default.sortedFavoriteKeys;
       if (categorySort.length === 0) {
         this.renderMessage("\uAD00\uC2EC \uCE74\uD14C\uACE0\uB9AC\uB97C \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.");
         return;
@@ -1531,7 +1531,7 @@
       if (!this.booksElement)
         return;
       this.booksElement.innerHTML = "";
-      const data = model_default.getFavorites()[key];
+      const data = model_default.favorites[key];
       if (data.length === 0) {
         this.renderMessage("\uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
         return;
@@ -1569,7 +1569,7 @@
     }
     connectedCallback() {
       if (this.category === null) {
-        this.category = model_default.getSortedFavoriteKeys()[0];
+        this.category = model_default.sortedFavoriteKeys[0];
         const url = this.getUrl(this.category);
         location.search = url;
       }
@@ -1585,7 +1585,7 @@
         return;
       this.nav.innerHTML = "";
       const fragment = new DocumentFragment();
-      model_default.getSortedFavoriteKeys().forEach((category) => {
+      model_default.sortedFavoriteKeys.forEach((category) => {
         const el = this.createItem(category);
         fragment.appendChild(el);
       });
@@ -1636,7 +1636,7 @@
               return;
             const prevName = payload.prevName;
             const newName = payload.newName;
-            const index = model_default.getSortedFavoriteKeys().indexOf(prevName);
+            const index = model_default.sortedFavoriteKeys.indexOf(prevName);
             this.nav.querySelectorAll("a")[index].textContent = newName;
             model_default.renameSortedFavoriteKey(prevName, newName);
             if (this.category === prevName) {
@@ -1686,7 +1686,7 @@
           return;
         }
         model_default.addfavorite(favorite);
-        const index = model_default.getSortedFavoriteKeys().length;
+        const index = model_default.sortedFavoriteKeys.length;
         const cloned = this.createItem(favorite, index);
         (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
         this.addInput.value = "";
@@ -1739,7 +1739,7 @@
       if (!this.list)
         return;
       const fragment = new DocumentFragment();
-      model_default.getSortedFavoriteKeys().forEach((favorite, index) => {
+      model_default.sortedFavoriteKeys.forEach((favorite, index) => {
         const cloned = this.createItem(favorite, index);
         fragment.appendChild(cloned);
       });

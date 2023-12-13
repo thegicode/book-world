@@ -20,7 +20,7 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
     fetchList(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
-            const favoriteLibraries = bookModel.getRegions();
+            const favoriteLibraries = bookModel.regions;
             if (Object.entries(favoriteLibraries).length === 0)
                 return;
             for (const regionName in favoriteLibraries) {
