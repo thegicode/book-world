@@ -234,16 +234,17 @@ popular-header .filterButton {
 }
 .filter-actions button {
   flex: auto;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #dbe8e6;
-  background-color: #f0fdfb;
-  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #e6e6e6;
+  background: #f8f8f8;
+  font-size: 12px;
   color: #666;
 }
 .filter-actions button:hover {
-  background-color: #dffff9;
-  border-color: #b1d4ce;
+  border-color: #d6d6d6;
+  background-color: #efeeee;
+  color: #4f4f4f;
 }
 
 .region,
@@ -317,13 +318,13 @@ popular-header .filterButton {
   color: #767676;
 }
 .popular-item .book-info li {
-  padding-bottom: 6px;
+  padding-bottom: 4px;
 }
 .popular-item .book-info li span {
   margin-left: 5px;
 }
 .popular-item .book-info .bookname {
-  padding-bottom: 10px;
+  padding-bottom: 7px;
   font-weight: bold;
   font-size: 1rem;
   color: #417f80;

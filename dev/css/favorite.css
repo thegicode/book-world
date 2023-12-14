@@ -72,16 +72,17 @@ book-description .description[data-ellipsis=true] {
 book-description .more-description-button {
   width: auto;
   margin-left: auto;
+  background-color: #fff;
+  display: inline-block;
   padding: 5px 10px;
   border-radius: 5px;
-  border: 1px solid #e7e7e7;
-  background-color: #fff;
+  border: 1px solid #e8e8e8;
   font-size: 12px;
-  text-decoration: none;
   color: #666;
+  text-decoration: none;
 }
 book-description .more-description-button:hover {
-  text-decoration: underline;
+  background-color: rgba(159, 234, 134, 0.1);
 }
 book-description .more-description-button[aria-hidden=true] {
   display: none;
@@ -229,8 +230,9 @@ nav-gnb {
 
 .favorite-header {
   display: flex;
+  align-items: center;
   box-sizing: border-box;
-  min-height: 25px;
+  height: 34px;
   padding: 0 1rem;
   background-color: #364d4e;
 }
@@ -244,14 +246,14 @@ nav-gnb {
   background-color: transparent;
   font-size: 12px;
   text-decoration: none;
-  color: #c5c4c4;
+  color: #b5b2b2;
 }
 .favorite-category a:hover, .favorite-category a:active {
   color: #d6d6d6;
   text-decoration: underline;
 }
 .favorite-category a[aria-selected=true] {
-  color: #f9ffae;
+  color: #fff;
 }
 
 .favorite-changeButton {
@@ -324,17 +326,20 @@ favorite-item .book-info .loanCnt {
 }
 
 .favorite-actions button {
-  width: 100%;
-  padding: 7px 10px;
+  background-color: #fff;
+  display: inline-block;
+  padding: 5px 10px;
   border-radius: 5px;
-  border: 1px solid transparent;
-  background-color: transparent;
+  border: 1px solid #e8e8e8;
   font-size: 12px;
+  color: #666;
   text-decoration: none;
-  color: #6f6f6f;
 }
 .favorite-actions button:hover {
-  border-color: #eff2e5;
+  background-color: rgba(159, 234, 134, 0.1);
+}
+.favorite-actions button[hidden] {
+  display: none;
 }
 
 library-book-exist {
@@ -349,7 +354,7 @@ library-book-exist {
 
 .overlay-category {
   position: absolute;
-  top: 5.3rem;
+  top: 64px;
   right: 10px;
   z-index: 10;
 }

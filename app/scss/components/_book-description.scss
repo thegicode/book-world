@@ -1,3 +1,5 @@
+@import "./_button.scss";
+
 book-description {
     display: flex;
     flex-direction: column;
@@ -20,16 +22,7 @@ book-description {
     .more-description-button {
         width: auto;
         margin-left: auto;
-        padding: 5px 10px;
-        border-radius: 5px;
-        border: 1px solid #e7e7e7;
-        background-color: #fff;
-        font-size: 12px;
-        text-decoration: none;
-        color: #666;
-        &:hover {
-            text-decoration: underline;
-        }
+        @include button1;
         &[aria-hidden="true"] {
             display: none;
         }

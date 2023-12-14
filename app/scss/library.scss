@@ -1,6 +1,7 @@
 @import "./base/_reset.scss";
 @import "./components/_gnb.scss";
-@import "./components/loading";
+@import "./components/_loading";
+@import "./components/_button";
 
 h2 {
     margin: 0;
@@ -196,22 +197,10 @@ library-item {
         // margin-right: 7px;
     }
     span {
-        padding: 5px 10px;
-        border-radius: 5px;
-        border: 1px solid #e6e6e6;
-        background: #f8f8f8;
-        font-size: 12px;
-        color: #666;
-        &:hover {
-            border-color: #d6d6d6;
-            background-color: #efeeee;
-            color: #4f4f4f;
-        }
+        @include button2;
     }
     input[name="myLibrary"]:checked + span {
-        background: #548b8c;
-        border-color: #4c7677;
-        color: #efefef;
+        @include button2-active;
     }
 }
 

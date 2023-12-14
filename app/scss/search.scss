@@ -5,6 +5,7 @@
 @import "./components/_category-selector.scss";
 @import "./components/_book-image.scss";
 @import "./components/_loading.scss";
+@import "./components/_button.scss";
 
 .root {
     display: flex;
@@ -84,6 +85,10 @@ app-search {
 
     label {
         margin-right: 1rem;
+        font-size: 12px;
+        input {
+            vertical-align: sub;
+        }
     }
 }
 
@@ -166,17 +171,17 @@ book-item {
         }
 
         .link {
-            display: inline-block;
-            // color: #333;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 12px;
-            text-decoration: none;
-            color: #555;
-            &:hover {
-                background-color: rgba(10, 100, 200, 0.05);
-            }
+            @include button1 // display: inline-block;
+                // padding: 5px 10px;
+                // border-radius: 5px;
+                // border: 1px solid #ddd;
+                // font-size: 12px;
+                // text-decoration: none;
+                // color: #555;
+                // &:hover {
+                //     background-color: rgba(10, 100, 200, 0.05);
+                // }
+;
         }
     }
 
@@ -187,11 +192,7 @@ book-item {
     .actions {
         margin: 1rem;
         button {
-            border-radius: 7px;
-            border: 1px solid #eee;
-            background-color: transparent;
-            padding: 5px 1rem;
-
+            @include button1;
             &[data-selected="true"] {
                 color: green;
                 svg {
@@ -204,11 +205,12 @@ book-item {
             margin-right: 5px;
         }
         .library-button {
-            width: 100%;
-            margin-top: 10px;
-            text-align: center;
-            font-size: 12px;
-            color: #666;
+            @include button1;
+            // width: 100%;
+            // margin-top: 10px;
+            // text-align: center;
+            // font-size: 12px;
+            // color: #666;
         }
     }
 }

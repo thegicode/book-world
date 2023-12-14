@@ -124,7 +124,7 @@ set-detail-region .regions label input[type=radio] {
   visibility: hidden;
 }
 set-detail-region .regions label span {
-  padding: 3px 10px;
+  padding: 5px 10px;
   border-radius: 5px;
   border: 1px solid #e6e6e6;
   background: #f8f8f8;
@@ -137,8 +137,8 @@ set-detail-region .regions label span:hover {
   color: #4f4f4f;
 }
 set-detail-region .regions label input[type=radio]:checked + span {
-  border-color: #4c7677;
   background: #548b8c;
+  border-color: #4c7677;
   color: #efefef;
 }
 set-detail-region .detailRegions {
@@ -157,10 +157,17 @@ set-storage {
   padding: 1rem;
 }
 set-storage button {
+  background-color: #fff;
+  display: inline-block;
   padding: 5px 10px;
-  border: 1px solid #ddd;
+  border-radius: 5px;
+  border: 1px solid #e8e8e8;
   font-size: 12px;
-  color: #4f4f4f;
+  color: #666;
+  text-decoration: none;
+}
+set-storage button:hover {
+  background-color: rgba(159, 234, 134, 0.1);
 }
 set-storage textarea {
   width: 100%;

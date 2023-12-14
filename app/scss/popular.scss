@@ -3,6 +3,7 @@
 @import "./components/_category-selector.scss";
 @import "./components/_book-image.scss";
 @import "./components/_loading.scss";
+@import "./components/_button.scss";
 
 .root {
     display: flex;
@@ -132,16 +133,17 @@ popular-header {
     margin-top: 1rem;
     button {
         flex: auto;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #dbe8e6;
-        background-color: #f0fdfb;
-        font-size: 14px;
-        color: #666;
-        &:hover {
-            background-color: #dffff9;
-            border-color: #b1d4ce;
-        }
+        @include button2;
+        // padding: 10px;
+        // border-radius: 8px;
+        // border: 1px solid #dbe8e6;
+        // background-color: #f0fdfb;
+        // font-size: 14px;
+        // color: #666;
+        //     &: hover {
+        //     background-color: #dffff9;
+        //     border-color: #b1d4ce;
+        // }
     }
 }
 
@@ -217,13 +219,13 @@ popular-header {
         font-size: 12px;
         color: #767676;
         li {
-            padding-bottom: 6px;
+            padding-bottom: 4px;
             span {
                 margin-left: 5px;
             }
         }
         .bookname {
-            padding-bottom: 10px;
+            padding-bottom: 7px;
             font-weight: bold;
             font-size: 1rem;
             color: #417f80;

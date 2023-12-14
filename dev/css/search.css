@@ -61,16 +61,17 @@ book-description .description[data-ellipsis=true] {
 book-description .more-description-button {
   width: auto;
   margin-left: auto;
+  background-color: #fff;
+  display: inline-block;
   padding: 5px 10px;
   border-radius: 5px;
-  border: 1px solid #e7e7e7;
-  background-color: #fff;
+  border: 1px solid #e8e8e8;
   font-size: 12px;
-  text-decoration: none;
   color: #666;
+  text-decoration: none;
 }
 book-description .more-description-button:hover {
-  text-decoration: underline;
+  background-color: rgba(159, 234, 134, 0.1);
 }
 book-description .more-description-button[aria-hidden=true] {
   display: none;
@@ -257,6 +258,10 @@ app-search {
 }
 .inputSearch-sort label {
   margin-right: 1rem;
+  font-size: 12px;
+}
+.inputSearch-sort label input {
+  vertical-align: sub;
 }
 
 .paging-info {
@@ -332,16 +337,17 @@ book-item .book-info li {
   margin-bottom: 5px;
 }
 book-item .book-info .link {
+  background-color: #fff;
   display: inline-block;
   padding: 5px 10px;
   border-radius: 5px;
-  border: 1px solid #ddd;
+  border: 1px solid #e8e8e8;
   font-size: 12px;
+  color: #666;
   text-decoration: none;
-  color: #555;
 }
 book-item .book-info .link:hover {
-  background-color: rgba(10, 100, 200, 0.05);
+  background-color: rgba(159, 234, 134, 0.1);
 }
 book-item book-description {
   margin: 0 1rem;
@@ -350,10 +356,17 @@ book-item .actions {
   margin: 1rem;
 }
 book-item .actions button {
-  border-radius: 7px;
-  border: 1px solid #eee;
-  background-color: transparent;
-  padding: 5px 1rem;
+  background-color: #fff;
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #e8e8e8;
+  font-size: 12px;
+  color: #666;
+  text-decoration: none;
+}
+book-item .actions button:hover {
+  background-color: rgba(159, 234, 134, 0.1);
 }
 book-item .actions button[data-selected=true] {
   color: green;
@@ -366,11 +379,17 @@ book-item .actions svg {
   margin-right: 5px;
 }
 book-item .actions .library-button {
-  width: 100%;
-  margin-top: 10px;
-  text-align: center;
+  background-color: #fff;
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #e8e8e8;
   font-size: 12px;
   color: #666;
+  text-decoration: none;
+}
+book-item .actions .library-button:hover {
+  background-color: rgba(159, 234, 134, 0.1);
 }
 
 .observe {
