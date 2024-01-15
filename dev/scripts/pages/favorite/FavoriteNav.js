@@ -4,110 +4,90 @@ export default class FavoriteNav extends HTMLElement {
         super();
         this.nav = this.querySelector(".favorite-category");
         this.overlayCategory = document.querySelector("overlay-category");
-        const params = new URLSearchParams(location.search);
-        this.category = params.get("category");
-        this.handleCategoryChange = this.handleCategoryChange.bind(this);
+        this.changButton = this.querySelector(".favorite-changeButton");
+        this.category = null;
+        this.handleOverlayCatalog = this.handleOverlayCatalog.bind(this);
+        this.subscribeCategoryChange = this.subscribeCategoryChange.bind(this);
     }
     connectedCallback() {
-        if (this.category === null) {
-            this.category = bookModel.sortedFavoriteKeys[0];
-            const url = this.getUrl(this.category);
-            location.search = url;
-        }
+        this.intialize();
         this.render();
-        this.overlayCatalog();
+        this.changButton.addEventListener("click", this.handleOverlayCatalog);
         bookModel.subscribeToFavoritesUpdate(this
-            .handleCategoryChange);
+            .subscribeCategoryChange);
     }
     disconnectedCallback() {
+        this.changButton.removeEventListener("click", this.handleOverlayCatalog);
         bookModel.unsubscribeToFavoritesUpdate(this
-            .handleCategoryChange);
+            .subscribeCategoryChange);
+    }
+    intialize() {
+        this.category =
+            new URLSearchParams(location.search).get("category") ||
+                bookModel.sortedFavoriteKeys[0];
+        // if (this.category === null) {
+        //     this.category = bookModel.sortedFavoriteKeys[0];
+        //     location.search = this.getUrl(this.category);
+        // }
     }
     render() {
-        if (!this.nav)
-            return;
-        this.nav.innerHTML = "";
         const fragment = new DocumentFragment();
-        bookModel.sortedFavoriteKeys.forEach((category) => {
-            const el = this.createItem(category);
-            fragment.appendChild(el);
-        });
+        bookModel.sortedFavoriteKeys
+            .map((category) => this.createItem(category))
+            .forEach((element) => fragment.appendChild(element));
+        this.nav.innerHTML = "";
         this.nav.appendChild(fragment);
         this.hidden = false;
     }
     createItem(category) {
-        const el = document.createElement("a");
-        el.textContent = category;
-        el.href = `?${this.getUrl(category)}`;
-        if (category === this.category) {
-            el.ariaSelected = "true";
-        }
-        el.addEventListener("click", (event) => {
-            this.onChange(category, el, event);
-        });
-        return el;
+        const element = document.createElement("a");
+        element.ariaSelected = (category === this.category).toString();
+        this.updateItem(element, category);
+        return element;
     }
-    onChange(category, el, event) {
-        event.preventDefault();
-        el.ariaSelected = "true";
-        location.search = this.getUrl(category);
-        this.category = category;
+    updateItem(element, name) {
+        element.textContent = name;
+        element.href = `?${this.getUrl(name)}`;
+    }
+    handleOverlayCatalog() {
+        this.overlayCategory.hidden = Boolean(!this.overlayCategory.hidden);
     }
     getUrl(category) {
         const categoryStr = encodeURIComponent(category);
         return `category=${categoryStr}`;
     }
-    overlayCatalog() {
-        const modal = this.overlayCategory;
-        const changeButton = this.querySelector(".favorite-changeButton");
-        changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
-            modal.hidden = Boolean(!modal.hidden);
-        });
-    }
-    handleCategoryChange({ type, payload }) {
-        var _a, _b, _c;
-        switch (type) {
-            case "add":
-                {
-                    const element = this.createItem(payload.name);
-                    (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
-                }
-                break;
-            case "rename":
-                {
-                    if (!this.nav)
-                        return;
-                    const prevName = payload.prevName;
-                    const newName = payload.newName;
-                    const index = bookModel.sortedFavoriteKeys.indexOf(prevName);
-                    this.nav.querySelectorAll("a")[index].textContent = newName;
-                    bookModel.renameSortedFavoriteKey(prevName, newName);
-                    if (this.category === prevName) {
-                        location.search = this.getUrl(newName);
-                    }
-                }
-                break;
-            case "delete": {
-                const name = payload.name;
-                const deletedIndex = bookModel.deleteSortedFavoriteKey(name);
-                if (deletedIndex > -1) {
-                    (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[deletedIndex].remove();
-                }
-                break;
-            }
-            case "change": {
-                const { targetIndex, draggedIndex } = payload;
-                if (targetIndex === undefined || draggedIndex === undefined)
-                    return;
-                const navLinks = (_c = this.nav) === null || _c === void 0 ? void 0 : _c.querySelectorAll("a");
-                if (navLinks) {
-                    const targetEl = navLinks[targetIndex].cloneNode(true);
-                    const draggedEl = navLinks[draggedIndex].cloneNode(true);
-                    navLinks[draggedIndex].replaceWith(targetEl);
-                    navLinks[targetIndex].replaceWith(draggedEl);
-                }
-            }
+    subscribeCategoryChange({ type, payload }) {
+        const actions = {
+            add: () => this.handlAdd(payload.name),
+            rename: () => this.handlRename(payload.prevName, payload.newName),
+            delete: () => this.handlDelete(payload.name),
+            change: () => this.handlChange(payload.targetIndex, payload.draggedIndex),
+        };
+        if (actions[type]) {
+            actions[type]();
         }
+        else {
+            console.error("No subscribe type");
+        }
+    }
+    handlAdd(name) {
+        this.nav.appendChild(this.createItem(name));
+    }
+    handlRename(prevName, newName) {
+        this.updateItem(this.nav.querySelectorAll("a")[bookModel.sortedFavoriteKeys.indexOf(prevName)], newName);
+        bookModel.renameSortedFavoriteKey(prevName, newName);
+        if (this.category === prevName) {
+            location.search = this.getUrl(newName);
+        }
+    }
+    handlDelete(name) {
+        const deletedIndex = bookModel.deleteSortedFavoriteKey(name);
+        this.nav.querySelectorAll("a")[deletedIndex].remove();
+    }
+    handlChange(targetIndex, draggedIndex) {
+        const navs = this.nav.querySelectorAll("a");
+        navs[draggedIndex].replaceWith(navs[targetIndex].cloneNode(true));
+        navs[targetIndex].replaceWith(navs[draggedIndex].cloneNode(true));
     }
 }
 //# sourceMappingURL=FavoriteNav.js.map

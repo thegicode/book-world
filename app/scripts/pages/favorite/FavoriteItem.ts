@@ -1,20 +1,21 @@
 import { CustomFetch } from "../../utils/index";
 import { LibraryBookExist, LoadingComponent } from "../../components/index";
 import bookModel from "../../model";
-import FavoriteItemView from "./FavoriteItemView";
+import FavoriteItemUI from "./FavoriteItemUI";
 
 export default class FavoriteItem extends HTMLElement {
     private loadingComponent: LoadingComponent | null = null;
     private libraryBookExist?: LibraryBookExist | null;
-    private libraryButton?: HTMLButtonElement | null = null;
-    private hideButton?: HTMLButtonElement | null;
     private _isbn: string | null = null;
-    private view: FavoriteItemView;
+    private ui: FavoriteItemUI;
+
+    libraryButton?: HTMLButtonElement | null = null;
+    hideButton?: HTMLButtonElement | null;
 
     constructor(isbn: string) {
         super();
         this._isbn = isbn;
-        this.view = new FavoriteItemView(this);
+        this.ui = new FavoriteItemUI(this);
     }
 
     connectedCallback() {
@@ -24,7 +25,6 @@ export default class FavoriteItem extends HTMLElement {
         this.libraryBookExist = this.querySelector("library-book-exist");
 
         this.addEvents();
-
         this.fetchData();
     }
 
@@ -56,9 +56,9 @@ export default class FavoriteItem extends HTMLElement {
         const url = `/usage-analysis-list?isbn13=${this._isbn}`;
         try {
             const data = await CustomFetch.fetch<IUsageAnalysisResult>(url);
-            this.renderView(data);
+            this.renderUI(data.book);
         } catch (error) {
-            this.view.renderError();
+            this.ui.renderError();
             console.error(error);
             throw new Error(`Fail to get usage analysis list.`);
         }
@@ -66,11 +66,9 @@ export default class FavoriteItem extends HTMLElement {
         this.loadingComponent?.hide();
     }
 
-    protected renderView(data: IUsageAnalysisResult) {
-        const newData = data.book;
-        delete newData.vol;
-
-        this.view.render(newData);
+    protected renderUI(book: IBook) {
+        delete book.vol;
+        this.ui.render(book);
     }
 
     private onLibrary() {
@@ -81,7 +79,7 @@ export default class FavoriteItem extends HTMLElement {
                 bookModel.libraries
             );
 
-            this.view.updateOnLibrary();
+            this.ui.updateOnLibrary();
         }
     }
 
@@ -92,6 +90,6 @@ export default class FavoriteItem extends HTMLElement {
 
         list.innerHTML = "";
 
-        this.view.updateOnHideLibrary();
+        this.ui.updateOnHideLibrary();
     }
 }

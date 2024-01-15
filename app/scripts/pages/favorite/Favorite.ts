@@ -21,11 +21,18 @@ export default class Favorite extends HTMLElement {
         this.messageTemplate = document.querySelector(
             "#tp-message"
         ) as HTMLTemplateElement;
+
+        // this.subscribeCategoryChange = this.subscribeCategoryChange.bind(this);
     }
 
     connectedCallback() {
         const isbnsOfCategory = this.getIsbnsOfCategory();
         if (isbnsOfCategory) this.render(isbnsOfCategory);
+
+        // bookModel.subscribeToFavoritesUpdate(
+        //     this
+        //         .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
+        // );
     }
 
     disconnectedCallback() {
@@ -74,4 +81,12 @@ export default class Favorite extends HTMLElement {
         messageElement.textContent = message;
         this.listElement.appendChild(messageElement);
     }
+
+    // private subscribeCategoryChange({ type, payload }: IFavoritesUpdateProps) {
+    //     switch (type) {
+    //         case "rename":
+    //             console.log("reanme");
+    //             break;
+    //     }
+    // }
 }

@@ -8,11 +8,16 @@ export default class Favorite extends HTMLElement {
         this.listElement = this.querySelector(".favorite-books");
         this.itemTemplate = document.querySelector("#tp-favorite-item");
         this.messageTemplate = document.querySelector("#tp-message");
+        // this.subscribeCategoryChange = this.subscribeCategoryChange.bind(this);
     }
     connectedCallback() {
         const isbnsOfCategory = this.getIsbnsOfCategory();
         if (isbnsOfCategory)
             this.render(isbnsOfCategory);
+        // bookModel.subscribeToFavoritesUpdate(
+        //     this
+        //         .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
+        // );
     }
     disconnectedCallback() {
         //

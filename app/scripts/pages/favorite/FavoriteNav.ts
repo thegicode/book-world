@@ -1,87 +1,86 @@
 import bookModel from "../../model";
 
 export default class FavoriteNav extends HTMLElement {
-    nav: HTMLElement | null;
-    overlayCategory: HTMLElement;
-    category: string | null;
+    private nav: HTMLElement;
+    private overlayCategory: HTMLElement;
+    private changButton: HTMLButtonElement;
+    private category: string | null;
 
     constructor() {
         super();
 
-        this.nav = this.querySelector(".favorite-category");
-
+        this.nav = this.querySelector(".favorite-category") as HTMLElement;
         this.overlayCategory = document.querySelector(
             "overlay-category"
         ) as HTMLElement;
+        this.changButton = this.querySelector(
+            ".favorite-changeButton"
+        ) as HTMLButtonElement;
 
-        const params = new URLSearchParams(location.search);
-        this.category = params.get("category");
+        this.category = null;
 
-        this.handleCategoryChange = this.handleCategoryChange.bind(this);
+        this.handleOverlayCatalog = this.handleOverlayCatalog.bind(this);
+        this.subscribeCategoryChange = this.subscribeCategoryChange.bind(this);
     }
 
     connectedCallback() {
-        if (this.category === null) {
-            this.category = bookModel.sortedFavoriteKeys[0];
-            const url = this.getUrl(this.category);
-            location.search = url;
-        }
-
+        this.intialize();
         this.render();
-        this.overlayCatalog();
 
+        this.changButton.addEventListener("click", this.handleOverlayCatalog);
         bookModel.subscribeToFavoritesUpdate(
             this
-                .handleCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
+                .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
         );
     }
 
     disconnectedCallback() {
+        this.changButton.removeEventListener(
+            "click",
+            this.handleOverlayCatalog
+        );
         bookModel.unsubscribeToFavoritesUpdate(
             this
-                .handleCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
+                .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
         );
     }
 
+    private intialize() {
+        this.category =
+            new URLSearchParams(location.search).get("category") ||
+            bookModel.sortedFavoriteKeys[0];
+
+        // if (this.category === null) {
+        //     this.category = bookModel.sortedFavoriteKeys[0];
+        //     location.search = this.getUrl(this.category);
+        // }
+    }
+
     private render() {
-        if (!this.nav) return;
-        this.nav.innerHTML = "";
-
         const fragment = new DocumentFragment();
+        bookModel.sortedFavoriteKeys
+            .map((category) => this.createItem(category))
+            .forEach((element) => fragment.appendChild(element));
 
-        bookModel.sortedFavoriteKeys.forEach((category: string) => {
-            const el = this.createItem(category);
-            fragment.appendChild(el);
-        });
-
+        this.nav.innerHTML = "";
         this.nav.appendChild(fragment);
-
         this.hidden = false;
     }
 
     private createItem(category: string) {
-        const el = document.createElement("a") as HTMLAnchorElement;
-        el.textContent = category;
-        el.href = `?${this.getUrl(category)}`;
-
-        if (category === this.category) {
-            el.ariaSelected = "true";
-        }
-
-        el.addEventListener("click", (event) => {
-            this.onChange(category, el, event);
-        });
-
-        return el;
+        const element = document.createElement("a") as HTMLAnchorElement;
+        element.ariaSelected = (category === this.category).toString();
+        this.updateItem(element, category);
+        return element;
     }
 
-    private onChange(category: string, el: HTMLElement, event: Event) {
-        event.preventDefault();
+    private updateItem(element: HTMLAnchorElement, name: string) {
+        element.textContent = name;
+        element.href = `?${this.getUrl(name)}`;
+    }
 
-        el.ariaSelected = "true";
-
-        location.search = this.getUrl(category);
-        this.category = category;
+    private handleOverlayCatalog() {
+        this.overlayCategory.hidden = Boolean(!this.overlayCategory.hidden);
     }
 
     private getUrl(category: string) {
@@ -89,58 +88,55 @@ export default class FavoriteNav extends HTMLElement {
         return `category=${categoryStr}`;
     }
 
-    private overlayCatalog() {
-        const modal = this.overlayCategory;
-        const changeButton = this.querySelector(".favorite-changeButton");
-        changeButton?.addEventListener("click", () => {
-            modal.hidden = Boolean(!modal.hidden);
-        });
+    private subscribeCategoryChange({ type, payload }: IFavoritesUpdateProps) {
+        const actions: Record<string, () => void> = {
+            add: () => this.handlAdd(payload.name as string),
+            rename: () =>
+                this.handlRename(
+                    payload.prevName as string,
+                    payload.newName as string
+                ),
+            delete: () => this.handlDelete(payload.name as string),
+            change: () =>
+                this.handlChange(
+                    payload.targetIndex as number,
+                    payload.draggedIndex as number
+                ),
+        };
+
+        if (actions[type]) {
+            actions[type]();
+        } else {
+            console.error("No subscribe type");
+        }
     }
 
-    private handleCategoryChange({ type, payload }: IFavoritesUpdateProps) {
-        switch (type) {
-            case "add":
-                {
-                    const element = this.createItem(payload.name as string);
-                    this.nav?.appendChild(element);
-                }
-                break;
-            case "rename":
-                {
-                    if (!this.nav) return;
-                    const prevName = payload.prevName as string;
-                    const newName = payload.newName as string;
-                    const index =
-                        bookModel.sortedFavoriteKeys.indexOf(prevName);
-                    this.nav.querySelectorAll("a")[index].textContent = newName;
-                    bookModel.renameSortedFavoriteKey(prevName, newName);
+    private handlAdd(name: string) {
+        this.nav.appendChild(this.createItem(name));
+    }
 
-                    if (this.category === prevName) {
-                        location.search = this.getUrl(newName);
-                    }
-                }
-                break;
-            case "delete": {
-                const name = payload.name as string;
-                const deletedIndex = bookModel.deleteSortedFavoriteKey(name);
-                if (deletedIndex > -1) {
-                    this.nav?.querySelectorAll("a")[deletedIndex].remove();
-                }
-                break;
-            }
-            case "change": {
-                const { targetIndex, draggedIndex } = payload;
-                if (targetIndex === undefined || draggedIndex === undefined)
-                    return;
-                const navLinks = this.nav?.querySelectorAll("a");
-                if (navLinks) {
-                    const targetEl = navLinks[targetIndex].cloneNode(true);
-                    const draggedEl = navLinks[draggedIndex].cloneNode(true);
+    private handlRename(prevName: string, newName: string) {
+        this.updateItem(
+            this.nav.querySelectorAll("a")[
+                bookModel.sortedFavoriteKeys.indexOf(prevName)
+            ],
+            newName
+        );
+        bookModel.renameSortedFavoriteKey(prevName, newName);
 
-                    navLinks[draggedIndex].replaceWith(targetEl);
-                    navLinks[targetIndex].replaceWith(draggedEl);
-                }
-            }
+        if (this.category === prevName) {
+            location.search = this.getUrl(newName);
         }
+    }
+
+    private handlDelete(name: string) {
+        const deletedIndex = bookModel.deleteSortedFavoriteKey(name);
+        this.nav.querySelectorAll("a")[deletedIndex].remove();
+    }
+
+    private handlChange(targetIndex: number, draggedIndex: number) {
+        const navs = this.nav.querySelectorAll("a");
+        navs[draggedIndex].replaceWith(navs[targetIndex].cloneNode(true));
+        navs[targetIndex].replaceWith(navs[draggedIndex].cloneNode(true));
     }
 }

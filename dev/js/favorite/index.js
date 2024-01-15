@@ -1331,7 +1331,7 @@
     });
   }
 
-  // dev/scripts/pages/favorite/FavoriteItemView.js
+  // dev/scripts/pages/favorite/FavoriteItemUI.js
   var __rest = function(s, e) {
     var t = {};
     for (var p in s)
@@ -1344,46 +1344,46 @@
       }
     return t;
   };
-  var FavoriteItemView = class {
-    constructor(control) {
-      this.control = control;
+  var FavoriteItemUI = class {
+    constructor(component) {
+      this.component = component;
     }
     render(_a) {
       var { bookImageURL, bookname, description, isbn13 } = _a, otherData = __rest(_a, ["bookImageURL", "bookname", "description", "isbn13"]);
-      const linkElement = this.control.querySelector(".book-summary a");
+      const linkElement = this.component.querySelector(".book-summary a");
       linkElement.appendChild(new BookImage(bookImageURL, bookname));
-      const descNode = this.control.querySelector("book-description");
+      const descNode = this.component.querySelector("book-description");
       descNode.data = description;
-      const anchorEl = this.control.querySelector("a");
+      const anchorEl = this.component.querySelector("a");
       anchorEl.href = `/book?isbn=${isbn13}`;
       const others = Object.assign(Object.assign({}, otherData), {
         bookname,
         isbn13
       });
-      fillElementsWithData(others, this.control);
-      if (this.control.libraryButton && Object.keys(model_default.libraries).length === 0) {
-        this.control.libraryButton.hidden = true;
+      fillElementsWithData(others, this.component);
+      if (this.component.libraryButton && Object.keys(model_default.libraries).length === 0) {
+        this.component.libraryButton.hidden = true;
       }
     }
     renderError() {
-      this.control.dataset.fail = "true";
-      this.control.querySelector(".bookname").textContent = `ISBN : ${this.control.isbn}`;
-      this.control.querySelector(".authors").textContent = "\uC815\uBCF4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.";
+      this.component.dataset.fail = "true";
+      this.component.querySelector(".bookname").textContent = `ISBN : ${this.component.isbn}`;
+      this.component.querySelector(".authors").textContent = "\uC815\uBCF4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.";
     }
     updateOnLibrary() {
-      if (this.control.libraryButton)
-        this.control.libraryButton.hidden = true;
-      if (this.control.hideButton) {
-        this.control.hideButton.hidden = false;
+      if (this.component.libraryButton)
+        this.component.libraryButton.hidden = true;
+      if (this.component.hideButton) {
+        this.component.hideButton.hidden = false;
       }
     }
     updateOnHideLibrary() {
-      if (this.control.libraryButton) {
-        this.control.libraryButton.disabled = false;
-        this.control.libraryButton.hidden = false;
+      if (this.component.libraryButton) {
+        this.component.libraryButton.disabled = false;
+        this.component.libraryButton.hidden = false;
       }
-      if (this.control.hideButton) {
-        this.control.hideButton.hidden = true;
+      if (this.component.hideButton) {
+        this.component.hideButton.hidden = true;
       }
     }
   };
@@ -1420,10 +1420,10 @@
     constructor(isbn) {
       super();
       this.loadingComponent = null;
-      this.libraryButton = null;
       this._isbn = null;
+      this.libraryButton = null;
       this._isbn = isbn;
-      this.view = new FavoriteItemView(this);
+      this.ui = new FavoriteItemUI(this);
     }
     connectedCallback() {
       this.loadingComponent = this.querySelector("loading-component");
@@ -1455,31 +1455,30 @@
         const url = `/usage-analysis-list?isbn13=${this._isbn}`;
         try {
           const data = yield CustomFetch_default.fetch(url);
-          this.renderView(data);
+          this.renderUI(data.book);
         } catch (error) {
-          this.view.renderError();
+          this.ui.renderError();
           console.error(error);
           throw new Error(`Fail to get usage analysis list.`);
         }
         (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.hide();
       });
     }
-    renderView(data) {
-      const newData = data.book;
-      delete newData.vol;
-      this.view.render(newData);
+    renderUI(book) {
+      delete book.vol;
+      this.ui.render(book);
     }
     onLibrary() {
       if (this.libraryBookExist && this.libraryButton) {
         this.libraryBookExist.onLibraryBookExist(this.libraryButton, this._isbn, model_default.libraries);
-        this.view.updateOnLibrary();
+        this.ui.updateOnLibrary();
       }
     }
     onHideLibrary() {
       var _a;
       const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
       list.innerHTML = "";
-      this.view.updateOnHideLibrary();
+      this.ui.updateOnHideLibrary();
     }
   };
 
@@ -1541,108 +1540,79 @@
       super();
       this.nav = this.querySelector(".favorite-category");
       this.overlayCategory = document.querySelector("overlay-category");
-      const params = new URLSearchParams(location.search);
-      this.category = params.get("category");
-      this.handleCategoryChange = this.handleCategoryChange.bind(this);
+      this.changButton = this.querySelector(".favorite-changeButton");
+      this.category = null;
+      this.handleOverlayCatalog = this.handleOverlayCatalog.bind(this);
+      this.subscribeCategoryChange = this.subscribeCategoryChange.bind(this);
     }
     connectedCallback() {
-      if (this.category === null) {
-        this.category = model_default.sortedFavoriteKeys[0];
-        const url = this.getUrl(this.category);
-        location.search = url;
-      }
+      this.intialize();
       this.render();
-      this.overlayCatalog();
-      model_default.subscribeToFavoritesUpdate(this.handleCategoryChange);
+      this.changButton.addEventListener("click", this.handleOverlayCatalog);
+      model_default.subscribeToFavoritesUpdate(this.subscribeCategoryChange);
     }
     disconnectedCallback() {
-      model_default.unsubscribeToFavoritesUpdate(this.handleCategoryChange);
+      this.changButton.removeEventListener("click", this.handleOverlayCatalog);
+      model_default.unsubscribeToFavoritesUpdate(this.subscribeCategoryChange);
+    }
+    intialize() {
+      this.category = new URLSearchParams(location.search).get("category") || model_default.sortedFavoriteKeys[0];
     }
     render() {
-      if (!this.nav)
-        return;
-      this.nav.innerHTML = "";
       const fragment = new DocumentFragment();
-      model_default.sortedFavoriteKeys.forEach((category) => {
-        const el = this.createItem(category);
-        fragment.appendChild(el);
-      });
+      model_default.sortedFavoriteKeys.map((category) => this.createItem(category)).forEach((element) => fragment.appendChild(element));
+      this.nav.innerHTML = "";
       this.nav.appendChild(fragment);
       this.hidden = false;
     }
     createItem(category) {
-      const el = document.createElement("a");
-      el.textContent = category;
-      el.href = `?${this.getUrl(category)}`;
-      if (category === this.category) {
-        el.ariaSelected = "true";
-      }
-      el.addEventListener("click", (event) => {
-        this.onChange(category, el, event);
-      });
-      return el;
+      const element = document.createElement("a");
+      element.ariaSelected = (category === this.category).toString();
+      this.updateItem(element, category);
+      return element;
     }
-    onChange(category, el, event) {
-      event.preventDefault();
-      el.ariaSelected = "true";
-      location.search = this.getUrl(category);
-      this.category = category;
+    updateItem(element, name) {
+      element.textContent = name;
+      element.href = `?${this.getUrl(name)}`;
+    }
+    handleOverlayCatalog() {
+      this.overlayCategory.hidden = Boolean(!this.overlayCategory.hidden);
     }
     getUrl(category) {
       const categoryStr = encodeURIComponent(category);
       return `category=${categoryStr}`;
     }
-    overlayCatalog() {
-      const modal = this.overlayCategory;
-      const changeButton = this.querySelector(".favorite-changeButton");
-      changeButton === null || changeButton === void 0 ? void 0 : changeButton.addEventListener("click", () => {
-        modal.hidden = Boolean(!modal.hidden);
-      });
-    }
-    handleCategoryChange({ type, payload }) {
-      var _a, _b, _c;
-      switch (type) {
-        case "add":
-          {
-            const element = this.createItem(payload.name);
-            (_a = this.nav) === null || _a === void 0 ? void 0 : _a.appendChild(element);
-          }
-          break;
-        case "rename":
-          {
-            if (!this.nav)
-              return;
-            const prevName = payload.prevName;
-            const newName = payload.newName;
-            const index = model_default.sortedFavoriteKeys.indexOf(prevName);
-            this.nav.querySelectorAll("a")[index].textContent = newName;
-            model_default.renameSortedFavoriteKey(prevName, newName);
-            if (this.category === prevName) {
-              location.search = this.getUrl(newName);
-            }
-          }
-          break;
-        case "delete": {
-          const name = payload.name;
-          const deletedIndex = model_default.deleteSortedFavoriteKey(name);
-          if (deletedIndex > -1) {
-            (_b = this.nav) === null || _b === void 0 ? void 0 : _b.querySelectorAll("a")[deletedIndex].remove();
-          }
-          break;
-        }
-        case "change": {
-          const { targetIndex, draggedIndex } = payload;
-          if (targetIndex === void 0 || draggedIndex === void 0)
-            return;
-          const navLinks = (_c = this.nav) === null || _c === void 0 ? void 0 : _c.querySelectorAll("a");
-          if (navLinks) {
-            const targetEl = navLinks[targetIndex].cloneNode(true);
-            const draggedEl = navLinks[draggedIndex].cloneNode(true);
-            navLinks[draggedIndex].replaceWith(targetEl);
-            navLinks[targetIndex].replaceWith(draggedEl);
-          }
-        }
+    subscribeCategoryChange({ type, payload }) {
+      const actions = {
+        add: () => this.handlAdd(payload.name),
+        rename: () => this.handlRename(payload.prevName, payload.newName),
+        delete: () => this.handlDelete(payload.name),
+        change: () => this.handlChange(payload.targetIndex, payload.draggedIndex)
+      };
+      if (actions[type]) {
+        actions[type]();
+      } else {
+        console.error("No subscribe type");
       }
+    }
+    handlAdd(name) {
+      this.nav.appendChild(this.createItem(name));
+    }
+    handlRename(prevName, newName) {
+      this.updateItem(this.nav.querySelectorAll("a")[model_default.sortedFavoriteKeys.indexOf(prevName)], newName);
+      model_default.renameSortedFavoriteKey(prevName, newName);
+      if (this.category === prevName) {
+        location.search = this.getUrl(newName);
+      }
+    }
+    handlDelete(name) {
+      const deletedIndex = model_default.deleteSortedFavoriteKey(name);
+      this.nav.querySelectorAll("a")[deletedIndex].remove();
+    }
+    handlChange(targetIndex, draggedIndex) {
+      const navs = this.nav.querySelectorAll("a");
+      navs[draggedIndex].replaceWith(navs[targetIndex].cloneNode(true));
+      navs[targetIndex].replaceWith(navs[draggedIndex].cloneNode(true));
     }
   };
 

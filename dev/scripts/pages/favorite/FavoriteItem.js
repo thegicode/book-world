@@ -9,15 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { CustomFetch } from "../../utils/index";
 import bookModel from "../../model";
-import FavoriteItemView from "./FavoriteItemView";
+import FavoriteItemUI from "./FavoriteItemUI";
 export default class FavoriteItem extends HTMLElement {
     constructor(isbn) {
         super();
         this.loadingComponent = null;
-        this.libraryButton = null;
         this._isbn = null;
+        this.libraryButton = null;
         this._isbn = isbn;
-        this.view = new FavoriteItemView(this);
+        this.ui = new FavoriteItemUI(this);
     }
     connectedCallback() {
         this.loadingComponent = this.querySelector("loading-component");
@@ -49,32 +49,31 @@ export default class FavoriteItem extends HTMLElement {
             const url = `/usage-analysis-list?isbn13=${this._isbn}`;
             try {
                 const data = yield CustomFetch.fetch(url);
-                this.renderView(data);
+                this.renderUI(data.book);
             }
             catch (error) {
-                this.view.renderError();
+                this.ui.renderError();
                 console.error(error);
                 throw new Error(`Fail to get usage analysis list.`);
             }
             (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.hide();
         });
     }
-    renderView(data) {
-        const newData = data.book;
-        delete newData.vol;
-        this.view.render(newData);
+    renderUI(book) {
+        delete book.vol;
+        this.ui.render(book);
     }
     onLibrary() {
         if (this.libraryBookExist && this.libraryButton) {
             this.libraryBookExist.onLibraryBookExist(this.libraryButton, this._isbn, bookModel.libraries);
-            this.view.updateOnLibrary();
+            this.ui.updateOnLibrary();
         }
     }
     onHideLibrary() {
         var _a;
         const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
         list.innerHTML = "";
-        this.view.updateOnHideLibrary();
+        this.ui.updateOnHideLibrary();
     }
 }
 //# sourceMappingURL=FavoriteItem.js.map
