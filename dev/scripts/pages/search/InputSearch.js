@@ -8,25 +8,22 @@ export default class InputSearch extends HTMLElement {
         this.input = null;
         this.handleRadioChange = () => {
             var _a;
-            const submitEvent = new Event("submit");
-            (_a = this.form) === null || _a === void 0 ? void 0 : _a.dispatchEvent(submitEvent);
+            (_a = this.form) === null || _a === void 0 ? void 0 : _a.dispatchEvent(new Event("submit"));
         };
         this.onSubmit = (event) => {
             var _a;
             event.preventDefault();
             if (!this.input)
                 return;
+            this.input.focus();
+            const url = new URL(window.location.href);
             const keyword = this.input.value;
             const sort = (_a = this.form) === null || _a === void 0 ? void 0 : _a.sort.value;
-            this.input.focus();
-            if (keyword && sort) {
-                const url = new URL(window.location.href);
-                url.searchParams.set("keyword", keyword);
-                url.searchParams.set("sort", sort);
-                window.history.pushState({}, "", url.toString());
-                bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
-                // CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
-            }
+            url.searchParams.set("keyword", keyword);
+            url.searchParams.set("sort", sort);
+            window.history.pushState({}, "", url.toString());
+            bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
+            // CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
         };
         this.form = this.querySelector("form");
         this.input = this.querySelector("input[type='search']");

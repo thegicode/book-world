@@ -17,70 +17,48 @@ export default class BookList extends HTMLElement {
         this.bookContainer = this.querySelector(".books");
         this.loadingComponent =
             this.querySelector("loading-component");
-        this.retrieveBooks = this.retrieveBooks.bind(this);
+        this.observeTarget = this.querySelector(".observe");
+        this.itemTemplate = document.querySelector("#tp-book-item");
+        this.itemsPerPage = 10;
+        this.fetchBooks = this.fetchBooks.bind(this);
         this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
     connectedCallback() {
-        this.setupObserver();
-        // CustomEventEmitter.add(
-        //     SEARCH_PAGE_INIT,
-        //     this.initializeSearchPage as EventListener
-        // );
+        this.observer = new Observer(this.observeTarget, this.fetchBooks);
     }
     disconnectedCallback() {
         var _a;
         (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
-        // CustomEventEmitter.remove(
-        //     SEARCH_PAGE_INIT,
-        //     this.initializeSearchPage as EventListener
-        // );
     }
     initializeSearchPage(keyword, sortValue) {
+        var _a;
         this.keyword = keyword;
         this.sortingOrder = sortValue;
-        this.itemCount = 0;
-        // renderBooks: onSubmit으로 들어온 경우와 브라우저
+        this.currentItemCount = 0;
+        (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
+        // loadBooks: onSubmit으로 들어온 경우와 브라우저
         // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
-        this.keyword ? this.renderBooks() : this.showDefaultMessage();
+        this.keyword ? this.loadBooks() : this.showDefaultMessage();
     }
-    // initializeSearchPage(
-    //     event: ICustomEvent<{
-    //         keyword: string;
-    //         sort: string;
-    //     }>
-    // ) {
-    //     const { keyword, sort } = event.detail;
-    //     this.keyword = keyword;
-    //     this.sortingOrder = sort;
-    //     this.itemCount = 0;
-    //     // renderBooks: onSubmit으로 들어온 경우와 브라우저
-    //     // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
-    //     this.keyword ? this.renderBooks() : this.showDefaultMessage();
-    // }
-    setupObserver() {
-        const target = this.querySelector(".observe");
-        this.observer = new Observer(target, this.retrieveBooks);
-    }
-    renderBooks() {
+    loadBooks() {
         this.bookContainer.innerHTML = "";
-        this.retrieveBooks();
+        this.fetchBooks();
     }
     showDefaultMessage() {
         this.paginationElement.hidden = true;
         this.renderMessage("message");
     }
-    retrieveBooks() {
+    fetchBooks() {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.keyword || !this.sortingOrder)
+            if (!this.keyword || !this.sortingOrder) {
                 return;
+            }
             (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
-            const encodedKeyword = encodeURIComponent(this.keyword);
-            const searchUrl = `${URL.search}?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
-            // console.log("fetch-search: ", searchUrl);
+            const searchUrl = `${URL.search}?keyword=${encodeURIComponent(this.keyword)}&display=${this.itemsPerPage}&start=${this.currentItemCount + 1}&sort=${this.sortingOrder}`;
             try {
                 const data = yield CustomFetch.fetch(searchUrl);
-                this.renderBookList(data);
+                this.displayBooks(data);
             }
             catch (error) {
                 if (error instanceof Error) {
@@ -93,42 +71,46 @@ export default class BookList extends HTMLElement {
             (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
         });
     }
-    renderBookList({ total, display, items, }) {
+    displayBooks(bookData) {
         var _a;
-        if (total === 0) {
+        if (bookData.total === 0) {
             this.renderMessage("notFound");
             return;
         }
-        this.itemCount += display;
-        this.refreshPagingData(total, display);
-        this.appendBookItems(items);
-        this.paginationElement.hidden = false;
-        if (total !== this.itemCount)
+        this.currentItemCount += bookData.display;
+        this.updatePagingInfo(bookData.total);
+        this.appendBookItems(bookData.items);
+        if (bookData.total !== this.currentItemCount) {
             (_a = this.observer) === null || _a === void 0 ? void 0 : _a.observe();
+        }
     }
-    refreshPagingData(total, display) {
+    updatePagingInfo(total) {
         const obj = {
             keyword: `${this.keyword}`,
-            length: `${this.itemCount.toLocaleString()}`,
+            length: `${this.currentItemCount.toLocaleString()}`,
             total: `${total.toLocaleString()}`,
-            display: `${display}개씩`,
+            display: `${this.itemsPerPage}개씩`,
         };
         for (const [key, value] of Object.entries(obj)) {
             const element = this.paginationElement.querySelector(`.__${key}`);
             element.textContent = value;
         }
+        this.paginationElement.hidden = false;
     }
-    appendBookItems(items) {
+    appendBookItems(searchBookData) {
         const fragment = new DocumentFragment();
-        const template = document.querySelector("#tp-book-item");
-        items.forEach((data, index) => {
+        searchBookData.forEach((data, index) => {
             const bookItem = new BookItem(data);
-            const cloned = template.content.cloneNode(true);
-            bookItem.appendChild(cloned);
-            bookItem.dataset.index = (this.itemCount + index).toString();
+            bookItem.dataset.index = this.getIndex(index).toString();
+            bookItem.appendChild(this.itemTemplate.content.cloneNode(true));
             fragment.appendChild(bookItem);
         });
         this.bookContainer.appendChild(fragment);
+    }
+    getIndex(index) {
+        return (Math.ceil((this.currentItemCount - this.itemsPerPage) / this.itemsPerPage) *
+            this.itemsPerPage +
+            index);
     }
     renderMessage(type) {
         const messageTemplate = document.querySelector(`#tp-${type}`);
@@ -142,7 +124,7 @@ export default class BookList extends HTMLElement {
 //     changes.forEach( change => {
 //         if (change.isIntersecting) {
 //             this.observer.unobserve(change.target)
-//             this.retrieveBooks()
+//             this.fetchBooks()
 //         }
 //     })
 // })

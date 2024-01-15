@@ -33,7 +33,6 @@ export default class AppSearch extends HTMLElement {
 
         if (keyword && sort) {
             bookList?.initializeSearchPage(keyword, sort);
-            // CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
             searchInputElement.value = keyword;
         }
     }

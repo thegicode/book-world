@@ -36,15 +36,13 @@ export default class BookItem extends HTMLElement {
     }
     renderView() {
         const _a = this.data, { discount, pubdate } = _a, others = __rest(_a, ["discount", "pubdate"]);
-        const _pubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
-        const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: _pubdate });
+        const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}` });
         renderBookItem(this, renderData);
     }
     // 도서관 소장 | 대출 조회
     onLibraryButtonClick() {
-        const isbn = this.dataset.isbn || "";
         const libraryBookExist = this.querySelector("library-book-exist");
-        libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, bookModel.libraries);
+        libraryBookExist.onLibraryBookExist(this.libraryButton, this.dataset.isbn || "", bookModel.libraries);
     }
 }
 //# sourceMappingURL=BookItem.js.map

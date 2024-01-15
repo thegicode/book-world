@@ -42,15 +42,13 @@ export default class BookItem extends HTMLElement {
     private renderView() {
         const { discount, pubdate, ...others } = this.data;
 
-        const _pubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(
-            4,
-            6
-        )}.${pubdate.substring(6)}`;
-
         const renderData = {
             ...others,
             discount: Number(discount).toLocaleString(),
-            pubdate: _pubdate,
+            pubdate: `${pubdate.substring(0, 4)}.${pubdate.substring(
+                4,
+                6
+            )}.${pubdate.substring(6)}`,
         };
 
         renderBookItem(this, renderData);
@@ -58,13 +56,12 @@ export default class BookItem extends HTMLElement {
 
     // 도서관 소장 | 대출 조회
     private onLibraryButtonClick() {
-        const isbn = this.dataset.isbn || "";
         const libraryBookExist = this.querySelector(
             "library-book-exist"
         ) as LibraryBookExist;
         libraryBookExist.onLibraryBookExist(
             this.libraryButton,
-            isbn,
+            this.dataset.isbn || "",
             bookModel.libraries
         );
     }

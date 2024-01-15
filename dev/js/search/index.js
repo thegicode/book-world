@@ -1387,24 +1387,21 @@
       this.input = null;
       this.handleRadioChange = () => {
         var _a;
-        const submitEvent = new Event("submit");
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.dispatchEvent(submitEvent);
+        (_a = this.form) === null || _a === void 0 ? void 0 : _a.dispatchEvent(new Event("submit"));
       };
       this.onSubmit = (event) => {
         var _a;
         event.preventDefault();
         if (!this.input)
           return;
+        this.input.focus();
+        const url = new URL(window.location.href);
         const keyword = this.input.value;
         const sort = (_a = this.form) === null || _a === void 0 ? void 0 : _a.sort.value;
-        this.input.focus();
-        if (keyword && sort) {
-          const url = new URL(window.location.href);
-          url.searchParams.set("keyword", keyword);
-          url.searchParams.set("sort", sort);
-          window.history.pushState({}, "", url.toString());
-          bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
-        }
+        url.searchParams.set("keyword", keyword);
+        url.searchParams.set("sort", sort);
+        window.history.pushState({}, "", url.toString());
+        bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
       };
       this.form = this.querySelector("form");
       this.input = this.querySelector("input[type='search']");
@@ -1500,15 +1497,13 @@
     }
     renderView() {
       const _a = this.data, { discount, pubdate } = _a, others = __rest2(_a, ["discount", "pubdate"]);
-      const _pubdate = `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
-      const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: _pubdate });
+      const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}` });
       renderBookItem(this, renderData);
     }
     // 도서관 소장 | 대출 조회
     onLibraryButtonClick() {
-      const isbn = this.dataset.isbn || "";
       const libraryBookExist = this.querySelector("library-book-exist");
-      libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, model_default.libraries);
+      libraryBookExist.onLibraryBookExist(this.libraryButton, this.dataset.isbn || "", model_default.libraries);
     }
   };
 
@@ -1551,59 +1546,46 @@
       this.paginationElement = this.querySelector(".paging-info");
       this.bookContainer = this.querySelector(".books");
       this.loadingComponent = this.querySelector("loading-component");
-      this.retrieveBooks = this.retrieveBooks.bind(this);
+      this.observeTarget = this.querySelector(".observe");
+      this.itemTemplate = document.querySelector("#tp-book-item");
+      this.itemsPerPage = 10;
+      this.fetchBooks = this.fetchBooks.bind(this);
       this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
     connectedCallback() {
-      this.setupObserver();
+      this.observer = new Observer(this.observeTarget, this.fetchBooks);
     }
     disconnectedCallback() {
       var _a;
       (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
     }
     initializeSearchPage(keyword, sortValue) {
+      var _a;
       this.keyword = keyword;
       this.sortingOrder = sortValue;
-      this.itemCount = 0;
-      this.keyword ? this.renderBooks() : this.showDefaultMessage();
+      this.currentItemCount = 0;
+      (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
+      this.keyword ? this.loadBooks() : this.showDefaultMessage();
     }
-    // initializeSearchPage(
-    //     event: ICustomEvent<{
-    //         keyword: string;
-    //         sort: string;
-    //     }>
-    // ) {
-    //     const { keyword, sort } = event.detail;
-    //     this.keyword = keyword;
-    //     this.sortingOrder = sort;
-    //     this.itemCount = 0;
-    //     // renderBooks: onSubmit으로 들어온 경우와 브라우저
-    //     // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
-    //     this.keyword ? this.renderBooks() : this.showDefaultMessage();
-    // }
-    setupObserver() {
-      const target = this.querySelector(".observe");
-      this.observer = new Observer(target, this.retrieveBooks);
-    }
-    renderBooks() {
+    loadBooks() {
       this.bookContainer.innerHTML = "";
-      this.retrieveBooks();
+      this.fetchBooks();
     }
     showDefaultMessage() {
       this.paginationElement.hidden = true;
       this.renderMessage("message");
     }
-    retrieveBooks() {
+    fetchBooks() {
       var _a, _b;
       return __awaiter3(this, void 0, void 0, function* () {
-        if (!this.keyword || !this.sortingOrder)
+        if (!this.keyword || !this.sortingOrder) {
           return;
+        }
         (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
-        const encodedKeyword = encodeURIComponent(this.keyword);
-        const searchUrl = `${URL2.search}?keyword=${encodedKeyword}&display=${10}&start=${this.itemCount + 1}&sort=${this.sortingOrder}`;
+        const searchUrl = `${URL2.search}?keyword=${encodeURIComponent(this.keyword)}&display=${this.itemsPerPage}&start=${this.currentItemCount + 1}&sort=${this.sortingOrder}`;
         try {
           const data = yield CustomFetch_default.fetch(searchUrl);
-          this.renderBookList(data);
+          this.displayBooks(data);
         } catch (error) {
           if (error instanceof Error) {
             console.error(`Error fetching books: ${error.message}`);
@@ -1614,42 +1596,44 @@
         (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
       });
     }
-    renderBookList({ total, display, items }) {
+    displayBooks(bookData) {
       var _a;
-      if (total === 0) {
+      if (bookData.total === 0) {
         this.renderMessage("notFound");
         return;
       }
-      this.itemCount += display;
-      this.refreshPagingData(total, display);
-      this.appendBookItems(items);
-      this.paginationElement.hidden = false;
-      if (total !== this.itemCount)
+      this.currentItemCount += bookData.display;
+      this.updatePagingInfo(bookData.total);
+      this.appendBookItems(bookData.items);
+      if (bookData.total !== this.currentItemCount) {
         (_a = this.observer) === null || _a === void 0 ? void 0 : _a.observe();
+      }
     }
-    refreshPagingData(total, display) {
+    updatePagingInfo(total) {
       const obj = {
         keyword: `${this.keyword}`,
-        length: `${this.itemCount.toLocaleString()}`,
+        length: `${this.currentItemCount.toLocaleString()}`,
         total: `${total.toLocaleString()}`,
-        display: `${display}\uAC1C\uC529`
+        display: `${this.itemsPerPage}\uAC1C\uC529`
       };
       for (const [key, value] of Object.entries(obj)) {
         const element = this.paginationElement.querySelector(`.__${key}`);
         element.textContent = value;
       }
+      this.paginationElement.hidden = false;
     }
-    appendBookItems(items) {
+    appendBookItems(searchBookData) {
       const fragment = new DocumentFragment();
-      const template = document.querySelector("#tp-book-item");
-      items.forEach((data, index) => {
+      searchBookData.forEach((data, index) => {
         const bookItem = new BookItem(data);
-        const cloned = template.content.cloneNode(true);
-        bookItem.appendChild(cloned);
-        bookItem.dataset.index = (this.itemCount + index).toString();
+        bookItem.dataset.index = this.getIndex(index).toString();
+        bookItem.appendChild(this.itemTemplate.content.cloneNode(true));
         fragment.appendChild(bookItem);
       });
       this.bookContainer.appendChild(fragment);
+    }
+    getIndex(index) {
+      return Math.ceil((this.currentItemCount - this.itemsPerPage) / this.itemsPerPage) * this.itemsPerPage + index;
     }
     renderMessage(type) {
       const messageTemplate = document.querySelector(`#tp-${type}`);

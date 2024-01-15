@@ -25,7 +25,6 @@ export default class AppSearch extends HTMLElement {
         const sort = params.get("sort") || "sim";
         if (keyword && sort) {
             bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
-            // CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
             searchInputElement.value = keyword;
         }
     }
