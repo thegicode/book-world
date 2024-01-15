@@ -1345,6 +1345,7 @@
 
   // dev/scripts/pages/search/selectors.js
   var bookList = document.querySelector("book-list");
+  var searchForm = document.querySelector("input-search form");
   var searchInputElement = document.querySelector("input-search input[type='search']");
 
   // dev/scripts/pages/search/AppSearch.js
@@ -1642,6 +1643,83 @@
     }
   };
 
+  // dev/scripts/pages/search/MonthlyKeywords.js
+  var __awaiter4 = function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P ? value : new P(function(resolve) {
+        resolve(value);
+      });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+  };
+  var MonthlyKeywords = class extends HTMLElement {
+    constructor() {
+      super();
+    }
+    connectedCallback() {
+      this.fetch();
+    }
+    // disconnectedCallback() {}
+    fetch() {
+      return __awaiter4(this, void 0, void 0, function* () {
+        const date = /* @__PURE__ */ new Date();
+        date.setMonth(date.getMonth() - 1);
+        const month = date.getMonth() + 1;
+        const formatMonth = month < 10 ? `0${month}` : month.toString();
+        const searchParams = new URLSearchParams({
+          month: `${date.getFullYear()}-${formatMonth}`
+        });
+        try {
+          const data = yield CustomFetch_default.fetch(`/monthly-keywords?${searchParams}`);
+          this.render(data.keywords);
+        } catch (error) {
+          console.error(error);
+          throw new Error(`Fail to get library search by book.`);
+        }
+      });
+    }
+    render(keywords) {
+      const fragment = new DocumentFragment();
+      keywords.map((keyword) => {
+        const element = document.createElement("a");
+        element.textContent = keyword.word;
+        element.href = `?keyword=${keyword.word}`;
+        element.addEventListener("click", (event) => this.onKeywordClick(event, keyword.word));
+        return element;
+      }).forEach((element) => fragment.appendChild(element));
+      this.appendChild(fragment);
+    }
+    onKeywordClick(event, word) {
+      event.preventDefault();
+      const url = new URL(window.location.href);
+      const sort = searchForm === null || searchForm === void 0 ? void 0 : searchForm.sort.value;
+      url.searchParams.set("keyword", word);
+      url.searchParams.set("sort", sort);
+      window.history.pushState({}, "", url.toString());
+      searchInputElement.value = word;
+      bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(word, sort);
+    }
+  };
+
   // dev/scripts/pages/search/index.js
   customElements.define("book-image", BookImage);
   customElements.define("nav-gnb", NavGnb);
@@ -1652,5 +1730,6 @@
   customElements.define("book-description", BookDescription);
   customElements.define("library-book-exist", LibraryBookExist);
   customElements.define("category-selector", CategorySelector);
+  customElements.define("monthly-keywords", MonthlyKeywords);
 })();
 //# sourceMappingURL=index.js.map

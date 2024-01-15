@@ -180,7 +180,20 @@ interface IBookState {
     regions: TRegions;
 }
 
+interface IMonthlyKeywordsBookResponse {
+    resultNum: number;
+    keywords: Record<TMonthlyKeyword>;
+    request: {
+        month: string;
+    };
+}
+
 type TFavoritesUpdateSubscriber = (params: IFavoritesUpdateProps) => void;
+
+type TMonthlyKeyword = {
+    word: string;
+    weight: number;
+};
 
 type TPublishers = {
     bookStateUpdate: Publisher<undefined>;

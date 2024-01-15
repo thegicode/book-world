@@ -235,6 +235,26 @@ export async function loanItemSrch(req: Request, res: Response) {
     }
 }
 
+// 이달의 키워드
+// http://data4library.kr/api/monthlyKeywords?authKey=[발급받은키]&month=2022-11
+export async function monthlyKeywords(req: Request, res: Response) {
+    const url = buildLibraryApiUrl("monthlyKeywords", {
+        month: req.query.month as string,
+    });
+    try {
+        const data = await fetchData(url);
+        const { keywords, request, resultNum } = data.response;
+        res.send({
+            keywords: keywords.map((keyword: any) => keyword.keyword),
+            request,
+            resultNum,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Failed to get library search data");
+    }
+}
+
 // 111007 고덕도서관
 
 // 도서관별 장서/대출 데이터 조회

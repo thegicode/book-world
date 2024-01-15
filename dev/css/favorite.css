@@ -132,8 +132,10 @@ category-selector .category-button {
   font-size: 12px;
 }
 category-selector .category {
+  overflow-y: auto;
   display: block;
   box-sizing: border-box;
+  height: 150px;
   margin-bottom: -5px;
   padding-bottom: 5px;
   border: 1px solid #b5b5b5;

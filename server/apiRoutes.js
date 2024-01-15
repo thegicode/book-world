@@ -9,5 +9,6 @@ const setApiRoutes = (app) => {
     app.get("/usage-analysis-list", apiHandlers_1.usageAnalysisList);
     app.get("/library-search-by-book", apiHandlers_1.librarySearchByBook);
     app.get("/popular-book", apiHandlers_1.loanItemSrch);
+    app.get("/monthly-keywords", apiHandlers_1.monthlyKeywords);
 };
 exports.setApiRoutes = setApiRoutes;
