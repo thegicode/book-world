@@ -84,8 +84,7 @@ export default class FavoriteNav extends HTMLElement {
     }
 
     private getUrl(category: string) {
-        const categoryStr = encodeURIComponent(category);
-        return `category=${categoryStr}`;
+        return `category=${encodeURIComponent(category)}`;
     }
 
     private subscribeCategoryChange({ type, payload }: IFavoritesUpdateProps) {
@@ -136,7 +135,9 @@ export default class FavoriteNav extends HTMLElement {
 
     private handlChange(targetIndex: number, draggedIndex: number) {
         const navs = this.nav.querySelectorAll("a");
-        navs[draggedIndex].replaceWith(navs[targetIndex].cloneNode(true));
-        navs[targetIndex].replaceWith(navs[draggedIndex].cloneNode(true));
+        const dragged = navs[draggedIndex];
+        const targeted = navs[targetIndex];
+        dragged.replaceWith(targeted.cloneNode(true));
+        targeted.replaceWith(dragged.cloneNode(true));
     }
 }

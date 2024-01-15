@@ -26,7 +26,6 @@ export default class Popular extends HTMLElement {
     constructor() {
         super();
         this.itemTemplate = document.querySelector("#tp-popular-item");
-        this.body = this.querySelector(".popular-body");
         this.list = this.querySelector(".popular-list");
         this.loadingComponent =
             this.querySelector("loading-component");
@@ -35,8 +34,18 @@ export default class Popular extends HTMLElement {
         this.params = null;
     }
     connectedCallback() {
+        this.params = this.getParams();
+        this.fetch(this.params);
+        CustomEventEmitter.add("requestPopular", this.onRequestPopular);
+        CustomEventEmitter.add("clickPageNav", this.onClickPageNav);
+    }
+    disconnectedCallback() {
+        CustomEventEmitter.remove("requestPopular", this.onRequestPopular);
+        CustomEventEmitter.remove("clickPageNav", this.onClickPageNav);
+    }
+    getParams() {
         const { currentYear, currentMonth, currentDay } = getCurrentDates();
-        const params = {
+        return {
             startDt: "2023-01-01",
             endDt: `${currentYear}-${currentMonth}-${currentDay}`,
             gender: "",
@@ -47,28 +56,17 @@ export default class Popular extends HTMLElement {
             pageNo: "1",
             pageSize: "100",
         };
-        this.params = params;
-        this.fetch(params);
-        CustomEventEmitter.add("requestPopular", this.onRequestPopular);
-        CustomEventEmitter.add("clickPageNav", this.onClickPageNav);
-    }
-    disconnectedCallback() {
-        CustomEventEmitter.remove("requestPopular", this.onRequestPopular);
-        CustomEventEmitter.remove("clickPageNav", this.onClickPageNav);
     }
     fetch(params) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
-            if (this.body && this.list) {
-                this.list.innerHTML = "";
-            }
+            this.list.innerHTML = "";
             const searchParams = new URLSearchParams(Object.entries(params)
                 .filter(([, value]) => value !== undefined)
                 .map(([key, value]) => [key, String(value)]));
-            const url = `/popular-book?${searchParams}`;
             try {
-                const data = yield CustomFetch.fetch(url);
+                const data = yield CustomFetch.fetch(`/popular-book?${searchParams}`);
                 this.render(data);
                 if (params.pageNo === "1") {
                     CustomEventEmitter.dispatch("renderPageNav", {
@@ -88,10 +86,7 @@ export default class Popular extends HTMLElement {
             return;
         console.log(resultNum);
         const fragment = new DocumentFragment();
-        data.map((item) => {
-            const cloned = this.createItem(item);
-            cloned && fragment.appendChild(cloned);
-        });
+        data.map((item) => this.createItem(item)).forEach((element) => element && fragment.appendChild(element));
         this.list.appendChild(fragment);
     }
     createItem(item) {
@@ -102,16 +97,12 @@ export default class Popular extends HTMLElement {
         bookDtlUrl } = item, otherData = __rest(item, ["bookImageURL", "bookDtlUrl"])
         // authors,  class_nm, isbn13, class_no, loan_count,  no,  publication_year,  publisher, ranking, vol,
         ;
-        const isbn = item.isbn13;
-        const bookname = item.bookname;
-        if (this.itemTemplate === null) {
-            throw new Error("Template is null");
-        }
+        if (!this.itemTemplate)
+            return;
         const cloned = cloneTemplate(this.itemTemplate);
-        cloned.dataset.isbn = isbn;
-        const bookImage = new BookImage(bookImageURL, bookname);
+        cloned.dataset.isbn = item.isbn13;
         const linkEl = cloned.querySelector(".link");
-        linkEl.insertBefore(bookImage, linkEl.querySelector(".ranking"));
+        linkEl.insertBefore(new BookImage(bookImageURL, item.bookname), linkEl.querySelector(".ranking"));
         const bookDtlUrlNode = cloned.querySelector(".bookDtlUrl");
         if (bookDtlUrlNode) {
             bookDtlUrlNode.href = bookDtlUrl;
@@ -123,20 +114,18 @@ export default class Popular extends HTMLElement {
         });
         const anchorEl = cloned.querySelector("a");
         if (anchorEl)
-            anchorEl.href = `/book?isbn=${isbn}`;
+            anchorEl.href = `/book?isbn=${item.isbn13}`;
         return cloned;
     }
     onRequestPopular(event) {
-        const { params } = event.detail;
-        this.params = params;
-        this.fetch(params);
+        this.params = event.detail.params;
+        this.fetch(this.params);
     }
     onClickPageNav(event) {
-        const { pageIndex } = event.detail;
-        if (this.params) {
-            this.params.pageNo = pageIndex.toString();
-            this.fetch(this.params);
-        }
+        if (!this.params)
+            return;
+        this.params.pageNo = event.detail.pageIndex.toString();
+        this.fetch(this.params);
     }
 }
 //# sourceMappingURL=Popular.js.map

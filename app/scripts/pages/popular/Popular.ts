@@ -4,18 +4,16 @@ import { CustomEventEmitter, CustomFetch } from "../../utils";
 import { cloneTemplate, getCurrentDates } from "../../utils/helpers";
 
 export default class Popular extends HTMLElement {
-    itemTemplate: HTMLTemplateElement | null;
-    body: HTMLHtmlElement | null;
-    list: HTMLElement | null;
+    private itemTemplate: HTMLTemplateElement | null;
+    private list: HTMLElement;
     private loadingComponent: LoadingComponent | null;
-    params: IPopularFetchParams | null;
+    private params: IPopularFetchParams | null;
 
     constructor() {
         super();
 
         this.itemTemplate = document.querySelector("#tp-popular-item");
-        this.body = this.querySelector(".popular-body");
-        this.list = this.querySelector(".popular-list");
+        this.list = this.querySelector(".popular-list") as HTMLElement;
         this.loadingComponent =
             this.querySelector<LoadingComponent>("loading-component");
 
@@ -25,21 +23,8 @@ export default class Popular extends HTMLElement {
     }
 
     connectedCallback() {
-        const { currentYear, currentMonth, currentDay } = getCurrentDates();
-        const params = {
-            startDt: "2023-01-01",
-            endDt: `${currentYear}-${currentMonth}-${currentDay}`,
-            gender: "",
-            age: "",
-            region: "",
-            addCode: "",
-            kdc: "",
-            pageNo: "1",
-            pageSize: "100",
-        };
-        this.params = params;
-
-        this.fetch(params);
+        this.params = this.getParams();
+        this.fetch(this.params);
 
         CustomEventEmitter.add(
             "requestPopular",
@@ -63,12 +48,25 @@ export default class Popular extends HTMLElement {
         );
     }
 
-    async fetch(params: IPopularFetchParams): Promise<void> {
+    private getParams() {
+        const { currentYear, currentMonth, currentDay } = getCurrentDates();
+        return {
+            startDt: "2023-01-01",
+            endDt: `${currentYear}-${currentMonth}-${currentDay}`,
+            gender: "",
+            age: "",
+            region: "",
+            addCode: "",
+            kdc: "",
+            pageNo: "1",
+            pageSize: "100",
+        };
+    }
+
+    private async fetch(params: IPopularFetchParams): Promise<void> {
         this.loadingComponent?.show();
 
-        if (this.body && this.list) {
-            this.list.innerHTML = "";
-        }
+        this.list.innerHTML = "";
 
         const searchParams = new URLSearchParams(
             Object.entries(params)
@@ -76,10 +74,10 @@ export default class Popular extends HTMLElement {
                 .map(([key, value]) => [key, String(value)])
         );
 
-        const url = `/popular-book?${searchParams}`;
-
         try {
-            const data = await CustomFetch.fetch<IPopularBookResponse>(url);
+            const data = await CustomFetch.fetch<IPopularBookResponse>(
+                `/popular-book?${searchParams}`
+            );
             this.render(data);
 
             if (params.pageNo === "1") {
@@ -95,22 +93,19 @@ export default class Popular extends HTMLElement {
         this.loadingComponent?.hide();
     }
 
-    render({ data, resultNum }: IPopularBookResponse) {
+    private render({ data, resultNum }: IPopularBookResponse) {
         if (!this.list) return;
 
         console.log(resultNum);
 
         const fragment = new DocumentFragment();
-
-        data.map((item) => {
-            const cloned = this.createItem(item);
-            cloned && fragment.appendChild(cloned);
-        });
-
+        data.map((item) => this.createItem(item)).forEach(
+            (element) => element && fragment.appendChild(element)
+        );
         this.list.appendChild(fragment);
     }
 
-    createItem(item: IPopularBook) {
+    private createItem(item: IPopularBook) {
         const {
             // addition_symbol,
             bookImageURL,
@@ -122,19 +117,16 @@ export default class Popular extends HTMLElement {
             // authors,  class_nm, isbn13, class_no, loan_count,  no,  publication_year,  publisher, ranking, vol,
         } = item;
 
-        const isbn = item.isbn13;
-        const bookname = item.bookname;
-
-        if (this.itemTemplate === null) {
-            throw new Error("Template is null");
-        }
+        if (!this.itemTemplate) return;
         const cloned = cloneTemplate(this.itemTemplate);
 
-        cloned.dataset.isbn = isbn;
+        cloned.dataset.isbn = item.isbn13;
 
-        const bookImage = new BookImage(bookImageURL, bookname);
         const linkEl = cloned.querySelector(".link") as HTMLLinkElement;
-        linkEl.insertBefore(bookImage, linkEl.querySelector(".ranking"));
+        linkEl.insertBefore(
+            new BookImage(bookImageURL, item.bookname),
+            linkEl.querySelector(".ranking")
+        );
 
         const bookDtlUrlNode = cloned.querySelector(
             ".bookDtlUrl"
@@ -149,23 +141,21 @@ export default class Popular extends HTMLElement {
         });
 
         const anchorEl = cloned.querySelector("a") as HTMLAnchorElement;
-        if (anchorEl) anchorEl.href = `/book?isbn=${isbn}`;
+        if (anchorEl) anchorEl.href = `/book?isbn=${item.isbn13}`;
 
         return cloned;
     }
 
-    onRequestPopular(event: ICustomEvent<{ params: IPopularFetchParams }>) {
-        const { params } = event.detail;
-        this.params = params;
-        this.fetch(params);
+    private onRequestPopular(
+        event: ICustomEvent<{ params: IPopularFetchParams }>
+    ) {
+        this.params = event.detail.params;
+        this.fetch(this.params);
     }
 
-    onClickPageNav(event: ICustomEvent<{ pageIndex: number }>) {
-        const { pageIndex } = event.detail;
-
-        if (this.params) {
-            this.params.pageNo = pageIndex.toString();
-            this.fetch(this.params);
-        }
+    private onClickPageNav(event: ICustomEvent<{ pageIndex: number }>) {
+        if (!this.params) return;
+        this.params.pageNo = event.detail.pageIndex.toString();
+        this.fetch(this.params);
     }
 }

@@ -3,68 +3,58 @@ import bookModel from "../../model";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 
 export default class SetStorage extends HTMLElement {
-    private saveButton: HTMLElement | null = null;
-    private defaultButton: HTMLElement | null = null;
-    private resetButton: HTMLElement | null = null;
+    private saveButton: HTMLButtonElement;
+    private defaultButton: HTMLButtonElement;
+    private resetButton: HTMLButtonElement;
 
     constructor() {
         super();
 
         this.saveButton = this.querySelector(
             ".saveStorage button"
-        ) as HTMLElement;
+        ) as HTMLButtonElement;
         this.defaultButton = this.querySelector(
             ".localStorage button"
-        ) as HTMLElement;
+        ) as HTMLButtonElement;
         this.resetButton = this.querySelector(
             ".resetStorage button"
-        ) as HTMLElement;
+        ) as HTMLButtonElement;
     }
 
     connectedCallback() {
-        this.saveButton?.addEventListener("click", this.savetStorage);
-        this.defaultButton?.addEventListener(
+        this.saveButton.addEventListener("click", this.saveStorage);
+        this.defaultButton.addEventListener(
             "click",
             this.setLocalStorageToBase
         );
-        this.resetButton?.addEventListener("click", this.resetStorage);
+        this.resetButton.addEventListener("click", this.resetStorage);
     }
 
     disconnectedCallback() {
-        this.saveButton?.removeEventListener("click", this.savetStorage);
-        this.defaultButton?.removeEventListener(
+        this.saveButton.removeEventListener("click", this.saveStorage);
+        this.defaultButton.removeEventListener(
             "click",
             this.setLocalStorageToBase
         );
-        this.resetButton?.removeEventListener("click", this.resetStorage);
+        this.resetButton.removeEventListener("click", this.resetStorage);
     }
 
-    private savetStorage = () => {
-        const state = bookModel.state;
-        if (!state) return;
+    private saveStorage = () => {
+        // Blob 객체 생성
+        const blob = new Blob([JSON.stringify(bookModel.state)], {
+            type: "application/json",
+        });
 
-        fetch(SAMPLE_JSON_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "appication/json",
-            },
-            body: JSON.stringify(state),
-        })
-            .then(function (reponse) {
-                if (!reponse.ok) {
-                    throw new Error("서버 응답 오류" + reponse.status);
-                }
-                return reponse.text();
-            })
-            .then(function (responseText: string) {
-                console.log(
-                    "데이터가 서버에 성공적으로 전송되었습니다.",
-                    responseText
-                );
-            })
-            .catch(function (error) {
-                console.error("데이터 전송 중 오류 발생:", error);
-            });
+        // a 태그를 생성하여 다운로드 링크로 사용
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "storage-sample.json"; // 파일명 지정
+
+        // a 태그를 클릭하여 다운로드 시작
+        a.click();
+
+        // URL.createObjectURL()로 생성된 URL 해제
+        URL.revokeObjectURL(a.href);
     };
 
     private setLocalStorageToBase = async () => {

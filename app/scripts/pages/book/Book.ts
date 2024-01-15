@@ -72,6 +72,7 @@ export default class Book extends HTMLElement {
         const {
             bookname,
             bookImageURL,
+            description,
             ...otherData
             // authors, class_nm,  class_no, description, isbn13,  loanCnt, publication_year,  publisher,
         } = book;
@@ -82,6 +83,8 @@ export default class Book extends HTMLElement {
             .join("");
 
         (this.querySelector(".bookname") as HTMLElement).innerHTML = bookNames;
+        (this.querySelector(".description") as HTMLElement).innerHTML =
+            description;
 
         // const bookImageElement = this.querySelector<BookImage>("book-image");
         // if (!bookImageElement) return;

@@ -1263,9 +1263,10 @@
       this.loadingElement = null;
     }
     renderBook(book) {
-      const { bookname, bookImageURL } = book, otherData = __rest(book, ["bookname", "bookImageURL"]);
+      const { bookname, bookImageURL, description } = book, otherData = __rest(book, ["bookname", "bookImageURL", "description"]);
       const bookNames = bookname.split(/[=/:]/).map((item) => `<p>${item}</p>`).join("");
       this.querySelector(".bookname").innerHTML = bookNames;
+      this.querySelector(".description").innerHTML = description;
       const bookImage = new BookImage(bookImageURL, bookname);
       const bookImageContainer = this.querySelector(".book-image-container");
       bookImageContainer.appendChild(bookImage);

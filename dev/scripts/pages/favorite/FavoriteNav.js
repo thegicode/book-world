@@ -53,8 +53,7 @@ export default class FavoriteNav extends HTMLElement {
         this.overlayCategory.hidden = Boolean(!this.overlayCategory.hidden);
     }
     getUrl(category) {
-        const categoryStr = encodeURIComponent(category);
-        return `category=${categoryStr}`;
+        return `category=${encodeURIComponent(category)}`;
     }
     subscribeCategoryChange({ type, payload }) {
         const actions = {
@@ -86,8 +85,10 @@ export default class FavoriteNav extends HTMLElement {
     }
     handlChange(targetIndex, draggedIndex) {
         const navs = this.nav.querySelectorAll("a");
-        navs[draggedIndex].replaceWith(navs[targetIndex].cloneNode(true));
-        navs[targetIndex].replaceWith(navs[draggedIndex].cloneNode(true));
+        const dragged = navs[draggedIndex];
+        const targeted = navs[targetIndex];
+        dragged.replaceWith(targeted.cloneNode(true));
+        targeted.replaceWith(dragged.cloneNode(true));
     }
 }
 //# sourceMappingURL=FavoriteNav.js.map

@@ -1228,7 +1228,6 @@
     constructor() {
       super();
       this.itemTemplate = document.querySelector("#tp-popular-item");
-      this.body = this.querySelector(".popular-body");
       this.list = this.querySelector(".popular-list");
       this.loadingComponent = this.querySelector("loading-component");
       this.onRequestPopular = this.onRequestPopular.bind(this);
@@ -1236,8 +1235,18 @@
       this.params = null;
     }
     connectedCallback() {
+      this.params = this.getParams();
+      this.fetch(this.params);
+      CustomEventEmitter_default.add("requestPopular", this.onRequestPopular);
+      CustomEventEmitter_default.add("clickPageNav", this.onClickPageNav);
+    }
+    disconnectedCallback() {
+      CustomEventEmitter_default.remove("requestPopular", this.onRequestPopular);
+      CustomEventEmitter_default.remove("clickPageNav", this.onClickPageNav);
+    }
+    getParams() {
       const { currentYear, currentMonth, currentDay } = getCurrentDates();
-      const params = {
+      return {
         startDt: "2023-01-01",
         endDt: `${currentYear}-${currentMonth}-${currentDay}`,
         gender: "",
@@ -1248,26 +1257,15 @@
         pageNo: "1",
         pageSize: "100"
       };
-      this.params = params;
-      this.fetch(params);
-      CustomEventEmitter_default.add("requestPopular", this.onRequestPopular);
-      CustomEventEmitter_default.add("clickPageNav", this.onClickPageNav);
-    }
-    disconnectedCallback() {
-      CustomEventEmitter_default.remove("requestPopular", this.onRequestPopular);
-      CustomEventEmitter_default.remove("clickPageNav", this.onClickPageNav);
     }
     fetch(params) {
       var _a, _b;
       return __awaiter2(this, void 0, void 0, function* () {
         (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
-        if (this.body && this.list) {
-          this.list.innerHTML = "";
-        }
+        this.list.innerHTML = "";
         const searchParams = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== void 0).map(([key, value]) => [key, String(value)]));
-        const url = `/popular-book?${searchParams}`;
         try {
-          const data = yield CustomFetch_default.fetch(url);
+          const data = yield CustomFetch_default.fetch(`/popular-book?${searchParams}`);
           this.render(data);
           if (params.pageNo === "1") {
             CustomEventEmitter_default.dispatch("renderPageNav", {
@@ -1286,10 +1284,7 @@
         return;
       console.log(resultNum);
       const fragment = new DocumentFragment();
-      data.map((item) => {
-        const cloned = this.createItem(item);
-        cloned && fragment.appendChild(cloned);
-      });
+      data.map((item) => this.createItem(item)).forEach((element) => element && fragment.appendChild(element));
       this.list.appendChild(fragment);
     }
     createItem(item) {
@@ -1299,16 +1294,12 @@
         // bookname,
         bookDtlUrl
       } = item, otherData = __rest(item, ["bookImageURL", "bookDtlUrl"]);
-      const isbn = item.isbn13;
-      const bookname = item.bookname;
-      if (this.itemTemplate === null) {
-        throw new Error("Template is null");
-      }
+      if (!this.itemTemplate)
+        return;
       const cloned = cloneTemplate(this.itemTemplate);
-      cloned.dataset.isbn = isbn;
-      const bookImage = new BookImage(bookImageURL, bookname);
+      cloned.dataset.isbn = item.isbn13;
       const linkEl = cloned.querySelector(".link");
-      linkEl.insertBefore(bookImage, linkEl.querySelector(".ranking"));
+      linkEl.insertBefore(new BookImage(bookImageURL, item.bookname), linkEl.querySelector(".ranking"));
       const bookDtlUrlNode = cloned.querySelector(".bookDtlUrl");
       if (bookDtlUrlNode) {
         bookDtlUrlNode.href = bookDtlUrl;
@@ -1320,20 +1311,18 @@
       });
       const anchorEl = cloned.querySelector("a");
       if (anchorEl)
-        anchorEl.href = `/book?isbn=${isbn}`;
+        anchorEl.href = `/book?isbn=${item.isbn13}`;
       return cloned;
     }
     onRequestPopular(event) {
-      const { params } = event.detail;
-      this.params = params;
-      this.fetch(params);
+      this.params = event.detail.params;
+      this.fetch(this.params);
     }
     onClickPageNav(event) {
-      const { pageIndex } = event.detail;
-      if (this.params) {
-        this.params.pageNo = pageIndex.toString();
-        this.fetch(this.params);
-      }
+      if (!this.params)
+        return;
+      this.params.pageNo = event.detail.pageIndex.toString();
+      this.fetch(this.params);
     }
   };
 
@@ -1342,15 +1331,10 @@
     constructor() {
       super();
       this.closeForm = () => {
-        if (!this.form)
-          return;
         this.form.hidden = true;
       };
       this.onRenderPageNav = (event) => {
-        if (!this.pageNav)
-          return;
-        const { pageSize } = event.detail;
-        this.pageSize = pageSize;
+        this.pageSize = event.detail.pageSize;
         this.pageNav.innerHTML = "";
         const fragment = new DocumentFragment();
         const navSize = 3;
@@ -1380,37 +1364,23 @@
         });
       };
       this.onClickFilterButton = () => {
-        if (!this.form)
-          return;
         this.form.hidden = !this.form.hidden;
       };
       this.onChangeForm = (event) => {
         const target = event.target;
-        switch (target.name) {
-          case "loanDuration":
-            this.handleLoanDuration(event);
-            break;
-          case "gender":
-            this.handleGender(target);
-            break;
-          case "age":
-            this.handleAge(target);
-            break;
-          case "region":
-            this.handleRegion(target);
-            break;
-          case "detailRegion":
-            this.handleDetailRegion(target);
-            break;
-          case "addCode":
-            this.handleAddCode(target);
-            break;
-          case "kdc":
-            this.handleSubject(target);
-            break;
-          case "detailKdc":
-            this.handleDetailSubject(target);
-            break;
+        const actions = {
+          addCode: () => this.handleAddCode(target),
+          age: () => this.handleAge(target),
+          dataSource: () => this.handleDataSource(target),
+          detailKdc: () => this.handleDetailSubject(target),
+          detailRegion: () => this.handleDetailRegion(target),
+          gender: () => this.handleGender(target),
+          loanDuration: () => this.handleLoanDuration(event),
+          kdc: () => this.handleSubject(target),
+          region: () => this.handleRegion(target)
+        };
+        if (target.name) {
+          actions[target.name]();
         }
       };
       this.onReset = () => {
@@ -1420,8 +1390,6 @@
       };
       this.onSumbit = (event) => {
         event.preventDefault();
-        if (!this.form)
-          return;
         const formData = new FormData(this.form);
         const params = {};
         const skipKeys = ["dataSource", "loanDuration", "subKdc", "subRegion"];
@@ -1458,22 +1426,18 @@
       this.onClickPageNav = this.onClickPageNav.bind(this);
     }
     connectedCallback() {
-      var _a, _b;
-      if (!this.form)
-        return;
       this.initialLoanDuration();
-      (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickFilterButton);
-      (_b = this.closeButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.closeForm);
+      this.filterButton.addEventListener("click", this.onClickFilterButton);
+      this.closeButton.addEventListener("click", this.closeForm);
       this.form.addEventListener("change", this.onChangeForm);
       this.form.addEventListener("reset", this.onReset);
       this.form.addEventListener("submit", this.onSumbit);
       CustomEventEmitter_default.add("renderPageNav", this.onRenderPageNav);
     }
     disconnectedCallback() {
-      var _a;
       if (!this.form)
         return;
-      (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onClickFilterButton);
+      this.filterButton.removeEventListener("click", this.onClickFilterButton);
       this.form.removeEventListener("change", this.onChangeForm);
       this.form.removeEventListener("reset", this.onReset);
       this.form.removeEventListener("submit", this.onSumbit);
@@ -1482,44 +1446,46 @@
     createNavItem(index) {
       if (!this.pageSize)
         return;
-      const pageSize = this.pageSize;
       const el = document.createElement("button");
       el.type = "button";
       el.value = index.toString();
-      el.textContent = `${pageSize * index + 1} ~ ${pageSize * (index + 1)}`;
+      el.textContent = `${this.pageSize * index + 1} ~ ${this.pageSize * (index + 1)}`;
       if (index === 0)
         el.ariaSelected = "true";
       el.addEventListener("click", this.onClickPageNav);
       return el;
     }
+    handleDataSource(target) {
+      console.log(target.value);
+    }
     handleGender(target) {
       if (!(target.value === "A")) {
-        const elA = this.querySelector("input[name='gender'][value='A']");
-        elA.checked = false;
+        const element = this.querySelector("input[name='gender'][value='A']");
+        element.checked = false;
       }
       if (target.value === "A") {
-        const els = this.querySelectorAll("input[type='checkbox'][name='gender']");
-        els.forEach((item) => item.checked = false);
+        const elements = this.querySelectorAll("input[type='checkbox'][name='gender']");
+        elements.forEach((item) => item.checked = false);
       }
     }
     handleAge(target) {
       if (!(target.value === "A")) {
-        const elA = this.querySelector("input[name='age'][value='A']");
-        elA.checked = false;
+        const element = this.querySelector("input[name='age'][value='A']");
+        element.checked = false;
       }
       if (target.value === "A") {
-        const els = this.querySelectorAll("input[type='checkbox'][name='age']");
-        els.forEach((item) => item.checked = false);
+        const elements = this.querySelectorAll("input[type='checkbox'][name='age']");
+        elements.forEach((item) => item.checked = false);
       }
     }
     handleRegion(target) {
-      const elA = this.querySelector("input[name='region'][value='A']");
-      const els = this.querySelectorAll("input[type='checkbox'][name='region']");
+      const element = this.querySelector("input[name='region'][value='A']");
+      const elements = this.querySelectorAll("input[type='checkbox'][name='region']");
       if (!(target.value === "A")) {
-        elA.checked = false;
+        element.checked = false;
       }
       if (target.value === "A") {
-        els.forEach((item) => item.checked = false);
+        elements.forEach((item) => item.checked = false);
       }
       const checkedEls = Array.from(this.querySelectorAll('[name="region"]:checked')).filter((el) => el.value !== "A");
       if (this.detailRegion && this.subRegion) {
@@ -1531,8 +1497,6 @@
       }
     }
     handleDetailRegion(target) {
-      if (!this.subRegion)
-        return;
       this.subRegion.hidden = !target.checked;
     }
     handleAddCode(target) {
@@ -1570,9 +1534,6 @@
     }
     handleLoanDuration(event) {
       var _a;
-      if (!this.startDateInput || !this.endDateInput) {
-        return;
-      }
       const { currentDate, currentYear, currentMonth, currentDay } = getCurrentDates();
       const target = event === null || event === void 0 ? void 0 : event.target;
       switch (target === null || target === void 0 ? void 0 : target.value) {
@@ -1603,8 +1564,6 @@
       });
     }
     initialLoanDuration() {
-      if (!this.startDateInput || !this.endDateInput)
-        return;
       const { currentDate, currentMonth, currentDay } = getCurrentDates();
       this.startDateInput.value = `${currentDate.getFullYear()}-01-01`;
       this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;

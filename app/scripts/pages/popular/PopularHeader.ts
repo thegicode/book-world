@@ -2,31 +2,43 @@ import { CustomEventEmitter } from "../../utils";
 import { getCurrentDates } from "../../utils/helpers";
 
 export default class PopularHeader extends HTMLElement {
-    form: HTMLFormElement | null;
-    filterButton: HTMLButtonElement | null;
-    closeButton: HTMLButtonElement | null;
-    startDateInput: HTMLInputElement | null;
-    endDateInput: HTMLInputElement | null;
-    detailRegion: HTMLInputElement | null;
-    subRegion: HTMLInputElement | null;
-    detailSubject: HTMLInputElement | null;
-    subSubject: HTMLInputElement | null;
-    pageNav: HTMLElement | null;
-    pageSize: number | null;
+    private form: HTMLFormElement;
+    private filterButton: HTMLButtonElement;
+    private closeButton: HTMLButtonElement;
+    private startDateInput: HTMLInputElement;
+    private endDateInput: HTMLInputElement;
+    private detailRegion: HTMLInputElement;
+    private subRegion: HTMLInputElement;
+    private detailSubject: HTMLInputElement;
+    private subSubject: HTMLInputElement;
+    private pageNav: HTMLElement;
+    private pageSize: number | null;
 
     constructor() {
         super();
 
-        this.form = this.querySelector("form");
-        this.filterButton = this.querySelector(".filterButton");
-        this.closeButton = this.querySelector(".closeButton");
-        this.startDateInput = this.querySelector("input[name='startDt']");
-        this.endDateInput = this.querySelector("input[name='endDt']");
-        this.detailRegion = this.querySelector("[name='detailRegion']");
-        this.subRegion = this.querySelector(".subRegion");
-        this.detailSubject = this.querySelector("[name='detailKdc']");
-        this.subSubject = this.querySelector(".subSubject");
-        this.pageNav = this.querySelector(".page-nav");
+        this.form = this.querySelector("form") as HTMLFormElement;
+        this.filterButton = this.querySelector(
+            ".filterButton"
+        ) as HTMLButtonElement;
+        this.closeButton = this.querySelector(
+            ".closeButton"
+        ) as HTMLButtonElement;
+        this.startDateInput = this.querySelector(
+            "input[name='startDt']"
+        ) as HTMLInputElement;
+        this.endDateInput = this.querySelector(
+            "input[name='endDt']"
+        ) as HTMLInputElement;
+        this.detailRegion = this.querySelector(
+            "[name='detailRegion']"
+        ) as HTMLInputElement;
+        this.subRegion = this.querySelector(".subRegion") as HTMLInputElement;
+        this.detailSubject = this.querySelector(
+            "[name='detailKdc']"
+        ) as HTMLInputElement;
+        this.subSubject = this.querySelector(".subSubject") as HTMLInputElement;
+        this.pageNav = this.querySelector(".page-nav") as HTMLElement;
         this.pageSize = null;
 
         this.onRenderPageNav = this.onRenderPageNav.bind(this);
@@ -34,17 +46,12 @@ export default class PopularHeader extends HTMLElement {
     }
 
     connectedCallback() {
-        if (!this.form) return;
-
         this.initialLoanDuration();
 
-        this.filterButton?.addEventListener("click", this.onClickFilterButton);
-        this.closeButton?.addEventListener("click", this.closeForm);
-
+        this.filterButton.addEventListener("click", this.onClickFilterButton);
+        this.closeButton.addEventListener("click", this.closeForm);
         this.form.addEventListener("change", this.onChangeForm);
-
         this.form.addEventListener("reset", this.onReset);
-
         this.form.addEventListener("submit", this.onSumbit);
 
         CustomEventEmitter.add(
@@ -56,33 +63,25 @@ export default class PopularHeader extends HTMLElement {
     disconnectedCallback() {
         if (!this.form) return;
 
-        this.filterButton?.removeEventListener(
+        this.filterButton.removeEventListener(
             "click",
             this.onClickFilterButton
         );
-
         this.form.removeEventListener("change", this.onChangeForm);
-
         this.form.removeEventListener("reset", this.onReset);
-
         this.form.removeEventListener("submit", this.onSumbit);
-
         CustomEventEmitter.remove(
             "renderPageNav",
             this.onRenderPageNav as EventListener
         );
     }
 
-    closeForm = () => {
-        if (!this.form) return;
+    private closeForm = () => {
         this.form.hidden = true;
     };
 
-    onRenderPageNav = (event: ICustomEvent<{ pageSize: number }>) => {
-        if (!this.pageNav) return;
-
-        const { pageSize } = event.detail;
-        this.pageSize = pageSize;
+    private onRenderPageNav = (event: ICustomEvent<{ pageSize: number }>) => {
+        this.pageSize = event.detail.pageSize;
 
         this.pageNav.innerHTML = "";
 
@@ -99,14 +98,15 @@ export default class PopularHeader extends HTMLElement {
         this.insertBefore(this.pageNav, this.filterButton);
     };
 
-    createNavItem(index: number) {
+    private createNavItem(index: number) {
         if (!this.pageSize) return;
 
-        const pageSize = this.pageSize;
         const el = document.createElement("button");
         el.type = "button";
         el.value = index.toString();
-        el.textContent = `${pageSize * index + 1} ~ ${pageSize * (index + 1)}`;
+        el.textContent = `${this.pageSize * index + 1} ~ ${
+            this.pageSize * (index + 1)
+        }`;
 
         if (index === 0) el.ariaSelected = "true";
 
@@ -114,7 +114,7 @@ export default class PopularHeader extends HTMLElement {
         return el;
     }
 
-    onClickPageNav = (event: Event) => {
+    private onClickPageNav = (event: Event) => {
         const target = event.target as HTMLButtonElement;
         if (!target || !this.pageNav) return;
 
@@ -136,93 +136,83 @@ export default class PopularHeader extends HTMLElement {
         });
     };
 
-    onClickFilterButton = () => {
-        if (!this.form) return;
+    private onClickFilterButton = () => {
         this.form.hidden = !this.form.hidden;
     };
 
-    onChangeForm = (event: Event) => {
+    private onChangeForm = (event: Event) => {
         const target = event.target as HTMLInputElement;
 
-        switch (target.name) {
-            case "loanDuration":
-                this.handleLoanDuration(event);
-                break;
-            case "gender":
-                this.handleGender(target);
-                break;
-            case "age":
-                this.handleAge(target);
-                break;
-            case "region":
-                this.handleRegion(target);
-                break;
-            case "detailRegion":
-                this.handleDetailRegion(target);
-                break;
-            case "addCode":
-                this.handleAddCode(target);
-                break;
-            case "kdc":
-                this.handleSubject(target);
-                break;
-            case "detailKdc":
-                this.handleDetailSubject(target);
-                break;
+        const actions: Record<string, () => void> = {
+            addCode: () => this.handleAddCode(target),
+            age: () => this.handleAge(target),
+            dataSource: () => this.handleDataSource(target),
+            detailKdc: () => this.handleDetailSubject(target),
+            detailRegion: () => this.handleDetailRegion(target),
+            gender: () => this.handleGender(target),
+            loanDuration: () => this.handleLoanDuration(event),
+            kdc: () => this.handleSubject(target),
+            region: () => this.handleRegion(target),
+        };
+
+        if (target.name) {
+            actions[target.name]();
         }
     };
 
-    handleGender(target: HTMLInputElement) {
+    private handleDataSource(target: HTMLInputElement) {
+        console.log(target.value);
+    }
+
+    private handleGender(target: HTMLInputElement) {
         if (!(target.value === "A")) {
-            const elA = this.querySelector(
+            const element = this.querySelector(
                 "input[name='gender'][value='A']"
             ) as HTMLInputElement;
-
-            elA.checked = false;
+            element.checked = false;
         }
 
         if (target.value === "A") {
-            const els = this.querySelectorAll<HTMLInputElement>(
+            const elements = this.querySelectorAll<HTMLInputElement>(
                 "input[type='checkbox'][name='gender']"
             );
-
-            els.forEach((item) => (item.checked = false));
+            elements.forEach((item) => (item.checked = false));
         }
     }
 
-    handleAge(target: HTMLInputElement) {
+    private handleAge(target: HTMLInputElement) {
         if (!(target.value === "A")) {
-            const elA = this.querySelector(
+            const element = this.querySelector(
                 "input[name='age'][value='A']"
             ) as HTMLInputElement;
 
-            elA.checked = false;
+            element.checked = false;
         }
 
         if (target.value === "A") {
-            const els = this.querySelectorAll<HTMLInputElement>(
+            const elements = this.querySelectorAll<HTMLInputElement>(
                 "input[type='checkbox'][name='age']"
             );
 
-            els.forEach((item) => (item.checked = false));
+            elements.forEach((item) => (item.checked = false));
         }
     }
 
-    handleRegion(target: HTMLInputElement) {
-        const elA = this.querySelector(
+    private handleRegion(target: HTMLInputElement) {
+        const element = this.querySelector(
             "input[name='region'][value='A']"
         ) as HTMLInputElement;
 
-        const els = this.querySelectorAll<HTMLInputElement>(
+        const elements = this.querySelectorAll<HTMLInputElement>(
             "input[type='checkbox'][name='region']"
         );
 
         if (!(target.value === "A")) {
-            elA.checked = false;
+            element.checked = false;
         }
 
         if (target.value === "A") {
-            els.forEach((item) => (item.checked = false));
+            elements.forEach((item) => (item.checked = false));
         }
 
         const checkedEls = Array.from(
@@ -238,12 +228,11 @@ export default class PopularHeader extends HTMLElement {
         }
     }
 
-    handleDetailRegion(target: HTMLInputElement) {
-        if (!this.subRegion) return;
+    private handleDetailRegion(target: HTMLInputElement) {
         this.subRegion.hidden = !target.checked;
     }
 
-    handleAddCode(target: HTMLInputElement) {
+    private handleAddCode(target: HTMLInputElement) {
         if (!(target.value === "A")) {
             const elA = this.querySelector(
                 "input[name='addCode'][value='A']"
@@ -261,7 +250,7 @@ export default class PopularHeader extends HTMLElement {
         }
     }
 
-    handleSubject(target: HTMLInputElement) {
+    private handleSubject(target: HTMLInputElement) {
         const elA = this.querySelector(
             "input[name='kdc'][value='A']"
         ) as HTMLInputElement;
@@ -291,16 +280,12 @@ export default class PopularHeader extends HTMLElement {
         }
     }
 
-    handleDetailSubject(target: HTMLInputElement) {
+    private handleDetailSubject(target: HTMLInputElement) {
         if (!this.subSubject) return;
         this.subSubject.hidden = !target.checked;
     }
 
-    handleLoanDuration(event?: Event) {
-        if (!this.startDateInput || !this.endDateInput) {
-            return;
-        }
-
+    private handleLoanDuration(event?: Event) {
         const { currentDate, currentYear, currentMonth, currentDay } =
             getCurrentDates();
 
@@ -344,9 +329,7 @@ export default class PopularHeader extends HTMLElement {
         });
     }
 
-    initialLoanDuration() {
-        if (!this.startDateInput || !this.endDateInput) return;
-
+    private initialLoanDuration() {
         const { currentDate, currentMonth, currentDay } = getCurrentDates();
 
         this.startDateInput.value = `${currentDate.getFullYear()}-01-01`;
@@ -359,9 +342,8 @@ export default class PopularHeader extends HTMLElement {
         }, 100);
     };
 
-    onSumbit = (event: Event) => {
+    private onSumbit = (event: Event) => {
         event.preventDefault();
-        if (!this.form) return;
 
         const formData = new FormData(this.form);
 

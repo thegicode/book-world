@@ -4,15 +4,10 @@ export default class PopularHeader extends HTMLElement {
     constructor() {
         super();
         this.closeForm = () => {
-            if (!this.form)
-                return;
             this.form.hidden = true;
         };
         this.onRenderPageNav = (event) => {
-            if (!this.pageNav)
-                return;
-            const { pageSize } = event.detail;
-            this.pageSize = pageSize;
+            this.pageSize = event.detail.pageSize;
             this.pageNav.innerHTML = "";
             const fragment = new DocumentFragment();
             const navSize = 3;
@@ -42,37 +37,23 @@ export default class PopularHeader extends HTMLElement {
             });
         };
         this.onClickFilterButton = () => {
-            if (!this.form)
-                return;
             this.form.hidden = !this.form.hidden;
         };
         this.onChangeForm = (event) => {
             const target = event.target;
-            switch (target.name) {
-                case "loanDuration":
-                    this.handleLoanDuration(event);
-                    break;
-                case "gender":
-                    this.handleGender(target);
-                    break;
-                case "age":
-                    this.handleAge(target);
-                    break;
-                case "region":
-                    this.handleRegion(target);
-                    break;
-                case "detailRegion":
-                    this.handleDetailRegion(target);
-                    break;
-                case "addCode":
-                    this.handleAddCode(target);
-                    break;
-                case "kdc":
-                    this.handleSubject(target);
-                    break;
-                case "detailKdc":
-                    this.handleDetailSubject(target);
-                    break;
+            const actions = {
+                addCode: () => this.handleAddCode(target),
+                age: () => this.handleAge(target),
+                dataSource: () => this.handleDataSource(target),
+                detailKdc: () => this.handleDetailSubject(target),
+                detailRegion: () => this.handleDetailRegion(target),
+                gender: () => this.handleGender(target),
+                loanDuration: () => this.handleLoanDuration(event),
+                kdc: () => this.handleSubject(target),
+                region: () => this.handleRegion(target),
+            };
+            if (target.name) {
+                actions[target.name]();
             }
         };
         this.onReset = () => {
@@ -82,8 +63,6 @@ export default class PopularHeader extends HTMLElement {
         };
         this.onSumbit = (event) => {
             event.preventDefault();
-            if (!this.form)
-                return;
             const formData = new FormData(this.form);
             const params = {};
             const skipKeys = ["dataSource", "loanDuration", "subKdc", "subRegion"];
@@ -122,22 +101,18 @@ export default class PopularHeader extends HTMLElement {
         this.onClickPageNav = this.onClickPageNav.bind(this);
     }
     connectedCallback() {
-        var _a, _b;
-        if (!this.form)
-            return;
         this.initialLoanDuration();
-        (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickFilterButton);
-        (_b = this.closeButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.closeForm);
+        this.filterButton.addEventListener("click", this.onClickFilterButton);
+        this.closeButton.addEventListener("click", this.closeForm);
         this.form.addEventListener("change", this.onChangeForm);
         this.form.addEventListener("reset", this.onReset);
         this.form.addEventListener("submit", this.onSumbit);
         CustomEventEmitter.add("renderPageNav", this.onRenderPageNav);
     }
     disconnectedCallback() {
-        var _a;
         if (!this.form)
             return;
-        (_a = this.filterButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onClickFilterButton);
+        this.filterButton.removeEventListener("click", this.onClickFilterButton);
         this.form.removeEventListener("change", this.onChangeForm);
         this.form.removeEventListener("reset", this.onReset);
         this.form.removeEventListener("submit", this.onSumbit);
@@ -146,44 +121,46 @@ export default class PopularHeader extends HTMLElement {
     createNavItem(index) {
         if (!this.pageSize)
             return;
-        const pageSize = this.pageSize;
         const el = document.createElement("button");
         el.type = "button";
         el.value = index.toString();
-        el.textContent = `${pageSize * index + 1} ~ ${pageSize * (index + 1)}`;
+        el.textContent = `${this.pageSize * index + 1} ~ ${this.pageSize * (index + 1)}`;
         if (index === 0)
             el.ariaSelected = "true";
         el.addEventListener("click", this.onClickPageNav);
         return el;
     }
+    handleDataSource(target) {
+        console.log(target.value);
+    }
     handleGender(target) {
         if (!(target.value === "A")) {
-            const elA = this.querySelector("input[name='gender'][value='A']");
-            elA.checked = false;
+            const element = this.querySelector("input[name='gender'][value='A']");
+            element.checked = false;
         }
         if (target.value === "A") {
-            const els = this.querySelectorAll("input[type='checkbox'][name='gender']");
-            els.forEach((item) => (item.checked = false));
+            const elements = this.querySelectorAll("input[type='checkbox'][name='gender']");
+            elements.forEach((item) => (item.checked = false));
         }
     }
     handleAge(target) {
         if (!(target.value === "A")) {
-            const elA = this.querySelector("input[name='age'][value='A']");
-            elA.checked = false;
+            const element = this.querySelector("input[name='age'][value='A']");
+            element.checked = false;
         }
         if (target.value === "A") {
-            const els = this.querySelectorAll("input[type='checkbox'][name='age']");
-            els.forEach((item) => (item.checked = false));
+            const elements = this.querySelectorAll("input[type='checkbox'][name='age']");
+            elements.forEach((item) => (item.checked = false));
         }
     }
     handleRegion(target) {
-        const elA = this.querySelector("input[name='region'][value='A']");
-        const els = this.querySelectorAll("input[type='checkbox'][name='region']");
+        const element = this.querySelector("input[name='region'][value='A']");
+        const elements = this.querySelectorAll("input[type='checkbox'][name='region']");
         if (!(target.value === "A")) {
-            elA.checked = false;
+            element.checked = false;
         }
         if (target.value === "A") {
-            els.forEach((item) => (item.checked = false));
+            elements.forEach((item) => (item.checked = false));
         }
         const checkedEls = Array.from(this.querySelectorAll('[name="region"]:checked')).filter((el) => el.value !== "A");
         if (this.detailRegion && this.subRegion) {
@@ -195,8 +172,6 @@ export default class PopularHeader extends HTMLElement {
         }
     }
     handleDetailRegion(target) {
-        if (!this.subRegion)
-            return;
         this.subRegion.hidden = !target.checked;
     }
     handleAddCode(target) {
@@ -234,9 +209,6 @@ export default class PopularHeader extends HTMLElement {
     }
     handleLoanDuration(event) {
         var _a;
-        if (!this.startDateInput || !this.endDateInput) {
-            return;
-        }
         const { currentDate, currentYear, currentMonth, currentDay } = getCurrentDates();
         const target = event === null || event === void 0 ? void 0 : event.target;
         switch (target === null || target === void 0 ? void 0 : target.value) {
@@ -267,8 +239,6 @@ export default class PopularHeader extends HTMLElement {
         });
     }
     initialLoanDuration() {
-        if (!this.startDateInput || !this.endDateInput)
-            return;
         const { currentDate, currentMonth, currentDay } = getCurrentDates();
         this.startDateInput.value = `${currentDate.getFullYear()}-01-01`;
         this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;

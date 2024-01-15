@@ -67,7 +67,7 @@ export default class Book extends HTMLElement {
         this.loadingElement = null;
     }
     renderBook(book) {
-        const { bookname, bookImageURL } = book, otherData = __rest(book, ["bookname", "bookImageURL"])
+        const { bookname, bookImageURL, description } = book, otherData = __rest(book, ["bookname", "bookImageURL", "description"])
         // authors, class_nm,  class_no, description, isbn13,  loanCnt, publication_year,  publisher,
         ;
         const bookNames = bookname
@@ -75,6 +75,8 @@ export default class Book extends HTMLElement {
             .map((item) => `<p>${item}</p>`)
             .join("");
         this.querySelector(".bookname").innerHTML = bookNames;
+        this.querySelector(".description").innerHTML =
+            description;
         // const bookImageElement = this.querySelector<BookImage>("book-image");
         // if (!bookImageElement) return;
         // bookImageElement.data = {
