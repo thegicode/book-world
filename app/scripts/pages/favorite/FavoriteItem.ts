@@ -6,8 +6,8 @@ import FavoriteItemView from "./FavoriteItemView";
 export default class FavoriteItem extends HTMLElement {
     private loadingComponent: LoadingComponent | null = null;
     private libraryBookExist?: LibraryBookExist | null;
-    libraryButton?: HTMLButtonElement | null = null;
-    hideButton?: HTMLButtonElement | null;
+    private libraryButton?: HTMLButtonElement | null = null;
+    private hideButton?: HTMLButtonElement | null;
     private _isbn: string | null = null;
     private view: FavoriteItemView;
 
@@ -74,11 +74,10 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     private onLibrary() {
-        const isbn = this._isbn as string;
         if (this.libraryBookExist && this.libraryButton) {
             this.libraryBookExist.onLibraryBookExist(
                 this.libraryButton,
-                isbn,
+                this._isbn as string,
                 bookModel.libraries
             );
 
@@ -90,6 +89,7 @@ export default class FavoriteItem extends HTMLElement {
         const list = this.libraryBookExist?.querySelector(
             "ul"
         ) as HTMLUListElement;
+
         list.innerHTML = "";
 
         this.view.updateOnHideLibrary();

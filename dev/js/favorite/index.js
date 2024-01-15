@@ -496,11 +496,9 @@
     }
     render() {
       var _a;
-      const button = this.createButton();
-      const container = this.createContainer();
-      this.button = button;
-      this.appendChild(container);
-      this.appendChild(button);
+      this.button = this.createButton();
+      this.appendChild(this.createContainer());
+      this.appendChild(this.button);
       (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
     }
     createButton() {
@@ -509,6 +507,13 @@
       button.textContent = "Category";
       return button;
     }
+    createContainer() {
+      const container = document.createElement("div");
+      container.className = "category";
+      container.hidden = true;
+      model_default.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      return container;
+    }
     onClickCategory() {
       const el = this.querySelector(".category");
       el.hidden = !el.hidden;
@@ -516,13 +521,6 @@
     getISBN() {
       const isbnElement = this.closest("[data-isbn]");
       return isbnElement && isbnElement.dataset.isbn ? isbnElement.dataset.isbn : null;
-    }
-    createContainer() {
-      const container = document.createElement("div");
-      container.className = "category";
-      container.hidden = true;
-      model_default.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
-      return container;
     }
     createCheckbox(category, ISBN) {
       const checkbox = document.createElement("input");
@@ -1472,9 +1470,8 @@
       this.view.render(newData);
     }
     onLibrary() {
-      const isbn = this._isbn;
       if (this.libraryBookExist && this.libraryButton) {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, isbn, model_default.libraries);
+        this.libraryBookExist.onLibraryBookExist(this.libraryButton, this._isbn, model_default.libraries);
         this.view.updateOnLibrary();
       }
     }
@@ -1490,48 +1487,51 @@
   var Favorite = class extends HTMLElement {
     constructor() {
       super();
-      this.booksElement = this.querySelector(".favorite-books");
+      this.currentCategory = new URLSearchParams(location.search).get("category");
+      this.listElement = this.querySelector(".favorite-books");
       this.itemTemplate = document.querySelector("#tp-favorite-item");
-      this.locationCategory = new URLSearchParams(location.search).get("category");
+      this.messageTemplate = document.querySelector("#tp-message");
     }
     connectedCallback() {
-      const categorySort = model_default.sortedFavoriteKeys;
-      if (categorySort.length === 0) {
-        this.renderMessage("\uAD00\uC2EC \uCE74\uD14C\uACE0\uB9AC\uB97C \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.");
-        return;
-      }
-      const categoryName = this.locationCategory || categorySort[0];
-      this.render(categoryName);
+      const isbnsOfCategory = this.getIsbnsOfCategory();
+      if (isbnsOfCategory)
+        this.render(isbnsOfCategory);
     }
     disconnectedCallback() {
     }
-    render(categoryName) {
-      if (!this.booksElement)
-        return;
-      this.booksElement.innerHTML = "";
-      const isbns = model_default.favorites[categoryName];
-      if (isbns.length === 0) {
-        this.renderMessage("\uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
+    getIsbnsOfCategory() {
+      const categoryKeys = model_default.sortedFavoriteKeys;
+      if (categoryKeys.length === 0) {
+        this.renderMessage("\uAD00\uC2EC \uCE74\uD14C\uACE0\uB9AC\uB97C \uB4F1\uB85D\uD574\uC8FC\uC138\uC694.");
         return;
       }
+      const isbnsOfCategory = model_default.favorites[this.currentCategory || categoryKeys[0]];
+      if (isbnsOfCategory.length === 0) {
+        this.renderMessage("\uB4F1\uB85D\uB41C \uAD00\uC2EC\uCC45\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
+        return;
+      }
+      return isbnsOfCategory;
+    }
+    render(isbnsOfCategory) {
+      if (!this.listElement)
+        return;
       const fragment = new DocumentFragment();
-      for (const isbn of isbns) {
-        if (!this.itemTemplate)
-          return;
-        const favoriteItem = new FavoriteItem(isbn);
-        const cloned = this.itemTemplate.content.cloneNode(true);
-        favoriteItem.appendChild(cloned);
-        fragment.appendChild(favoriteItem);
-      }
-      this.booksElement.appendChild(fragment);
+      isbnsOfCategory.map((isbn) => this.createItem(isbn)).forEach((element) => fragment.appendChild(element));
+      this.listElement.innerHTML = "";
+      this.listElement.appendChild(fragment);
+    }
+    createItem(isbn) {
+      const favoriteItem = new FavoriteItem(isbn);
+      favoriteItem.appendChild(this.itemTemplate.content.cloneNode(true));
+      favoriteItem.dataset.isbn = isbn;
+      return favoriteItem;
     }
     renderMessage(message) {
-      const template = document.querySelector("#tp-message");
-      if (template && this.booksElement) {
-        const element = cloneTemplate(template);
-        element.textContent = message;
-        this.booksElement.appendChild(element);
-      }
+      if (!this.messageTemplate || !this.listElement)
+        return;
+      const messageElement = cloneTemplate(this.messageTemplate);
+      messageElement.textContent = message;
+      this.listElement.appendChild(messageElement);
     }
   };
 

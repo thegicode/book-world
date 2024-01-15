@@ -18,22 +18,29 @@ export default class CategorySelector extends HTMLElement {
     }
 
     protected render() {
-        const button = this.createButton();
-        const container = this.createContainer();
+        this.button = this.createButton();
 
-        this.button = button;
-
-        this.appendChild(container);
-        this.appendChild(button);
+        this.appendChild(this.createContainer());
+        this.appendChild(this.button);
 
         this.button?.addEventListener("click", this.onClickCategory);
     }
 
-    createButton() {
+    private createButton() {
         const button = document.createElement("button");
         button.className = "category-button";
         button.textContent = "Category";
         return button;
+    }
+
+    private createContainer() {
+        const container = document.createElement("div");
+        container.className = "category";
+        container.hidden = true;
+        bookModel.sortedFavoriteKeys.forEach((category: string) =>
+            this.createCategoryItem(container, category, this.isbn || "")
+        );
+        return container;
     }
 
     onClickCategory() {
@@ -46,16 +53,6 @@ export default class CategorySelector extends HTMLElement {
         return isbnElement && isbnElement.dataset.isbn
             ? isbnElement.dataset.isbn
             : null;
-    }
-
-    private createContainer() {
-        const container = document.createElement("div");
-        container.className = "category";
-        container.hidden = true;
-        bookModel.sortedFavoriteKeys.forEach((category: string) =>
-            this.createCategoryItem(container, category, this.isbn || "")
-        );
-        return container;
     }
 
     private createCategoryItem = (

@@ -21,11 +21,9 @@ export default class CategorySelector extends HTMLElement {
     }
     render() {
         var _a;
-        const button = this.createButton();
-        const container = this.createContainer();
-        this.button = button;
-        this.appendChild(container);
-        this.appendChild(button);
+        this.button = this.createButton();
+        this.appendChild(this.createContainer());
+        this.appendChild(this.button);
         (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
     }
     createButton() {
@@ -33,6 +31,13 @@ export default class CategorySelector extends HTMLElement {
         button.className = "category-button";
         button.textContent = "Category";
         return button;
+    }
+    createContainer() {
+        const container = document.createElement("div");
+        container.className = "category";
+        container.hidden = true;
+        bookModel.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+        return container;
     }
     onClickCategory() {
         const el = this.querySelector(".category");
@@ -43,13 +48,6 @@ export default class CategorySelector extends HTMLElement {
         return isbnElement && isbnElement.dataset.isbn
             ? isbnElement.dataset.isbn
             : null;
-    }
-    createContainer() {
-        const container = document.createElement("div");
-        container.className = "category";
-        container.hidden = true;
-        bookModel.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
-        return container;
     }
     createCheckbox(category, ISBN) {
         const checkbox = document.createElement("input");

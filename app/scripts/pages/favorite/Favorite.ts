@@ -3,66 +3,75 @@ import { cloneTemplate } from "../../utils/helpers";
 import FavoriteItem from "./FavoriteItem";
 
 export default class Favorite extends HTMLElement {
-    booksElement: HTMLElement | null;
-    itemTemplate: HTMLTemplateElement | null;
-    locationCategory: string | null;
+    private currentCategory: string | null;
+    private listElement: HTMLElement | null;
+    private itemTemplate: HTMLTemplateElement;
+    private messageTemplate: HTMLTemplateElement;
 
     constructor() {
         super();
 
-        this.booksElement = this.querySelector(".favorite-books");
-        this.itemTemplate = document.querySelector("#tp-favorite-item");
-        this.locationCategory = new URLSearchParams(location.search).get(
+        this.currentCategory = new URLSearchParams(location.search).get(
             "category"
         );
+        this.listElement = this.querySelector(".favorite-books");
+        this.itemTemplate = document.querySelector(
+            "#tp-favorite-item"
+        ) as HTMLTemplateElement;
+        this.messageTemplate = document.querySelector(
+            "#tp-message"
+        ) as HTMLTemplateElement;
     }
 
     connectedCallback() {
-        const categorySort = bookModel.sortedFavoriteKeys;
-        if (categorySort.length === 0) {
-            this.renderMessage("관심 카테고리를 등록해주세요.");
-            return;
-        }
-
-        const categoryName = this.locationCategory || categorySort[0];
-        this.render(categoryName);
+        const isbnsOfCategory = this.getIsbnsOfCategory();
+        if (isbnsOfCategory) this.render(isbnsOfCategory);
     }
 
     disconnectedCallback() {
         //
     }
 
-    private render(categoryName: string) {
-        if (!this.booksElement) return;
-        this.booksElement.innerHTML = "";
-
-        const isbns = bookModel.favorites[categoryName];
-        if (isbns.length === 0) {
-            this.renderMessage("관심책이 없습니다.");
+    private getIsbnsOfCategory(): string[] | undefined {
+        const categoryKeys = bookModel.sortedFavoriteKeys;
+        if (categoryKeys.length === 0) {
+            this.renderMessage("관심 카테고리를 등록해주세요.");
             return;
         }
 
-        const fragment = new DocumentFragment();
-        for (const isbn of isbns) {
-            if (!this.itemTemplate) return;
-
-            const favoriteItem = new FavoriteItem(isbn);
-            const cloned = this.itemTemplate.content.cloneNode(true);
-            favoriteItem.appendChild(cloned);
-            fragment.appendChild(favoriteItem);
+        const isbnsOfCategory =
+            bookModel.favorites[this.currentCategory || categoryKeys[0]];
+        if (isbnsOfCategory.length === 0) {
+            this.renderMessage("등록된 관심책이 없습니다.");
+            return;
         }
 
-        this.booksElement.appendChild(fragment);
+        return isbnsOfCategory;
+    }
+
+    private render(isbnsOfCategory: string[]) {
+        if (!this.listElement) return;
+        const fragment = new DocumentFragment();
+        isbnsOfCategory
+            .map((isbn) => this.createItem(isbn))
+            .forEach((element) => fragment.appendChild(element));
+
+        this.listElement.innerHTML = "";
+        this.listElement.appendChild(fragment);
+    }
+
+    private createItem(isbn: string) {
+        const favoriteItem = new FavoriteItem(isbn);
+        favoriteItem.appendChild(this.itemTemplate.content.cloneNode(true));
+        favoriteItem.dataset.isbn = isbn;
+        return favoriteItem;
     }
 
     private renderMessage(message: string) {
-        const template = document.querySelector(
-            "#tp-message"
-        ) as HTMLTemplateElement;
-        if (template && this.booksElement) {
-            const element = cloneTemplate(template);
-            element.textContent = message;
-            this.booksElement.appendChild(element);
-        }
+        if (!this.messageTemplate || !this.listElement) return;
+
+        const messageElement = cloneTemplate(this.messageTemplate);
+        messageElement.textContent = message;
+        this.listElement.appendChild(messageElement);
     }
 }

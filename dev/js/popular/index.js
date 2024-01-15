@@ -448,11 +448,9 @@
     }
     render() {
       var _a;
-      const button = this.createButton();
-      const container = this.createContainer();
-      this.button = button;
-      this.appendChild(container);
-      this.appendChild(button);
+      this.button = this.createButton();
+      this.appendChild(this.createContainer());
+      this.appendChild(this.button);
       (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
     }
     createButton() {
@@ -461,6 +459,13 @@
       button.textContent = "Category";
       return button;
     }
+    createContainer() {
+      const container = document.createElement("div");
+      container.className = "category";
+      container.hidden = true;
+      model_default.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
+      return container;
+    }
     onClickCategory() {
       const el = this.querySelector(".category");
       el.hidden = !el.hidden;
@@ -468,13 +473,6 @@
     getISBN() {
       const isbnElement = this.closest("[data-isbn]");
       return isbnElement && isbnElement.dataset.isbn ? isbnElement.dataset.isbn : null;
-    }
-    createContainer() {
-      const container = document.createElement("div");
-      container.className = "category";
-      container.hidden = true;
-      model_default.sortedFavoriteKeys.forEach((category) => this.createCategoryItem(container, category, this.isbn || ""));
-      return container;
     }
     createCheckbox(category, ISBN) {
       const checkbox = document.createElement("input");
