@@ -119,12 +119,12 @@ export default class FavoriteModel {
         this.bookUpdatePublisher.notify();
     }
 
-    subscribeFavoritesUpdate(subscriber: TFavoritesUpdateSubscriber) {
+    subscribeCategoriesUpdate(subscriber: TFavoritesUpdateSubscriber) {
         this.categoriesUpdatePublisher.subscribe(
             subscriber as TSubscriberCallback<IFavoritesUpdateProps>
         );
     }
-    unsubscribeFavoritesUpdate(subscriber: TFavoritesUpdateSubscriber) {
+    unsubscribeCategoriesUpdate(subscriber: TFavoritesUpdateSubscriber) {
         this.categoriesUpdatePublisher.unsubscribe(
             subscriber as TSubscriberCallback<IFavoritesUpdateProps>
         );

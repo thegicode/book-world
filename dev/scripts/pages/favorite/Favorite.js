@@ -14,7 +14,7 @@ export default class Favorite extends HTMLElement {
         const isbnsOfCategory = this.getIsbnsOfCategory();
         if (isbnsOfCategory)
             this.render(isbnsOfCategory);
-        // bookModel.subscribeToFavoritesUpdate(
+        // bookModel.subscribeFavoriteCategoriesUpdate(
         //     this
         //         .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
         // );

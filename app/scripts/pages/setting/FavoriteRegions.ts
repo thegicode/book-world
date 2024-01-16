@@ -17,12 +17,12 @@ export default class FavoriteRegions extends HTMLElement {
         this.render();
 
         bookModel.subscribeToBookStateUpdate(this.render);
-        bookModel.subscribeToDetailRegionUpdate(this.render);
+        bookModel.subscribeDetailRegionUpdate(this.render);
     }
 
     disconnectedCallback() {
         bookModel.unsubscribeToBookStateUpdate(this.render);
-        bookModel.unsubscribeToDetailRegionUpdate(this.render);
+        bookModel.unsubscribeDetailRegionUpdate(this.render);
     }
 
     private render() {

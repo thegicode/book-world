@@ -23,19 +23,13 @@ export default class SetStorage extends HTMLElement {
 
     connectedCallback() {
         this.saveButton.addEventListener("click", this.saveStorage);
-        this.defaultButton.addEventListener(
-            "click",
-            this.setLocalStorageToBase
-        );
+        this.defaultButton.addEventListener("click", this.setDefaultState);
         this.resetButton.addEventListener("click", this.resetStorage);
     }
 
     disconnectedCallback() {
         this.saveButton.removeEventListener("click", this.saveStorage);
-        this.defaultButton.removeEventListener(
-            "click",
-            this.setLocalStorageToBase
-        );
+        this.defaultButton.removeEventListener("click", this.setDefaultState);
         this.resetButton.removeEventListener("click", this.resetStorage);
     }
 
@@ -57,7 +51,7 @@ export default class SetStorage extends HTMLElement {
         URL.revokeObjectURL(a.href);
     };
 
-    private setLocalStorageToBase = async () => {
+    private setDefaultState = async () => {
         try {
             const data = await CustomFetch.fetch<IBookState>(SAMPLE_JSON_URL);
 

@@ -28,7 +28,7 @@ export default class FavoriteNav extends HTMLElement {
         this.render();
 
         this.changButton.addEventListener("click", this.handleOverlayCatalog);
-        bookModel.subscribeToFavoritesUpdate(
+        bookModel.subscribeFavoriteCategoriesUpdate(
             this
                 .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
         );
@@ -39,7 +39,7 @@ export default class FavoriteNav extends HTMLElement {
             "click",
             this.handleOverlayCatalog
         );
-        bookModel.unsubscribeToFavoritesUpdate(
+        bookModel.unsubscribeFavoriteCategoriesUpdate(
             this
                 .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
         );

@@ -60,6 +60,8 @@ class BookModel {
         this.regionModel.regions = regions;
 
         this.bookStateUpdatePublisher.notify();
+
+        console.log("set state");
     }
 
     get favorites() {
@@ -218,17 +220,19 @@ class BookModel {
         this.bookStateUpdatePublisher.unsubscribe(subscriber);
     }
 
-    subscribeToFavoritesUpdate(subscriber: TFavoritesUpdateSubscriber) {
-        this.favoriteModel.subscribeFavoritesUpdate(subscriber);
+    subscribeFavoriteCategoriesUpdate(subscriber: TFavoritesUpdateSubscriber) {
+        this.favoriteModel.subscribeCategoriesUpdate(subscriber);
     }
-    unsubscribeToFavoritesUpdate(subscriber: TFavoritesUpdateSubscriber) {
-        this.favoriteModel.unsubscribeFavoritesUpdate(subscriber);
+    unsubscribeFavoriteCategoriesUpdate(
+        subscriber: TFavoritesUpdateSubscriber
+    ) {
+        this.favoriteModel.unsubscribeCategoriesUpdate(subscriber);
     }
 
-    subscribeBookUpdate(subscriber: TSubscriberVoid) {
+    subscribeFavoriteBookUpdate(subscriber: TSubscriberVoid) {
         this.favoriteModel.subscribeBookUpdate(subscriber);
     }
-    unsubscribeBookUpdate(subscriber: TSubscriberVoid) {
+    unsubscribeFavoriteBookUpdate(subscriber: TSubscriberVoid) {
         this.favoriteModel.unsubscribeBookUpdate(subscriber);
     }
 
@@ -239,18 +243,18 @@ class BookModel {
         this.libraryModel.unsubscribeUpdate(subscriber);
     }
 
-    subscribeToRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regionModel.subscribeToUpdatePublisher(subscriber);
+    subscribeRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regionModel.subscribeUpdatePublisher(subscriber);
     }
-    unsubscribeToRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regionModel.unsubscribeToUpdatePublisher(subscriber);
+    unsubscribeRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regionModel.unsubscribeUpdatePublisher(subscriber);
     }
 
-    subscribeToDetailRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regionModel.subscribeToDetailUpdatePublisher(subscriber);
+    subscribeDetailRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regionModel.subscribeDetailUpdatePublisher(subscriber);
     }
-    unsubscribeToDetailRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regionModel.unsubscribeToDetailUpdatePublisher(subscriber);
+    unsubscribeDetailRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regionModel.unsubscribeDetailUpdatePublisher(subscriber);
     }
 }
 

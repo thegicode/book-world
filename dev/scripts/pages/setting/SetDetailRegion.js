@@ -11,11 +11,11 @@ export default class SetDetailRegion extends HTMLElement {
         this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
-        bookModel.subscribeToRegionUpdate(this.renderRegion);
+        bookModel.subscribeRegionUpdate(this.renderRegion);
         CustomEventEmitter.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     disconnectedCallback() {
-        bookModel.unsubscribeToRegionUpdate(this.renderRegion);
+        bookModel.unsubscribeRegionUpdate(this.renderRegion);
         CustomEventEmitter.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     setRegionData(event) {

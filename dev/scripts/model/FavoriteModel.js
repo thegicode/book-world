@@ -90,10 +90,10 @@ export default class FavoriteModel {
         }
         this.bookUpdatePublisher.notify();
     }
-    subscribeFavoritesUpdate(subscriber) {
+    subscribeCategoriesUpdate(subscriber) {
         this.categoriesUpdatePublisher.subscribe(subscriber);
     }
-    unsubscribeFavoritesUpdate(subscriber) {
+    unsubscribeCategoriesUpdate(subscriber) {
         this.categoriesUpdatePublisher.unsubscribe(subscriber);
     }
     subscribeBookUpdate(subscriber) {

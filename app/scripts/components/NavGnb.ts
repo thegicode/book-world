@@ -21,11 +21,13 @@ export default class NavGnb extends HTMLElement {
         this.render();
         this.setSelectedMenu();
 
-        bookModel.subscribeBookUpdate(this.renderBookSize);
+        bookModel.subscribeFavoriteBookUpdate(this.renderBookSize);
+        bookModel.subscribeToBookStateUpdate(this.renderBookSize);
     }
 
     disconnectedCallback() {
-        bookModel.unsubscribeBookUpdate(this.renderBookSize);
+        bookModel.unsubscribeFavoriteBookUpdate(this.renderBookSize);
+        bookModel.unsubscribeFavoriteBookUpdate(this.renderBookSize);
         //
     }
 
@@ -37,14 +39,13 @@ export default class NavGnb extends HTMLElement {
     }
 
     protected render() {
-        const paths = this.PATHS;
         this.innerHTML = `
             <nav class="gnb">
-                <a class="gnb-item" href=".${paths[0]}">책 검색</a>
-                <a class="gnb-item" href=".${paths[1]}">나의 책 (<span class="size">${this.bookSize}</span>)</a>
-                <a class="gnb-item" href=".${paths[2]}">인기대출도서</a>
-                <a class="gnb-item" href=".${paths[3]}">도서관 조회</a>
-                <a class="gnb-item" href=".${paths[4]}">설정</a>
+                <a class="gnb-item" href=".${this.PATHS[0]}">책 검색</a>
+                <a class="gnb-item" href=".${this.PATHS[1]}">나의 책 (<span class="size">${this.bookSize}</span>)</a>
+                <a class="gnb-item" href=".${this.PATHS[2]}">인기대출도서</a>
+                <a class="gnb-item" href=".${this.PATHS[3]}">도서관 조회</a>
+                <a class="gnb-item" href=".${this.PATHS[4]}">설정</a>
             </nav>`;
     }
 

@@ -12,11 +12,11 @@ export default class FavoriteRegions extends HTMLElement {
         this.template = this.querySelector("#tp-favorites-stored");
         this.render();
         bookModel.subscribeToBookStateUpdate(this.render);
-        bookModel.subscribeToDetailRegionUpdate(this.render);
+        bookModel.subscribeDetailRegionUpdate(this.render);
     }
     disconnectedCallback() {
         bookModel.unsubscribeToBookStateUpdate(this.render);
-        bookModel.unsubscribeToDetailRegionUpdate(this.render);
+        bookModel.unsubscribeDetailRegionUpdate(this.render);
     }
     render() {
         if (!this.container)

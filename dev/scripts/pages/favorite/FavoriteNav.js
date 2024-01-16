@@ -13,12 +13,12 @@ export default class FavoriteNav extends HTMLElement {
         this.intialize();
         this.render();
         this.changButton.addEventListener("click", this.handleOverlayCatalog);
-        bookModel.subscribeToFavoritesUpdate(this
+        bookModel.subscribeFavoriteCategoriesUpdate(this
             .subscribeCategoryChange);
     }
     disconnectedCallback() {
         this.changButton.removeEventListener("click", this.handleOverlayCatalog);
-        bookModel.unsubscribeToFavoritesUpdate(this
+        bookModel.unsubscribeFavoriteCategoriesUpdate(this
             .subscribeCategoryChange);
     }
     intialize() {

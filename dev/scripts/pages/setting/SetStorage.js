@@ -27,7 +27,7 @@ export default class SetStorage extends HTMLElement {
             // URL.createObjectURL()로 생성된 URL 해제
             URL.revokeObjectURL(a.href);
         };
-        this.setLocalStorageToBase = () => __awaiter(this, void 0, void 0, function* () {
+        this.setDefaultState = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield CustomFetch.fetch(SAMPLE_JSON_URL);
                 bookModel.state = data;
@@ -47,12 +47,12 @@ export default class SetStorage extends HTMLElement {
     }
     connectedCallback() {
         this.saveButton.addEventListener("click", this.saveStorage);
-        this.defaultButton.addEventListener("click", this.setLocalStorageToBase);
+        this.defaultButton.addEventListener("click", this.setDefaultState);
         this.resetButton.addEventListener("click", this.resetStorage);
     }
     disconnectedCallback() {
         this.saveButton.removeEventListener("click", this.saveStorage);
-        this.defaultButton.removeEventListener("click", this.setLocalStorageToBase);
+        this.defaultButton.removeEventListener("click", this.setDefaultState);
         this.resetButton.removeEventListener("click", this.resetStorage);
     }
 }

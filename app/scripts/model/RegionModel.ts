@@ -48,19 +48,19 @@ export default class RegionModel {
         this.detailUpdatePublisher.notify();
     }
 
-    subscribeToUpdatePublisher(subscriber: TSubscriberVoid) {
+    subscribeUpdatePublisher(subscriber: TSubscriberVoid) {
         this.updatePublisher.subscribe(subscriber);
     }
 
-    unsubscribeToUpdatePublisher(subscriber: TSubscriberVoid) {
+    unsubscribeUpdatePublisher(subscriber: TSubscriberVoid) {
         this.updatePublisher.unsubscribe(subscriber);
     }
 
-    subscribeToDetailUpdatePublisher(subscriber: TSubscriberVoid) {
+    subscribeDetailUpdatePublisher(subscriber: TSubscriberVoid) {
         this.detailUpdatePublisher.subscribe(subscriber);
     }
 
-    unsubscribeToDetailUpdatePublisher(subscriber: TSubscriberVoid) {
+    unsubscribeDetailUpdatePublisher(subscriber: TSubscriberVoid) {
         this.detailUpdatePublisher.unsubscribe(subscriber);
     }
 }

@@ -111,10 +111,10 @@
       }
       this.bookUpdatePublisher.notify();
     }
-    subscribeFavoritesUpdate(subscriber) {
+    subscribeCategoriesUpdate(subscriber) {
       this.categoriesUpdatePublisher.subscribe(subscriber);
     }
-    unsubscribeFavoritesUpdate(subscriber) {
+    unsubscribeCategoriesUpdate(subscriber) {
       this.categoriesUpdatePublisher.unsubscribe(subscriber);
     }
     subscribeBookUpdate(subscriber) {
@@ -200,16 +200,16 @@
       }
       this.detailUpdatePublisher.notify();
     }
-    subscribeToUpdatePublisher(subscriber) {
+    subscribeUpdatePublisher(subscriber) {
       this.updatePublisher.subscribe(subscriber);
     }
-    unsubscribeToUpdatePublisher(subscriber) {
+    unsubscribeUpdatePublisher(subscriber) {
       this.updatePublisher.unsubscribe(subscriber);
     }
-    subscribeToDetailUpdatePublisher(subscriber) {
+    subscribeDetailUpdatePublisher(subscriber) {
       this.detailUpdatePublisher.subscribe(subscriber);
     }
-    unsubscribeToDetailUpdatePublisher(subscriber) {
+    unsubscribeDetailUpdatePublisher(subscriber) {
       this.detailUpdatePublisher.unsubscribe(subscriber);
     }
   };
@@ -257,6 +257,7 @@
       this.libraryModel.libraries = libraries;
       this.regionModel.regions = regions;
       this.bookStateUpdatePublisher.notify();
+      console.log("set state");
     }
     get favorites() {
       return this.favoriteModel.favorites;
@@ -366,16 +367,16 @@
     unsubscribeToBookStateUpdate(subscriber) {
       this.bookStateUpdatePublisher.unsubscribe(subscriber);
     }
-    subscribeToFavoritesUpdate(subscriber) {
-      this.favoriteModel.subscribeFavoritesUpdate(subscriber);
+    subscribeFavoriteCategoriesUpdate(subscriber) {
+      this.favoriteModel.subscribeCategoriesUpdate(subscriber);
     }
-    unsubscribeToFavoritesUpdate(subscriber) {
-      this.favoriteModel.unsubscribeFavoritesUpdate(subscriber);
+    unsubscribeFavoriteCategoriesUpdate(subscriber) {
+      this.favoriteModel.unsubscribeCategoriesUpdate(subscriber);
     }
-    subscribeBookUpdate(subscriber) {
+    subscribeFavoriteBookUpdate(subscriber) {
       this.favoriteModel.subscribeBookUpdate(subscriber);
     }
-    unsubscribeBookUpdate(subscriber) {
+    unsubscribeFavoriteBookUpdate(subscriber) {
       this.favoriteModel.unsubscribeBookUpdate(subscriber);
     }
     subscribeLibraryUpdate(subscriber) {
@@ -384,17 +385,17 @@
     unsubscribeLibraryUpdate(subscriber) {
       this.libraryModel.unsubscribeUpdate(subscriber);
     }
-    subscribeToRegionUpdate(subscriber) {
-      this.regionModel.subscribeToUpdatePublisher(subscriber);
+    subscribeRegionUpdate(subscriber) {
+      this.regionModel.subscribeUpdatePublisher(subscriber);
     }
-    unsubscribeToRegionUpdate(subscriber) {
-      this.regionModel.unsubscribeToUpdatePublisher(subscriber);
+    unsubscribeRegionUpdate(subscriber) {
+      this.regionModel.unsubscribeUpdatePublisher(subscriber);
     }
-    subscribeToDetailRegionUpdate(subscriber) {
-      this.regionModel.subscribeToDetailUpdatePublisher(subscriber);
+    subscribeDetailRegionUpdate(subscriber) {
+      this.regionModel.subscribeDetailUpdatePublisher(subscriber);
     }
-    unsubscribeToDetailRegionUpdate(subscriber) {
-      this.regionModel.unsubscribeToDetailUpdatePublisher(subscriber);
+    unsubscribeDetailRegionUpdate(subscriber) {
+      this.regionModel.unsubscribeDetailUpdatePublisher(subscriber);
     }
   };
   var bookModel = new BookModel();
@@ -1025,23 +1026,24 @@
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
-      model_default.subscribeBookUpdate(this.renderBookSize);
+      model_default.subscribeFavoriteBookUpdate(this.renderBookSize);
+      model_default.subscribeToBookStateUpdate(this.renderBookSize);
     }
     disconnectedCallback() {
-      model_default.unsubscribeBookUpdate(this.renderBookSize);
+      model_default.unsubscribeFavoriteBookUpdate(this.renderBookSize);
+      model_default.unsubscribeFavoriteBookUpdate(this.renderBookSize);
     }
     get bookSize() {
       return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
     }
     render() {
-      const paths = this.PATHS;
       this.innerHTML = `
             <nav class="gnb">
-                <a class="gnb-item" href=".${paths[0]}">\uCC45 \uAC80\uC0C9</a>
-                <a class="gnb-item" href=".${paths[1]}">\uB098\uC758 \uCC45 (<span class="size">${this.bookSize}</span>)</a>
-                <a class="gnb-item" href=".${paths[2]}">\uC778\uAE30\uB300\uCD9C\uB3C4\uC11C</a>
-                <a class="gnb-item" href=".${paths[3]}">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
-                <a class="gnb-item" href=".${paths[4]}">\uC124\uC815</a>
+                <a class="gnb-item" href=".${this.PATHS[0]}">\uCC45 \uAC80\uC0C9</a>
+                <a class="gnb-item" href=".${this.PATHS[1]}">\uB098\uC758 \uCC45 (<span class="size">${this.bookSize}</span>)</a>
+                <a class="gnb-item" href=".${this.PATHS[2]}">\uC778\uAE30\uB300\uCD9C\uB3C4\uC11C</a>
+                <a class="gnb-item" href=".${this.PATHS[3]}">\uB3C4\uC11C\uAD00 \uC870\uD68C</a>
+                <a class="gnb-item" href=".${this.PATHS[4]}">\uC124\uC815</a>
             </nav>`;
     }
     setSelectedMenu() {
@@ -1200,11 +1202,11 @@
       this.renderRegion = this.renderRegion.bind(this);
     }
     connectedCallback() {
-      model_default.subscribeToRegionUpdate(this.renderRegion);
+      model_default.subscribeRegionUpdate(this.renderRegion);
       CustomEventEmitter_default.add(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     disconnectedCallback() {
-      model_default.unsubscribeToRegionUpdate(this.renderRegion);
+      model_default.unsubscribeRegionUpdate(this.renderRegion);
       CustomEventEmitter_default.remove(FETCH_REGION_DATA_EVENT, this.setRegionData);
     }
     setRegionData(event) {
@@ -1335,11 +1337,11 @@
       this.template = this.querySelector("#tp-favorites-stored");
       this.render();
       model_default.subscribeToBookStateUpdate(this.render);
-      model_default.subscribeToDetailRegionUpdate(this.render);
+      model_default.subscribeDetailRegionUpdate(this.render);
     }
     disconnectedCallback() {
       model_default.unsubscribeToBookStateUpdate(this.render);
-      model_default.unsubscribeToDetailRegionUpdate(this.render);
+      model_default.unsubscribeDetailRegionUpdate(this.render);
     }
     render() {
       if (!this.container)
@@ -1418,7 +1420,7 @@
         a.click();
         URL.revokeObjectURL(a.href);
       };
-      this.setLocalStorageToBase = () => __awaiter3(this, void 0, void 0, function* () {
+      this.setDefaultState = () => __awaiter3(this, void 0, void 0, function* () {
         try {
           const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
           model_default.state = data;
@@ -1437,12 +1439,12 @@
     }
     connectedCallback() {
       this.saveButton.addEventListener("click", this.saveStorage);
-      this.defaultButton.addEventListener("click", this.setLocalStorageToBase);
+      this.defaultButton.addEventListener("click", this.setDefaultState);
       this.resetButton.addEventListener("click", this.resetStorage);
     }
     disconnectedCallback() {
       this.saveButton.removeEventListener("click", this.saveStorage);
-      this.defaultButton.removeEventListener("click", this.setLocalStorageToBase);
+      this.defaultButton.removeEventListener("click", this.setDefaultState);
       this.resetButton.removeEventListener("click", this.resetStorage);
     }
   };
