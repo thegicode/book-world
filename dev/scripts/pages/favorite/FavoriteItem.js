@@ -18,27 +18,23 @@ export default class FavoriteItem extends HTMLElement {
         this.libraryButton = null;
         this._isbn = isbn;
         this.ui = new FavoriteItemUI(this);
-    }
-    connectedCallback() {
-        this.loadingComponent = this.querySelector("loading-component");
-        this.libraryButton = this.querySelector(".library-button");
-        this.hideButton = this.querySelector(".hide-button");
-        this.libraryBookExist = this.querySelector("library-book-exist");
-        this.addEvents();
-        this.fetchData();
-    }
-    disconnectedCallback() {
-        this.removeEvents();
+        this.onLibrary = this.onLibrary.bind(this);
+        this.onHideLibrary = this.onHideLibrary.bind(this);
     }
     get isbn() {
         return this._isbn;
     }
-    addEvents() {
+    connectedCallback() {
         var _a, _b;
-        (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibrary.bind(this));
-        (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary.bind(this));
+        this.loadingComponent = this.querySelector("loading-component");
+        this.libraryButton = this.querySelector(".library-button");
+        this.hideButton = this.querySelector(".hide-button");
+        this.libraryBookExist = this.querySelector("library-book-exist");
+        this.fetchData();
+        (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibrary);
+        (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary);
     }
-    removeEvents() {
+    disconnectedCallback() {
         var _a, _b;
         (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
         (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
@@ -53,8 +49,7 @@ export default class FavoriteItem extends HTMLElement {
             }
             catch (error) {
                 this.ui.renderError();
-                console.error(error);
-                throw new Error(`Fail to get usage analysis list.`);
+                console.error(`${error}, Fail to get usage-analysis-list.`);
             }
             (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.hide();
         });
@@ -64,10 +59,10 @@ export default class FavoriteItem extends HTMLElement {
         this.ui.render(book);
     }
     onLibrary() {
-        if (this.libraryBookExist && this.libraryButton) {
-            this.libraryBookExist.onLibraryBookExist(this.libraryButton, this._isbn, bookModel.libraries);
-            this.ui.updateOnLibrary();
-        }
+        if (!this.libraryBookExist || !this.libraryButton)
+            return;
+        this.libraryBookExist.onLibraryBookExist(this.libraryButton, this._isbn, bookModel.libraries);
+        this.ui.updateOnLibrary();
     }
     onHideLibrary() {
         var _a;

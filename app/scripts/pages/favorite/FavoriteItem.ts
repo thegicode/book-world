@@ -16,6 +16,13 @@ export default class FavoriteItem extends HTMLElement {
         super();
         this._isbn = isbn;
         this.ui = new FavoriteItemUI(this);
+
+        this.onLibrary = this.onLibrary.bind(this);
+        this.onHideLibrary = this.onHideLibrary.bind(this);
+    }
+
+    get isbn() {
+        return this._isbn;
     }
 
     connectedCallback() {
@@ -24,30 +31,13 @@ export default class FavoriteItem extends HTMLElement {
         this.hideButton = this.querySelector(".hide-button");
         this.libraryBookExist = this.querySelector("library-book-exist");
 
-        this.addEvents();
         this.fetchData();
+
+        this.libraryButton?.addEventListener("click", this.onLibrary);
+        this.hideButton?.addEventListener("click", this.onHideLibrary);
     }
 
     disconnectedCallback() {
-        this.removeEvents();
-    }
-
-    get isbn() {
-        return this._isbn;
-    }
-
-    private addEvents() {
-        this.libraryButton?.addEventListener(
-            "click",
-            this.onLibrary.bind(this)
-        );
-        this.hideButton?.addEventListener(
-            "click",
-            this.onHideLibrary.bind(this)
-        );
-    }
-
-    private removeEvents() {
         this.libraryButton?.removeEventListener("click", this.onLibrary);
         this.hideButton?.removeEventListener("click", this.onHideLibrary);
     }
@@ -59,8 +49,7 @@ export default class FavoriteItem extends HTMLElement {
             this.renderUI(data.book);
         } catch (error) {
             this.ui.renderError();
-            console.error(error);
-            throw new Error(`Fail to get usage analysis list.`);
+            console.error(`${error}, Fail to get usage-analysis-list.`);
         }
 
         this.loadingComponent?.hide();
@@ -72,15 +61,15 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     private onLibrary() {
-        if (this.libraryBookExist && this.libraryButton) {
-            this.libraryBookExist.onLibraryBookExist(
-                this.libraryButton,
-                this._isbn as string,
-                bookModel.libraries
-            );
+        if (!this.libraryBookExist || !this.libraryButton) return;
 
-            this.ui.updateOnLibrary();
-        }
+        this.libraryBookExist.onLibraryBookExist(
+            this.libraryButton,
+            this._isbn as string,
+            bookModel.libraries
+        );
+
+        this.ui.updateOnLibrary();
     }
 
     onHideLibrary() {

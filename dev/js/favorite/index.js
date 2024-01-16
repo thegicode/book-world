@@ -1242,9 +1242,8 @@
       return __awaiter2(this, void 0, void 0, function* () {
         const entries = Object.entries(library);
         this.loading(entries.length);
-        if (button) {
+        if (button)
           button.disabled = true;
-        }
         const promises = entries.map(([libCode, libName], index) => __awaiter2(this, void 0, void 0, function* () {
           try {
             const data = yield CustomFetch_default.fetch(`/book-exist?isbn13=${isbn13}&libCode=${libCode}`);
@@ -1264,36 +1263,22 @@
     }
     renderBookExist(data, libName, index) {
       const { hasBook, loanAvailable } = data;
-      const _hasBook = hasBook === "Y" ? "\uC18C\uC7A5" : "\uBBF8\uC18C\uC7A5";
-      let _loanAvailable = "";
-      if (hasBook === "Y") {
-        _loanAvailable = loanAvailable === "Y" ? "| \uB300\uCD9C\uAC00\uB2A5" : "| \uB300\uCD9C\uBD88\uAC00";
-      }
-      const el = this.querySelectorAll(".library-item")[index];
-      const elName = el.querySelector(".name");
-      if (elName) {
-        elName.textContent = `\u2219 ${libName} : `;
-      }
-      const elHasBook = el.querySelector(".hasBook");
-      if (elHasBook) {
-        elHasBook.textContent = _hasBook;
-      }
-      const elLoanAvailable = el.querySelector(".loanAvailable");
-      if (elLoanAvailable) {
-        elLoanAvailable.textContent = _loanAvailable;
-      }
+      const loanAvailableText = hasBook === "Y" ? loanAvailable === "Y" ? "| \uB300\uCD9C\uAC00\uB2A5" : "| \uB300\uCD9C\uBD88\uAC00" : "";
+      const element = this.querySelectorAll(".library-item")[index];
+      element.querySelector(".name").textContent = `\u2219 ${libName} : `;
+      element.querySelector(".hasBook").textContent = hasBook === "Y" ? "\uC18C\uC7A5" : "\uBBF8\uC18C\uC7A5";
+      element.querySelector(".loanAvailable").textContent = loanAvailableText;
     }
     loading(size) {
-      let tp = "";
+      let text = "";
       while (size > 0) {
-        tp += this.itemTemplate;
+        text += this.itemTemplate;
         size--;
       }
-      this.container.innerHTML = tp;
+      this.container.innerHTML = text;
     }
     removeLoading() {
-      const loadingItems = this.querySelectorAll(".library-item[data-loading=true]");
-      loadingItems.forEach((el) => {
+      this.querySelectorAll(".library-item[data-loading=true]").forEach((el) => {
         delete el.dataset.loading;
       });
     }
@@ -1478,27 +1463,23 @@
       this.libraryButton = null;
       this._isbn = isbn;
       this.ui = new FavoriteItemUI(this);
-    }
-    connectedCallback() {
-      this.loadingComponent = this.querySelector("loading-component");
-      this.libraryButton = this.querySelector(".library-button");
-      this.hideButton = this.querySelector(".hide-button");
-      this.libraryBookExist = this.querySelector("library-book-exist");
-      this.addEvents();
-      this.fetchData();
-    }
-    disconnectedCallback() {
-      this.removeEvents();
+      this.onLibrary = this.onLibrary.bind(this);
+      this.onHideLibrary = this.onHideLibrary.bind(this);
     }
     get isbn() {
       return this._isbn;
     }
-    addEvents() {
+    connectedCallback() {
       var _a, _b;
-      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibrary.bind(this));
-      (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary.bind(this));
+      this.loadingComponent = this.querySelector("loading-component");
+      this.libraryButton = this.querySelector(".library-button");
+      this.hideButton = this.querySelector(".hide-button");
+      this.libraryBookExist = this.querySelector("library-book-exist");
+      this.fetchData();
+      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibrary);
+      (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary);
     }
-    removeEvents() {
+    disconnectedCallback() {
       var _a, _b;
       (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
       (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
@@ -1512,8 +1493,7 @@
           this.renderUI(data.book);
         } catch (error) {
           this.ui.renderError();
-          console.error(error);
-          throw new Error(`Fail to get usage analysis list.`);
+          console.error(`${error}, Fail to get usage-analysis-list.`);
         }
         (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.hide();
       });
@@ -1523,10 +1503,10 @@
       this.ui.render(book);
     }
     onLibrary() {
-      if (this.libraryBookExist && this.libraryButton) {
-        this.libraryBookExist.onLibraryBookExist(this.libraryButton, this._isbn, model_default.libraries);
-        this.ui.updateOnLibrary();
-      }
+      if (!this.libraryBookExist || !this.libraryButton)
+        return;
+      this.libraryBookExist.onLibraryBookExist(this.libraryButton, this._isbn, model_default.libraries);
+      this.ui.updateOnLibrary();
     }
     onHideLibrary() {
       var _a;
