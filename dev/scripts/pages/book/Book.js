@@ -26,21 +26,20 @@ export default class Book extends HTMLElement {
         super();
         this.loadingElement = null;
         this.data = null;
-        this.recBookTemplate = document.querySelector("#tp-recBookItem");
     }
     connectedCallback() {
         this.loadingElement = this.querySelector(".loading");
         const isbn = new URLSearchParams(location.search).get("isbn");
         this.dataset.isbn = isbn;
-        this.fetchUsageAnalysisList(isbn);
+        this.fetchUsageAnalysisList(isbn).then(() => {
+            this.render();
+        });
     }
     fetchUsageAnalysisList(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield CustomFetch.fetch(`/usage-analysis-list?isbn13=${isbn}`);
                 this.data = data;
-                console.log(data);
-                this.render();
             }
             catch (error) {
                 this.renderError();
@@ -89,24 +88,15 @@ export default class Book extends HTMLElement {
         fillElementsWithData(otherData, this);
     }
     renderLoanHistory(loanHistory) {
-        const loanHistoryBody = this.querySelector(".loanHistory tbody");
-        if (!loanHistoryBody)
-            return;
-        const template = this.querySelector("#tp-loanHistoryItem");
-        if (!template)
-            return;
         const fragment = new DocumentFragment();
         loanHistory.forEach((history) => {
-            const clone = cloneTemplate(template);
-            fillElementsWithData(history, clone);
-            fragment.appendChild(clone);
+            const cloned = cloneTemplate(this.querySelector("#tp-loanHistoryItem"));
+            fillElementsWithData(history, cloned);
+            fragment.appendChild(cloned);
         });
-        loanHistoryBody.appendChild(fragment);
+        this.querySelector(".loanHistory tbody").appendChild(fragment);
     }
     renderLoanGroups(loanGrps) {
-        const loanGroupBody = this.querySelector(".loanGrps tbody");
-        if (!loanGroupBody)
-            return;
         const template = document.querySelector("#tp-loanGrpItem");
         if (!template)
             return;
@@ -116,7 +106,7 @@ export default class Book extends HTMLElement {
             fillElementsWithData(loanGrp, clone);
             fragment.appendChild(clone);
         });
-        loanGroupBody.appendChild(fragment);
+        this.querySelector(".loanGrps tbody").appendChild(fragment);
     }
     renderKeyword(keywords) {
         const keywordsString = keywords
@@ -142,13 +132,13 @@ export default class Book extends HTMLElement {
         container.appendChild(fragment);
     }
     createRecItem(template, book) {
-        const el = cloneTemplate(template);
+        const element = cloneTemplate(template);
         const { isbn13 } = book;
-        fillElementsWithData(book, el);
-        const link = el.querySelector("a");
+        fillElementsWithData(book, element);
+        const link = element.querySelector("a");
         if (link)
             link.href = `book?isbn=${isbn13}`;
-        return el;
+        return element;
     }
     renderError() {
         if (this.loadingElement)

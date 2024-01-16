@@ -2,6 +2,7 @@ import bookModel from "../model";
 export default class NavGnb extends HTMLElement {
     constructor() {
         super();
+        this.sizeElement = null;
         this.PATHS = [
             "/search",
             "/favorite",
@@ -9,18 +10,19 @@ export default class NavGnb extends HTMLElement {
             "/library",
             "/setting",
         ];
+        this.sizeElement = null;
         this.renderBookSize = this.renderBookSize.bind(this);
     }
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
+        this.sizeElement = this.querySelector(".size");
         bookModel.subscribeFavoriteBookUpdate(this.renderBookSize);
         bookModel.subscribeToBookStateUpdate(this.renderBookSize);
     }
     disconnectedCallback() {
         bookModel.unsubscribeFavoriteBookUpdate(this.renderBookSize);
         bookModel.unsubscribeFavoriteBookUpdate(this.renderBookSize);
-        //
     }
     get bookSize() {
         return Object.values(bookModel.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
@@ -36,13 +38,13 @@ export default class NavGnb extends HTMLElement {
             </nav>`;
     }
     setSelectedMenu() {
-        const idx = this.PATHS.indexOf(document.location.pathname);
-        if (idx >= 0)
-            this.querySelectorAll("a")[idx].ariaSelected = "true";
+        const index = this.PATHS.indexOf(document.location.pathname);
+        if (index >= 0)
+            this.querySelectorAll("a")[index].ariaSelected = "true";
     }
     renderBookSize() {
-        const sizeEl = this.querySelector(".size");
-        sizeEl.textContent = this.bookSize.toString();
+        if (this.sizeElement)
+            this.sizeElement.textContent = this.bookSize.toString();
     }
 }
 //# sourceMappingURL=NavGnb.js.map

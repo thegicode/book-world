@@ -2,6 +2,7 @@ import bookModel from "../model";
 
 export default class NavGnb extends HTMLElement {
     private PATHS: string[];
+    private sizeElement: HTMLElement | null = null;
 
     constructor() {
         super();
@@ -14,12 +15,16 @@ export default class NavGnb extends HTMLElement {
             "/setting",
         ];
 
+        this.sizeElement = null;
+
         this.renderBookSize = this.renderBookSize.bind(this);
     }
 
     connectedCallback() {
         this.render();
         this.setSelectedMenu();
+
+        this.sizeElement = this.querySelector(".size") as HTMLElement;
 
         bookModel.subscribeFavoriteBookUpdate(this.renderBookSize);
         bookModel.subscribeToBookStateUpdate(this.renderBookSize);
@@ -28,7 +33,6 @@ export default class NavGnb extends HTMLElement {
     disconnectedCallback() {
         bookModel.unsubscribeFavoriteBookUpdate(this.renderBookSize);
         bookModel.unsubscribeFavoriteBookUpdate(this.renderBookSize);
-        //
     }
 
     get bookSize() {
@@ -50,12 +54,12 @@ export default class NavGnb extends HTMLElement {
     }
 
     protected setSelectedMenu(): void {
-        const idx = this.PATHS.indexOf(document.location.pathname);
-        if (idx >= 0) this.querySelectorAll("a")[idx].ariaSelected = "true";
+        const index = this.PATHS.indexOf(document.location.pathname);
+        if (index >= 0) this.querySelectorAll("a")[index].ariaSelected = "true";
     }
 
     protected renderBookSize() {
-        const sizeEl = this.querySelector(".size") as HTMLElement;
-        sizeEl.textContent = this.bookSize.toString();
+        if (this.sizeElement)
+            this.sizeElement.textContent = this.bookSize.toString();
     }
 }

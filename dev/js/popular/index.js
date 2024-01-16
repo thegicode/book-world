@@ -1108,6 +1108,7 @@
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
+      this.sizeElement = null;
       this.PATHS = [
         "/search",
         "/favorite",
@@ -1115,11 +1116,13 @@
         "/library",
         "/setting"
       ];
+      this.sizeElement = null;
       this.renderBookSize = this.renderBookSize.bind(this);
     }
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
+      this.sizeElement = this.querySelector(".size");
       model_default.subscribeFavoriteBookUpdate(this.renderBookSize);
       model_default.subscribeToBookStateUpdate(this.renderBookSize);
     }
@@ -1141,13 +1144,13 @@
             </nav>`;
     }
     setSelectedMenu() {
-      const idx = this.PATHS.indexOf(document.location.pathname);
-      if (idx >= 0)
-        this.querySelectorAll("a")[idx].ariaSelected = "true";
+      const index = this.PATHS.indexOf(document.location.pathname);
+      if (index >= 0)
+        this.querySelectorAll("a")[index].ariaSelected = "true";
     }
     renderBookSize() {
-      const sizeEl = this.querySelector(".size");
-      sizeEl.textContent = this.bookSize.toString();
+      if (this.sizeElement)
+        this.sizeElement.textContent = this.bookSize.toString();
     }
   };
 

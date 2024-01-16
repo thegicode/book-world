@@ -15,23 +15,20 @@ export default class LibrarySearchByBook extends HTMLElement {
         super();
     }
     connectedCallback() {
-        const isbn = new URLSearchParams(location.search).get("isbn");
-        this.fetchList(isbn);
+        this.fetch(new URLSearchParams(location.search).get("isbn"));
     }
-    fetchList(isbn) {
+    fetch(isbn) {
         return __awaiter(this, void 0, void 0, function* () {
-            const favoriteLibraries = bookModel.regions;
-            if (Object.entries(favoriteLibraries).length === 0)
+            const libries = Object.values(bookModel.regions);
+            if (libries.length === 0)
                 return;
-            for (const regionName in favoriteLibraries) {
-                const detailCodes = Object.values(favoriteLibraries[regionName]);
-                if (detailCodes.length === 0)
-                    return;
-                const regionCode = detailCodes[0].slice(0, 2);
-                detailCodes.forEach((detailCode) => {
-                    this.fetchLibrarySearchByBook(isbn, regionCode, detailCode);
+            const promises = [];
+            libries.forEach((region) => {
+                Object.values(region).forEach((detailCode) => {
+                    promises.push(this.fetchLibrarySearchByBook(isbn, detailCode.slice(0, 2), detailCode));
                 });
-            }
+            });
+            yield Promise.all(promises);
         });
     }
     fetchLibrarySearchByBook(isbn, region, dtl_region) {
@@ -41,9 +38,8 @@ export default class LibrarySearchByBook extends HTMLElement {
                 region,
                 dtl_region,
             });
-            const url = `/library-search-by-book?${searchParams}`;
             try {
-                const data = yield CustomFetch.fetch(url);
+                const data = yield CustomFetch.fetch(`/library-search-by-book?${searchParams}`);
                 this.render(data, isbn);
             }
             catch (error) {
@@ -55,19 +51,13 @@ export default class LibrarySearchByBook extends HTMLElement {
     render({ libraries }, isbn) {
         if (libraries.length < 1)
             return;
-        const container = document.querySelector(".library-search-by-book");
-        if (!container)
-            return;
         const listElement = document.createElement("ul");
         const fragment = new DocumentFragment();
-        libraries.forEach(({ homepage, libCode, libName }) => {
-            const element = this.createLibrarySearchResultItem(isbn, homepage, libCode, libName);
-            if (element) {
-                fragment.appendChild(element);
-            }
-        });
+        libraries
+            .map(({ homepage, libCode, libName }) => this.createLibrarySearchResultItem(isbn, homepage, libCode, libName))
+            .forEach((element) => fragment.appendChild(element));
         listElement.appendChild(fragment);
-        container.appendChild(listElement);
+        document.querySelector(".library-search-by-book").appendChild(listElement);
     }
     createLibrarySearchResultItem(isbn, homepage, libCode, libName) {
         const template = document.querySelector("#tp-librarySearchByBookItem");
@@ -75,8 +65,6 @@ export default class LibrarySearchByBook extends HTMLElement {
             return null;
         const cloned = cloneTemplate(template);
         const link = cloned.querySelector("a");
-        if (!link)
-            return null;
         cloned.dataset.code = libCode;
         link.textContent = libName;
         link.href = homepage;

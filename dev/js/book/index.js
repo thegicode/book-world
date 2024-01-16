@@ -1108,6 +1108,7 @@
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
+      this.sizeElement = null;
       this.PATHS = [
         "/search",
         "/favorite",
@@ -1115,11 +1116,13 @@
         "/library",
         "/setting"
       ];
+      this.sizeElement = null;
       this.renderBookSize = this.renderBookSize.bind(this);
     }
     connectedCallback() {
       this.render();
       this.setSelectedMenu();
+      this.sizeElement = this.querySelector(".size");
       model_default.subscribeFavoriteBookUpdate(this.renderBookSize);
       model_default.subscribeToBookStateUpdate(this.renderBookSize);
     }
@@ -1141,13 +1144,13 @@
             </nav>`;
     }
     setSelectedMenu() {
-      const idx = this.PATHS.indexOf(document.location.pathname);
-      if (idx >= 0)
-        this.querySelectorAll("a")[idx].ariaSelected = "true";
+      const index = this.PATHS.indexOf(document.location.pathname);
+      if (index >= 0)
+        this.querySelectorAll("a")[index].ariaSelected = "true";
     }
     renderBookSize() {
-      const sizeEl = this.querySelector(".size");
-      sizeEl.textContent = this.bookSize.toString();
+      if (this.sizeElement)
+        this.sizeElement.textContent = this.bookSize.toString();
     }
   };
 
@@ -1225,21 +1228,20 @@
       super();
       this.loadingElement = null;
       this.data = null;
-      this.recBookTemplate = document.querySelector("#tp-recBookItem");
     }
     connectedCallback() {
       this.loadingElement = this.querySelector(".loading");
       const isbn = new URLSearchParams(location.search).get("isbn");
       this.dataset.isbn = isbn;
-      this.fetchUsageAnalysisList(isbn);
+      this.fetchUsageAnalysisList(isbn).then(() => {
+        this.render();
+      });
     }
     fetchUsageAnalysisList(isbn) {
       return __awaiter2(this, void 0, void 0, function* () {
         try {
           const data = yield CustomFetch_default.fetch(`/usage-analysis-list?isbn13=${isbn}`);
           this.data = data;
-          console.log(data);
-          this.render();
         } catch (error) {
           this.renderError();
           console.error(error);
@@ -1275,24 +1277,15 @@
       fillElementsWithData(otherData, this);
     }
     renderLoanHistory(loanHistory) {
-      const loanHistoryBody = this.querySelector(".loanHistory tbody");
-      if (!loanHistoryBody)
-        return;
-      const template = this.querySelector("#tp-loanHistoryItem");
-      if (!template)
-        return;
       const fragment = new DocumentFragment();
       loanHistory.forEach((history) => {
-        const clone = cloneTemplate(template);
-        fillElementsWithData(history, clone);
-        fragment.appendChild(clone);
+        const cloned = cloneTemplate(this.querySelector("#tp-loanHistoryItem"));
+        fillElementsWithData(history, cloned);
+        fragment.appendChild(cloned);
       });
-      loanHistoryBody.appendChild(fragment);
+      this.querySelector(".loanHistory tbody").appendChild(fragment);
     }
     renderLoanGroups(loanGrps) {
-      const loanGroupBody = this.querySelector(".loanGrps tbody");
-      if (!loanGroupBody)
-        return;
       const template = document.querySelector("#tp-loanGrpItem");
       if (!template)
         return;
@@ -1302,7 +1295,7 @@
         fillElementsWithData(loanGrp, clone);
         fragment.appendChild(clone);
       });
-      loanGroupBody.appendChild(fragment);
+      this.querySelector(".loanGrps tbody").appendChild(fragment);
     }
     renderKeyword(keywords) {
       const keywordsString = keywords.map((item) => {
@@ -1323,13 +1316,13 @@
       container.appendChild(fragment);
     }
     createRecItem(template, book) {
-      const el = cloneTemplate(template);
+      const element = cloneTemplate(template);
       const { isbn13 } = book;
-      fillElementsWithData(book, el);
-      const link = el.querySelector("a");
+      fillElementsWithData(book, element);
+      const link = element.querySelector("a");
       if (link)
         link.href = `book?isbn=${isbn13}`;
-      return el;
+      return element;
     }
     renderError() {
       if (this.loadingElement)
@@ -1370,23 +1363,20 @@
       super();
     }
     connectedCallback() {
-      const isbn = new URLSearchParams(location.search).get("isbn");
-      this.fetchList(isbn);
+      this.fetch(new URLSearchParams(location.search).get("isbn"));
     }
-    fetchList(isbn) {
+    fetch(isbn) {
       return __awaiter3(this, void 0, void 0, function* () {
-        const favoriteLibraries = model_default.regions;
-        if (Object.entries(favoriteLibraries).length === 0)
+        const libries = Object.values(model_default.regions);
+        if (libries.length === 0)
           return;
-        for (const regionName in favoriteLibraries) {
-          const detailCodes = Object.values(favoriteLibraries[regionName]);
-          if (detailCodes.length === 0)
-            return;
-          const regionCode = detailCodes[0].slice(0, 2);
-          detailCodes.forEach((detailCode) => {
-            this.fetchLibrarySearchByBook(isbn, regionCode, detailCode);
+        const promises = [];
+        libries.forEach((region) => {
+          Object.values(region).forEach((detailCode) => {
+            promises.push(this.fetchLibrarySearchByBook(isbn, detailCode.slice(0, 2), detailCode));
           });
-        }
+        });
+        yield Promise.all(promises);
       });
     }
     fetchLibrarySearchByBook(isbn, region, dtl_region) {
@@ -1396,9 +1386,8 @@
           region,
           dtl_region
         });
-        const url = `/library-search-by-book?${searchParams}`;
         try {
-          const data = yield CustomFetch_default.fetch(url);
+          const data = yield CustomFetch_default.fetch(`/library-search-by-book?${searchParams}`);
           this.render(data, isbn);
         } catch (error) {
           console.error(error);
@@ -1409,19 +1398,11 @@
     render({ libraries }, isbn) {
       if (libraries.length < 1)
         return;
-      const container = document.querySelector(".library-search-by-book");
-      if (!container)
-        return;
       const listElement = document.createElement("ul");
       const fragment = new DocumentFragment();
-      libraries.forEach(({ homepage, libCode, libName }) => {
-        const element = this.createLibrarySearchResultItem(isbn, homepage, libCode, libName);
-        if (element) {
-          fragment.appendChild(element);
-        }
-      });
+      libraries.map(({ homepage, libCode, libName }) => this.createLibrarySearchResultItem(isbn, homepage, libCode, libName)).forEach((element) => fragment.appendChild(element));
       listElement.appendChild(fragment);
-      container.appendChild(listElement);
+      document.querySelector(".library-search-by-book").appendChild(listElement);
     }
     createLibrarySearchResultItem(isbn, homepage, libCode, libName) {
       const template = document.querySelector("#tp-librarySearchByBookItem");
@@ -1429,8 +1410,6 @@
         return null;
       const cloned = cloneTemplate(template);
       const link = cloned.querySelector("a");
-      if (!link)
-        return null;
       cloned.dataset.code = libCode;
       link.textContent = libName;
       link.href = homepage;

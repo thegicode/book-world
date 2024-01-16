@@ -8,22 +8,28 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
 
     connectedCallback() {
-        const isbn = new URLSearchParams(location.search).get("isbn") as string;
-        this.fetchList(isbn);
+        this.fetch(new URLSearchParams(location.search).get("isbn") as string);
     }
 
-    protected async fetchList(isbn: string): Promise<void> {
-        const favoriteLibraries = bookModel.regions;
-        if (Object.entries(favoriteLibraries).length === 0) return;
+    protected async fetch(isbn: string): Promise<void> {
+        const libries = Object.values(bookModel.regions);
+        if (libries.length === 0) return;
 
-        for (const regionName in favoriteLibraries) {
-            const detailCodes = Object.values(favoriteLibraries[regionName]);
-            if (detailCodes.length === 0) return;
-            const regionCode = detailCodes[0].slice(0, 2);
-            detailCodes.forEach((detailCode) => {
-                this.fetchLibrarySearchByBook(isbn, regionCode, detailCode);
+        const promises: Promise<void>[] = [];
+
+        libries.forEach((region) => {
+            Object.values(region).forEach((detailCode) => {
+                promises.push(
+                    this.fetchLibrarySearchByBook(
+                        isbn,
+                        detailCode.slice(0, 2),
+                        detailCode
+                    )
+                );
             });
-        }
+        });
+
+        await Promise.all(promises);
     }
 
     protected async fetchLibrarySearchByBook(
@@ -36,11 +42,10 @@ export default class LibrarySearchByBook extends HTMLElement {
             region,
             dtl_region,
         });
-        const url = `/library-search-by-book?${searchParams}`;
 
         try {
             const data = await CustomFetch.fetch<ILibrarySearchByBookResult>(
-                url
+                `/library-search-by-book?${searchParams}`
             );
             this.render(data, isbn);
         } catch (error) {
@@ -55,26 +60,26 @@ export default class LibrarySearchByBook extends HTMLElement {
     ): void {
         if (libraries.length < 1) return;
 
-        const container = document.querySelector(".library-search-by-book");
-        if (!container) return;
-
         const listElement = document.createElement("ul");
         const fragment = new DocumentFragment();
 
-        libraries.forEach(({ homepage, libCode, libName }) => {
-            const element = this.createLibrarySearchResultItem(
-                isbn,
-                homepage,
-                libCode,
-                libName
-            ) as HTMLElement;
-            if (element) {
-                fragment.appendChild(element);
-            }
-        });
+        libraries
+            .map(
+                ({ homepage, libCode, libName }) =>
+                    this.createLibrarySearchResultItem(
+                        isbn,
+                        homepage,
+                        libCode,
+                        libName
+                    ) as HTMLElement
+            )
+            .forEach((element) => fragment.appendChild(element));
 
         listElement.appendChild(fragment);
-        container.appendChild(listElement);
+
+        (
+            document.querySelector(".library-search-by-book") as HTMLElement
+        ).appendChild(listElement);
     }
 
     protected createLibrarySearchResultItem(
@@ -89,10 +94,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         if (!template) return null;
 
         const cloned = cloneTemplate(template);
-
-        const link = cloned.querySelector("a");
-        if (!link) return null;
-
+        const link = cloned.querySelector("a") as HTMLAnchorElement;
         cloned.dataset.code = libCode;
         link.textContent = libName;
         link.href = homepage;

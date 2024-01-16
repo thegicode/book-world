@@ -6,14 +6,10 @@ export default class Book extends HTMLElement {
     protected loadingElement: HTMLElement | null;
     protected data: IUsageAnalysisListData | null;
 
-    recBookTemplate: HTMLTemplateElement | null;
-
     constructor() {
         super();
         this.loadingElement = null;
         this.data = null;
-
-        this.recBookTemplate = document.querySelector("#tp-recBookItem");
     }
 
     connectedCallback() {
@@ -21,7 +17,10 @@ export default class Book extends HTMLElement {
 
         const isbn = new URLSearchParams(location.search).get("isbn") as string;
         this.dataset.isbn = isbn;
-        this.fetchUsageAnalysisList(isbn);
+
+        this.fetchUsageAnalysisList(isbn).then(() => {
+            this.render();
+        });
     }
 
     protected async fetchUsageAnalysisList(isbn: string): Promise<void> {
@@ -30,8 +29,6 @@ export default class Book extends HTMLElement {
                 `/usage-analysis-list?isbn13=${isbn}`
             );
             this.data = data;
-            console.log(data);
-            this.render();
         } catch (error) {
             this.renderError();
             console.error(error);
@@ -103,28 +100,22 @@ export default class Book extends HTMLElement {
     }
 
     renderLoanHistory(loanHistory: ILoanHistory[]) {
-        const loanHistoryBody = this.querySelector(".loanHistory tbody");
-        if (!loanHistoryBody) return;
-
-        const template = this.querySelector(
-            "#tp-loanHistoryItem"
-        ) as HTMLTemplateElement;
-        if (!template) return;
-
         const fragment = new DocumentFragment();
         loanHistory.forEach((history) => {
-            const clone = cloneTemplate(template);
-            fillElementsWithData(history, clone);
-            fragment.appendChild(clone);
+            const cloned = cloneTemplate(
+                this.querySelector("#tp-loanHistoryItem") as HTMLTemplateElement
+            );
+            fillElementsWithData(history, cloned);
+
+            fragment.appendChild(cloned);
         });
 
-        loanHistoryBody.appendChild(fragment);
+        (this.querySelector(".loanHistory tbody") as HTMLElement).appendChild(
+            fragment
+        );
     }
 
     renderLoanGroups(loanGrps: ILoanGroups[]) {
-        const loanGroupBody = this.querySelector(".loanGrps tbody");
-        if (!loanGroupBody) return;
-
         const template = document.querySelector(
             "#tp-loanGrpItem"
         ) as HTMLTemplateElement;
@@ -139,7 +130,9 @@ export default class Book extends HTMLElement {
             fragment.appendChild(clone);
         });
 
-        loanGroupBody.appendChild(fragment);
+        (this.querySelector(".loanGrps tbody") as HTMLElement).appendChild(
+            fragment
+        );
     }
 
     renderKeyword(keywords: IKeyword[]) {
@@ -172,15 +165,15 @@ export default class Book extends HTMLElement {
     }
 
     createRecItem(template: HTMLTemplateElement, book: IRecBook) {
-        const el = cloneTemplate(template);
+        const element = cloneTemplate(template);
         const { isbn13 } = book;
 
-        fillElementsWithData(book, el);
+        fillElementsWithData(book, element);
 
-        const link = el.querySelector("a");
+        const link = element.querySelector("a");
         if (link) link.href = `book?isbn=${isbn13}`;
 
-        return el;
+        return element;
     }
 
     protected renderError() {
