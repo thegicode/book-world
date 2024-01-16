@@ -41,24 +41,21 @@ export default class BookList extends HTMLElement {
         this.keyword ? this.loadBooks() : this.showDefaultMessage();
     }
     loadBooks() {
+        var _a, _b;
         this.bookContainer.innerHTML = "";
+        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
         this.fetchBooks();
-    }
-    showDefaultMessage() {
-        this.paginationElement.hidden = true;
-        this.renderMessage("message");
+        (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
     }
     fetchBooks() {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.keyword || !this.sortingOrder) {
                 return;
             }
-            (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
             const searchUrl = `${URL.search}?keyword=${encodeURIComponent(this.keyword)}&display=${this.itemsPerPage}&start=${this.currentItemCount + 1}&sort=${this.sortingOrder}`;
             try {
                 const data = yield CustomFetch.fetch(searchUrl);
-                this.displayBooks(data);
+                this.render(data);
             }
             catch (error) {
                 if (error instanceof Error) {
@@ -68,18 +65,19 @@ export default class BookList extends HTMLElement {
                     console.error("An unexpected error occurred");
                 }
             }
-            (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
         });
     }
-    displayBooks(bookData) {
+    render(bookData) {
         var _a;
+        if (!bookData)
+            return;
         if (bookData.total === 0) {
             this.renderMessage("notFound");
             return;
         }
         this.currentItemCount += bookData.display;
         this.updatePagingInfo(bookData.total);
-        this.appendBookItems(bookData.items);
+        this.renderList(bookData.items);
         if (bookData.total !== this.currentItemCount) {
             (_a = this.observer) === null || _a === void 0 ? void 0 : _a.observe();
         }
@@ -97,20 +95,27 @@ export default class BookList extends HTMLElement {
         }
         this.paginationElement.hidden = false;
     }
-    appendBookItems(searchBookData) {
+    renderList(searchBookData) {
         const fragment = new DocumentFragment();
-        searchBookData.forEach((data, index) => {
-            const bookItem = new BookItem(data);
-            bookItem.dataset.index = this.getIndex(index).toString();
-            bookItem.appendChild(this.itemTemplate.content.cloneNode(true));
-            fragment.appendChild(bookItem);
-        });
+        searchBookData
+            .map((data, index) => this.createItem(data, index))
+            .forEach((bookItem) => fragment.appendChild(bookItem));
         this.bookContainer.appendChild(fragment);
+    }
+    createItem(data, index) {
+        const bookItem = new BookItem(data);
+        bookItem.dataset.index = this.getIndex(index).toString();
+        bookItem.appendChild(this.itemTemplate.content.cloneNode(true));
+        return bookItem;
     }
     getIndex(index) {
         return (Math.ceil((this.currentItemCount - this.itemsPerPage) / this.itemsPerPage) *
             this.itemsPerPage +
             index);
+    }
+    showDefaultMessage() {
+        this.paginationElement.hidden = true;
+        this.renderMessage("message");
     }
     renderMessage(type) {
         const messageTemplate = document.querySelector(`#tp-${type}`);

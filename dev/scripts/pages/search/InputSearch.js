@@ -4,21 +4,17 @@ import { bookList } from "./selectors";
 export default class InputSearch extends HTMLElement {
     constructor() {
         super();
-        this.form = null;
-        this.input = null;
         this.handleRadioChange = () => {
-            var _a;
-            (_a = this.form) === null || _a === void 0 ? void 0 : _a.dispatchEvent(new Event("submit"));
+            this.form.dispatchEvent(new Event("submit"));
         };
         this.onSubmit = (event) => {
-            var _a;
             event.preventDefault();
             if (!this.input)
                 return;
             this.input.focus();
             const url = new URL(window.location.href);
             const keyword = this.input.value;
-            const sort = (_a = this.form) === null || _a === void 0 ? void 0 : _a.sort.value;
+            const sort = this.form.sort.value;
             url.searchParams.set("keyword", keyword);
             url.searchParams.set("sort", sort);
             window.history.pushState({}, "", url.toString());
@@ -29,16 +25,14 @@ export default class InputSearch extends HTMLElement {
         this.input = this.querySelector("input[type='search']");
     }
     connectedCallback() {
-        var _a, _b;
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", this.onSubmit);
-        (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort.forEach((radio) => {
+        this.form.addEventListener("submit", this.onSubmit);
+        this.form.sort.forEach((radio) => {
             radio.addEventListener("change", this.handleRadioChange);
         });
     }
     disconnectedCallback() {
-        var _a, _b;
-        (_a = this.form) === null || _a === void 0 ? void 0 : _a.removeEventListener("submit", this.onSubmit);
-        (_b = this.form) === null || _b === void 0 ? void 0 : _b.sort.forEach((radio) => {
+        this.form.removeEventListener("submit", this.onSubmit);
+        this.form.sort.forEach((radio) => {
             radio.removeEventListener("change", this.handleRadioChange);
         });
     }

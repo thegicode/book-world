@@ -5,6 +5,7 @@ import renderBookItem from "./renderBooItem";
 export default class BookItem extends HTMLElement {
     private data: ISearchBook;
     private libraryButton: HTMLButtonElement | null = null;
+    private libraryBookExist: LibraryBookExist | null = null;
 
     constructor(data: ISearchBook) {
         super();
@@ -16,23 +17,18 @@ export default class BookItem extends HTMLElement {
     connectedCallback() {
         this.renderView();
 
-        this.libraryButton = this.querySelector(".library-button");
+        this.libraryButton = this.querySelector(
+            ".library-button"
+        ) as HTMLButtonElement;
 
-        this.addListeners();
+        this.libraryBookExist = this.querySelector(
+            "library-book-exist"
+        ) as LibraryBookExist;
+
+        this.libraryButton.addEventListener("click", this.onLibraryButtonClick);
     }
 
     disconnectedCallback() {
-        this.removeListeners();
-    }
-
-    private addListeners() {
-        this.libraryButton?.addEventListener(
-            "click",
-            this.onLibraryButtonClick
-        );
-    }
-
-    private removeListeners() {
         this.libraryButton?.removeEventListener(
             "click",
             this.onLibraryButtonClick
@@ -45,21 +41,22 @@ export default class BookItem extends HTMLElement {
         const renderData = {
             ...others,
             discount: Number(discount).toLocaleString(),
-            pubdate: `${pubdate.substring(0, 4)}.${pubdate.substring(
-                4,
-                6
-            )}.${pubdate.substring(6)}`,
+            pubdate: this.getPubdate(pubdate),
         };
 
         renderBookItem(this, renderData);
     }
 
+    private getPubdate(pubdate: string) {
+        return `${pubdate.substring(0, 4)}.${pubdate.substring(
+            4,
+            6
+        )}.${pubdate.substring(6)}`;
+    }
+
     // 도서관 소장 | 대출 조회
     private onLibraryButtonClick() {
-        const libraryBookExist = this.querySelector(
-            "library-book-exist"
-        ) as LibraryBookExist;
-        libraryBookExist.onLibraryBookExist(
+        this.libraryBookExist?.onLibraryBookExist(
             this.libraryButton,
             this.dataset.isbn || "",
             bookModel.libraries

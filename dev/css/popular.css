@@ -191,15 +191,15 @@ popular-header .filterButton {
   overflow: auto;
   position: absolute;
   left: 5px;
-  right: 5px;
+  right: 10px;
   top: 76px;
   z-index: 10;
   box-sizing: border-box;
   height: 80%;
   padding: 1rem;
-  border-radius: 5px;
-  border: 2px solid #464646;
-  background: #fff;
+  border-radius: 10px;
+  border: 2px solid #dadada;
+  background: #efefef;
   color: #666;
 }
 .filter-form fieldset {

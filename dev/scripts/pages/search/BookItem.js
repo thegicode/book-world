@@ -15,34 +15,32 @@ export default class BookItem extends HTMLElement {
     constructor(data) {
         super();
         this.libraryButton = null;
+        this.libraryBookExist = null;
         this.data = data;
         this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }
     connectedCallback() {
         this.renderView();
         this.libraryButton = this.querySelector(".library-button");
-        this.addListeners();
+        this.libraryBookExist = this.querySelector("library-book-exist");
+        this.libraryButton.addEventListener("click", this.onLibraryButtonClick);
     }
     disconnectedCallback() {
-        this.removeListeners();
-    }
-    addListeners() {
-        var _a;
-        (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
-    }
-    removeListeners() {
         var _a;
         (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibraryButtonClick);
     }
     renderView() {
         const _a = this.data, { discount, pubdate } = _a, others = __rest(_a, ["discount", "pubdate"]);
-        const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}` });
+        const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: this.getPubdate(pubdate) });
         renderBookItem(this, renderData);
+    }
+    getPubdate(pubdate) {
+        return `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
     }
     // 도서관 소장 | 대출 조회
     onLibraryButtonClick() {
-        const libraryBookExist = this.querySelector("library-book-exist");
-        libraryBookExist.onLibraryBookExist(this.libraryButton, this.dataset.isbn || "", bookModel.libraries);
+        var _a;
+        (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.onLibraryBookExist(this.libraryButton, this.dataset.isbn || "", bookModel.libraries);
     }
 }
 //# sourceMappingURL=BookItem.js.map

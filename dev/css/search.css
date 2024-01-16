@@ -230,11 +230,12 @@ monthly-keywords a {
   border: 1px solid #c8e0da;
   background-color: #d7edd8;
   white-space: nowrap;
-  color: #222;
+  color: #44877c;
   text-decoration: none;
 }
 monthly-keywords a:hover {
-  text-decoration: underline;
+  border-color: #7bdac1;
+  background-color: #fff;
 }
 
 .input-search {
@@ -242,11 +243,11 @@ monthly-keywords a:hover {
 }
 .input-search input {
   flex: 1;
-  padding: 10px 1rem;
+  padding: 7px 10px;
   border-radius: 5px;
   border: 1px solid #cde1d1;
   background-color: transparent;
-  font-size: 14px;
+  font-size: 13px;
   color: #4a754a;
 }
 .input-search input::placeholder {

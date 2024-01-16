@@ -56,20 +56,18 @@ export default class BookList extends HTMLElement {
 
     private loadBooks() {
         this.bookContainer.innerHTML = "";
+
+        this.loadingComponent?.show();
+
         this.fetchBooks();
+
+        this.loadingComponent?.hide();
     }
 
-    private showDefaultMessage() {
-        this.paginationElement.hidden = true;
-        this.renderMessage("message");
-    }
-
-    private async fetchBooks(): Promise<void> {
+    private async fetchBooks() {
         if (!this.keyword || !this.sortingOrder) {
             return;
         }
-
-        this.loadingComponent?.show();
 
         const searchUrl = `${URL.search}?keyword=${encodeURIComponent(
             this.keyword
@@ -81,7 +79,7 @@ export default class BookList extends HTMLElement {
             const data = await CustomFetch.fetch<ISearchNaverBookResult>(
                 searchUrl
             );
-            this.displayBooks(data);
+            this.render(data);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 console.error(`Error fetching books: ${error.message}`);
@@ -89,11 +87,11 @@ export default class BookList extends HTMLElement {
                 console.error("An unexpected error occurred");
             }
         }
-
-        this.loadingComponent?.hide();
     }
 
-    private displayBooks(bookData: ISearchNaverBookResult): void {
+    private render(bookData: ISearchNaverBookResult) {
+        if (!bookData) return;
+
         if (bookData.total === 0) {
             this.renderMessage("notFound");
             return;
@@ -101,7 +99,7 @@ export default class BookList extends HTMLElement {
 
         this.currentItemCount += bookData.display;
         this.updatePagingInfo(bookData.total);
-        this.appendBookItems(bookData.items);
+        this.renderList(bookData.items);
 
         if (bookData.total !== this.currentItemCount) {
             this.observer?.observe();
@@ -125,17 +123,21 @@ export default class BookList extends HTMLElement {
         this.paginationElement.hidden = false;
     }
 
-    private appendBookItems(searchBookData: ISearchBook[]) {
+    private renderList(searchBookData: ISearchBook[]) {
         const fragment = new DocumentFragment();
 
-        searchBookData.forEach((data, index) => {
-            const bookItem = new BookItem(data);
-            bookItem.dataset.index = this.getIndex(index).toString();
-            bookItem.appendChild(this.itemTemplate.content.cloneNode(true));
-            fragment.appendChild(bookItem);
-        });
+        searchBookData
+            .map((data, index) => this.createItem(data, index))
+            .forEach((bookItem) => fragment.appendChild(bookItem));
 
         this.bookContainer.appendChild(fragment);
+    }
+
+    private createItem(data: ISearchBook, index: number) {
+        const bookItem = new BookItem(data);
+        bookItem.dataset.index = this.getIndex(index).toString();
+        bookItem.appendChild(this.itemTemplate.content.cloneNode(true));
+        return bookItem;
     }
 
     private getIndex(index: number) {
@@ -146,6 +148,11 @@ export default class BookList extends HTMLElement {
                 this.itemsPerPage +
             index
         );
+    }
+
+    private showDefaultMessage() {
+        this.paginationElement.hidden = true;
+        this.renderMessage("message");
     }
 
     private renderMessage(type: string) {

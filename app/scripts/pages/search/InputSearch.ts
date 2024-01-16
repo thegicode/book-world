@@ -3,8 +3,8 @@
 import { bookList } from "./selectors";
 
 export default class InputSearch extends HTMLElement {
-    private form: HTMLFormElement | null = null;
-    private input: HTMLInputElement | null = null;
+    private form: HTMLFormElement;
+    private input: HTMLInputElement;
 
     constructor() {
         super();
@@ -16,21 +16,21 @@ export default class InputSearch extends HTMLElement {
     }
 
     connectedCallback() {
-        this.form?.addEventListener("submit", this.onSubmit);
-        this.form?.sort.forEach((radio: HTMLInputElement) => {
+        this.form.addEventListener("submit", this.onSubmit);
+        this.form.sort.forEach((radio: HTMLInputElement) => {
             radio.addEventListener("change", this.handleRadioChange);
         });
     }
 
     disconnectedCallback() {
-        this.form?.removeEventListener("submit", this.onSubmit);
-        this.form?.sort.forEach((radio: HTMLInputElement) => {
+        this.form.removeEventListener("submit", this.onSubmit);
+        this.form.sort.forEach((radio: HTMLInputElement) => {
             radio.removeEventListener("change", this.handleRadioChange);
         });
     }
 
     private handleRadioChange = () => {
-        this.form?.dispatchEvent(new Event("submit"));
+        this.form.dispatchEvent(new Event("submit"));
     };
 
     private onSubmit = (event: Event) => {
@@ -41,7 +41,7 @@ export default class InputSearch extends HTMLElement {
 
         const url = new URL(window.location.href);
         const keyword = this.input.value;
-        const sort = this.form?.sort.value;
+        const sort = this.form.sort.value;
 
         url.searchParams.set("keyword", keyword);
         url.searchParams.set("sort", sort);
