@@ -23,13 +23,13 @@
             <nav-gnb></nav-gnb>
 
             <app-popular class="popular">
-                <popular-header>
+                <popular-search>
                     <nav class="page-nav" hidden></nav>
                     <button type="button" class="filterButton">
                         조건 검색
                     </button>
                     <form class="filter-form" hidden>
-                        <fieldset class="dataSource">
+                        <!-- <fieldset class="dataSource">
                             <legend class="title">데이터 제공 방식</legend>
                             <div class="options">
                                 <label>
@@ -58,7 +58,7 @@
                                     <span class="label">연도별</span>
                                 </label>
                             </div>
-                        </fieldset>
+                        </fieldset> -->
                         <fieldset class="loanDuration">
                             <legend class="title">대출 기간</legend>
                             <div class="options">
@@ -688,7 +688,7 @@
                             <button type="submit">확인</button>
                         </div>
                     </form>
-                </popular-header>
+                </popular-search>
                 <main class="popular-body">
                     <ul class="popular-list"></ul>
                     <loading-component hidden>Loading...</loading-component>

@@ -1380,8 +1380,8 @@
     }
   };
 
-  // dev/scripts/pages/popular/PopularHeader.js
-  var PopularHeader = class extends HTMLElement {
+  // dev/scripts/pages/popular/PopularSearch.js
+  var PopularSearch = class extends HTMLElement {
     constructor() {
       super();
       this.closeForm = () => {
@@ -1628,7 +1628,7 @@
   customElements.define("book-image", BookImage);
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-popular", Popular);
-  customElements.define("popular-header", PopularHeader);
+  customElements.define("popular-search", PopularSearch);
   customElements.define("category-selector", CategorySelector);
 })();
 //# sourceMappingURL=index.js.map

@@ -145,21 +145,21 @@ nav-gnb {
   color: #666;
 }
 
-popular-header {
+popular-search {
   flex: none;
   display: flex;
   gap: 5px;
 }
-popular-header .page-nav {
+popular-search .page-nav {
   flex: 1;
   overflow: auto;
   display: flex;
   background-color: #364d4e;
 }
-popular-header .page-nav[hidden] {
+popular-search .page-nav[hidden] {
   display: none;
 }
-popular-header .page-nav button {
+popular-search .page-nav button {
   flex: 1;
   padding: 10px 1rem;
   border-radius: 0;
@@ -170,14 +170,14 @@ popular-header .page-nav button {
   color: #c8c8c8;
   white-space: nowrap;
 }
-popular-header .page-nav button:hover, popular-header .page-nav button:active {
+popular-search .page-nav button:hover, popular-search .page-nav button:active {
   color: #fff;
 }
-popular-header .page-nav button[aria-selected=true] {
+popular-search .page-nav button[aria-selected=true] {
   color: #333;
   background-color: #fff;
 }
-popular-header .filterButton {
+popular-search .filterButton {
   margin-left: auto;
   box-sizing: border-box;
   padding: 7px 1rem;

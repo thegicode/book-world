@@ -244,4 +244,4 @@ export default class PopularSearch extends HTMLElement {
         this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;
     }
 }
-//# sourceMappingURL=PopularHeader.js.map
+//# sourceMappingURL=PopularSearch.js.map

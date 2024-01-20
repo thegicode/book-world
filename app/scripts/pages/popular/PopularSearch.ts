@@ -1,7 +1,7 @@
 import { CustomEventEmitter } from "../../utils";
 import { getCurrentDates } from "../../utils/helpers";
 
-export default class PopularHeader extends HTMLElement {
+export default class PopularSearch extends HTMLElement {
     private form: HTMLFormElement;
     private filterButton: HTMLButtonElement;
     private closeButton: HTMLButtonElement;
