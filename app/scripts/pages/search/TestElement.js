@@ -20,5 +20,7 @@ export default class TestElement extends HTMLElement {
             });
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+        //
+    }
 }

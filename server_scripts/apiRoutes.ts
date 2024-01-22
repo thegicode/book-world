@@ -7,6 +7,7 @@ import {
     librarySearchByBook,
     loanItemSrch,
     monthlyKeywords,
+    searchKyoboBook,
 } from "./apiHandlers";
 
 export const setApiRoutes = (app: Application) => {
@@ -17,4 +18,5 @@ export const setApiRoutes = (app: Application) => {
     app.get("/library-search-by-book", librarySearchByBook);
     app.get("/popular-book", loanItemSrch);
     app.get("/monthly-keywords", monthlyKeywords);
+    app.get("/kyobo-book", searchKyoboBook);
 };

@@ -2,6 +2,7 @@
 import { Request, Response } from "express";
 import path from "path";
 import dotenv from "dotenv";
+import cheerio from "cheerio";
 
 dotenv.config({ path: path.resolve(__dirname, ".env.key") });
 const { LIBRARY_KEY, NAVER_CLIENT_ID, NAVER_SECRET_KEY } = process.env;
@@ -15,7 +16,7 @@ const fetchData = async (url: string, headers?: Record<string, string>) => {
     return await response.json();
 };
 
-// NAVER ; 키워드 검색, 책 검색
+/* NAVER ; 키워드 검색, 책 검색 */
 export async function searchNaverBook(req: Request, res: Response) {
     const { keyword, display, start, sort } = req.query;
     const queryParams = new URLSearchParams({
@@ -37,6 +38,45 @@ export async function searchNaverBook(req: Request, res: Response) {
         console.error(error);
         res.status(500).send("Failed to get books from Naver");
     }
+}
+
+/* 교보문고 : eBook, sam 검색 */
+export async function searchKyoboBook(req: Request, res: Response) {
+    // https://search.kyobobook.co.kr/search?keyword=${req.query.isbn}
+
+    const url = "https://product.kyobobook.co.kr/detail/S000001913217";
+
+    async function fetchWebPage(url: string) {
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const html = await response.text();
+            return html;
+        } catch (error) {
+            console.error("Error fetching web page:", error);
+            throw error;
+        }
+    }
+
+    async function handleKyobo() {
+        const webPageContent = await fetchWebPage(url);
+        const $ = cheerio.load(webPageContent);
+        const prodTypeElements = $(".prod_type_list .prod_type");
+        // const prodPriceElements = $(".prod_type_list .prod_price");
+        const prodTypes = prodTypeElements
+            .map(function () {
+                return $(this).text().trim();
+            })
+            .get();
+
+        res.send(prodTypes);
+    }
+
+    handleKyobo();
 }
 
 /** 도서관 정보나루 */

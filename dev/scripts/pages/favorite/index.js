@@ -3,6 +3,7 @@ import Favorite from "./Favorite";
 import FavoriteNav from "./FavoriteNav";
 import FavoriteItem from "./FavoriteItem";
 import OverlayCategory from "./OverlayCategory";
+import KyoboInfo from "./KyoboInfo";
 customElements.define("book-image", BookImage);
 customElements.define("nav-gnb", NavGnb);
 customElements.define("favorite-item", FavoriteItem);
@@ -12,4 +13,5 @@ customElements.define("book-description", BookDescription);
 customElements.define("library-book-exist", LibraryBookExist);
 customElements.define("category-selector", CategorySelector);
 customElements.define("overlay-category", OverlayCategory);
+customElements.define("kyobo-info", KyoboInfo);
 //# sourceMappingURL=index.js.map

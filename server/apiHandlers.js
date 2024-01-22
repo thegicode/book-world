@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.monthlyKeywords = exports.loanItemSrch = exports.librarySearchByBook = exports.usageAnalysisList = exports.bookExist = exports.librarySearch = exports.searchNaverBook = void 0;
+exports.monthlyKeywords = exports.loanItemSrch = exports.librarySearchByBook = exports.usageAnalysisList = exports.bookExist = exports.librarySearch = exports.searchKyoboBook = exports.searchNaverBook = void 0;
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const cheerio_1 = __importDefault(require("cheerio"));
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, ".env.key") });
 const { LIBRARY_KEY, NAVER_CLIENT_ID, NAVER_SECRET_KEY } = process.env;
 const fetchData = (url, headers) => __awaiter(void 0, void 0, void 0, function* () {
@@ -50,6 +51,42 @@ function searchNaverBook(req, res) {
     });
 }
 exports.searchNaverBook = searchNaverBook;
+function searchKyoboBook(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = "https://product.kyobobook.co.kr/detail/S000001913217";
+        function fetchWebPage(url) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const response = yield fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const html = yield response.text();
+                    return html;
+                }
+                catch (error) {
+                    console.error("Error fetching web page:", error);
+                    throw error;
+                }
+            });
+        }
+        function handleKyobo() {
+            return __awaiter(this, void 0, void 0, function* () {
+                const webPageContent = yield fetchWebPage(url);
+                const $ = cheerio_1.default.load(webPageContent);
+                const prodTypeElements = $(".prod_type_list .prod_type");
+                const prodTypes = prodTypeElements
+                    .map(function () {
+                    return $(this).text().trim();
+                })
+                    .get();
+                res.send(prodTypes);
+            });
+        }
+        handleKyobo();
+    });
+}
+exports.searchKyoboBook = searchKyoboBook;
 const buildLibraryApiUrl = (apiPath, params) => {
     const queryParams = new URLSearchParams(Object.assign(Object.assign({}, params), { authKey: LIBRARY_KEY, format: "json" }));
     return `http://data4library.kr/api/${apiPath}?${queryParams}`;
