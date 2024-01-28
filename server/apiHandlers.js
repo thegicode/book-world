@@ -70,7 +70,6 @@ function searchNaverBook(req, res) {
 exports.searchNaverBook = searchNaverBook;
 function searchKyoboBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("searchKyoboBook part10");
         try {
             const bookIsbn = req.query.isbn;
             const koyboURL = path_1.default.resolve("./server/kyobo.json");
