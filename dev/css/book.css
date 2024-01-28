@@ -48,7 +48,7 @@ library-book-exist .library-item {
   display: flex;
   padding: 3px 0;
   font-size: 12px;
-  color: #666;
+  color: #767676;
 }
 library-book-exist .library-item span {
   margin-right: 5px;

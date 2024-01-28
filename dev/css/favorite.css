@@ -98,7 +98,7 @@ library-book-exist .library-item {
   display: flex;
   padding: 3px 0;
   font-size: 12px;
-  color: #666;
+  color: #767676;
 }
 library-book-exist .library-item span {
   margin-right: 5px;
@@ -203,7 +203,7 @@ loading-component[hidden] {
 }
 
 kyobo-info {
-  margin: 0 1rem 10px;
+  margin: 1rem 1rem 10px;
 }
 kyobo-info h5 {
   margin: 0 0 5px;
@@ -211,13 +211,22 @@ kyobo-info h5 {
 kyobo-info ul {
   list-style: none;
   display: flex;
+  flex-wrap: wrap;
   margin: 0;
   padding: 0;
   font-size: 12px;
 }
 kyobo-info li {
-  flex: 1;
-  padding: 0;
+  box-sizing: border-box;
+  width: 50%;
+  padding: 3px;
+}
+kyobo-info a {
+  text-decoration: none;
+  color: #767676;
+}
+kyobo-info a:hover {
+  text-decoration: underline;
 }
 
 .root {
@@ -292,6 +301,7 @@ favorite-item {
   display: flex;
   flex-direction: column;
   position: relative;
+  padding: 1rem 0;
   border-bottom: 1px solid #dfedd9;
 }
 favorite-item[data-fail=true] book-image {
@@ -314,7 +324,7 @@ favorite-item[data-fail=true] book-description {
 }
 favorite-item .book-summary {
   position: relative;
-  margin: 1rem 1rem 7px;
+  margin: 0 1rem 7px;
   display: flex;
   gap: 10px;
 }
@@ -345,6 +355,10 @@ favorite-item .book-info .loanCnt {
   margin-left: 5px;
 }
 
+.favorite-actions {
+  display: flex;
+  gap: 10px;
+}
 .favorite-actions button {
   background-color: #fff;
   display: inline-block;
@@ -363,7 +377,10 @@ favorite-item .book-info .loanCnt {
 }
 
 library-book-exist {
-  margin: 0 1rem 1rem;
+  margin: 10px 1rem 1rem;
+}
+library-book-exist h5 {
+  margin: 0;
 }
 
 .favorite-message {

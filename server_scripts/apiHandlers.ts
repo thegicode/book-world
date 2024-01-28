@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
+import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import cheerio from "cheerio";
@@ -15,6 +16,22 @@ const fetchData = async (url: string, headers?: Record<string, string>) => {
 
     return await response.json();
 };
+
+async function fetchWeb(url: string) {
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const html = await response.text();
+        return html;
+    } catch (error) {
+        console.error("Error fetching web page:", error);
+        throw error;
+    }
+}
 
 /* NAVER ; 키워드 검색, 책 검색 */
 export async function searchNaverBook(req: Request, res: Response) {
@@ -42,41 +59,58 @@ export async function searchNaverBook(req: Request, res: Response) {
 
 /* 교보문고 : eBook, sam 검색 */
 export async function searchKyoboBook(req: Request, res: Response) {
-    // https://search.kyobobook.co.kr/search?keyword=${req.query.isbn}
+    try {
+        const bookIsbn = req.query.isbn as string;
+        const koyboURL = path.resolve("./server/kyobo.json");
+        const kyoboJson = JSON.parse(fs.readFileSync(koyboURL, "utf-8"));
 
-    const url = "https://product.kyobobook.co.kr/detail/S000001913217";
+        if (kyoboJson.hasOwnProperty(bookIsbn)) {
+            res.send(kyoboJson[bookIsbn]);
+        } else {
+            console.log("writeFile", koyboURL);
 
-    async function fetchWebPage(url: string) {
-        try {
-            const response = await fetch(url);
+            const href = await getAnchorHref();
+            if (!href) return;
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+            const bookData = await getKyoboInfoData(href);
 
-            const html = await response.text();
-            return html;
-        } catch (error) {
-            console.error("Error fetching web page:", error);
-            throw error;
+            kyoboJson[bookIsbn] = bookData;
+            fs.writeFileSync(koyboURL, JSON.stringify(kyoboJson));
+
+            res.send(bookData);
         }
+    } catch (error) {
+        console.error(`Fail to read file, ${error}`);
     }
 
-    async function handleKyobo() {
-        const webPageContent = await fetchWebPage(url);
+    async function getAnchorHref() {
+        const bookContentPage = await fetchWeb(
+            `https://search.kyobobook.co.kr/search?keyword=${req.query.isbn}`
+        );
+        const $ = cheerio.load(bookContentPage);
+        return $(".prod_link").attr("href");
+    }
+
+    async function getKyoboInfoData(url: string) {
+        const webPageContent = await fetchWeb(url);
         const $ = cheerio.load(webPageContent);
-        const prodTypeElements = $(".prod_type_list .prod_type");
-        // const prodPriceElements = $(".prod_type_list .prod_price");
-        const prodTypes = prodTypeElements
-            .map(function () {
-                return $(this).text().trim();
+
+        return $(".btn_prod_type")
+            .map((index, element: any) => {
+                const prodType = $(element).find(".prod_type").text().trim();
+                const prodPrice = $(element).find(".prod_price").text().trim();
+                const href = $(element).attr("href");
+
+                const data = {
+                    prodType,
+                    prodPrice,
+                    href,
+                };
+
+                return data;
             })
             .get();
-
-        res.send(prodTypes);
     }
-
-    handleKyobo();
 }
 
 /** 도서관 정보나루 */

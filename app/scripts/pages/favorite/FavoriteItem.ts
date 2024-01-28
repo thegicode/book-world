@@ -2,15 +2,18 @@ import { CustomFetch } from "../../utils/index";
 import { LibraryBookExist, LoadingComponent } from "../../components/index";
 import bookModel from "../../model";
 import FavoriteItemUI from "./FavoriteItemUI";
+import KyoboInfo from "./KyoboInfo";
 
 export default class FavoriteItem extends HTMLElement {
     private loadingComponent: LoadingComponent | null = null;
-    private libraryBookExist?: LibraryBookExist | null;
     private _isbn: string | null = null;
+    private kyoboButton: HTMLButtonElement | null = null;
+    private kyoboInfoCpnt: KyoboInfo | null = null;
     private ui: FavoriteItemUI;
 
+    libraryBookExist?: LibraryBookExist | null;
     libraryButton?: HTMLButtonElement | null = null;
-    hideButton?: HTMLButtonElement | null;
+    libraryHideButton?: HTMLButtonElement | null;
 
     constructor(isbn: string) {
         super();
@@ -19,6 +22,7 @@ export default class FavoriteItem extends HTMLElement {
 
         this.onLibrary = this.onLibrary.bind(this);
         this.onHideLibrary = this.onHideLibrary.bind(this);
+        this.onShowKyobo = this.onShowKyobo.bind(this);
     }
 
     get isbn() {
@@ -28,18 +32,24 @@ export default class FavoriteItem extends HTMLElement {
     connectedCallback() {
         this.loadingComponent = this.querySelector("loading-component");
         this.libraryButton = this.querySelector(".library-button");
-        this.hideButton = this.querySelector(".hide-button");
+        this.libraryHideButton = this.querySelector(".hide-button");
         this.libraryBookExist = this.querySelector("library-book-exist");
+        this.kyoboButton = this.querySelector(".kyoboInfo-button");
+        this.kyoboInfoCpnt = this.querySelector("kyobo-info");
 
         this.fetchData();
 
         this.libraryButton?.addEventListener("click", this.onLibrary);
-        this.hideButton?.addEventListener("click", this.onHideLibrary);
+        this.libraryHideButton?.addEventListener("click", this.onHideLibrary);
+        this.kyoboButton?.addEventListener("click", this.onShowKyobo);
     }
 
     disconnectedCallback() {
         this.libraryButton?.removeEventListener("click", this.onLibrary);
-        this.hideButton?.removeEventListener("click", this.onHideLibrary);
+        this.libraryHideButton?.removeEventListener(
+            "click",
+            this.onHideLibrary
+        );
     }
 
     protected async fetchData() {
@@ -80,5 +90,9 @@ export default class FavoriteItem extends HTMLElement {
         list.innerHTML = "";
 
         this.ui.updateOnHideLibrary();
+    }
+
+    private onShowKyobo() {
+        this.kyoboInfoCpnt?.show();
     }
 }

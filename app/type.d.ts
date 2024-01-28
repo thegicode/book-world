@@ -211,6 +211,8 @@ type TActionProps = (
 
 type TFavoriteFavorites = Record<string, string[]>;
 
+type TKyeboInfoProps = { href: string; prodType: string; prodPrice: string };
+
 type TLibraries = Record<string, string>;
 
 type TLibraryPayload = {

@@ -72,18 +72,11 @@
             </div>
             <book-description></book-description>
 
-            <kyobo-info>
-                <h5>교보문고 정보</h5>
-                <ul>
-                    <!-- <dt>eBook :</dt>
-                    <dd></dd>
-                    <dt>sam :</dt>
-                    <dd></dd> -->
-                </ul>
-            </kyobo-info>
-
             <div class="favorite-actions">
-                <!-- <category-selector></category-selector> -->
+                <button type="button" class="kyoboInfo-button">
+                    교보문고 정보 조회
+                </button>
+
                 <button type="button" class="library-button">
                     관심 도서관 소장 | 대출 조회
                 </button>
@@ -92,7 +85,20 @@
                 </button>
             </div>
 
-            <library-book-exist>
+            <kyobo-info hidden>
+                <h5>교보문고 조회</h5>
+                <ul></ul>
+                <template id="tp-kyoboInfoItem">
+                    <li>
+                        <a href="" target="_blank">
+                            <span></span>
+                        </a>
+                    </li>
+                </template>
+            </kyobo-info>
+
+            <library-book-exist hidden>
+                <h5>관심 도서관 소장 | 대출 조회</h5>
                 <ul class="library-list"></ul>
             </library-book-exist>
 

@@ -41,18 +41,22 @@ export default class FavoriteItemUI {
     updateOnLibrary() {
         if (this.component.libraryButton)
             this.component.libraryButton.hidden = true;
-        if (this.component.hideButton) {
-            this.component.hideButton.hidden = false;
+        if (this.component.libraryHideButton) {
+            this.component.libraryHideButton.hidden = false;
         }
+        if (this.component.libraryBookExist)
+            this.component.libraryBookExist.hidden = false;
     }
     updateOnHideLibrary() {
         if (this.component.libraryButton) {
             this.component.libraryButton.disabled = false;
             this.component.libraryButton.hidden = false;
         }
-        if (this.component.hideButton) {
-            this.component.hideButton.hidden = true;
+        if (this.component.libraryHideButton) {
+            this.component.libraryHideButton.hidden = true;
         }
+        if (this.component.libraryBookExist)
+            this.component.libraryBookExist.hidden = true;
     }
 }
 //# sourceMappingURL=FavoriteItemUI.js.map

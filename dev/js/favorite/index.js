@@ -1412,18 +1412,22 @@
     updateOnLibrary() {
       if (this.component.libraryButton)
         this.component.libraryButton.hidden = true;
-      if (this.component.hideButton) {
-        this.component.hideButton.hidden = false;
+      if (this.component.libraryHideButton) {
+        this.component.libraryHideButton.hidden = false;
       }
+      if (this.component.libraryBookExist)
+        this.component.libraryBookExist.hidden = false;
     }
     updateOnHideLibrary() {
       if (this.component.libraryButton) {
         this.component.libraryButton.disabled = false;
         this.component.libraryButton.hidden = false;
       }
-      if (this.component.hideButton) {
-        this.component.hideButton.hidden = true;
+      if (this.component.libraryHideButton) {
+        this.component.libraryHideButton.hidden = true;
       }
+      if (this.component.libraryBookExist)
+        this.component.libraryBookExist.hidden = true;
     }
   };
 
@@ -1460,29 +1464,35 @@
       super();
       this.loadingComponent = null;
       this._isbn = null;
+      this.kyoboButton = null;
+      this.kyoboInfoCpnt = null;
       this.libraryButton = null;
       this._isbn = isbn;
       this.ui = new FavoriteItemUI(this);
       this.onLibrary = this.onLibrary.bind(this);
       this.onHideLibrary = this.onHideLibrary.bind(this);
+      this.onShowKyobo = this.onShowKyobo.bind(this);
     }
     get isbn() {
       return this._isbn;
     }
     connectedCallback() {
-      var _a, _b;
+      var _a, _b, _c;
       this.loadingComponent = this.querySelector("loading-component");
       this.libraryButton = this.querySelector(".library-button");
-      this.hideButton = this.querySelector(".hide-button");
+      this.libraryHideButton = this.querySelector(".hide-button");
       this.libraryBookExist = this.querySelector("library-book-exist");
+      this.kyoboButton = this.querySelector(".kyoboInfo-button");
+      this.kyoboInfoCpnt = this.querySelector("kyobo-info");
       this.fetchData();
       (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibrary);
-      (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary);
+      (_b = this.libraryHideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary);
+      (_c = this.kyoboButton) === null || _c === void 0 ? void 0 : _c.addEventListener("click", this.onShowKyobo);
     }
     disconnectedCallback() {
       var _a, _b;
       (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
-      (_b = this.hideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
+      (_b = this.libraryHideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
     }
     fetchData() {
       var _a;
@@ -1513,6 +1523,10 @@
       const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
       list.innerHTML = "";
       this.ui.updateOnHideLibrary();
+    }
+    onShowKyobo() {
+      var _a;
+      (_a = this.kyoboInfoCpnt) === null || _a === void 0 ? void 0 : _a.show();
     }
   };
 
@@ -1841,12 +1855,15 @@
       super();
       this._isbn = null;
       this._isbn = this.getIsbn() || null;
-      this.container = this.querySelector("ul");
+      this.listElement = this.querySelector("ul");
+      this.template = this.querySelector("#tp-kyoboInfoItem");
     }
     connectedCallback() {
-      this.fetch();
     }
     disconnectedCallback() {
+    }
+    show() {
+      this.fetch();
     }
     getIsbn() {
       const cloeset = this.closest("[data-isbn]");
@@ -1869,12 +1886,19 @@
         }
       });
     }
-    render(infos) {
-      infos.map((text) => {
-        const element = document.createElement("li");
-        element.textContent = text;
+    render(data) {
+      this.listElement.innerHTML = "";
+      const fragment = new DocumentFragment();
+      data.map(({ href, prodType, prodPrice }) => {
+        const element = cloneTemplate(this.template);
+        const linkElement = element.querySelector("a");
+        linkElement.href = href;
+        const spanElement = element.querySelector("span");
+        spanElement.textContent = `\u30FB ${prodType} : ${prodPrice}`;
         return element;
-      }).forEach((element) => this.container.appendChild(element));
+      }).forEach((element) => fragment.appendChild(element));
+      this.listElement.appendChild(fragment);
+      this.hidden = false;
     }
   };
 

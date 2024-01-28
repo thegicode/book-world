@@ -1,25 +1,30 @@
 import { CustomFetch } from "../../utils";
+import { cloneTemplate } from "../../utils/helpers";
 
 export default class KyoboInfo extends HTMLElement {
     private _isbn: string | null = null;
-    private container: HTMLElement;
+    private listElement: HTMLElement;
+    private template: HTMLTemplateElement;
 
     constructor() {
         super();
 
         this._isbn = this.getIsbn() || null;
-        this.container = this.querySelector("ul") as HTMLElement;
+        this.listElement = this.querySelector("ul") as HTMLElement;
+        this.template = this.querySelector(
+            "#tp-kyoboInfoItem"
+        ) as HTMLTemplateElement;
     }
 
-    connectedCallback() {
+    connectedCallback() {}
+
+    disconnectedCallback() {}
+
+    show() {
         this.fetch();
     }
 
-    disconnectedCallback() {
-        //
-    }
-
-    getIsbn() {
+    private getIsbn() {
         const cloeset = this.closest("[data-isbn]") as HTMLElement;
         if (!cloeset) return;
         return cloeset.dataset.isbn;
@@ -27,11 +32,29 @@ export default class KyoboInfo extends HTMLElement {
 
     private async fetch() {
         const bookUrl = `/kyobo-book?isbn=${this._isbn}`;
-        // const bookUrl = `/kyobo-book?isbn=S000001913217`;
         try {
+            // const infoArray = [
+            //     {
+            //         href: "https://product.kyobobook.co.kr/detail/S000001913217",
+            //         prodType: "종이책",
+            //         prodPrice: "16,020원",
+            //     },
+            //     {
+            //         href: "https://ebook-product.kyobobook.co.kr/dig/epd/ebook/E000002981270",
+            //         prodType: "eBook",
+            //         prodPrice: "11,220원",
+            //     },
+            //     {
+            //         href: "https://ebook-product.kyobobook.co.kr/dig/epd/sam/E000002981270?tabType=SAM",
+            //         prodType: "sam",
+            //         prodPrice: "eBook",
+            //     },
+            // ];
+
             const infoArray = (await CustomFetch.fetch(
                 bookUrl
-            )) as Array<string>;
+            )) as TKyeboInfoProps[];
+
             this.render(infoArray);
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -42,13 +65,21 @@ export default class KyoboInfo extends HTMLElement {
         }
     }
 
-    private render(infos: Array<string>) {
-        infos
-            .map((text: string) => {
-                const element = document.createElement("li") as HTMLElement;
-                element.textContent = text;
-                return element;
-            })
-            .forEach((element) => this.container.appendChild(element));
+    private render(data: TKyeboInfoProps[]) {
+        this.listElement.innerHTML = "";
+        const fragment = new DocumentFragment();
+        data.map(({ href, prodType, prodPrice }: TKyeboInfoProps) => {
+            const element = cloneTemplate(this.template);
+
+            const linkElement = element.querySelector("a") as HTMLAnchorElement;
+            linkElement.href = href;
+
+            const spanElement = element.querySelector("span") as HTMLElement;
+            spanElement.textContent = `・ ${prodType} : ${prodPrice}`;
+
+            return element;
+        }).forEach((element: HTMLElement) => fragment.appendChild(element));
+        this.listElement.appendChild(fragment);
+        this.hidden = false;
     }
 }

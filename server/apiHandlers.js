@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.monthlyKeywords = exports.loanItemSrch = exports.librarySearchByBook = exports.usageAnalysisList = exports.bookExist = exports.librarySearch = exports.searchKyoboBook = exports.searchNaverBook = void 0;
+const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cheerio_1 = __importDefault(require("cheerio"));
@@ -25,6 +26,22 @@ const fetchData = (url, headers) => __awaiter(void 0, void 0, void 0, function* 
     }
     return yield response.json();
 });
+function fetchWeb(url) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const response = yield fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const html = yield response.text();
+            return html;
+        }
+        catch (error) {
+            console.error("Error fetching web page:", error);
+            throw error;
+        }
+    });
+}
 function searchNaverBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { keyword, display, start, sort } = req.query;
@@ -53,37 +70,54 @@ function searchNaverBook(req, res) {
 exports.searchNaverBook = searchNaverBook;
 function searchKyoboBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = "https://product.kyobobook.co.kr/detail/S000001913217";
-        function fetchWebPage(url) {
+        console.log("searchKyoboBook part10");
+        try {
+            const bookIsbn = req.query.isbn;
+            const koyboURL = path_1.default.resolve("./server/kyobo.json");
+            const kyoboJson = JSON.parse(fs_1.default.readFileSync(koyboURL, "utf-8"));
+            if (kyoboJson.hasOwnProperty(bookIsbn)) {
+                res.send(kyoboJson[bookIsbn]);
+            }
+            else {
+                console.log("writeFile", koyboURL);
+                const href = yield getAnchorHref();
+                if (!href)
+                    return;
+                const bookData = yield getKyoboInfoData(href);
+                kyoboJson[bookIsbn] = bookData;
+                fs_1.default.writeFileSync(koyboURL, JSON.stringify(kyoboJson));
+                res.send(bookData);
+            }
+        }
+        catch (error) {
+            console.error(`Fail to read file, ${error}`);
+        }
+        function getAnchorHref() {
             return __awaiter(this, void 0, void 0, function* () {
-                try {
-                    const response = yield fetch(url);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    const html = yield response.text();
-                    return html;
-                }
-                catch (error) {
-                    console.error("Error fetching web page:", error);
-                    throw error;
-                }
+                const bookContentPage = yield fetchWeb(`https://search.kyobobook.co.kr/search?keyword=${req.query.isbn}`);
+                const $ = cheerio_1.default.load(bookContentPage);
+                return $(".prod_link").attr("href");
             });
         }
-        function handleKyobo() {
+        function getKyoboInfoData(url) {
             return __awaiter(this, void 0, void 0, function* () {
-                const webPageContent = yield fetchWebPage(url);
+                const webPageContent = yield fetchWeb(url);
                 const $ = cheerio_1.default.load(webPageContent);
-                const prodTypeElements = $(".prod_type_list .prod_type");
-                const prodTypes = prodTypeElements
-                    .map(function () {
-                    return $(this).text().trim();
+                return $(".btn_prod_type")
+                    .map((index, element) => {
+                    const prodType = $(element).find(".prod_type").text().trim();
+                    const prodPrice = $(element).find(".prod_price").text().trim();
+                    const href = $(element).attr("href");
+                    const data = {
+                        prodType,
+                        prodPrice,
+                        href,
+                    };
+                    return data;
                 })
                     .get();
-                res.send(prodTypes);
             });
         }
-        handleKyobo();
     });
 }
 exports.searchKyoboBook = searchKyoboBook;

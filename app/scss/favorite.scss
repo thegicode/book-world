@@ -100,6 +100,7 @@ favorite-item {
     display: flex;
     flex-direction: column;
     position: relative;
+    padding: 1rem 0;
     border-bottom: 1px solid #dfedd9;
 
     &[data-fail="true"] {
@@ -127,7 +128,7 @@ favorite-item {
 
     .book-summary {
         position: relative;
-        margin: 1rem 1rem 7px;
+        margin: 0 1rem 7px;
         display: flex;
         gap: 10px;
     }
@@ -163,18 +164,9 @@ favorite-item {
 }
 
 .favorite-actions {
+    display: flex;
+    gap: 10px;
     button {
-        // width: 100%;
-        // padding: 7px 10px;
-        // border-radius: 5px;
-        // border: 1px solid transparent;
-        // background-color: transparent;
-        // font-size: 12px;
-        // text-decoration: none;
-        // color: #6f6f6f;
-        // &:hover {
-        //     border-color: #eff2e5;
-        // }
         @include button1;
 
         &[hidden] {
@@ -184,7 +176,10 @@ favorite-item {
 }
 
 library-book-exist {
-    margin: 0 1rem 1rem;
+    margin: 10px 1rem 1rem;
+    h5 {
+        margin: 0;
+    }
 }
 
 .favorite-message {
