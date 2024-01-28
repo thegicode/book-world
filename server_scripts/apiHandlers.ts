@@ -97,17 +97,11 @@ export async function searchKyoboBook(req: Request, res: Response) {
 
         return $(".btn_prod_type")
             .map((index, element: any) => {
-                const prodType = $(element).find(".prod_type").text().trim();
-                const prodPrice = $(element).find(".prod_price").text().trim();
-                const href = $(element).attr("href");
-
-                const data = {
-                    prodType,
-                    prodPrice,
-                    href,
+                return {
+                    prodType: $(element).find(".prod_type").text().trim(),
+                    prodPrice: $(element).find(".prod_price").text().trim(),
+                    href: $(element).attr("href"),
                 };
-
-                return data;
             })
             .get();
     }
@@ -178,6 +172,8 @@ export async function usageAnalysisList(req: Request, res: Response) {
     try {
         const data = await fetchData(url);
 
+        if (!data || !data.response) return;
+
         const {
             book,
             loanHistory, // 대출 추이
@@ -188,24 +184,26 @@ export async function usageAnalysisList(req: Request, res: Response) {
             readerRecBooks, // 다독자를 위한 추천도서
         } = data.response;
 
-        const loanHistoryItems = loanHistory.map(
-            (item: { loan: string }) => item.loan
-        );
-        const loanGrpsItems = loanGrps
-            .slice(0, 5)
-            .map((item: { loanGrp: string }) => item.loanGrp);
-        const keywordsItems = keywords.map(
-            (item: { keyword: string }) => item.keyword
-        );
-        const coLoanBookItems = coLoanBooks
-            .slice(0, 5)
-            .map((item: any) => item.book);
-        const maniaRecBookItems = maniaRecBooks
-            .slice(0, 5)
-            .map((item: any) => item.book);
-        const readerRecBookItems = readerRecBooks
-            .slice(0, 5)
-            .map((item: any) => item.book);
+        const loanHistoryItems =
+            loanHistory &&
+            loanHistory.map((item: { loan: string }) => item.loan);
+        const loanGrpsItems =
+            loanGrps &&
+            loanGrps
+                .slice(0, 5)
+                .map((item: { loanGrp: string }) => item.loanGrp);
+        const keywordsItems =
+            keywords &&
+            keywords.map((item: { keyword: string }) => item.keyword);
+        const coLoanBookItems =
+            coLoanBooks &&
+            coLoanBooks.slice(0, 5).map((item: any) => item.book);
+        const maniaRecBookItems =
+            maniaRecBooks &&
+            maniaRecBooks.slice(0, 5).map((item: any) => item.book);
+        const readerRecBookItems =
+            readerRecBooks &&
+            readerRecBooks.slice(0, 5).map((item: any) => item.book);
 
         res.send({
             book,

@@ -104,15 +104,11 @@ function searchKyoboBook(req, res) {
                 const $ = cheerio_1.default.load(webPageContent);
                 return $(".btn_prod_type")
                     .map((index, element) => {
-                    const prodType = $(element).find(".prod_type").text().trim();
-                    const prodPrice = $(element).find(".prod_price").text().trim();
-                    const href = $(element).attr("href");
-                    const data = {
-                        prodType,
-                        prodPrice,
-                        href,
+                    return {
+                        prodType: $(element).find(".prod_type").text().trim(),
+                        prodPrice: $(element).find(".prod_price").text().trim(),
+                        href: $(element).attr("href"),
                     };
-                    return data;
                 })
                     .get();
             });
@@ -180,21 +176,23 @@ function usageAnalysisList(req, res) {
         });
         try {
             const data = yield fetchData(url);
+            if (!data || !data.response)
+                return;
             const { book, loanHistory, loanGrps, keywords, coLoanBooks, maniaRecBooks, readerRecBooks, } = data.response;
-            const loanHistoryItems = loanHistory.map((item) => item.loan);
-            const loanGrpsItems = loanGrps
-                .slice(0, 5)
-                .map((item) => item.loanGrp);
-            const keywordsItems = keywords.map((item) => item.keyword);
-            const coLoanBookItems = coLoanBooks
-                .slice(0, 5)
-                .map((item) => item.book);
-            const maniaRecBookItems = maniaRecBooks
-                .slice(0, 5)
-                .map((item) => item.book);
-            const readerRecBookItems = readerRecBooks
-                .slice(0, 5)
-                .map((item) => item.book);
+            const loanHistoryItems = loanHistory &&
+                loanHistory.map((item) => item.loan);
+            const loanGrpsItems = loanGrps &&
+                loanGrps
+                    .slice(0, 5)
+                    .map((item) => item.loanGrp);
+            const keywordsItems = keywords &&
+                keywords.map((item) => item.keyword);
+            const coLoanBookItems = coLoanBooks &&
+                coLoanBooks.slice(0, 5).map((item) => item.book);
+            const maniaRecBookItems = maniaRecBooks &&
+                maniaRecBooks.slice(0, 5).map((item) => item.book);
+            const readerRecBookItems = readerRecBooks &&
+                readerRecBooks.slice(0, 5).map((item) => item.book);
             res.send({
                 book,
                 loanHistory: loanHistoryItems,
