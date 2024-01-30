@@ -8,6 +8,7 @@ import {
     loanItemSrch,
     monthlyKeywords,
     searchKyoboBook,
+    regisKey,
 } from "./apiHandlers";
 
 export const setApiRoutes = (app: Application) => {
@@ -19,4 +20,5 @@ export const setApiRoutes = (app: Application) => {
     app.get("/popular-book", loanItemSrch);
     app.get("/monthly-keywords", monthlyKeywords);
     app.get("/kyobo-book", searchKyoboBook);
+    app.get("/regis-key", regisKey);
 };

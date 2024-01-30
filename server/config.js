@@ -16,5 +16,6 @@ exports.rootPath = rootPath;
 const destinationPath = path_1.default.join(rootPath, buildType);
 exports.destinationPath = destinationPath;
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, envFile) });
+dotenv_1.default.config({ path: path_1.default.resolve(__dirname, ".env.key") });
 const { PORT } = process.env;
 exports.PORT = PORT;

@@ -41,19 +41,45 @@ export default class SetStorage extends HTMLElement {
         this.resetStorage = () => {
             bookModel.resetState();
         };
+        this.regisKey = () => __awaiter(this, void 0, void 0, function* () {
+            const keyString = this.regisKeyTextarea.value;
+            if (!this.validateKey(keyString))
+                return;
+            const key = keyString.replace(/\n/g, "aaaaa");
+            const response = yield CustomFetch.fetch(`/regis-key?key=${key}`);
+            if (response) {
+                console.log("success");
+            }
+        });
         this.saveButton = this.querySelector(".saveStorage button");
         this.defaultButton = this.querySelector(".localStorage button");
         this.resetButton = this.querySelector(".resetStorage button");
+        this.regisKeyTextarea = this.querySelector(".regisKey textarea");
+        this.regisButton = this.querySelector(".regisKey button");
     }
     connectedCallback() {
         this.saveButton.addEventListener("click", this.saveStorage);
         this.defaultButton.addEventListener("click", this.setDefaultState);
         this.resetButton.addEventListener("click", this.resetStorage);
+        this.regisButton.addEventListener("click", this.regisKey);
     }
     disconnectedCallback() {
         this.saveButton.removeEventListener("click", this.saveStorage);
         this.defaultButton.removeEventListener("click", this.setDefaultState);
-        this.resetButton.removeEventListener("click", this.resetStorage);
+        this.regisButton.removeEventListener("click", this.resetStorage);
+        this.regisButton.removeEventListener("click", this.regisKey);
+    }
+    validateKey(keyString) {
+        if (keyString.length > 0) {
+            const names = [
+                "LIBRARY_KEY",
+                "NAVER_CLIENT_ID",
+                "NAVER_SECRET_KEY",
+            ];
+            return names.every((n) => keyString.includes(n));
+        }
+        else
+            return false;
     }
 }
 //# sourceMappingURL=SetStorage.js.map

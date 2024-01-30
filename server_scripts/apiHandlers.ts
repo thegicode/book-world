@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
+import fs from "fs";
 import path from "path";
-import dotenv from "dotenv";
 import { searchBook } from "./naverApi";
 import { searchBookByWeb } from "./kyoboApi";
 import {
@@ -12,8 +12,6 @@ import {
     searchOpenLibrary,
     usageAnalysis,
 } from "./libraryApi";
-
-dotenv.config({ path: path.resolve(__dirname, ".env.key") });
 
 /* NAVER */
 export const searchNaverBook = (req: Request, res: Response) =>
@@ -48,3 +46,18 @@ export const loanItemSrch = (req: Request, res: Response) =>
 // 이달의 키워드
 export const monthlyKeywords = (req: Request, res: Response) =>
     getKeysords(req, res);
+
+/* Regis Key */
+export const regisKey = (req: Request, res: Response) => {
+    const ENV_PATH = path.resolve("./server/.env.key");
+
+    try {
+        const key = (req.query.key as string).replace(/aaaaa/g, "\n");
+        fs.writeFileSync(ENV_PATH, key);
+
+        res.send(true);
+    } catch (error) {
+        res.send(false);
+        console.error(`Fail to read file, ${error}`);
+    }
+};

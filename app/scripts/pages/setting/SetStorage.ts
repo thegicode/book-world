@@ -6,6 +6,8 @@ export default class SetStorage extends HTMLElement {
     private saveButton: HTMLButtonElement;
     private defaultButton: HTMLButtonElement;
     private resetButton: HTMLButtonElement;
+    private regisKeyTextarea: HTMLTextAreaElement;
+    private regisButton: HTMLButtonElement;
 
     constructor() {
         super();
@@ -19,18 +21,26 @@ export default class SetStorage extends HTMLElement {
         this.resetButton = this.querySelector(
             ".resetStorage button"
         ) as HTMLButtonElement;
+        this.regisKeyTextarea = this.querySelector(
+            ".regisKey textarea"
+        ) as HTMLTextAreaElement;
+        this.regisButton = this.querySelector(
+            ".regisKey button"
+        ) as HTMLButtonElement;
     }
 
     connectedCallback() {
         this.saveButton.addEventListener("click", this.saveStorage);
         this.defaultButton.addEventListener("click", this.setDefaultState);
         this.resetButton.addEventListener("click", this.resetStorage);
+        this.regisButton.addEventListener("click", this.regisKey);
     }
 
     disconnectedCallback() {
         this.saveButton.removeEventListener("click", this.saveStorage);
         this.defaultButton.removeEventListener("click", this.setDefaultState);
-        this.resetButton.removeEventListener("click", this.resetStorage);
+        this.regisButton.removeEventListener("click", this.resetStorage);
+        this.regisButton.removeEventListener("click", this.regisKey);
     }
 
     private saveStorage = () => {
@@ -67,4 +77,28 @@ export default class SetStorage extends HTMLElement {
     private resetStorage = () => {
         bookModel.resetState();
     };
+
+    private regisKey = async () => {
+        const keyString = this.regisKeyTextarea.value;
+        if (!this.validateKey(keyString)) return;
+
+        const key = keyString.replace(/\n/g, "aaaaa");
+        const response = await CustomFetch.fetch<any>(`/regis-key?key=${key}`);
+
+        if (response) {
+            console.log("success");
+        }
+    };
+
+    private validateKey(keyString: string) {
+        if (keyString.length > 0) {
+            const names = [
+                "LIBRARY_KEY",
+                "NAVER_CLIENT_ID",
+                "NAVER_SECRET_KEY",
+            ];
+
+            return names.every((n) => keyString.includes(n));
+        } else return false;
+    }
 }
