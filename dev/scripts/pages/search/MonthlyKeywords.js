@@ -32,7 +32,7 @@ export default class MonthlyKeywords extends HTMLElement {
             }
             catch (error) {
                 console.error(error);
-                throw new Error(`Fail to get library search by book.`);
+                throw new Error(`Fail to get monthly keyword.`);
             }
         });
     }

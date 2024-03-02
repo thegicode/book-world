@@ -12,9 +12,9 @@ watchAndCopy();
 
 app.use(express.static(destinationPath));
 
+setApiRoutes(app);
+setupStaticRoutes(app);
+
 app.listen(PORT, () => {
     console.log(`Start : http://localhost:${PORT}`);
 });
-
-setApiRoutes(app);
-setupStaticRoutes(app);
