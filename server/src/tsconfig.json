@@ -7,7 +7,7 @@
         "esModuleInterop": true,
         "removeComments": true,
         "sourceMap": false,
-        "outDir": "../server"
+        "outDir": "../dist"
     },
     "include": ["*.ts"]
     // "exclude": ["node_modules", "**/*.test.ts"]
