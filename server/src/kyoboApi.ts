@@ -4,7 +4,7 @@ import path from "path";
 import cheerio from "cheerio";
 import { fetchWeb } from "./apiUtils";
 
-const KEYBO_JSON_PATH = path.resolve("./server/kyobo.json");
+const KEYBO_JSON_PATH = path.resolve("./server/dist/kyobo.json");
 
 export async function searchBookByWeb(req: Request, res: Response) {
     try {

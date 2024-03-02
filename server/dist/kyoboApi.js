@@ -17,7 +17,7 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const cheerio_1 = __importDefault(require("cheerio"));
 const apiUtils_1 = require("./apiUtils");
-const KEYBO_JSON_PATH = path_1.default.resolve("./server/kyobo.json");
+const KEYBO_JSON_PATH = path_1.default.resolve("./server/dist/kyobo.json");
 function searchBookByWeb(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
