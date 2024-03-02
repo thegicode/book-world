@@ -6,7 +6,7 @@
         "module": "ESNext",
         "strict": true,
         "esModuleInterop": true,
-        "outDir": "./dev/scripts",
+        "outDir": "app/public/scripts",
         "moduleResolution": "node",
         "skipLibCheck": true,
         "types": ["jest"],
@@ -21,6 +21,6 @@
         // },
         "sourceMap": true
     },
-    "include": ["app/**/*.ts"],
+    "include": ["app/src/**/*.ts"],
     "exclude": ["node_modules", "app/__tests__", "server/**.ts"]
 }

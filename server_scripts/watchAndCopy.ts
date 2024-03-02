@@ -2,11 +2,11 @@ import path from "path";
 import chokidar from "chokidar";
 import fs from "fs";
 import fsExtra from "fs-extra";
-import { buildType, rootPath } from "./config";
+import { buildPath, rootPath } from "./config";
 
 export const watchAndCopy = () => {
     const assetsSrcPath = path.join(rootPath, "app", "assets");
-    const assetsDistPath = path.join(rootPath, buildType, "assets");
+    const assetsDistPath = path.join(rootPath, buildPath, "assets");
 
     const watcher = chokidar.watch(`${assetsSrcPath}/**/*`, {
         ignored: /\.DS_Store$/,
