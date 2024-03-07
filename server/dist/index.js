@@ -11,7 +11,7 @@ const staticRoutes_1 = require("./routes/staticRoutes");
 const app = (0, express_1.default)();
 console.log("***[Server]*** isProduction: ", config_1.isProduction);
 (0, watchAndCopy_1.watchAndCopy)();
-app.use(express_1.default.static(config_1.destinationPath));
+app.use(express_1.default.static(config_1.finalBuildPath));
 (0, apiRoutes_1.setApiRoutes)(app);
 (0, staticRoutes_1.setStaticRoutes)(app);
 app.listen(config_1.PORT, () => {

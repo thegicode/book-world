@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Application } from "express";
-import { destinationPath } from "../config";
+import { finalBuildPath } from "../config";
 
 export const setStaticRoutes = (app: Application) => {
     const routes = [
@@ -18,7 +18,7 @@ export const setStaticRoutes = (app: Application) => {
         app.get(`/${route}`, (req, res) => {
             const fileName = route === "" ? "index" : route;
             const htmlPath = path.join(
-                destinationPath,
+                finalBuildPath,
                 `/html/${fileName}.html`
             );
 

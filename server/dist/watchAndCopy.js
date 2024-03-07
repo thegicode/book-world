@@ -10,8 +10,8 @@ const fs_1 = __importDefault(require("fs"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const config_1 = require("./config");
 const watchAndCopy = () => {
-    const assetsSrcPath = path_1.default.join(config_1.rootPath, "app", "assets");
-    const assetsDistPath = path_1.default.join(config_1.rootPath, config_1.buildPath, "assets");
+    const assetsSrcPath = path_1.default.join(config_1.rootDirectoryPath, "app", "assets");
+    const assetsDistPath = path_1.default.join(config_1.rootDirectoryPath, config_1.buildDirectory, "assets");
     const watcher = chokidar_1.default.watch(`${assetsSrcPath}/**/*`, {
         ignored: /\.DS_Store$/,
         persistent: true,

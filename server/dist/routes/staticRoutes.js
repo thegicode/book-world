@@ -20,7 +20,7 @@ const setStaticRoutes = (app) => {
     routes.forEach((route) => {
         app.get(`/${route}`, (req, res) => {
             const fileName = route === "" ? "index" : route;
-            const htmlPath = path_1.default.join(config_1.destinationPath, `/html/${fileName}.html`);
+            const htmlPath = path_1.default.join(config_1.finalBuildPath, `/html/${fileName}.html`);
             fs_1.default.readFile(htmlPath, "utf8", (err, data) => {
                 if (err) {
                     console.error(err);
