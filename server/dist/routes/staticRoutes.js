@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setupStaticRoutes = void 0;
+exports.setStaticRoutes = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const config_1 = require("./config");
-const setupStaticRoutes = (app) => {
+const config_1 = require("../config");
+const setStaticRoutes = (app) => {
     const routes = [
         "",
         "search",
@@ -19,8 +19,8 @@ const setupStaticRoutes = (app) => {
     ];
     routes.forEach((route) => {
         app.get(`/${route}`, (req, res) => {
-            route = route === "" ? "index" : route;
-            const htmlPath = path_1.default.join(config_1.destinationPath, `/html/${route}.html`);
+            const fileName = route === "" ? "index" : route;
+            const htmlPath = path_1.default.join(config_1.destinationPath, `/html/${fileName}.html`);
             fs_1.default.readFile(htmlPath, "utf8", (err, data) => {
                 if (err) {
                     console.error(err);
@@ -31,4 +31,4 @@ const setupStaticRoutes = (app) => {
         });
     });
 };
-exports.setupStaticRoutes = setupStaticRoutes;
+exports.setStaticRoutes = setStaticRoutes;

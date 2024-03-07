@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export async function fetchNaver(url: string) {
+async function fetchNaver(url: string) {
     const headers = {
         "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID as string,
         "X-Naver-Client-Secret": process.env.NAVER_SECRET_KEY as string,
@@ -15,7 +15,7 @@ export async function fetchNaver(url: string) {
 }
 
 // 키워드 검색
-export async function searchBook(req: Request, res: Response) {
+export async function fetchBooksFromNaver(req: Request, res: Response) {
     const queryParams = new URLSearchParams({
         query: req.query.keyword as string,
         display: req.query.display as string,

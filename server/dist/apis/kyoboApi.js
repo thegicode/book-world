@@ -12,13 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchBookByWeb = void 0;
+exports.fetchKyoboBookInfo = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const cheerio_1 = __importDefault(require("cheerio"));
 const apiUtils_1 = require("./apiUtils");
-const KEYBO_JSON_PATH = path_1.default.resolve("./server/dist/kyobo.json");
-function searchBookByWeb(req, res) {
+const KEYBO_JSON_PATH = path_1.default.resolve("./server/kyobo.json");
+function fetchKyoboBookInfo(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const bookIsbn = req.query.isbn;
@@ -42,7 +42,7 @@ function searchBookByWeb(req, res) {
         }
     });
 }
-exports.searchBookByWeb = searchBookByWeb;
+exports.fetchKyoboBookInfo = fetchKyoboBookInfo;
 function getAnchorHref(isbn) {
     return __awaiter(this, void 0, void 0, function* () {
         const bookContentPage = yield (0, apiUtils_1.fetchWeb)(`https://search.kyobobook.co.kr/search?keyword=${isbn}`);

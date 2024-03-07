@@ -8,14 +8,16 @@ const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const isProduction = process.env.NODE_ENV === "production";
 exports.isProduction = isProduction;
-const envFile = isProduction ? "../.env.production" : "../.env.development";
+const envFile = isProduction
+    ? "../../.env.production"
+    : "../../.env.development";
 const buildPath = isProduction ? "app/build" : "app/public";
 exports.buildPath = buildPath;
-const rootPath = path_1.default.join(__dirname, "../../");
+const rootPath = path_1.default.join(__dirname, "../../../");
 exports.rootPath = rootPath;
 const destinationPath = path_1.default.join(rootPath, buildPath);
 exports.destinationPath = destinationPath;
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, envFile) });
-dotenv_1.default.config({ path: path_1.default.resolve(__dirname, "../.env.key") });
+dotenv_1.default.config({ path: path_1.default.resolve(__dirname, "../../.env.key") });
 const { PORT } = process.env;
 exports.PORT = PORT;

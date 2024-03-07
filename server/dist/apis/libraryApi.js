@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getKeysords = exports.getPopularBooks = exports.searchLibraryOfBook = exports.usageAnalysis = exports.getExistBookInfo = exports.searchOpenLibrary = void 0;
+exports.fetchMonthlyKeywords = exports.fetchPopularBooksByCriteria = exports.fetchLibrariesByBookISBN = exports.fetchBookUsageAnalysis = exports.fetchBookAvailability = exports.fetchLibrariesByCriteria = void 0;
 const apiUtils_1 = require("./apiUtils");
 const LIBRARY_API_BASE_URL = "http://data4library.kr/api";
 const AUTH_KEY = process.env.LIBRARY_KEY;
@@ -18,7 +18,7 @@ const parseURL = (apiPath, params) => {
     const queryParams = new URLSearchParams(Object.assign(Object.assign({}, params), { authKey: AUTH_KEY, format: API_FORMAT }));
     return `${LIBRARY_API_BASE_URL}/${apiPath}?${queryParams}`;
 };
-function searchOpenLibrary(req, res) {
+function fetchLibrariesByCriteria(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = parseURL("libSrch", {
             dtl_region: req.query.dtl_region,
@@ -42,8 +42,8 @@ function searchOpenLibrary(req, res) {
         }
     });
 }
-exports.searchOpenLibrary = searchOpenLibrary;
-function getExistBookInfo(req, res) {
+exports.fetchLibrariesByCriteria = fetchLibrariesByCriteria;
+function fetchBookAvailability(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const url = parseURL("bookExist", {
@@ -61,8 +61,8 @@ function getExistBookInfo(req, res) {
         }
     });
 }
-exports.getExistBookInfo = getExistBookInfo;
-function usageAnalysis(req, res) {
+exports.fetchBookAvailability = fetchBookAvailability;
+function fetchBookUsageAnalysis(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = parseURL("usageAnalysisList", {
             isbn13: req.query.isbn13,
@@ -97,8 +97,8 @@ function usageAnalysis(req, res) {
         }
     });
 }
-exports.usageAnalysis = usageAnalysis;
-function searchLibraryOfBook(req, res) {
+exports.fetchBookUsageAnalysis = fetchBookUsageAnalysis;
+function fetchLibrariesByBookISBN(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { isbn, region, dtl_region } = req.query;
         if (typeof isbn !== "string" ||
@@ -128,8 +128,8 @@ function searchLibraryOfBook(req, res) {
         }
     });
 }
-exports.searchLibraryOfBook = searchLibraryOfBook;
-function getPopularBooks(req, res) {
+exports.fetchLibrariesByBookISBN = fetchLibrariesByBookISBN;
+function fetchPopularBooksByCriteria(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { startDt, endDt, gender, age, region, addCode, kdc, pageNo, pageSize, } = req.query;
         if (typeof startDt !== "string" ||
@@ -166,8 +166,8 @@ function getPopularBooks(req, res) {
         }
     });
 }
-exports.getPopularBooks = getPopularBooks;
-function getKeysords(req, res) {
+exports.fetchPopularBooksByCriteria = fetchPopularBooksByCriteria;
+function fetchMonthlyKeywords(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = parseURL("monthlyKeywords", {
             month: req.query.month,
@@ -187,4 +187,4 @@ function getKeysords(req, res) {
         }
     });
 }
-exports.getKeysords = getKeysords;
+exports.fetchMonthlyKeywords = fetchMonthlyKeywords;

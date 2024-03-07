@@ -3,6 +3,7 @@ import { fetchData } from "./apiUtils";
 
 const LIBRARY_API_BASE_URL = "http://data4library.kr/api";
 const AUTH_KEY = process.env.LIBRARY_KEY as string;
+
 const API_FORMAT = "json";
 
 const parseURL = (apiPath: string, params: Record<string, string>) => {
@@ -16,7 +17,7 @@ const parseURL = (apiPath: string, params: Record<string, string>) => {
 };
 
 // 정보공개 도서관 조회
-export async function searchOpenLibrary(req: Request, res: Response) {
+export async function fetchLibrariesByCriteria(req: Request, res: Response) {
     const url = parseURL("libSrch", {
         dtl_region: req.query.dtl_region as string,
         pageNo: req.query.page as string,
@@ -40,7 +41,7 @@ export async function searchOpenLibrary(req: Request, res: Response) {
 }
 
 // 책 소장 & 대출 가능 여부
-export async function getExistBookInfo(req: Request, res: Response) {
+export async function fetchBookAvailability(req: Request, res: Response) {
     const url = parseURL("bookExist", {
         isbn13: req.query.isbn13 as string,
         libCode: req.query.libCode as string,
@@ -57,7 +58,7 @@ export async function getExistBookInfo(req: Request, res: Response) {
 }
 
 // 도서별 이용 분석
-export async function usageAnalysis(req: Request, res: Response) {
+export async function fetchBookUsageAnalysis(req: Request, res: Response) {
     const url = parseURL("usageAnalysisList", {
         isbn13: req.query.isbn13 as string,
         loaninfoYN: "Y" as string,
@@ -107,7 +108,7 @@ export async function usageAnalysis(req: Request, res: Response) {
 }
 
 // 도서 소장 도서관 조회
-export async function searchLibraryOfBook(req: Request, res: Response) {
+export async function fetchLibrariesByBookISBN(req: Request, res: Response) {
     const { isbn, region, dtl_region } = req.query;
 
     if (
@@ -142,7 +143,7 @@ export async function searchLibraryOfBook(req: Request, res: Response) {
 }
 
 // 인기 대출 도서 조회
-export async function getPopularBooks(req: Request, res: Response) {
+export async function fetchPopularBooksByCriteria(req: Request, res: Response) {
     const {
         startDt,
         endDt,
@@ -193,7 +194,7 @@ export async function getPopularBooks(req: Request, res: Response) {
 }
 
 // 이달의 키워드
-export async function getKeysords(req: Request, res: Response) {
+export async function fetchMonthlyKeywords(req: Request, res: Response) {
     const url = parseURL("monthlyKeywords", {
         month: req.query.month as string,
     });

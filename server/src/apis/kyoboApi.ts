@@ -4,9 +4,9 @@ import path from "path";
 import cheerio from "cheerio";
 import { fetchWeb } from "./apiUtils";
 
-const KEYBO_JSON_PATH = path.resolve("./server/dist/kyobo.json");
+const KEYBO_JSON_PATH = path.resolve("./server/kyobo.json");
 
-export async function searchBookByWeb(req: Request, res: Response) {
+export async function fetchKyoboBookInfo(req: Request, res: Response) {
     try {
         const bookIsbn = req.query.isbn as string;
         const kyoboJson = JSON.parse(fs.readFileSync(KEYBO_JSON_PATH, "utf-8"));

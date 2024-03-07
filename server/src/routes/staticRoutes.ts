@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import { Application } from "express";
-import { destinationPath } from "./config";
+import { destinationPath } from "../config";
 
-export const setupStaticRoutes = (app: Application) => {
+export const setStaticRoutes = (app: Application) => {
     const routes = [
         "",
         "search",
@@ -13,10 +13,15 @@ export const setupStaticRoutes = (app: Application) => {
         "popular",
         "setting",
     ];
+
     routes.forEach((route) => {
         app.get(`/${route}`, (req, res) => {
-            route = route === "" ? "index" : route;
-            const htmlPath = path.join(destinationPath, `/html/${route}.html`);
+            const fileName = route === "" ? "index" : route;
+            const htmlPath = path.join(
+                destinationPath,
+                `/html/${fileName}.html`
+            );
+
             fs.readFile(htmlPath, "utf8", (err, data) => {
                 if (err) {
                     console.error(err);

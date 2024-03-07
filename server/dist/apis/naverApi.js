@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchBook = exports.fetchNaver = void 0;
+exports.fetchBooksFromNaver = void 0;
 function fetchNaver(url) {
     return __awaiter(this, void 0, void 0, function* () {
         const headers = {
@@ -23,8 +23,7 @@ function fetchNaver(url) {
         return yield response.json();
     });
 }
-exports.fetchNaver = fetchNaver;
-function searchBook(req, res) {
+function fetchBooksFromNaver(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const queryParams = new URLSearchParams({
             query: req.query.keyword,
@@ -37,4 +36,4 @@ function searchBook(req, res) {
         res.send({ total, start, display, items });
     });
 }
-exports.searchBook = searchBook;
+exports.fetchBooksFromNaver = fetchBooksFromNaver;
