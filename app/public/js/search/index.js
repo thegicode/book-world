@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  // app/public/scripts/components/BookDescription.js
+  // app/src/scripts/components/BookDescription.ts
   var BookDescription = class extends HTMLElement {
     constructor() {
       super();
@@ -15,7 +15,10 @@
     }
     disconnectedCallback() {
       if (this.button)
-        this.button.removeEventListener("click", this.onButtonClick.bind(this));
+        this.button.removeEventListener(
+          "click",
+          this.onButtonClick.bind(this)
+        );
     }
     render(value) {
       const template = `
@@ -25,7 +28,10 @@
       this.el = this.querySelector(".description");
       this.button = this.querySelector(".more-description-button");
       if (this.button)
-        this.button.addEventListener("click", this.onButtonClick.bind(this));
+        this.button.addEventListener(
+          "click",
+          this.onButtonClick.bind(this)
+        );
     }
     // isEllipsisActive(el) {
     //     return (el.offsetHeight < el.scrollHeight);
@@ -48,7 +54,7 @@
     }
   };
 
-  // app/public/scripts/components/BookImage.js
+  // app/src/scripts/components/BookImage.ts
   var BookImage = class extends HTMLElement {
     constructor(url, name) {
       super();
@@ -69,14 +75,14 @@
       var _a;
       this.dataset.fail = "true";
       console.error(`Failed to load image`);
-      (_a = this.image) === null || _a === void 0 ? void 0 : _a.remove();
+      (_a = this.image) == null ? void 0 : _a.remove();
     }
   };
 
-  // app/public/scripts/model/constants.js
+  // app/src/scripts/model/constants.ts
   var STORAGE_NAME = "BookWorld";
 
-  // app/public/scripts/utils/Publisher.js
+  // app/src/scripts/utils/Publisher.ts
   var Publisher = class {
     constructor() {
       this.subscribers = [];
@@ -85,14 +91,16 @@
       this.subscribers.push(callback);
     }
     unsubscribe(callback) {
-      this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
+      this.subscribers = this.subscribers.filter(
+        (subscriber) => subscriber !== callback
+      );
     }
     notify(payload) {
       this.subscribers.forEach((callback) => callback(payload));
     }
   };
 
-  // app/public/scripts/model/FavoriteModel.js
+  // app/src/scripts/model/FavoriteModel.ts
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -101,7 +109,7 @@
       this._sortedKeys = sortedKeys;
     }
     get favorites() {
-      return Object.assign({}, this._favorites);
+      return { ...this._favorites };
     }
     set favorites(newCategories) {
       this._favorites = newCategories;
@@ -185,10 +193,14 @@
       this.bookUpdatePublisher.notify();
     }
     subscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.subscribe(subscriber);
+      this.categoriesUpdatePublisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.unsubscribe(subscriber);
+      this.categoriesUpdatePublisher.unsubscribe(
+        subscriber
+      );
     }
     subscribeBookUpdate(subscriber) {
       this.bookUpdatePublisher.subscribe(subscriber);
@@ -198,14 +210,14 @@
     }
   };
 
-  // app/public/scripts/model/LibraryModel.js
+  // app/src/scripts/model/LibraryModel.ts
   var LibraryModel = class {
     constructor(libraries) {
       this.publisher = new Publisher();
       this._libraries = libraries;
     }
     get libraries() {
-      return Object.assign({}, this._libraries);
+      return { ...this._libraries };
     }
     set libraries(newLibries) {
       this._libraries = newLibries;
@@ -233,14 +245,18 @@
       return code in this._libraries;
     }
     subscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
   };
 
-  // app/public/scripts/model/RegionModel.js
+  // app/src/scripts/model/RegionModel.ts
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -248,7 +264,7 @@
       this._regions = regions;
     }
     get regions() {
-      return Object.assign({}, this._regions);
+      return { ...this._regions };
     }
     set regions(newRegions) {
       this._regions = newRegions;
@@ -287,7 +303,7 @@
     }
   };
 
-  // app/public/scripts/model/index.js
+  // app/src/scripts/model/index.ts
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -474,7 +490,7 @@
   var bookModel = new BookModel();
   var model_default = bookModel;
 
-  // app/public/scripts/components/CategorySelector.js
+  // app/src/scripts/components/CategorySelector.ts
   var CategorySelector = class extends HTMLElement {
     constructor() {
       super();
@@ -500,15 +516,17 @@
       this.button = this.createButton();
       this.container = this.createContainer();
       this.render();
-      (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
+      (_a = this.button) == null ? void 0 : _a.addEventListener("click", this.onClickCategory);
       model_default.subscribeFavoriteCategoriesUpdate(this.handleCategoryUpdate);
     }
     render() {
       if (!this.container || !this.button)
         return;
-      model_default.sortedFavoriteKeys.map((category) => this.createCategoryItem(category)).forEach((label) => {
+      model_default.sortedFavoriteKeys.map(
+        (category) => this.createCategoryItem(category)
+      ).forEach((label) => {
         var _a;
-        return (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(label);
+        return (_a = this.container) == null ? void 0 : _a.appendChild(label);
       });
       this.appendChild(this.container);
       this.appendChild(this.button);
@@ -540,7 +558,10 @@
       if (model_default.hasFavoriteBook(category, ISBN)) {
         checkbox.checked = true;
       }
-      checkbox.addEventListener("change", () => this.onChange(checkbox, category));
+      checkbox.addEventListener(
+        "change",
+        () => this.onChange(checkbox, category)
+      );
       return checkbox;
     }
     onChange(checkbox, category) {
@@ -553,11 +574,17 @@
       }
       checkbox.checked = !isBookInCategory;
     }
-    handleCategoryUpdate({ type, payload }) {
+    handleCategoryUpdate({
+      type,
+      payload
+    }) {
       const actions = {
         add: () => this.handleAdd(payload.name),
         rename: () => this.reanmeCategory(payload.newName),
-        change: () => this.changeCategory(payload.targetIndex, payload.draggedIndex),
+        change: () => this.changeCategory(
+          payload.targetIndex,
+          payload.draggedIndex
+        ),
         delete: () => this.handleDelete(payload.name)
       };
       if (actions[type]) {
@@ -568,7 +595,9 @@
     }
     handleAdd(name) {
       var _a;
-      (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(this.createCategoryItem(name));
+      (_a = this.container) == null ? void 0 : _a.appendChild(
+        this.createCategoryItem(name)
+      );
     }
     handleDelete(name) {
       this.querySelectorAll("label span").forEach((item, index) => {
@@ -580,8 +609,12 @@
     changeCategory(targetIndex, draggedIndex) {
       var _a, _b;
       const labels = this.querySelectorAll("label");
-      const targetElement = this.createCategoryItem((_a = labels[draggedIndex].querySelector("span")) === null || _a === void 0 ? void 0 : _a.textContent);
-      const dragElement = this.createCategoryItem((_b = labels[targetIndex].querySelector("span")) === null || _b === void 0 ? void 0 : _b.textContent);
+      const targetElement = this.createCategoryItem(
+        (_a = labels[draggedIndex].querySelector("span")) == null ? void 0 : _a.textContent
+      );
+      const dragElement = this.createCategoryItem(
+        (_b = labels[targetIndex].querySelector("span")) == null ? void 0 : _b.textContent
+      );
       labels[targetIndex].replaceWith(targetElement);
       labels[draggedIndex].replaceWith(dragElement);
     }
@@ -592,16 +625,22 @@
     }
   };
 
-  // app/public/scripts/utils/CustomEventEmitter.js
+  // app/src/scripts/utils/CustomEventEmitter.ts
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
     }
     add(event, callback) {
-      this._bus.addEventListener(event, callback);
+      this._bus.addEventListener(
+        event,
+        callback
+      );
     }
     remove(event, callback) {
-      this._bus.removeEventListener(event, callback);
+      this._bus.removeEventListener(
+        event,
+        callback
+      );
     }
     dispatch(event, detail = {}) {
       this._bus.dispatchEvent(new CustomEvent(event, { detail }));
@@ -609,56 +648,35 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // app/public/scripts/utils/CustomFetch.js
-  var __awaiter = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/utils/CustomFetch.ts
   var CustomFetch = class {
     constructor(baseOptions = {}) {
-      this.defaultOptions = Object.assign({ method: "GET", headers: {
-        "Content-Type": "application/json"
-        // 'Authorization': `Bearer ${getToken()}`
-      } }, baseOptions);
+      this.defaultOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+          // 'Authorization': `Bearer ${getToken()}`
+        },
+        ...baseOptions
+      };
     }
-    fetch(url, options) {
-      return __awaiter(this, void 0, void 0, function* () {
-        const finalOptions = Object.assign(Object.assign(Object.assign({}, this.defaultOptions), options), { timeout: 5e3 });
-        try {
-          const response = yield fetch(url, finalOptions);
-          if (!response.ok) {
-            throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
-          }
-          const data = yield response.json();
-          return data;
-        } catch (error) {
-          console.error(`Error fetching data: ${error}`);
-          throw new Error(`Error fetching data: ${error}`);
+    async fetch(url, options) {
+      const finalOptions = {
+        ...this.defaultOptions,
+        ...options,
+        timeout: 5e3
+      };
+      try {
+        const response = await fetch(url, finalOptions);
+        if (!response.ok) {
+          throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
         }
-      });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error(`Error fetching data: ${error}`);
+        throw new Error(`Error fetching data: ${error}`);
+      }
     }
   };
   var CustomFetch_default = new CustomFetch();
@@ -1201,7 +1219,7 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // app/public/scripts/utils/Observer.js
+  // app/src/scripts/utils/Observer.ts
   var Observer = class {
     constructor(target, callback) {
       this.target = target;
@@ -1228,34 +1246,7 @@
     }
   };
 
-  // app/public/scripts/components/LibraryBookExist.js
-  var __awaiter2 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/components/LibraryBookExist.ts
   var LibraryBookExist = class extends HTMLElement {
     constructor() {
       super();
@@ -1265,28 +1256,28 @@
     connectedCallback() {
       this.itemTemplate = this.template();
     }
-    onLibraryBookExist(button, isbn13, library) {
-      return __awaiter2(this, void 0, void 0, function* () {
-        const entries = Object.entries(library);
-        this.loading(entries.length);
-        if (button)
-          button.disabled = true;
-        const promises = entries.map(([libCode, libName], index) => __awaiter2(this, void 0, void 0, function* () {
-          try {
-            const data = yield CustomFetch_default.fetch(`/book-exist?isbn13=${isbn13}&libCode=${libCode}`);
-            this.renderBookExist(data, libName, index);
-          } catch (error) {
-            console.error(error);
-            throw new Error(`Fail to get usage analysis list.`);
-          }
-        }));
+    async onLibraryBookExist(button, isbn13, library) {
+      const entries = Object.entries(library);
+      this.loading(entries.length);
+      if (button)
+        button.disabled = true;
+      const promises = entries.map(async ([libCode, libName], index) => {
         try {
-          yield Promise.all(promises);
-          this.removeLoading();
+          const data = await CustomFetch_default.fetch(
+            `/book-exist?isbn13=${isbn13}&libCode=${libCode}`
+          );
+          this.renderBookExist(data, libName, index);
         } catch (error) {
-          console.error("Failed to fetch data for some libraries");
+          console.error(error);
+          throw new Error(`Fail to get usage analysis list.`);
         }
       });
+      try {
+        await Promise.all(promises);
+        this.removeLoading();
+      } catch (error) {
+        console.error("Failed to fetch data for some libraries");
+      }
     }
     renderBookExist(data, libName, index) {
       const { hasBook, loanAvailable } = data;
@@ -1305,7 +1296,9 @@
       this.container.innerHTML = text;
     }
     removeLoading() {
-      this.querySelectorAll(".library-item[data-loading=true]").forEach((el) => {
+      this.querySelectorAll(
+        ".library-item[data-loading=true]"
+      ).forEach((el) => {
         delete el.dataset.loading;
       });
     }
@@ -1318,7 +1311,7 @@
     }
   };
 
-  // app/public/scripts/components/NavGnb.js
+  // app/src/scripts/components/NavGnb.ts
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -1345,7 +1338,10 @@
       model_default.unsubscribeFavoriteBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce(
+        (sum, currentArray) => sum + currentArray.length,
+        0
+      );
     }
     render() {
       this.innerHTML = `
@@ -1368,7 +1364,7 @@
     }
   };
 
-  // app/public/scripts/components/LoadingComponent.js
+  // app/src/scripts/components/LoadingComponent.ts
   var LoadingComponent = class extends HTMLElement {
     constructor() {
       super();
@@ -1382,12 +1378,16 @@
   };
   customElements.define("loading-component", LoadingComponent);
 
-  // app/public/scripts/pages/search/selectors.js
+  // app/src/scripts/pages/search/selectors.ts
   var bookList = document.querySelector("book-list");
-  var searchForm = document.querySelector("input-search form");
-  var searchInputElement = document.querySelector("input-search input[type='search']");
+  var searchForm = document.querySelector(
+    "input-search form"
+  );
+  var searchInputElement = document.querySelector(
+    "input-search input[type='search']"
+  );
 
-  // app/public/scripts/pages/search/AppSearch.js
+  // app/src/scripts/pages/search/AppSearch.ts
   var AppSearch = class extends HTMLElement {
     constructor() {
       super();
@@ -1407,17 +1407,18 @@
       this.renderBookList();
     }
     renderBookList() {
+      var _a;
       const params = new URLSearchParams(location.search);
       const keyword = params.get("keyword");
       const sort = params.get("sort") || "sim";
       if (keyword && sort) {
-        bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
+        (_a = bookList) == null ? void 0 : _a.initializeSearchPage(keyword, sort);
         searchInputElement.value = keyword;
       }
     }
   };
 
-  // app/public/scripts/pages/search/InputSearch.js
+  // app/src/scripts/pages/search/InputSearch.ts
   var InputSearch = class extends HTMLElement {
     constructor() {
       super();
@@ -1425,6 +1426,7 @@
         this.form.dispatchEvent(new Event("submit"));
       };
       this.onSubmit = (event) => {
+        var _a;
         event.preventDefault();
         if (!this.input)
           return;
@@ -1435,10 +1437,12 @@
         url.searchParams.set("keyword", keyword);
         url.searchParams.set("sort", sort);
         window.history.pushState({}, "", url.toString());
-        bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(keyword, sort);
+        (_a = bookList) == null ? void 0 : _a.initializeSearchPage(keyword, sort);
       };
       this.form = this.querySelector("form");
-      this.input = this.querySelector("input[type='search']");
+      this.input = this.querySelector(
+        "input[type='search']"
+      );
     }
     connectedCallback() {
       this.form.addEventListener("submit", this.onSubmit);
@@ -1454,7 +1458,7 @@
     }
   };
 
-  // app/public/scripts/utils/helpers.js
+  // app/src/scripts/utils/helpers.ts
   function fillElementsWithData(data, container) {
     Object.entries(data).forEach(([key, value]) => {
       const element = container.querySelector(`.${key}`);
@@ -1462,48 +1466,36 @@
     });
   }
 
-  // app/public/scripts/pages/search/renderBooItem.js
-  var __rest = function(s, e) {
-    var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  };
+  // app/src/scripts/pages/search/renderBooItem.ts
   function renderBookItem(bookItem, data) {
-    const { description, image, isbn, link, title } = data, otherData = __rest(data, ["description", "image", "isbn", "link", "title"]);
-    const summaryLinkElement = bookItem.querySelector(".book-summary a");
+    const {
+      description,
+      image,
+      isbn,
+      link,
+      title,
+      ...otherData
+      // author, discount, pubdate, publisher
+    } = data;
+    const summaryLinkElement = bookItem.querySelector(
+      ".book-summary a"
+    );
     const bookImage = new BookImage(image, title);
     summaryLinkElement.appendChild(bookImage);
     const linkEl = bookItem.querySelector(".link");
     linkEl.href = link;
-    const descriptionEl = bookItem.querySelector("book-description");
+    const descriptionEl = bookItem.querySelector(
+      "book-description"
+    );
     if (descriptionEl)
       descriptionEl.data = description;
     const anchorEl = bookItem.querySelector("a");
     anchorEl.href = `/book?isbn=${isbn}`;
-    fillElementsWithData(Object.assign(Object.assign({}, otherData), { title }), bookItem);
+    fillElementsWithData({ ...otherData, title }, bookItem);
     bookItem.dataset.isbn = isbn;
   }
 
-  // app/public/scripts/pages/search/BookItem.js
-  var __rest2 = function(s, e) {
-    var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  };
+  // app/src/scripts/pages/search/BookItem.ts
   var BookItem = class extends HTMLElement {
     constructor(data) {
       super();
@@ -1514,70 +1506,65 @@
     }
     connectedCallback() {
       this.renderView();
-      this.libraryButton = this.querySelector(".library-button");
-      this.libraryBookExist = this.querySelector("library-book-exist");
+      this.libraryButton = this.querySelector(
+        ".library-button"
+      );
+      this.libraryBookExist = this.querySelector(
+        "library-book-exist"
+      );
       this.libraryButton.addEventListener("click", this.onLibraryButtonClick);
     }
     disconnectedCallback() {
       var _a;
-      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibraryButtonClick);
+      (_a = this.libraryButton) == null ? void 0 : _a.removeEventListener(
+        "click",
+        this.onLibraryButtonClick
+      );
     }
     renderView() {
-      const _a = this.data, { discount, pubdate } = _a, others = __rest2(_a, ["discount", "pubdate"]);
-      const renderData = Object.assign(Object.assign({}, others), { discount: Number(discount).toLocaleString(), pubdate: this.getPubdate(pubdate) });
+      const { discount, pubdate, ...others } = this.data;
+      const renderData = {
+        ...others,
+        discount: Number(discount).toLocaleString(),
+        pubdate: this.getPubdate(pubdate)
+      };
       renderBookItem(this, renderData);
     }
     getPubdate(pubdate) {
-      return `${pubdate.substring(0, 4)}.${pubdate.substring(4, 6)}.${pubdate.substring(6)}`;
+      return `${pubdate.substring(0, 4)}.${pubdate.substring(
+        4,
+        6
+      )}.${pubdate.substring(6)}`;
     }
     // 도서관 소장 | 대출 조회
     onLibraryButtonClick() {
       var _a;
-      (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.onLibraryBookExist(this.libraryButton, this.dataset.isbn || "", model_default.libraries);
+      (_a = this.libraryBookExist) == null ? void 0 : _a.onLibraryBookExist(
+        this.libraryButton,
+        this.dataset.isbn || "",
+        model_default.libraries
+      );
     }
   };
 
-  // app/public/scripts/utils/constants.js
+  // app/src/scripts/utils/constants.ts
   var URL2 = {
     search: "/search-naver-book"
   };
 
-  // app/public/scripts/pages/search/BookList.js
-  var __awaiter3 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/pages/search/BookList.ts
   var BookList = class extends HTMLElement {
     constructor() {
       super();
-      this.paginationElement = this.querySelector(".paging-info");
+      this.paginationElement = this.querySelector(
+        ".paging-info"
+      );
       this.bookContainer = this.querySelector(".books");
       this.loadingComponent = this.querySelector("loading-component");
       this.observeTarget = this.querySelector(".observe");
-      this.itemTemplate = document.querySelector("#tp-book-item");
+      this.itemTemplate = document.querySelector(
+        "#tp-book-item"
+      );
       this.itemsPerPage = 10;
       this.fetchBooks = this.fetchBooks.bind(this);
       this.initializeSearchPage = this.initializeSearchPage.bind(this);
@@ -1587,40 +1574,42 @@
     }
     disconnectedCallback() {
       var _a;
-      (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
+      (_a = this.observer) == null ? void 0 : _a.disconnect();
     }
     initializeSearchPage(keyword, sortValue) {
       var _a;
       this.keyword = keyword;
       this.sortingOrder = sortValue;
       this.currentItemCount = 0;
-      (_a = this.observer) === null || _a === void 0 ? void 0 : _a.disconnect();
+      (_a = this.observer) == null ? void 0 : _a.disconnect();
       this.keyword ? this.loadBooks() : this.showDefaultMessage();
     }
     loadBooks() {
       var _a, _b;
       this.bookContainer.innerHTML = "";
-      (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
+      (_a = this.loadingComponent) == null ? void 0 : _a.show();
       this.fetchBooks();
-      (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
+      (_b = this.loadingComponent) == null ? void 0 : _b.hide();
     }
-    fetchBooks() {
-      return __awaiter3(this, void 0, void 0, function* () {
-        if (!this.keyword || !this.sortingOrder) {
-          return;
+    async fetchBooks() {
+      if (!this.keyword || !this.sortingOrder) {
+        return;
+      }
+      const searchUrl = `${URL2.search}?keyword=${encodeURIComponent(
+        this.keyword
+      )}&display=${this.itemsPerPage}&start=${this.currentItemCount + 1}&sort=${this.sortingOrder}`;
+      try {
+        const data = await CustomFetch_default.fetch(
+          searchUrl
+        );
+        this.render(data);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(`Error fetching books: ${error.message}`);
+        } else {
+          console.error("An unexpected error occurred");
         }
-        const searchUrl = `${URL2.search}?keyword=${encodeURIComponent(this.keyword)}&display=${this.itemsPerPage}&start=${this.currentItemCount + 1}&sort=${this.sortingOrder}`;
-        try {
-          const data = yield CustomFetch_default.fetch(searchUrl);
-          this.render(data);
-        } catch (error) {
-          if (error instanceof Error) {
-            console.error(`Error fetching books: ${error.message}`);
-          } else {
-            console.error("An unexpected error occurred");
-          }
-        }
-      });
+      }
     }
     render(bookData) {
       var _a;
@@ -1634,7 +1623,7 @@
       this.updatePagingInfo(bookData.total);
       this.renderList(bookData.items);
       if (bookData.total !== this.currentItemCount) {
-        (_a = this.observer) === null || _a === void 0 ? void 0 : _a.observe();
+        (_a = this.observer) == null ? void 0 : _a.observe();
       }
     }
     updatePagingInfo(total) {
@@ -1645,7 +1634,9 @@
         display: `${this.itemsPerPage}\uAC1C\uC529`
       };
       for (const [key, value] of Object.entries(obj)) {
-        const element = this.paginationElement.querySelector(`.__${key}`);
+        const element = this.paginationElement.querySelector(
+          `.__${key}`
+        );
         element.textContent = value;
       }
       this.paginationElement.hidden = false;
@@ -1662,14 +1653,18 @@
       return bookItem;
     }
     getIndex(index) {
-      return Math.ceil((this.currentItemCount - this.itemsPerPage) / this.itemsPerPage) * this.itemsPerPage + index;
+      return Math.ceil(
+        (this.currentItemCount - this.itemsPerPage) / this.itemsPerPage
+      ) * this.itemsPerPage + index;
     }
     showDefaultMessage() {
       this.paginationElement.hidden = true;
       this.renderMessage("message");
     }
     renderMessage(type) {
-      const messageTemplate = document.querySelector(`#tp-${type}`);
+      const messageTemplate = document.querySelector(
+        `#tp-${type}`
+      );
       if (!messageTemplate)
         return;
       this.bookContainer.innerHTML = "";
@@ -1677,34 +1672,7 @@
     }
   };
 
-  // app/public/scripts/pages/search/MonthlyKeywords.js
-  var __awaiter4 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/pages/search/MonthlyKeywords.ts
   var MonthlyKeywords = class extends HTMLElement {
     constructor() {
       super();
@@ -1713,48 +1681,54 @@
       this.fetch();
     }
     // disconnectedCallback() {}
-    fetch() {
-      return __awaiter4(this, void 0, void 0, function* () {
-        const date = /* @__PURE__ */ new Date();
-        date.setMonth(date.getMonth() - 1);
-        const month = date.getMonth() + 1;
-        const formatMonth = month < 10 ? `0${month}` : month.toString();
-        const searchParams = new URLSearchParams({
-          month: `${date.getFullYear()}-${formatMonth}`
-        });
-        try {
-          const data = yield CustomFetch_default.fetch(`/monthly-keywords?${searchParams}`);
-          this.render(data.keywords);
-        } catch (error) {
-          console.error(error);
-          throw new Error(`Fail to get monthly keyword.`);
-        }
+    async fetch() {
+      const date = /* @__PURE__ */ new Date();
+      date.setMonth(date.getMonth() - 1);
+      const month = date.getMonth() + 1;
+      const formatMonth = month < 10 ? `0${month}` : month.toString();
+      const searchParams = new URLSearchParams({
+        month: `${date.getFullYear()}-${formatMonth}`
       });
+      try {
+        const data = await CustomFetch_default.fetch(
+          `/monthly-keywords?${searchParams}`
+        );
+        this.render(data.keywords);
+      } catch (error) {
+        console.error(error);
+        throw new Error(`Fail to get monthly keyword.`);
+      }
     }
     render(keywords) {
       const fragment = new DocumentFragment();
       keywords.map((keyword) => {
-        const element = document.createElement("a");
+        const element = document.createElement(
+          "a"
+        );
         element.textContent = keyword.word;
         element.href = `?keyword=${keyword.word}`;
-        element.addEventListener("click", (event) => this.onKeywordClick(event, keyword.word));
+        element.addEventListener(
+          "click",
+          (event) => this.onKeywordClick(event, keyword.word)
+        );
         return element;
       }).forEach((element) => fragment.appendChild(element));
       this.appendChild(fragment);
     }
     onKeywordClick(event, word) {
+      var _a, _b;
       event.preventDefault();
       const url = new URL(window.location.href);
-      const sort = searchForm === null || searchForm === void 0 ? void 0 : searchForm.sort.value;
+      const sort = (_a = searchForm) == null ? void 0 : _a.sort.value;
       url.searchParams.set("keyword", word);
       url.searchParams.set("sort", sort);
       window.history.pushState({}, "", url.toString());
       searchInputElement.value = word;
-      bookList === null || bookList === void 0 ? void 0 : bookList.initializeSearchPage(word, sort);
+      (_b = bookList) == null ? void 0 : _b.initializeSearchPage(word, sort);
     }
   };
 
-  // app/public/scripts/pages/search/index.js
+  // app/src/scripts/pages/search/index.ts
   customElements.define("book-image", BookImage);
   customElements.define("nav-gnb", NavGnb);
   customElements.define("book-list", BookList);

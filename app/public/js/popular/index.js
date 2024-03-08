@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  // app/public/scripts/components/BookImage.js
+  // app/src/scripts/components/BookImage.ts
   var BookImage = class extends HTMLElement {
     constructor(url, name) {
       super();
@@ -21,14 +21,14 @@
       var _a;
       this.dataset.fail = "true";
       console.error(`Failed to load image`);
-      (_a = this.image) === null || _a === void 0 ? void 0 : _a.remove();
+      (_a = this.image) == null ? void 0 : _a.remove();
     }
   };
 
-  // app/public/scripts/model/constants.js
+  // app/src/scripts/model/constants.ts
   var STORAGE_NAME = "BookWorld";
 
-  // app/public/scripts/utils/Publisher.js
+  // app/src/scripts/utils/Publisher.ts
   var Publisher = class {
     constructor() {
       this.subscribers = [];
@@ -37,14 +37,16 @@
       this.subscribers.push(callback);
     }
     unsubscribe(callback) {
-      this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
+      this.subscribers = this.subscribers.filter(
+        (subscriber) => subscriber !== callback
+      );
     }
     notify(payload) {
       this.subscribers.forEach((callback) => callback(payload));
     }
   };
 
-  // app/public/scripts/model/FavoriteModel.js
+  // app/src/scripts/model/FavoriteModel.ts
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -53,7 +55,7 @@
       this._sortedKeys = sortedKeys;
     }
     get favorites() {
-      return Object.assign({}, this._favorites);
+      return { ...this._favorites };
     }
     set favorites(newCategories) {
       this._favorites = newCategories;
@@ -137,10 +139,14 @@
       this.bookUpdatePublisher.notify();
     }
     subscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.subscribe(subscriber);
+      this.categoriesUpdatePublisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.unsubscribe(subscriber);
+      this.categoriesUpdatePublisher.unsubscribe(
+        subscriber
+      );
     }
     subscribeBookUpdate(subscriber) {
       this.bookUpdatePublisher.subscribe(subscriber);
@@ -150,14 +156,14 @@
     }
   };
 
-  // app/public/scripts/model/LibraryModel.js
+  // app/src/scripts/model/LibraryModel.ts
   var LibraryModel = class {
     constructor(libraries) {
       this.publisher = new Publisher();
       this._libraries = libraries;
     }
     get libraries() {
-      return Object.assign({}, this._libraries);
+      return { ...this._libraries };
     }
     set libraries(newLibries) {
       this._libraries = newLibries;
@@ -185,14 +191,18 @@
       return code in this._libraries;
     }
     subscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
   };
 
-  // app/public/scripts/model/RegionModel.js
+  // app/src/scripts/model/RegionModel.ts
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -200,7 +210,7 @@
       this._regions = regions;
     }
     get regions() {
-      return Object.assign({}, this._regions);
+      return { ...this._regions };
     }
     set regions(newRegions) {
       this._regions = newRegions;
@@ -239,7 +249,7 @@
     }
   };
 
-  // app/public/scripts/model/index.js
+  // app/src/scripts/model/index.ts
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -426,7 +436,7 @@
   var bookModel = new BookModel();
   var model_default = bookModel;
 
-  // app/public/scripts/components/CategorySelector.js
+  // app/src/scripts/components/CategorySelector.ts
   var CategorySelector = class extends HTMLElement {
     constructor() {
       super();
@@ -452,15 +462,17 @@
       this.button = this.createButton();
       this.container = this.createContainer();
       this.render();
-      (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
+      (_a = this.button) == null ? void 0 : _a.addEventListener("click", this.onClickCategory);
       model_default.subscribeFavoriteCategoriesUpdate(this.handleCategoryUpdate);
     }
     render() {
       if (!this.container || !this.button)
         return;
-      model_default.sortedFavoriteKeys.map((category) => this.createCategoryItem(category)).forEach((label) => {
+      model_default.sortedFavoriteKeys.map(
+        (category) => this.createCategoryItem(category)
+      ).forEach((label) => {
         var _a;
-        return (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(label);
+        return (_a = this.container) == null ? void 0 : _a.appendChild(label);
       });
       this.appendChild(this.container);
       this.appendChild(this.button);
@@ -492,7 +504,10 @@
       if (model_default.hasFavoriteBook(category, ISBN)) {
         checkbox.checked = true;
       }
-      checkbox.addEventListener("change", () => this.onChange(checkbox, category));
+      checkbox.addEventListener(
+        "change",
+        () => this.onChange(checkbox, category)
+      );
       return checkbox;
     }
     onChange(checkbox, category) {
@@ -505,11 +520,17 @@
       }
       checkbox.checked = !isBookInCategory;
     }
-    handleCategoryUpdate({ type, payload }) {
+    handleCategoryUpdate({
+      type,
+      payload
+    }) {
       const actions = {
         add: () => this.handleAdd(payload.name),
         rename: () => this.reanmeCategory(payload.newName),
-        change: () => this.changeCategory(payload.targetIndex, payload.draggedIndex),
+        change: () => this.changeCategory(
+          payload.targetIndex,
+          payload.draggedIndex
+        ),
         delete: () => this.handleDelete(payload.name)
       };
       if (actions[type]) {
@@ -520,7 +541,9 @@
     }
     handleAdd(name) {
       var _a;
-      (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(this.createCategoryItem(name));
+      (_a = this.container) == null ? void 0 : _a.appendChild(
+        this.createCategoryItem(name)
+      );
     }
     handleDelete(name) {
       this.querySelectorAll("label span").forEach((item, index) => {
@@ -532,8 +555,12 @@
     changeCategory(targetIndex, draggedIndex) {
       var _a, _b;
       const labels = this.querySelectorAll("label");
-      const targetElement = this.createCategoryItem((_a = labels[draggedIndex].querySelector("span")) === null || _a === void 0 ? void 0 : _a.textContent);
-      const dragElement = this.createCategoryItem((_b = labels[targetIndex].querySelector("span")) === null || _b === void 0 ? void 0 : _b.textContent);
+      const targetElement = this.createCategoryItem(
+        (_a = labels[draggedIndex].querySelector("span")) == null ? void 0 : _a.textContent
+      );
+      const dragElement = this.createCategoryItem(
+        (_b = labels[targetIndex].querySelector("span")) == null ? void 0 : _b.textContent
+      );
       labels[targetIndex].replaceWith(targetElement);
       labels[draggedIndex].replaceWith(dragElement);
     }
@@ -544,16 +571,22 @@
     }
   };
 
-  // app/public/scripts/utils/CustomEventEmitter.js
+  // app/src/scripts/utils/CustomEventEmitter.ts
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
     }
     add(event, callback) {
-      this._bus.addEventListener(event, callback);
+      this._bus.addEventListener(
+        event,
+        callback
+      );
     }
     remove(event, callback) {
-      this._bus.removeEventListener(event, callback);
+      this._bus.removeEventListener(
+        event,
+        callback
+      );
     }
     dispatch(event, detail = {}) {
       this._bus.dispatchEvent(new CustomEvent(event, { detail }));
@@ -561,56 +594,35 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // app/public/scripts/utils/CustomFetch.js
-  var __awaiter = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/utils/CustomFetch.ts
   var CustomFetch = class {
     constructor(baseOptions = {}) {
-      this.defaultOptions = Object.assign({ method: "GET", headers: {
-        "Content-Type": "application/json"
-        // 'Authorization': `Bearer ${getToken()}`
-      } }, baseOptions);
+      this.defaultOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+          // 'Authorization': `Bearer ${getToken()}`
+        },
+        ...baseOptions
+      };
     }
-    fetch(url, options) {
-      return __awaiter(this, void 0, void 0, function* () {
-        const finalOptions = Object.assign(Object.assign(Object.assign({}, this.defaultOptions), options), { timeout: 5e3 });
-        try {
-          const response = yield fetch(url, finalOptions);
-          if (!response.ok) {
-            throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
-          }
-          const data = yield response.json();
-          return data;
-        } catch (error) {
-          console.error(`Error fetching data: ${error}`);
-          throw new Error(`Error fetching data: ${error}`);
+    async fetch(url, options) {
+      const finalOptions = {
+        ...this.defaultOptions,
+        ...options,
+        timeout: 5e3
+      };
+      try {
+        const response = await fetch(url, finalOptions);
+        if (!response.ok) {
+          throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
         }
-      });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error(`Error fetching data: ${error}`);
+        throw new Error(`Error fetching data: ${error}`);
+      }
     }
   };
   var CustomFetch_default = new CustomFetch();
@@ -1153,7 +1165,7 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // app/public/scripts/components/NavGnb.js
+  // app/src/scripts/components/NavGnb.ts
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -1180,7 +1192,10 @@
       model_default.unsubscribeFavoriteBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce(
+        (sum, currentArray) => sum + currentArray.length,
+        0
+      );
     }
     render() {
       this.innerHTML = `
@@ -1203,7 +1218,7 @@
     }
   };
 
-  // app/public/scripts/components/LoadingComponent.js
+  // app/src/scripts/components/LoadingComponent.ts
   var LoadingComponent = class extends HTMLElement {
     constructor() {
       super();
@@ -1217,7 +1232,7 @@
   };
   customElements.define("loading-component", LoadingComponent);
 
-  // app/public/scripts/utils/helpers.js
+  // app/src/scripts/utils/helpers.ts
   function getCurrentDates() {
     const currentDate = /* @__PURE__ */ new Date();
     const currentYear = currentDate.getFullYear();
@@ -1238,46 +1253,7 @@
     return content.cloneNode(true);
   }
 
-  // app/public/scripts/pages/popular/Popular.js
-  var __awaiter2 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
-  var __rest = function(s, e) {
-    var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  };
+  // app/src/scripts/pages/popular/Popular.ts
   var Popular = class extends HTMLElement {
     constructor() {
       super();
@@ -1291,12 +1267,24 @@
     connectedCallback() {
       this.params = this.getParams();
       this.fetch(this.params);
-      CustomEventEmitter_default.add("requestPopular", this.onRequestPopular);
-      CustomEventEmitter_default.add("clickPageNav", this.onClickPageNav);
+      CustomEventEmitter_default.add(
+        "requestPopular",
+        this.onRequestPopular
+      );
+      CustomEventEmitter_default.add(
+        "clickPageNav",
+        this.onClickPageNav
+      );
     }
     disconnectedCallback() {
-      CustomEventEmitter_default.remove("requestPopular", this.onRequestPopular);
-      CustomEventEmitter_default.remove("clickPageNav", this.onClickPageNav);
+      CustomEventEmitter_default.remove(
+        "requestPopular",
+        this.onRequestPopular
+      );
+      CustomEventEmitter_default.remove(
+        "clickPageNav",
+        this.onClickPageNav
+      );
     }
     getParams() {
       const { currentYear, currentMonth, currentDay } = getCurrentDates();
@@ -1312,33 +1300,37 @@
         pageSize: "100"
       };
     }
-    fetch(params) {
+    async fetch(params) {
       var _a, _b;
-      return __awaiter2(this, void 0, void 0, function* () {
-        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
-        this.list.innerHTML = "";
-        const searchParams = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== void 0).map(([key, value]) => [key, String(value)]));
-        try {
-          const data = yield CustomFetch_default.fetch(`/popular-book?${searchParams}`);
-          this.render(data);
-          if (params.pageNo === "1") {
-            CustomEventEmitter_default.dispatch("renderPageNav", {
-              pageSize: params.pageSize
-            });
-          }
-        } catch (error) {
-          console.error(error);
-          throw new Error(`Fail to get library search by book.`);
+      (_a = this.loadingComponent) == null ? void 0 : _a.show();
+      this.list.innerHTML = "";
+      const searchParams = new URLSearchParams(
+        Object.entries(params).filter(([, value]) => value !== void 0).map(([key, value]) => [key, String(value)])
+      );
+      try {
+        const data = await CustomFetch_default.fetch(
+          `/popular-book?${searchParams}`
+        );
+        this.render(data);
+        if (params.pageNo === "1") {
+          CustomEventEmitter_default.dispatch("renderPageNav", {
+            pageSize: params.pageSize
+          });
         }
-        (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
-      });
+      } catch (error) {
+        console.error(error);
+        throw new Error(`Fail to get library search by book.`);
+      }
+      (_b = this.loadingComponent) == null ? void 0 : _b.hide();
     }
     render({ data, resultNum }) {
       if (!this.list)
         return;
       console.log(resultNum);
       const fragment = new DocumentFragment();
-      data.map((item) => this.createItem(item)).forEach((element) => element && fragment.appendChild(element));
+      data.map((item) => this.createItem(item)).forEach(
+        (element) => element && fragment.appendChild(element)
+      );
       this.list.appendChild(fragment);
     }
     createItem(item) {
@@ -1346,15 +1338,22 @@
         // addition_symbol,
         bookImageURL,
         // bookname,
-        bookDtlUrl
-      } = item, otherData = __rest(item, ["bookImageURL", "bookDtlUrl"]);
+        bookDtlUrl,
+        ...otherData
+        // authors,  class_nm, isbn13, class_no, loan_count,  no,  publication_year,  publisher, ranking, vol,
+      } = item;
       if (!this.itemTemplate)
         return;
       const cloned = cloneTemplate(this.itemTemplate);
       cloned.dataset.isbn = item.isbn13;
       const linkEl = cloned.querySelector(".link");
-      linkEl.insertBefore(new BookImage(bookImageURL, item.bookname), linkEl.querySelector(".ranking"));
-      const bookDtlUrlNode = cloned.querySelector(".bookDtlUrl");
+      linkEl.insertBefore(
+        new BookImage(bookImageURL, item.bookname),
+        linkEl.querySelector(".ranking")
+      );
+      const bookDtlUrlNode = cloned.querySelector(
+        ".bookDtlUrl"
+      );
       if (bookDtlUrlNode) {
         bookDtlUrlNode.href = bookDtlUrl;
       }
@@ -1380,7 +1379,7 @@
     }
   };
 
-  // app/public/scripts/pages/popular/PopularSearch.js
+  // app/src/scripts/pages/popular/PopularSearch.ts
   var PopularSearch = class extends HTMLElement {
     constructor() {
       super();
@@ -1410,7 +1409,9 @@
         }
         target.ariaSelected = "true";
         if (this.pageNav.lastChild === target) {
-          const el = this.createNavItem(Number(target.value) + 1);
+          const el = this.createNavItem(
+            Number(target.value) + 1
+          );
           this.pageNav.appendChild(el);
         }
         CustomEventEmitter_default.dispatch("clickPageNav", {
@@ -1466,13 +1467,25 @@
         this.closeForm();
       };
       this.form = this.querySelector("form");
-      this.filterButton = this.querySelector(".filterButton");
-      this.closeButton = this.querySelector(".closeButton");
-      this.startDateInput = this.querySelector("input[name='startDt']");
-      this.endDateInput = this.querySelector("input[name='endDt']");
-      this.detailRegion = this.querySelector("[name='detailRegion']");
+      this.filterButton = this.querySelector(
+        ".filterButton"
+      );
+      this.closeButton = this.querySelector(
+        ".closeButton"
+      );
+      this.startDateInput = this.querySelector(
+        "input[name='startDt']"
+      );
+      this.endDateInput = this.querySelector(
+        "input[name='endDt']"
+      );
+      this.detailRegion = this.querySelector(
+        "[name='detailRegion']"
+      );
       this.subRegion = this.querySelector(".subRegion");
-      this.detailSubject = this.querySelector("[name='detailKdc']");
+      this.detailSubject = this.querySelector(
+        "[name='detailKdc']"
+      );
       this.subSubject = this.querySelector(".subSubject");
       this.pageNav = this.querySelector(".page-nav");
       this.pageSize = null;
@@ -1486,16 +1499,25 @@
       this.form.addEventListener("change", this.onChangeForm);
       this.form.addEventListener("reset", this.onReset);
       this.form.addEventListener("submit", this.onSumbit);
-      CustomEventEmitter_default.add("renderPageNav", this.onRenderPageNav);
+      CustomEventEmitter_default.add(
+        "renderPageNav",
+        this.onRenderPageNav
+      );
     }
     disconnectedCallback() {
       if (!this.form)
         return;
-      this.filterButton.removeEventListener("click", this.onClickFilterButton);
+      this.filterButton.removeEventListener(
+        "click",
+        this.onClickFilterButton
+      );
       this.form.removeEventListener("change", this.onChangeForm);
       this.form.removeEventListener("reset", this.onReset);
       this.form.removeEventListener("submit", this.onSumbit);
-      CustomEventEmitter_default.remove("renderPageNav", this.onRenderPageNav);
+      CustomEventEmitter_default.remove(
+        "renderPageNav",
+        this.onRenderPageNav
+      );
     }
     createNavItem(index) {
       if (!this.pageSize)
@@ -1514,34 +1536,48 @@
     }
     handleGender(target) {
       if (!(target.value === "A")) {
-        const element = this.querySelector("input[name='gender'][value='A']");
+        const element = this.querySelector(
+          "input[name='gender'][value='A']"
+        );
         element.checked = false;
       }
       if (target.value === "A") {
-        const elements = this.querySelectorAll("input[type='checkbox'][name='gender']");
+        const elements = this.querySelectorAll(
+          "input[type='checkbox'][name='gender']"
+        );
         elements.forEach((item) => item.checked = false);
       }
     }
     handleAge(target) {
       if (!(target.value === "A")) {
-        const element = this.querySelector("input[name='age'][value='A']");
+        const element = this.querySelector(
+          "input[name='age'][value='A']"
+        );
         element.checked = false;
       }
       if (target.value === "A") {
-        const elements = this.querySelectorAll("input[type='checkbox'][name='age']");
+        const elements = this.querySelectorAll(
+          "input[type='checkbox'][name='age']"
+        );
         elements.forEach((item) => item.checked = false);
       }
     }
     handleRegion(target) {
-      const element = this.querySelector("input[name='region'][value='A']");
-      const elements = this.querySelectorAll("input[type='checkbox'][name='region']");
+      const element = this.querySelector(
+        "input[name='region'][value='A']"
+      );
+      const elements = this.querySelectorAll(
+        "input[type='checkbox'][name='region']"
+      );
       if (!(target.value === "A")) {
         element.checked = false;
       }
       if (target.value === "A") {
         elements.forEach((item) => item.checked = false);
       }
-      const checkedEls = Array.from(this.querySelectorAll('[name="region"]:checked')).filter((el) => el.value !== "A");
+      const checkedEls = Array.from(
+        this.querySelectorAll('[name="region"]:checked')
+      ).filter((el) => el.value !== "A");
       if (this.detailRegion && this.subRegion) {
         const isOnly = checkedEls.length === 1;
         this.detailRegion.disabled = !isOnly;
@@ -1555,24 +1591,34 @@
     }
     handleAddCode(target) {
       if (!(target.value === "A")) {
-        const elA = this.querySelector("input[name='addCode'][value='A']");
+        const elA = this.querySelector(
+          "input[name='addCode'][value='A']"
+        );
         elA.checked = false;
       }
       if (target.value === "A") {
-        const els = this.querySelectorAll("input[type='checkbox'][name='addCode']");
+        const els = this.querySelectorAll(
+          "input[type='checkbox'][name='addCode']"
+        );
         els.forEach((item) => item.checked = false);
       }
     }
     handleSubject(target) {
-      const elA = this.querySelector("input[name='kdc'][value='A']");
-      const els = this.querySelectorAll("input[type='checkbox'][name='kdc']");
+      const elA = this.querySelector(
+        "input[name='kdc'][value='A']"
+      );
+      const els = this.querySelectorAll(
+        "input[type='checkbox'][name='kdc']"
+      );
       if (!(target.value === "A")) {
         elA.checked = false;
       }
       if (target.value === "A") {
         els.forEach((item) => item.checked = false);
       }
-      const checkedEls = Array.from(this.querySelectorAll('[name="kdc"]:checked')).filter((el) => el.value !== "A");
+      const checkedEls = Array.from(
+        this.querySelectorAll('[name="kdc"]:checked')
+      ).filter((el) => el.value !== "A");
       if (this.detailSubject && this.subSubject) {
         const isOnly = checkedEls.length === 1;
         this.detailSubject.disabled = !isOnly;
@@ -1589,8 +1635,8 @@
     handleLoanDuration(event) {
       var _a;
       const { currentDate, currentYear, currentMonth, currentDay } = getCurrentDates();
-      const target = event === null || event === void 0 ? void 0 : event.target;
-      switch (target === null || target === void 0 ? void 0 : target.value) {
+      const target = event == null ? void 0 : event.target;
+      switch (target == null ? void 0 : target.value) {
         case "year":
           this.initialLoanDuration();
           break;
@@ -1601,10 +1647,17 @@
         }
         case "week": {
           const startOfWeek = new Date(currentDate);
-          startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+          startOfWeek.setDate(
+            currentDate.getDate() - currentDate.getDay()
+          );
           const startWeekYear = startOfWeek.getFullYear();
-          const startWeekMonth = String(startOfWeek.getMonth() + 1).padStart(2, "0");
-          const startWeekDay = String(startOfWeek.getDate()).padStart(2, "0");
+          const startWeekMonth = String(
+            startOfWeek.getMonth() + 1
+          ).padStart(2, "0");
+          const startWeekDay = String(startOfWeek.getDate()).padStart(
+            2,
+            "0"
+          );
           this.startDateInput.value = `${startWeekYear}-${startWeekMonth}-${startWeekDay}`;
           this.endDateInput.value = `${currentYear}-${currentMonth}-${currentDay}`;
           break;
@@ -1612,8 +1665,10 @@
         case "custom":
           break;
       }
-      (_a = this.querySelector(".dateRange")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-        const customDateInput = this.querySelector("input[name='loanDuration'][value='custom']");
+      (_a = this.querySelector(".dateRange")) == null ? void 0 : _a.addEventListener("click", () => {
+        const customDateInput = this.querySelector(
+          "input[name='loanDuration'][value='custom']"
+        );
         customDateInput.checked = true;
       });
     }
@@ -1624,7 +1679,7 @@
     }
   };
 
-  // app/public/scripts/pages/popular/index.js
+  // app/src/scripts/pages/popular/index.ts
   customElements.define("book-image", BookImage);
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-popular", Popular);

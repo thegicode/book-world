@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  // app/public/scripts/components/BookDescription.js
+  // app/src/scripts/components/BookDescription.ts
   var BookDescription = class extends HTMLElement {
     constructor() {
       super();
@@ -15,7 +15,10 @@
     }
     disconnectedCallback() {
       if (this.button)
-        this.button.removeEventListener("click", this.onButtonClick.bind(this));
+        this.button.removeEventListener(
+          "click",
+          this.onButtonClick.bind(this)
+        );
     }
     render(value) {
       const template = `
@@ -25,7 +28,10 @@
       this.el = this.querySelector(".description");
       this.button = this.querySelector(".more-description-button");
       if (this.button)
-        this.button.addEventListener("click", this.onButtonClick.bind(this));
+        this.button.addEventListener(
+          "click",
+          this.onButtonClick.bind(this)
+        );
     }
     // isEllipsisActive(el) {
     //     return (el.offsetHeight < el.scrollHeight);
@@ -48,7 +54,7 @@
     }
   };
 
-  // app/public/scripts/components/BookImage.js
+  // app/src/scripts/components/BookImage.ts
   var BookImage = class extends HTMLElement {
     constructor(url, name) {
       super();
@@ -69,14 +75,14 @@
       var _a;
       this.dataset.fail = "true";
       console.error(`Failed to load image`);
-      (_a = this.image) === null || _a === void 0 ? void 0 : _a.remove();
+      (_a = this.image) == null ? void 0 : _a.remove();
     }
   };
 
-  // app/public/scripts/model/constants.js
+  // app/src/scripts/model/constants.ts
   var STORAGE_NAME = "BookWorld";
 
-  // app/public/scripts/utils/Publisher.js
+  // app/src/scripts/utils/Publisher.ts
   var Publisher = class {
     constructor() {
       this.subscribers = [];
@@ -85,14 +91,16 @@
       this.subscribers.push(callback);
     }
     unsubscribe(callback) {
-      this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
+      this.subscribers = this.subscribers.filter(
+        (subscriber) => subscriber !== callback
+      );
     }
     notify(payload) {
       this.subscribers.forEach((callback) => callback(payload));
     }
   };
 
-  // app/public/scripts/model/FavoriteModel.js
+  // app/src/scripts/model/FavoriteModel.ts
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -101,7 +109,7 @@
       this._sortedKeys = sortedKeys;
     }
     get favorites() {
-      return Object.assign({}, this._favorites);
+      return { ...this._favorites };
     }
     set favorites(newCategories) {
       this._favorites = newCategories;
@@ -185,10 +193,14 @@
       this.bookUpdatePublisher.notify();
     }
     subscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.subscribe(subscriber);
+      this.categoriesUpdatePublisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.unsubscribe(subscriber);
+      this.categoriesUpdatePublisher.unsubscribe(
+        subscriber
+      );
     }
     subscribeBookUpdate(subscriber) {
       this.bookUpdatePublisher.subscribe(subscriber);
@@ -198,14 +210,14 @@
     }
   };
 
-  // app/public/scripts/model/LibraryModel.js
+  // app/src/scripts/model/LibraryModel.ts
   var LibraryModel = class {
     constructor(libraries) {
       this.publisher = new Publisher();
       this._libraries = libraries;
     }
     get libraries() {
-      return Object.assign({}, this._libraries);
+      return { ...this._libraries };
     }
     set libraries(newLibries) {
       this._libraries = newLibries;
@@ -233,14 +245,18 @@
       return code in this._libraries;
     }
     subscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
   };
 
-  // app/public/scripts/model/RegionModel.js
+  // app/src/scripts/model/RegionModel.ts
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -248,7 +264,7 @@
       this._regions = regions;
     }
     get regions() {
-      return Object.assign({}, this._regions);
+      return { ...this._regions };
     }
     set regions(newRegions) {
       this._regions = newRegions;
@@ -287,7 +303,7 @@
     }
   };
 
-  // app/public/scripts/model/index.js
+  // app/src/scripts/model/index.ts
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -474,7 +490,7 @@
   var bookModel = new BookModel();
   var model_default = bookModel;
 
-  // app/public/scripts/components/CategorySelector.js
+  // app/src/scripts/components/CategorySelector.ts
   var CategorySelector = class extends HTMLElement {
     constructor() {
       super();
@@ -500,15 +516,17 @@
       this.button = this.createButton();
       this.container = this.createContainer();
       this.render();
-      (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
+      (_a = this.button) == null ? void 0 : _a.addEventListener("click", this.onClickCategory);
       model_default.subscribeFavoriteCategoriesUpdate(this.handleCategoryUpdate);
     }
     render() {
       if (!this.container || !this.button)
         return;
-      model_default.sortedFavoriteKeys.map((category) => this.createCategoryItem(category)).forEach((label) => {
+      model_default.sortedFavoriteKeys.map(
+        (category) => this.createCategoryItem(category)
+      ).forEach((label) => {
         var _a;
-        return (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(label);
+        return (_a = this.container) == null ? void 0 : _a.appendChild(label);
       });
       this.appendChild(this.container);
       this.appendChild(this.button);
@@ -540,7 +558,10 @@
       if (model_default.hasFavoriteBook(category, ISBN)) {
         checkbox.checked = true;
       }
-      checkbox.addEventListener("change", () => this.onChange(checkbox, category));
+      checkbox.addEventListener(
+        "change",
+        () => this.onChange(checkbox, category)
+      );
       return checkbox;
     }
     onChange(checkbox, category) {
@@ -553,11 +574,17 @@
       }
       checkbox.checked = !isBookInCategory;
     }
-    handleCategoryUpdate({ type, payload }) {
+    handleCategoryUpdate({
+      type,
+      payload
+    }) {
       const actions = {
         add: () => this.handleAdd(payload.name),
         rename: () => this.reanmeCategory(payload.newName),
-        change: () => this.changeCategory(payload.targetIndex, payload.draggedIndex),
+        change: () => this.changeCategory(
+          payload.targetIndex,
+          payload.draggedIndex
+        ),
         delete: () => this.handleDelete(payload.name)
       };
       if (actions[type]) {
@@ -568,7 +595,9 @@
     }
     handleAdd(name) {
       var _a;
-      (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(this.createCategoryItem(name));
+      (_a = this.container) == null ? void 0 : _a.appendChild(
+        this.createCategoryItem(name)
+      );
     }
     handleDelete(name) {
       this.querySelectorAll("label span").forEach((item, index) => {
@@ -580,8 +609,12 @@
     changeCategory(targetIndex, draggedIndex) {
       var _a, _b;
       const labels = this.querySelectorAll("label");
-      const targetElement = this.createCategoryItem((_a = labels[draggedIndex].querySelector("span")) === null || _a === void 0 ? void 0 : _a.textContent);
-      const dragElement = this.createCategoryItem((_b = labels[targetIndex].querySelector("span")) === null || _b === void 0 ? void 0 : _b.textContent);
+      const targetElement = this.createCategoryItem(
+        (_a = labels[draggedIndex].querySelector("span")) == null ? void 0 : _a.textContent
+      );
+      const dragElement = this.createCategoryItem(
+        (_b = labels[targetIndex].querySelector("span")) == null ? void 0 : _b.textContent
+      );
       labels[targetIndex].replaceWith(targetElement);
       labels[draggedIndex].replaceWith(dragElement);
     }
@@ -592,16 +625,22 @@
     }
   };
 
-  // app/public/scripts/utils/CustomEventEmitter.js
+  // app/src/scripts/utils/CustomEventEmitter.ts
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
     }
     add(event, callback) {
-      this._bus.addEventListener(event, callback);
+      this._bus.addEventListener(
+        event,
+        callback
+      );
     }
     remove(event, callback) {
-      this._bus.removeEventListener(event, callback);
+      this._bus.removeEventListener(
+        event,
+        callback
+      );
     }
     dispatch(event, detail = {}) {
       this._bus.dispatchEvent(new CustomEvent(event, { detail }));
@@ -609,56 +648,35 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // app/public/scripts/utils/CustomFetch.js
-  var __awaiter = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/utils/CustomFetch.ts
   var CustomFetch = class {
     constructor(baseOptions = {}) {
-      this.defaultOptions = Object.assign({ method: "GET", headers: {
-        "Content-Type": "application/json"
-        // 'Authorization': `Bearer ${getToken()}`
-      } }, baseOptions);
+      this.defaultOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+          // 'Authorization': `Bearer ${getToken()}`
+        },
+        ...baseOptions
+      };
     }
-    fetch(url, options) {
-      return __awaiter(this, void 0, void 0, function* () {
-        const finalOptions = Object.assign(Object.assign(Object.assign({}, this.defaultOptions), options), { timeout: 5e3 });
-        try {
-          const response = yield fetch(url, finalOptions);
-          if (!response.ok) {
-            throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
-          }
-          const data = yield response.json();
-          return data;
-        } catch (error) {
-          console.error(`Error fetching data: ${error}`);
-          throw new Error(`Error fetching data: ${error}`);
+    async fetch(url, options) {
+      const finalOptions = {
+        ...this.defaultOptions,
+        ...options,
+        timeout: 5e3
+      };
+      try {
+        const response = await fetch(url, finalOptions);
+        if (!response.ok) {
+          throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
         }
-      });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error(`Error fetching data: ${error}`);
+        throw new Error(`Error fetching data: ${error}`);
+      }
     }
   };
   var CustomFetch_default = new CustomFetch();
@@ -1201,34 +1219,7 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // app/public/scripts/components/LibraryBookExist.js
-  var __awaiter2 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/components/LibraryBookExist.ts
   var LibraryBookExist = class extends HTMLElement {
     constructor() {
       super();
@@ -1238,28 +1229,28 @@
     connectedCallback() {
       this.itemTemplate = this.template();
     }
-    onLibraryBookExist(button, isbn13, library) {
-      return __awaiter2(this, void 0, void 0, function* () {
-        const entries = Object.entries(library);
-        this.loading(entries.length);
-        if (button)
-          button.disabled = true;
-        const promises = entries.map(([libCode, libName], index) => __awaiter2(this, void 0, void 0, function* () {
-          try {
-            const data = yield CustomFetch_default.fetch(`/book-exist?isbn13=${isbn13}&libCode=${libCode}`);
-            this.renderBookExist(data, libName, index);
-          } catch (error) {
-            console.error(error);
-            throw new Error(`Fail to get usage analysis list.`);
-          }
-        }));
+    async onLibraryBookExist(button, isbn13, library) {
+      const entries = Object.entries(library);
+      this.loading(entries.length);
+      if (button)
+        button.disabled = true;
+      const promises = entries.map(async ([libCode, libName], index) => {
         try {
-          yield Promise.all(promises);
-          this.removeLoading();
+          const data = await CustomFetch_default.fetch(
+            `/book-exist?isbn13=${isbn13}&libCode=${libCode}`
+          );
+          this.renderBookExist(data, libName, index);
         } catch (error) {
-          console.error("Failed to fetch data for some libraries");
+          console.error(error);
+          throw new Error(`Fail to get usage analysis list.`);
         }
       });
+      try {
+        await Promise.all(promises);
+        this.removeLoading();
+      } catch (error) {
+        console.error("Failed to fetch data for some libraries");
+      }
     }
     renderBookExist(data, libName, index) {
       const { hasBook, loanAvailable } = data;
@@ -1278,7 +1269,9 @@
       this.container.innerHTML = text;
     }
     removeLoading() {
-      this.querySelectorAll(".library-item[data-loading=true]").forEach((el) => {
+      this.querySelectorAll(
+        ".library-item[data-loading=true]"
+      ).forEach((el) => {
         delete el.dataset.loading;
       });
     }
@@ -1291,7 +1284,7 @@
     }
   };
 
-  // app/public/scripts/components/NavGnb.js
+  // app/src/scripts/components/NavGnb.ts
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -1318,7 +1311,10 @@
       model_default.unsubscribeFavoriteBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce(
+        (sum, currentArray) => sum + currentArray.length,
+        0
+      );
     }
     render() {
       this.innerHTML = `
@@ -1341,7 +1337,7 @@
     }
   };
 
-  // app/public/scripts/components/LoadingComponent.js
+  // app/src/scripts/components/LoadingComponent.ts
   var LoadingComponent = class extends HTMLElement {
     constructor() {
       super();
@@ -1355,7 +1351,7 @@
   };
   customElements.define("loading-component", LoadingComponent);
 
-  // app/public/scripts/utils/helpers.js
+  // app/src/scripts/utils/helpers.ts
   function cloneTemplate(template) {
     const content = template.content.firstElementChild;
     if (!content) {
@@ -1370,35 +1366,33 @@
     });
   }
 
-  // app/public/scripts/pages/favorite/FavoriteItemUI.js
-  var __rest = function(s, e) {
-    var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  };
+  // app/src/scripts/pages/favorite/FavoriteItemUI.ts
   var FavoriteItemUI = class {
     constructor(component) {
       this.component = component;
     }
-    render(_a) {
-      var { bookImageURL, bookname, description, isbn13 } = _a, otherData = __rest(_a, ["bookImageURL", "bookname", "description", "isbn13"]);
-      const linkElement = this.component.querySelector(".book-summary a");
+    render({
+      bookImageURL,
+      bookname,
+      description,
+      isbn13,
+      ...otherData
+    }) {
+      const linkElement = this.component.querySelector(
+        ".book-summary a"
+      );
       linkElement.appendChild(new BookImage(bookImageURL, bookname));
-      const descNode = this.component.querySelector("book-description");
+      const descNode = this.component.querySelector(
+        "book-description"
+      );
       descNode.data = description;
       const anchorEl = this.component.querySelector("a");
       anchorEl.href = `/book?isbn=${isbn13}`;
-      const others = Object.assign(Object.assign({}, otherData), {
+      const others = {
+        ...otherData,
         bookname,
         isbn13
-      });
+      };
       fillElementsWithData(others, this.component);
       if (this.component.libraryButton && Object.keys(model_default.libraries).length === 0) {
         this.component.libraryButton.hidden = true;
@@ -1431,34 +1425,7 @@
     }
   };
 
-  // app/public/scripts/pages/favorite/FavoriteItem.js
-  var __awaiter3 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/pages/favorite/FavoriteItem.ts
   var FavoriteItem = class extends HTMLElement {
     constructor(isbn) {
       super();
@@ -1485,28 +1452,29 @@
       this.kyoboButton = this.querySelector(".kyoboInfo-button");
       this.kyoboInfoCpnt = this.querySelector("kyobo-info");
       this.fetchData();
-      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onLibrary);
-      (_b = this.libraryHideButton) === null || _b === void 0 ? void 0 : _b.addEventListener("click", this.onHideLibrary);
-      (_c = this.kyoboButton) === null || _c === void 0 ? void 0 : _c.addEventListener("click", this.onShowKyobo);
+      (_a = this.libraryButton) == null ? void 0 : _a.addEventListener("click", this.onLibrary);
+      (_b = this.libraryHideButton) == null ? void 0 : _b.addEventListener("click", this.onHideLibrary);
+      (_c = this.kyoboButton) == null ? void 0 : _c.addEventListener("click", this.onShowKyobo);
     }
     disconnectedCallback() {
       var _a, _b;
-      (_a = this.libraryButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onLibrary);
-      (_b = this.libraryHideButton) === null || _b === void 0 ? void 0 : _b.removeEventListener("click", this.onHideLibrary);
+      (_a = this.libraryButton) == null ? void 0 : _a.removeEventListener("click", this.onLibrary);
+      (_b = this.libraryHideButton) == null ? void 0 : _b.removeEventListener(
+        "click",
+        this.onHideLibrary
+      );
     }
-    fetchData() {
+    async fetchData() {
       var _a;
-      return __awaiter3(this, void 0, void 0, function* () {
-        const url = `/usage-analysis-list?isbn13=${this._isbn}`;
-        try {
-          const data = yield CustomFetch_default.fetch(url);
-          this.renderUI(data.book);
-        } catch (error) {
-          this.ui.renderError();
-          console.error(`${error}, Fail to get usage-analysis-list.`);
-        }
-        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.hide();
-      });
+      const url = `/usage-analysis-list?isbn13=${this._isbn}`;
+      try {
+        const data = await CustomFetch_default.fetch(url);
+        this.renderUI(data.book);
+      } catch (error) {
+        this.ui.renderError();
+        console.error(`${error}, Fail to get usage-analysis-list.`);
+      }
+      (_a = this.loadingComponent) == null ? void 0 : _a.hide();
     }
     renderUI(book) {
       delete book.vol;
@@ -1515,29 +1483,41 @@
     onLibrary() {
       if (!this.libraryBookExist || !this.libraryButton)
         return;
-      this.libraryBookExist.onLibraryBookExist(this.libraryButton, this._isbn, model_default.libraries);
+      this.libraryBookExist.onLibraryBookExist(
+        this.libraryButton,
+        this._isbn,
+        model_default.libraries
+      );
       this.ui.updateOnLibrary();
     }
     onHideLibrary() {
       var _a;
-      const list = (_a = this.libraryBookExist) === null || _a === void 0 ? void 0 : _a.querySelector("ul");
+      const list = (_a = this.libraryBookExist) == null ? void 0 : _a.querySelector(
+        "ul"
+      );
       list.innerHTML = "";
       this.ui.updateOnHideLibrary();
     }
     onShowKyobo() {
       var _a;
-      (_a = this.kyoboInfoCpnt) === null || _a === void 0 ? void 0 : _a.show();
+      (_a = this.kyoboInfoCpnt) == null ? void 0 : _a.show();
     }
   };
 
-  // app/public/scripts/pages/favorite/Favorite.js
+  // app/src/scripts/pages/favorite/Favorite.ts
   var Favorite = class extends HTMLElement {
     constructor() {
       super();
-      this.currentCategory = new URLSearchParams(location.search).get("category");
+      this.currentCategory = new URLSearchParams(location.search).get(
+        "category"
+      );
       this.listElement = this.querySelector(".favorite-books");
-      this.itemTemplate = document.querySelector("#tp-favorite-item");
-      this.messageTemplate = document.querySelector("#tp-message");
+      this.itemTemplate = document.querySelector(
+        "#tp-favorite-item"
+      );
+      this.messageTemplate = document.querySelector(
+        "#tp-message"
+      );
     }
     connectedCallback() {
       const isbnsOfCategory = this.getIsbnsOfCategory();
@@ -1580,15 +1560,26 @@
       messageElement.textContent = message;
       this.listElement.appendChild(messageElement);
     }
+    // private subscribeCategoryChange({ type, payload }: IFavoritesUpdateProps) {
+    //     switch (type) {
+    //         case "rename":
+    //             console.log("reanme");
+    //             break;
+    //     }
+    // }
   };
 
-  // app/public/scripts/pages/favorite/FavoriteNav.js
+  // app/src/scripts/pages/favorite/FavoriteNav.ts
   var FavoriteNav = class extends HTMLElement {
     constructor() {
       super();
       this.nav = this.querySelector(".favorite-category");
-      this.overlayCategory = document.querySelector("overlay-category");
-      this.changButton = this.querySelector(".favorite-changeButton");
+      this.overlayCategory = document.querySelector(
+        "overlay-category"
+      );
+      this.changButton = this.querySelector(
+        ".favorite-changeButton"
+      );
       this.category = null;
       this.handleOverlayCatalog = this.handleOverlayCatalog.bind(this);
       this.subscribeCategoryChange = this.subscribeCategoryChange.bind(this);
@@ -1597,11 +1588,18 @@
       this.intialize();
       this.render();
       this.changButton.addEventListener("click", this.handleOverlayCatalog);
-      model_default.subscribeFavoriteCategoriesUpdate(this.subscribeCategoryChange);
+      model_default.subscribeFavoriteCategoriesUpdate(
+        this.subscribeCategoryChange
+      );
     }
     disconnectedCallback() {
-      this.changButton.removeEventListener("click", this.handleOverlayCatalog);
-      model_default.unsubscribeFavoriteCategoriesUpdate(this.subscribeCategoryChange);
+      this.changButton.removeEventListener(
+        "click",
+        this.handleOverlayCatalog
+      );
+      model_default.unsubscribeFavoriteCategoriesUpdate(
+        this.subscribeCategoryChange
+      );
     }
     intialize() {
       this.category = new URLSearchParams(location.search).get("category") || model_default.sortedFavoriteKeys[0];
@@ -1632,9 +1630,15 @@
     subscribeCategoryChange({ type, payload }) {
       const actions = {
         add: () => this.handlAdd(payload.name),
-        rename: () => this.handlRename(payload.prevName, payload.newName),
+        rename: () => this.handlRename(
+          payload.prevName,
+          payload.newName
+        ),
         delete: () => this.handlDelete(payload.name),
-        change: () => this.handlChange(payload.targetIndex, payload.draggedIndex)
+        change: () => this.handlChange(
+          payload.targetIndex,
+          payload.draggedIndex
+        )
       };
       if (actions[type]) {
         actions[type]();
@@ -1646,7 +1650,10 @@
       this.nav.appendChild(this.createItem(name));
     }
     handlRename(prevName, newName) {
-      this.updateItem(this.nav.querySelectorAll("a")[model_default.sortedFavoriteKeys.indexOf(prevName)], newName);
+      this.updateItem(
+        this.nav.querySelectorAll("a")[model_default.sortedFavoriteKeys.indexOf(prevName)],
+        newName
+      );
       model_default.renameSortedFavoriteKey(prevName, newName);
       if (this.category === prevName) {
         location.search = this.getUrl(newName);
@@ -1665,7 +1672,7 @@
     }
   };
 
-  // app/public/scripts/pages/favorite/OverlayCategory.js
+  // app/src/scripts/pages/favorite/OverlayCategory.ts
   var OverlayCategory = class extends HTMLElement {
     constructor() {
       super();
@@ -1685,7 +1692,7 @@
         model_default.addfavorite(favorite);
         const index = model_default.sortedFavoriteKeys.length;
         const cloned = this.createItem(favorite, index);
-        (_a = this.list) === null || _a === void 0 ? void 0 : _a.appendChild(cloned);
+        (_a = this.list) == null ? void 0 : _a.appendChild(cloned);
         this.addInput.value = "";
       };
       this.handleSubmit = (event) => {
@@ -1711,15 +1718,15 @@
     connectedCallback() {
       var _a, _b, _c;
       this.render();
-      (_a = this.addButton) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.handleClickAdd);
-      (_b = this.form) === null || _b === void 0 ? void 0 : _b.addEventListener("submit", this.handleSubmit);
-      (_c = this.closeButton) === null || _c === void 0 ? void 0 : _c.addEventListener("click", this.handleClose);
+      (_a = this.addButton) == null ? void 0 : _a.addEventListener("click", this.handleClickAdd);
+      (_b = this.form) == null ? void 0 : _b.addEventListener("submit", this.handleSubmit);
+      (_c = this.closeButton) == null ? void 0 : _c.addEventListener("click", this.handleClose);
     }
     disconnectedCallback() {
       var _a, _b, _c;
-      (_a = this.addButton) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.handleClickAdd);
-      (_b = this.form) === null || _b === void 0 ? void 0 : _b.removeEventListener("submit", this.handleSubmit);
-      (_c = this.closeButton) === null || _c === void 0 ? void 0 : _c.removeEventListener("click", this.handleClose);
+      (_a = this.addButton) == null ? void 0 : _a.removeEventListener("click", this.handleClickAdd);
+      (_b = this.form) == null ? void 0 : _b.removeEventListener("submit", this.handleSubmit);
+      (_c = this.closeButton) == null ? void 0 : _c.removeEventListener("click", this.handleClose);
     }
     attributeChangedCallback(name) {
       if (name === "hidden" && !this.hasAttribute("hidden")) {
@@ -1749,7 +1756,9 @@
       const cloned = cloneTemplate(this.template);
       cloned.dataset.index = index.toString();
       cloned.dataset.favorite = favorite;
-      const input = cloned.querySelector("input[name='category']");
+      const input = cloned.querySelector(
+        "input[name='category']"
+      );
       if (input) {
         input.value = favorite;
       }
@@ -1759,11 +1768,14 @@
     }
     handleItemEvent(cloned, input, favorite) {
       var _a, _b;
-      (_a = cloned.querySelector(".renameButton")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+      (_a = cloned.querySelector(".renameButton")) == null ? void 0 : _a.addEventListener("click", () => {
         const favorite2 = cloned.dataset.favorite;
         this.handleRename(input, favorite2, cloned);
       });
-      (_b = cloned.querySelector(".deleteButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => this.handleDelete(cloned, favorite));
+      (_b = cloned.querySelector(".deleteButton")) == null ? void 0 : _b.addEventListener(
+        "click",
+        () => this.handleDelete(cloned, favorite)
+      );
       cloned.addEventListener("keydown", (event) => {
         const input2 = event.target;
         if (event.key === "Enter" && input2.name === "category") {
@@ -1783,7 +1795,9 @@
       model_default.deleteFavorite(favorite);
     }
     changeItem(cloned) {
-      const dragggerButton = cloned.querySelector(".dragger");
+      const dragggerButton = cloned.querySelector(
+        ".dragger"
+      );
       dragggerButton.addEventListener("mousedown", () => {
         cloned.draggable = true;
       });
@@ -1822,41 +1836,16 @@
     }
   };
 
-  // app/public/scripts/pages/favorite/KyoboInfo.js
-  var __awaiter4 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/pages/favorite/KyoboInfo.ts
   var KyoboInfo = class extends HTMLElement {
     constructor() {
       super();
       this._isbn = null;
       this._isbn = this.getIsbn() || null;
       this.listElement = this.querySelector("ul");
-      this.template = this.querySelector("#tp-kyoboInfoItem");
+      this.template = this.querySelector(
+        "#tp-kyoboInfoItem"
+      );
     }
     connectedCallback() {
     }
@@ -1871,20 +1860,20 @@
         return;
       return cloeset.dataset.isbn;
     }
-    fetch() {
-      return __awaiter4(this, void 0, void 0, function* () {
-        const bookUrl = `/kyobo-book?isbn=${this._isbn}`;
-        try {
-          const infoArray = yield CustomFetch_default.fetch(bookUrl);
-          this.render(infoArray);
-        } catch (error) {
-          if (error instanceof Error) {
-            console.error(`Error fetching books: ${error.message}`);
-          } else {
-            console.error("An unexpected error occurred");
-          }
+    async fetch() {
+      const bookUrl = `/kyobo-book?isbn=${this._isbn}`;
+      try {
+        const infoArray = await CustomFetch_default.fetch(
+          bookUrl
+        );
+        this.render(infoArray);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(`Error fetching books: ${error.message}`);
+        } else {
+          console.error("An unexpected error occurred");
         }
-      });
+      }
     }
     render(data) {
       this.listElement.innerHTML = "";
@@ -1902,7 +1891,7 @@
     }
   };
 
-  // app/public/scripts/pages/favorite/index.js
+  // app/src/scripts/pages/favorite/index.ts
   customElements.define("book-image", BookImage);
   customElements.define("nav-gnb", NavGnb);
   customElements.define("favorite-item", FavoriteItem);

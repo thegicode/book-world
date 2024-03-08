@@ -11,8 +11,8 @@ export default class FavoriteModel {
         categories: TFavoriteFavorites,
         sortedKeys: TSortedFavoriteKeys
     ) {
-        this._favorites = categories;
-        this._sortedKeys = sortedKeys;
+        this._favorites = categories || {};
+        this._sortedKeys = sortedKeys || [];
     }
 
     get favorites(): TFavoriteFavorites {

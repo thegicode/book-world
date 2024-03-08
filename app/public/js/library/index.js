@@ -1,9 +1,9 @@
 "use strict";
 (() => {
-  // app/public/scripts/model/constants.js
+  // app/src/scripts/model/constants.ts
   var STORAGE_NAME = "BookWorld";
 
-  // app/public/scripts/utils/Publisher.js
+  // app/src/scripts/utils/Publisher.ts
   var Publisher = class {
     constructor() {
       this.subscribers = [];
@@ -12,14 +12,16 @@
       this.subscribers.push(callback);
     }
     unsubscribe(callback) {
-      this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
+      this.subscribers = this.subscribers.filter(
+        (subscriber) => subscriber !== callback
+      );
     }
     notify(payload) {
       this.subscribers.forEach((callback) => callback(payload));
     }
   };
 
-  // app/public/scripts/model/FavoriteModel.js
+  // app/src/scripts/model/FavoriteModel.ts
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -28,7 +30,7 @@
       this._sortedKeys = sortedKeys;
     }
     get favorites() {
-      return Object.assign({}, this._favorites);
+      return { ...this._favorites };
     }
     set favorites(newCategories) {
       this._favorites = newCategories;
@@ -112,10 +114,14 @@
       this.bookUpdatePublisher.notify();
     }
     subscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.subscribe(subscriber);
+      this.categoriesUpdatePublisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.unsubscribe(subscriber);
+      this.categoriesUpdatePublisher.unsubscribe(
+        subscriber
+      );
     }
     subscribeBookUpdate(subscriber) {
       this.bookUpdatePublisher.subscribe(subscriber);
@@ -125,14 +131,14 @@
     }
   };
 
-  // app/public/scripts/model/LibraryModel.js
+  // app/src/scripts/model/LibraryModel.ts
   var LibraryModel = class {
     constructor(libraries) {
       this.publisher = new Publisher();
       this._libraries = libraries;
     }
     get libraries() {
-      return Object.assign({}, this._libraries);
+      return { ...this._libraries };
     }
     set libraries(newLibries) {
       this._libraries = newLibries;
@@ -160,14 +166,18 @@
       return code in this._libraries;
     }
     subscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
   };
 
-  // app/public/scripts/model/RegionModel.js
+  // app/src/scripts/model/RegionModel.ts
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -175,7 +185,7 @@
       this._regions = regions;
     }
     get regions() {
-      return Object.assign({}, this._regions);
+      return { ...this._regions };
     }
     set regions(newRegions) {
       this._regions = newRegions;
@@ -214,7 +224,7 @@
     }
   };
 
-  // app/public/scripts/model/index.js
+  // app/src/scripts/model/index.ts
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -401,16 +411,22 @@
   var bookModel = new BookModel();
   var model_default = bookModel;
 
-  // app/public/scripts/utils/CustomEventEmitter.js
+  // app/src/scripts/utils/CustomEventEmitter.ts
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
     }
     add(event, callback) {
-      this._bus.addEventListener(event, callback);
+      this._bus.addEventListener(
+        event,
+        callback
+      );
     }
     remove(event, callback) {
-      this._bus.removeEventListener(event, callback);
+      this._bus.removeEventListener(
+        event,
+        callback
+      );
     }
     dispatch(event, detail = {}) {
       this._bus.dispatchEvent(new CustomEvent(event, { detail }));
@@ -418,56 +434,35 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // app/public/scripts/utils/CustomFetch.js
-  var __awaiter = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/utils/CustomFetch.ts
   var CustomFetch = class {
     constructor(baseOptions = {}) {
-      this.defaultOptions = Object.assign({ method: "GET", headers: {
-        "Content-Type": "application/json"
-        // 'Authorization': `Bearer ${getToken()}`
-      } }, baseOptions);
+      this.defaultOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+          // 'Authorization': `Bearer ${getToken()}`
+        },
+        ...baseOptions
+      };
     }
-    fetch(url, options) {
-      return __awaiter(this, void 0, void 0, function* () {
-        const finalOptions = Object.assign(Object.assign(Object.assign({}, this.defaultOptions), options), { timeout: 5e3 });
-        try {
-          const response = yield fetch(url, finalOptions);
-          if (!response.ok) {
-            throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
-          }
-          const data = yield response.json();
-          return data;
-        } catch (error) {
-          console.error(`Error fetching data: ${error}`);
-          throw new Error(`Error fetching data: ${error}`);
+    async fetch(url, options) {
+      const finalOptions = {
+        ...this.defaultOptions,
+        ...options,
+        timeout: 5e3
+      };
+      try {
+        const response = await fetch(url, finalOptions);
+        if (!response.ok) {
+          throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
         }
-      });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error(`Error fetching data: ${error}`);
+        throw new Error(`Error fetching data: ${error}`);
+      }
     }
   };
   var CustomFetch_default = new CustomFetch();
@@ -1010,7 +1005,7 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // app/public/scripts/components/NavGnb.js
+  // app/src/scripts/components/NavGnb.ts
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -1037,7 +1032,10 @@
       model_default.unsubscribeFavoriteBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce(
+        (sum, currentArray) => sum + currentArray.length,
+        0
+      );
     }
     render() {
       this.innerHTML = `
@@ -1060,7 +1058,7 @@
     }
   };
 
-  // app/public/scripts/components/LoadingComponent.js
+  // app/src/scripts/components/LoadingComponent.ts
   var LoadingComponent = class extends HTMLElement {
     constructor() {
       super();
@@ -1074,7 +1072,7 @@
   };
   customElements.define("loading-component", LoadingComponent);
 
-  // app/public/scripts/utils/helpers.js
+  // app/src/scripts/utils/helpers.ts
   function cloneTemplate(template) {
     const content = template.content.firstElementChild;
     if (!content) {
@@ -1083,41 +1081,16 @@
     return content.cloneNode(true);
   }
 
-  // app/public/scripts/pages/library/Library.js
-  var __awaiter2 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/pages/library/Library.ts
   var Library = class extends HTMLElement {
     constructor() {
       super();
       this._regionCode = null;
       this.PAGE_SIZE = 20;
       this.listElement = this.querySelector(".library-list");
-      this.itemTemplate = document.querySelector("#tp-item");
+      this.itemTemplate = document.querySelector(
+        "#tp-item"
+      );
       this.loadingComponent = this.querySelector("loading-component");
     }
     set regionCode(value) {
@@ -1134,22 +1107,22 @@
         return;
       this.fetchLibrarySearch(this.regionCode);
     }
-    fetchLibrarySearch(regionCode) {
+    async fetchLibrarySearch(regionCode) {
       var _a, _b;
-      return __awaiter2(this, void 0, void 0, function* () {
-        if (this.listElement)
-          this.listElement.innerHTML = "";
-        (_a = this.loadingComponent) === null || _a === void 0 ? void 0 : _a.show();
-        const url = `/library-search?dtl_region=${regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
-        try {
-          const data = yield CustomFetch_default.fetch(url);
-          this.renderLibraryList(data);
-        } catch (error) {
-          console.error(error);
-          throw new Error("Fail to get library search data.");
-        }
-        (_b = this.loadingComponent) === null || _b === void 0 ? void 0 : _b.hide();
-      });
+      if (this.listElement)
+        this.listElement.innerHTML = "";
+      (_a = this.loadingComponent) == null ? void 0 : _a.show();
+      const url = `/library-search?dtl_region=${regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
+      try {
+        const data = await CustomFetch_default.fetch(
+          url
+        );
+        this.renderLibraryList(data);
+      } catch (error) {
+        console.error(error);
+        throw new Error("Fail to get library search data.");
+      }
+      (_b = this.loadingComponent) == null ? void 0 : _b.hide();
     }
     renderLibraryList(data) {
       if (!this.listElement)
@@ -1162,7 +1135,10 @@
         this.showMessage("notFound");
         return;
       }
-      const fragment = libraries.reduce((fragment2, lib) => this.createLibraryItem(fragment2, lib), new DocumentFragment());
+      const fragment = libraries.reduce(
+        (fragment2, lib) => this.createLibraryItem(fragment2, lib),
+        new DocumentFragment()
+      );
       this.listElement.appendChild(fragment);
     }
     createLibraryItem(fragment, lib) {
@@ -1177,7 +1153,9 @@
       return fragment;
     }
     showMessage(type) {
-      const template = document.querySelector(`#tp-${type}`);
+      const template = document.querySelector(
+        `#tp-${type}`
+      );
       if (template && this.listElement) {
         this.listElement.innerHTML = "";
         const clone = cloneTemplate(template);
@@ -1186,7 +1164,7 @@
     }
   };
 
-  // app/public/scripts/pages/library/LibraryStored.js
+  // app/src/scripts/pages/library/LibraryStored.ts
   var LibraryStored = class extends HTMLElement {
     constructor() {
       super();
@@ -1229,7 +1207,9 @@
       return element;
     }
     addEvents(element) {
-      const cancelButton = element.querySelector(".cancelButton");
+      const cancelButton = element.querySelector(
+        ".cancelButton"
+      );
       cancelButton.addEventListener("click", () => {
         const code = element.dataset.library;
         if (!code)
@@ -1266,11 +1246,11 @@
     }
   };
 
-  // app/public/scripts/pages/library/selectors.js
+  // app/src/scripts/pages/library/selectors.ts
   var libraryElement = document.querySelector("app-library");
   var loadingComponent = document.querySelector("loading-component");
 
-  // app/public/scripts/pages/library/LibraryHeader.js
+  // app/src/scripts/pages/library/LibraryHeader.ts
   var LibraryRegion = class extends HTMLElement {
     constructor() {
       super();
@@ -1283,13 +1263,23 @@
       };
     }
     connectedCallback() {
-      this.template = document.querySelector("#tp-region");
-      this.detailSelectElement = this.querySelector("select");
+      this.template = document.querySelector(
+        "#tp-region"
+      );
+      this.detailSelectElement = this.querySelector(
+        "select"
+      );
       this.renderFavoriteRegions();
-      this.detailSelectElement.addEventListener("change", this.handleDetailSelectChange);
+      this.detailSelectElement.addEventListener(
+        "change",
+        this.handleDetailSelectChange
+      );
     }
     disconnectedCallback() {
-      this.detailSelectElement.removeEventListener("change", this.handleDetailSelectChange);
+      this.detailSelectElement.removeEventListener(
+        "change",
+        this.handleDetailSelectChange
+      );
     }
     renderFavoriteRegions() {
       const favoriteRegions = model_default.regions;
@@ -1306,7 +1296,9 @@
       }
       container.appendChild(fragment);
       if (!this.regionCode) {
-        const firstInput = container.querySelector("input");
+        const firstInput = container.querySelector(
+          "input"
+        );
         firstInput.checked = true;
         this.renderDetailRegion(firstInput.value);
       }
@@ -1317,7 +1309,10 @@
       const element = cloneTemplate(this.template);
       const radioElement = element.querySelector("input");
       radioElement.value = regionName;
-      radioElement.addEventListener("change", () => this.handleRegionChange(radioElement.value));
+      radioElement.addEventListener(
+        "change",
+        () => this.handleRegionChange(radioElement.value)
+      );
       const spanElement = element.querySelector("span");
       spanElement.textContent = regionName;
       return element;
@@ -1335,13 +1330,15 @@
         optionEl.value = value;
         this.detailSelectElement.appendChild(optionEl);
       }
-      const firstOptionElement = this.detailSelectElement.querySelector("option");
+      const firstOptionElement = this.detailSelectElement.querySelector(
+        "option"
+      );
       firstOptionElement.selected = true;
       this.handleDetailSelectChange();
     }
   };
 
-  // app/public/scripts/pages/library/LibraryItem.js
+  // app/src/scripts/pages/library/LibraryItem.ts
   var LibraryItem = class extends HTMLElement {
     constructor() {
       super();
@@ -1354,11 +1351,11 @@
     connectedCallback() {
       var _a;
       this.render();
-      (_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onChange);
+      (_a = this.checkbox) == null ? void 0 : _a.addEventListener("click", this.onChange);
     }
     disconnectedCallback() {
       var _a;
-      (_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.removeEventListener("click", this.onChange);
+      (_a = this.checkbox) == null ? void 0 : _a.removeEventListener("click", this.onChange);
     }
     render() {
       const { data } = this;
@@ -1382,7 +1379,7 @@
     }
     onChange() {
       var _a;
-      if ((_a = this.checkbox) === null || _a === void 0 ? void 0 : _a.checked) {
+      if ((_a = this.checkbox) == null ? void 0 : _a.checked) {
         model_default.addLibraries(this.libCode, this.libName);
       } else {
         model_default.removeLibraries(this.libCode);
@@ -1390,7 +1387,7 @@
     }
   };
 
-  // app/public/scripts/pages/library/index.js
+  // app/src/scripts/pages/library/index.ts
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-library", Library);
   customElements.define("library-stored", LibraryStored);

@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  // app/public/scripts/components/BookImage.js
+  // app/src/scripts/components/BookImage.ts
   var BookImage = class extends HTMLElement {
     constructor(url, name) {
       super();
@@ -21,14 +21,14 @@
       var _a;
       this.dataset.fail = "true";
       console.error(`Failed to load image`);
-      (_a = this.image) === null || _a === void 0 ? void 0 : _a.remove();
+      (_a = this.image) == null ? void 0 : _a.remove();
     }
   };
 
-  // app/public/scripts/model/constants.js
+  // app/src/scripts/model/constants.ts
   var STORAGE_NAME = "BookWorld";
 
-  // app/public/scripts/utils/Publisher.js
+  // app/src/scripts/utils/Publisher.ts
   var Publisher = class {
     constructor() {
       this.subscribers = [];
@@ -37,14 +37,16 @@
       this.subscribers.push(callback);
     }
     unsubscribe(callback) {
-      this.subscribers = this.subscribers.filter((subscriber) => subscriber !== callback);
+      this.subscribers = this.subscribers.filter(
+        (subscriber) => subscriber !== callback
+      );
     }
     notify(payload) {
       this.subscribers.forEach((callback) => callback(payload));
     }
   };
 
-  // app/public/scripts/model/FavoriteModel.js
+  // app/src/scripts/model/FavoriteModel.ts
   var FavoriteModel = class {
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
@@ -53,7 +55,7 @@
       this._sortedKeys = sortedKeys;
     }
     get favorites() {
-      return Object.assign({}, this._favorites);
+      return { ...this._favorites };
     }
     set favorites(newCategories) {
       this._favorites = newCategories;
@@ -137,10 +139,14 @@
       this.bookUpdatePublisher.notify();
     }
     subscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.subscribe(subscriber);
+      this.categoriesUpdatePublisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeCategoriesUpdate(subscriber) {
-      this.categoriesUpdatePublisher.unsubscribe(subscriber);
+      this.categoriesUpdatePublisher.unsubscribe(
+        subscriber
+      );
     }
     subscribeBookUpdate(subscriber) {
       this.bookUpdatePublisher.subscribe(subscriber);
@@ -150,14 +156,14 @@
     }
   };
 
-  // app/public/scripts/model/LibraryModel.js
+  // app/src/scripts/model/LibraryModel.ts
   var LibraryModel = class {
     constructor(libraries) {
       this.publisher = new Publisher();
       this._libraries = libraries;
     }
     get libraries() {
-      return Object.assign({}, this._libraries);
+      return { ...this._libraries };
     }
     set libraries(newLibries) {
       this._libraries = newLibries;
@@ -185,14 +191,18 @@
       return code in this._libraries;
     }
     subscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
     unsubscribeUpdate(subscriber) {
-      this.publisher.subscribe(subscriber);
+      this.publisher.subscribe(
+        subscriber
+      );
     }
   };
 
-  // app/public/scripts/model/RegionModel.js
+  // app/src/scripts/model/RegionModel.ts
   var RegionModel = class {
     constructor(regions) {
       this.updatePublisher = new Publisher();
@@ -200,7 +210,7 @@
       this._regions = regions;
     }
     get regions() {
-      return Object.assign({}, this._regions);
+      return { ...this._regions };
     }
     set regions(newRegions) {
       this._regions = newRegions;
@@ -239,7 +249,7 @@
     }
   };
 
-  // app/public/scripts/model/index.js
+  // app/src/scripts/model/index.ts
   var cloneDeep = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
@@ -426,7 +436,7 @@
   var bookModel = new BookModel();
   var model_default = bookModel;
 
-  // app/public/scripts/components/CategorySelector.js
+  // app/src/scripts/components/CategorySelector.ts
   var CategorySelector = class extends HTMLElement {
     constructor() {
       super();
@@ -452,15 +462,17 @@
       this.button = this.createButton();
       this.container = this.createContainer();
       this.render();
-      (_a = this.button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", this.onClickCategory);
+      (_a = this.button) == null ? void 0 : _a.addEventListener("click", this.onClickCategory);
       model_default.subscribeFavoriteCategoriesUpdate(this.handleCategoryUpdate);
     }
     render() {
       if (!this.container || !this.button)
         return;
-      model_default.sortedFavoriteKeys.map((category) => this.createCategoryItem(category)).forEach((label) => {
+      model_default.sortedFavoriteKeys.map(
+        (category) => this.createCategoryItem(category)
+      ).forEach((label) => {
         var _a;
-        return (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(label);
+        return (_a = this.container) == null ? void 0 : _a.appendChild(label);
       });
       this.appendChild(this.container);
       this.appendChild(this.button);
@@ -492,7 +504,10 @@
       if (model_default.hasFavoriteBook(category, ISBN)) {
         checkbox.checked = true;
       }
-      checkbox.addEventListener("change", () => this.onChange(checkbox, category));
+      checkbox.addEventListener(
+        "change",
+        () => this.onChange(checkbox, category)
+      );
       return checkbox;
     }
     onChange(checkbox, category) {
@@ -505,11 +520,17 @@
       }
       checkbox.checked = !isBookInCategory;
     }
-    handleCategoryUpdate({ type, payload }) {
+    handleCategoryUpdate({
+      type,
+      payload
+    }) {
       const actions = {
         add: () => this.handleAdd(payload.name),
         rename: () => this.reanmeCategory(payload.newName),
-        change: () => this.changeCategory(payload.targetIndex, payload.draggedIndex),
+        change: () => this.changeCategory(
+          payload.targetIndex,
+          payload.draggedIndex
+        ),
         delete: () => this.handleDelete(payload.name)
       };
       if (actions[type]) {
@@ -520,7 +541,9 @@
     }
     handleAdd(name) {
       var _a;
-      (_a = this.container) === null || _a === void 0 ? void 0 : _a.appendChild(this.createCategoryItem(name));
+      (_a = this.container) == null ? void 0 : _a.appendChild(
+        this.createCategoryItem(name)
+      );
     }
     handleDelete(name) {
       this.querySelectorAll("label span").forEach((item, index) => {
@@ -532,8 +555,12 @@
     changeCategory(targetIndex, draggedIndex) {
       var _a, _b;
       const labels = this.querySelectorAll("label");
-      const targetElement = this.createCategoryItem((_a = labels[draggedIndex].querySelector("span")) === null || _a === void 0 ? void 0 : _a.textContent);
-      const dragElement = this.createCategoryItem((_b = labels[targetIndex].querySelector("span")) === null || _b === void 0 ? void 0 : _b.textContent);
+      const targetElement = this.createCategoryItem(
+        (_a = labels[draggedIndex].querySelector("span")) == null ? void 0 : _a.textContent
+      );
+      const dragElement = this.createCategoryItem(
+        (_b = labels[targetIndex].querySelector("span")) == null ? void 0 : _b.textContent
+      );
       labels[targetIndex].replaceWith(targetElement);
       labels[draggedIndex].replaceWith(dragElement);
     }
@@ -544,16 +571,22 @@
     }
   };
 
-  // app/public/scripts/utils/CustomEventEmitter.js
+  // app/src/scripts/utils/CustomEventEmitter.ts
   var CustomEventEmitter = class {
     constructor() {
       this._bus = document.createElement("div");
     }
     add(event, callback) {
-      this._bus.addEventListener(event, callback);
+      this._bus.addEventListener(
+        event,
+        callback
+      );
     }
     remove(event, callback) {
-      this._bus.removeEventListener(event, callback);
+      this._bus.removeEventListener(
+        event,
+        callback
+      );
     }
     dispatch(event, detail = {}) {
       this._bus.dispatchEvent(new CustomEvent(event, { detail }));
@@ -561,56 +594,35 @@
   };
   var CustomEventEmitter_default = new CustomEventEmitter();
 
-  // app/public/scripts/utils/CustomFetch.js
-  var __awaiter = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/utils/CustomFetch.ts
   var CustomFetch = class {
     constructor(baseOptions = {}) {
-      this.defaultOptions = Object.assign({ method: "GET", headers: {
-        "Content-Type": "application/json"
-        // 'Authorization': `Bearer ${getToken()}`
-      } }, baseOptions);
+      this.defaultOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+          // 'Authorization': `Bearer ${getToken()}`
+        },
+        ...baseOptions
+      };
     }
-    fetch(url, options) {
-      return __awaiter(this, void 0, void 0, function* () {
-        const finalOptions = Object.assign(Object.assign(Object.assign({}, this.defaultOptions), options), { timeout: 5e3 });
-        try {
-          const response = yield fetch(url, finalOptions);
-          if (!response.ok) {
-            throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
-          }
-          const data = yield response.json();
-          return data;
-        } catch (error) {
-          console.error(`Error fetching data: ${error}`);
-          throw new Error(`Error fetching data: ${error}`);
+    async fetch(url, options) {
+      const finalOptions = {
+        ...this.defaultOptions,
+        ...options,
+        timeout: 5e3
+      };
+      try {
+        const response = await fetch(url, finalOptions);
+        if (!response.ok) {
+          throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
         }
-      });
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error(`Error fetching data: ${error}`);
+        throw new Error(`Error fetching data: ${error}`);
+      }
     }
   };
   var CustomFetch_default = new CustomFetch();
@@ -1153,7 +1165,7 @@
     window.IntersectionObserverEntry = IntersectionObserverEntry;
   })();
 
-  // app/public/scripts/components/NavGnb.js
+  // app/src/scripts/components/NavGnb.ts
   var NavGnb = class extends HTMLElement {
     constructor() {
       super();
@@ -1180,7 +1192,10 @@
       model_default.unsubscribeFavoriteBookUpdate(this.renderBookSize);
     }
     get bookSize() {
-      return Object.values(model_default.favorites).reduce((sum, currentArray) => sum + currentArray.length, 0);
+      return Object.values(model_default.favorites).reduce(
+        (sum, currentArray) => sum + currentArray.length,
+        0
+      );
     }
     render() {
       this.innerHTML = `
@@ -1203,7 +1218,7 @@
     }
   };
 
-  // app/public/scripts/components/LoadingComponent.js
+  // app/src/scripts/components/LoadingComponent.ts
   var LoadingComponent = class extends HTMLElement {
     constructor() {
       super();
@@ -1217,7 +1232,7 @@
   };
   customElements.define("loading-component", LoadingComponent);
 
-  // app/public/scripts/utils/helpers.js
+  // app/src/scripts/utils/helpers.ts
   function cloneTemplate(template) {
     const content = template.content.firstElementChild;
     if (!content) {
@@ -1232,46 +1247,7 @@
     });
   }
 
-  // app/public/scripts/pages/book/Book.js
-  var __awaiter2 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
-  var __rest = function(s, e) {
-    var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-          t[p[i]] = s[p[i]];
-      }
-    return t;
-  };
+  // app/src/scripts/pages/book/Book.ts
   var Book = class extends HTMLElement {
     constructor() {
       super();
@@ -1286,17 +1262,17 @@
         this.render();
       });
     }
-    fetchUsageAnalysisList(isbn) {
-      return __awaiter2(this, void 0, void 0, function* () {
-        try {
-          const data = yield CustomFetch_default.fetch(`/usage-analysis-list?isbn13=${isbn}`);
-          this.data = data;
-        } catch (error) {
-          this.renderError();
-          console.error(error);
-          throw new Error(`Fail to get usage analysis list.`);
-        }
-      });
+    async fetchUsageAnalysisList(isbn) {
+      try {
+        const data = await CustomFetch_default.fetch(
+          `/usage-analysis-list?isbn13=${isbn}`
+        );
+        this.data = data;
+      } catch (error) {
+        this.renderError();
+        console.error(error);
+        throw new Error(`Fail to get usage analysis list.`);
+      }
     }
     render() {
       var _a;
@@ -1304,7 +1280,15 @@
         console.error("Data is null");
         return;
       }
-      const { book, keywords, coLoanBooks, loanHistory, loanGrps, maniaRecBooks, readerRecBooks } = this.data;
+      const {
+        book,
+        keywords,
+        coLoanBooks,
+        loanHistory,
+        loanGrps,
+        maniaRecBooks,
+        readerRecBooks
+      } = this.data;
       this.renderBook(book);
       this.renderLoanHistory(loanHistory);
       this.renderLoanGroups(loanGrps);
@@ -1312,30 +1296,44 @@
       this.renderRecBooks(".coLoanBooks", coLoanBooks, "#tp-coLoanBookItem");
       this.renderRecBooks(".maniaBooks", maniaRecBooks, "#tp-recBookItem");
       this.renderRecBooks(".readerBooks", readerRecBooks, "#tp-recBookItem");
-      (_a = this.loadingElement) === null || _a === void 0 ? void 0 : _a.remove();
+      (_a = this.loadingElement) == null ? void 0 : _a.remove();
       this.loadingElement = null;
     }
     renderBook(book) {
-      const { bookname, bookImageURL, description } = book, otherData = __rest(book, ["bookname", "bookImageURL", "description"]);
+      const {
+        bookname,
+        bookImageURL,
+        description,
+        ...otherData
+        // authors, class_nm,  class_no, description, isbn13,  loanCnt, publication_year,  publisher,
+      } = book;
       const bookNames = bookname.split(/[=/:]/).map((item) => `<p>${item}</p>`).join("");
       this.querySelector(".bookname").innerHTML = bookNames;
       this.querySelector(".description").innerHTML = description;
       const bookImage = new BookImage(bookImageURL, bookname);
-      const bookImageContainer = this.querySelector(".book-image-container");
+      const bookImageContainer = this.querySelector(
+        ".book-image-container"
+      );
       bookImageContainer.appendChild(bookImage);
       fillElementsWithData(otherData, this);
     }
     renderLoanHistory(loanHistory) {
       const fragment = new DocumentFragment();
       loanHistory.forEach((history) => {
-        const cloned = cloneTemplate(this.querySelector("#tp-loanHistoryItem"));
+        const cloned = cloneTemplate(
+          this.querySelector("#tp-loanHistoryItem")
+        );
         fillElementsWithData(history, cloned);
         fragment.appendChild(cloned);
       });
-      this.querySelector(".loanHistory tbody").appendChild(fragment);
+      this.querySelector(".loanHistory tbody").appendChild(
+        fragment
+      );
     }
     renderLoanGroups(loanGrps) {
-      const template = document.querySelector("#tp-loanGrpItem");
+      const template = document.querySelector(
+        "#tp-loanGrpItem"
+      );
       if (!template)
         return;
       const fragment = new DocumentFragment();
@@ -1344,7 +1342,9 @@
         fillElementsWithData(loanGrp, clone);
         fragment.appendChild(clone);
       });
-      this.querySelector(".loanGrps tbody").appendChild(fragment);
+      this.querySelector(".loanGrps tbody").appendChild(
+        fragment
+      );
     }
     renderKeyword(keywords) {
       const keywordsString = keywords.map((item) => {
@@ -1379,34 +1379,7 @@
     }
   };
 
-  // app/public/scripts/pages/book/LibrarySearchByBook.js
-  var __awaiter3 = function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
+  // app/src/scripts/pages/book/LibrarySearchByBook.ts
   var LibrarySearchByBook = class extends HTMLElement {
     constructor() {
       super();
@@ -1414,47 +1387,60 @@
     connectedCallback() {
       this.fetch(new URLSearchParams(location.search).get("isbn"));
     }
-    fetch(isbn) {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const libries = Object.values(model_default.regions);
-        if (libries.length === 0)
-          return;
-        const promises = [];
-        libries.forEach((region) => {
-          Object.values(region).forEach((detailCode) => {
-            promises.push(this.fetchLibrarySearchByBook(isbn, detailCode.slice(0, 2), detailCode));
-          });
+    async fetch(isbn) {
+      const libries = Object.values(model_default.regions);
+      if (libries.length === 0)
+        return;
+      const promises = [];
+      libries.forEach((region) => {
+        Object.values(region).forEach((detailCode) => {
+          promises.push(
+            this.fetchLibrarySearchByBook(
+              isbn,
+              detailCode.slice(0, 2),
+              detailCode
+            )
+          );
         });
-        yield Promise.all(promises);
       });
+      await Promise.all(promises);
     }
-    fetchLibrarySearchByBook(isbn, region, dtl_region) {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const searchParams = new URLSearchParams({
-          isbn,
-          region,
-          dtl_region
-        });
-        try {
-          const data = yield CustomFetch_default.fetch(`/library-search-by-book?${searchParams}`);
-          this.render(data, isbn);
-        } catch (error) {
-          console.error(error);
-          throw new Error(`Fail to get library search by book.`);
-        }
+    async fetchLibrarySearchByBook(isbn, region, dtl_region) {
+      const searchParams = new URLSearchParams({
+        isbn,
+        region,
+        dtl_region
       });
+      try {
+        const data = await CustomFetch_default.fetch(
+          `/library-search-by-book?${searchParams}`
+        );
+        this.render(data, isbn);
+      } catch (error) {
+        console.error(error);
+        throw new Error(`Fail to get library search by book.`);
+      }
     }
     render({ libraries }, isbn) {
       if (libraries.length < 1)
         return;
       const listElement = document.createElement("ul");
       const fragment = new DocumentFragment();
-      libraries.map(({ homepage, libCode, libName }) => this.createLibrarySearchResultItem(isbn, homepage, libCode, libName)).forEach((element) => fragment.appendChild(element));
+      libraries.map(
+        ({ homepage, libCode, libName }) => this.createLibrarySearchResultItem(
+          isbn,
+          homepage,
+          libCode,
+          libName
+        )
+      ).forEach((element) => fragment.appendChild(element));
       listElement.appendChild(fragment);
       document.querySelector(".library-search-by-book").appendChild(listElement);
     }
     createLibrarySearchResultItem(isbn, homepage, libCode, libName) {
-      const template = document.querySelector("#tp-librarySearchByBookItem");
+      const template = document.querySelector(
+        "#tp-librarySearchByBookItem"
+      );
       if (!template)
         return null;
       const cloned = cloneTemplate(template);
@@ -1465,45 +1451,44 @@
       this.loanAvailable(isbn, libCode, cloned);
       return cloned;
     }
-    loanAvailable(isbn, libCode, el) {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const { hasBook, loanAvailable } = yield this.fetchLoadnAvailabilty(isbn, libCode);
-        const hasBookEl = el.querySelector(".hasBook");
-        const isAvailableEl = el.querySelector(".loanAvailable");
-        if (hasBookEl) {
-          hasBookEl.textContent = hasBook === "Y" ? "\uC18C\uC7A5" : "\uBBF8\uC18C\uC7A5";
+    async loanAvailable(isbn, libCode, el) {
+      const { hasBook, loanAvailable } = await this.fetchLoadnAvailabilty(
+        isbn,
+        libCode
+      );
+      const hasBookEl = el.querySelector(".hasBook");
+      const isAvailableEl = el.querySelector(".loanAvailable");
+      if (hasBookEl) {
+        hasBookEl.textContent = hasBook === "Y" ? "\uC18C\uC7A5" : "\uBBF8\uC18C\uC7A5";
+      }
+      if (isAvailableEl) {
+        const isLoanAvailable = loanAvailable === "Y";
+        isAvailableEl.textContent = isLoanAvailable ? "\uB300\uCD9C \uAC00\uB2A5" : "\uB300\uCD9C \uBD88\uAC00";
+        if (isLoanAvailable) {
+          el.dataset.available = "true";
         }
-        if (isAvailableEl) {
-          const isLoanAvailable = loanAvailable === "Y";
-          isAvailableEl.textContent = isLoanAvailable ? "\uB300\uCD9C \uAC00\uB2A5" : "\uB300\uCD9C \uBD88\uAC00";
-          if (isLoanAvailable) {
-            el.dataset.available = "true";
-          }
-        }
-      });
+      }
     }
-    fetchLoadnAvailabilty(isbn13, libCode) {
-      return __awaiter3(this, void 0, void 0, function* () {
-        const searchParams = new URLSearchParams({
-          isbn13,
-          libCode
-        });
-        const url = `/book-exist?${searchParams}`;
-        try {
-          const result = yield CustomFetch_default.fetch(url, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-          });
-          return result;
-        } catch (error) {
-          console.error(error);
-          throw new Error(`Fail to get book exist.`);
-        }
+    async fetchLoadnAvailabilty(isbn13, libCode) {
+      const searchParams = new URLSearchParams({
+        isbn13,
+        libCode
       });
+      const url = `/book-exist?${searchParams}`;
+      try {
+        const result = await CustomFetch_default.fetch(url, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+        return result;
+      } catch (error) {
+        console.error(error);
+        throw new Error(`Fail to get book exist.`);
+      }
     }
   };
 
-  // app/public/scripts/pages/book/index.js
+  // app/src/scripts/pages/book/index.ts
   customElements.define("nav-gnb", NavGnb);
   customElements.define("app-book", Book);
   customElements.define("library-search-by-book", LibrarySearchByBook);

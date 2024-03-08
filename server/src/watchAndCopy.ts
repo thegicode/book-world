@@ -5,7 +5,7 @@ import fsExtra from "fs-extra";
 import { buildDirectory, rootDirectoryPath } from "./config";
 
 export const watchAndCopy = () => {
-    const assetsSrcPath = path.join(rootDirectoryPath, "app", "assets");
+    const assetsSrcPath = path.join(rootDirectoryPath, "app/src", "assets");
     const assetsDistPath = path.join(
         rootDirectoryPath,
         buildDirectory,

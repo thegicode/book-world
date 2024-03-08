@@ -1,12 +1,12 @@
 {
     "compileOnSave": true,
     "compilerOptions": {
-        "target": "es6",
+        "target": "es2016",
         "lib": ["ES6", "ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
         "module": "ESNext",
         "strict": true,
         "esModuleInterop": true,
-        "outDir": "app/public/scripts",
+        // "outDir": "app/public/scripts",
         "moduleResolution": "node",
         "skipLibCheck": true,
         "types": ["jest"],
@@ -19,6 +19,7 @@
         //     "@pages/*": ["scripts/pages/*"],
         //     "@utils/*": ["scripts/utils/*"]
         // },
+        "noEmit": true,
         "sourceMap": true
     },
     "include": ["app/src/**/*.ts"],
