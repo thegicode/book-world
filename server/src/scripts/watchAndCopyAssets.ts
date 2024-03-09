@@ -2,9 +2,9 @@ import path from "path";
 import chokidar from "chokidar";
 import fs from "fs";
 import fsExtra from "fs-extra";
-import { buildDirectory, rootDirectoryPath } from "./config";
+import { buildDirectory, rootDirectoryPath } from "../config";
 
-export const watchAndCopy = () => {
+const watchAndCopyAssets = () => {
     const assetsSrcPath = path.join(rootDirectoryPath, "app/src", "assets");
     const assetsDistPath = path.join(
         rootDirectoryPath,
@@ -51,3 +51,5 @@ export const watchAndCopy = () => {
             removeFile(path);
         });
 };
+
+export default watchAndCopyAssets;

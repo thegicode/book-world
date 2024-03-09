@@ -23,7 +23,9 @@ const staticRoutes = (app) => {
             fs_1.default.readFile(htmlPath, "utf8", (err, data) => {
                 if (err) {
                     console.error(err);
-                    return res.status(500).send("Failed to load HTML file");
+                    return res
+                        .status(500)
+                        .send("Failed to load HTML file: ", htmlPath);
                 }
                 res.send(data);
             });

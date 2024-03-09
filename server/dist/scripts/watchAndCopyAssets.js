@@ -3,13 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.watchAndCopy = void 0;
 const path_1 = __importDefault(require("path"));
 const chokidar_1 = __importDefault(require("chokidar"));
 const fs_1 = __importDefault(require("fs"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
-const config_1 = require("./config");
-const watchAndCopy = () => {
+const config_1 = require("../config");
+const watchAndCopyAssets = () => {
     const assetsSrcPath = path_1.default.join(config_1.rootDirectoryPath, "app/src", "assets");
     const assetsDistPath = path_1.default.join(config_1.rootDirectoryPath, config_1.buildDirectory, "assets");
     const watcher = chokidar_1.default.watch(`${assetsSrcPath}/**/*`, {
@@ -47,4 +46,4 @@ const watchAndCopy = () => {
         removeFile(path);
     });
 };
-exports.watchAndCopy = watchAndCopy;
+exports.default = watchAndCopyAssets;

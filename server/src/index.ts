@@ -1,6 +1,6 @@
 import express from "express";
 import { isProduction, finalBuildPath, PORT } from "./config";
-import { watchAndCopy } from "./watchAndCopy";
+import watchAndCopyAssets from "./scripts/watchAndCopyAssets";
 import apiRoutes from "./routes/apiRoutes";
 import staticRoutes from "./routes/staticRoutes";
 
@@ -11,7 +11,7 @@ app.use(express.static(finalBuildPath));
 apiRoutes(app);
 staticRoutes(app);
 
-watchAndCopy();
+watchAndCopyAssets();
 
 console.log("***[Server]*** isProduction: ", isProduction);
 
