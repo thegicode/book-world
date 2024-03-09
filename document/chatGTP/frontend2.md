@@ -110,7 +110,7 @@ esbuild.build({
 
 # 다시 질문할 것
 
-frontend 의 개발 환경 세팅
+frontend 의 개발 환경 세팅 추천
 
 -   프론트엔드를 위한 백엔드 포함
 -   development, production 고려

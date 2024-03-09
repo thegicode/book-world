@@ -12,7 +12,7 @@ import {
     saveRegistrationKey,
 } from "../apis";
 
-export const setApiRoutes = (app: Application) => {
+const apiRoutes = (app: Application) => {
     app.get("/search-naver-book", fetchBooksFromNaver);
     app.get("/library-search", fetchLibrariesByCriteria);
     app.get("/book-exist", fetchBookAvailability);
@@ -23,3 +23,5 @@ export const setApiRoutes = (app: Application) => {
     app.get("/kyobo-book", fetchKyoboBookInfo);
     app.get("/regis-key", saveRegistrationKey);
 };
+
+export default apiRoutes;

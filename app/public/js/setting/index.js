@@ -1,5 +1,45 @@
 "use strict";
 (() => {
+  var __defProp = Object.defineProperty;
+  var __defProps = Object.defineProperties;
+  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __propIsEnum = Object.prototype.propertyIsEnumerable;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __spreadValues = (a, b) => {
+    for (var prop in b || (b = {}))
+      if (__hasOwnProp.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    if (__getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(b)) {
+        if (__propIsEnum.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      }
+    return a;
+  };
+  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
+
   // app/src/scripts/model/constants.ts
   var STORAGE_NAME = "BookWorld";
 
@@ -26,11 +66,11 @@
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
       this.bookUpdatePublisher = new Publisher();
-      this._favorites = categories;
-      this._sortedKeys = sortedKeys;
+      this._favorites = categories || {};
+      this._sortedKeys = sortedKeys || [];
     }
     get favorites() {
-      return { ...this._favorites };
+      return __spreadValues({}, this._favorites);
     }
     set favorites(newCategories) {
       this._favorites = newCategories;
@@ -138,7 +178,7 @@
       this._libraries = libraries;
     }
     get libraries() {
-      return { ...this._libraries };
+      return __spreadValues({}, this._libraries);
     }
     set libraries(newLibries) {
       this._libraries = newLibries;
@@ -185,7 +225,7 @@
       this._regions = regions;
     }
     get regions() {
-      return { ...this._regions };
+      return __spreadValues({}, this._regions);
     }
     set regions(newRegions) {
       this._regions = newRegions;
@@ -437,32 +477,31 @@
   // app/src/scripts/utils/CustomFetch.ts
   var CustomFetch = class {
     constructor(baseOptions = {}) {
-      this.defaultOptions = {
+      this.defaultOptions = __spreadValues({
         method: "GET",
         headers: {
           "Content-Type": "application/json"
           // 'Authorization': `Bearer ${getToken()}`
-        },
-        ...baseOptions
-      };
-    }
-    async fetch(url, options) {
-      const finalOptions = {
-        ...this.defaultOptions,
-        ...options,
-        timeout: 5e3
-      };
-      try {
-        const response = await fetch(url, finalOptions);
-        if (!response.ok) {
-          throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
         }
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error(`Error fetching data: ${error}`);
-        throw new Error(`Error fetching data: ${error}`);
-      }
+      }, baseOptions);
+    }
+    fetch(url, options) {
+      return __async(this, null, function* () {
+        const finalOptions = __spreadProps(__spreadValues(__spreadValues({}, this.defaultOptions), options), {
+          timeout: 5e3
+        });
+        try {
+          const response = yield fetch(url, finalOptions);
+          if (!response.ok) {
+            throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
+          }
+          const data = yield response.json();
+          return data;
+        } catch (error) {
+          console.error(`Error fetching data: ${error}`);
+          throw new Error(`Error fetching data: ${error}`);
+        }
+      });
     }
   };
   var CustomFetch_default = new CustomFetch();
@@ -1108,19 +1147,21 @@
     discinnectedCallback() {
       model_default.unsubscribeToBookStateUpdate(this.fetchAndRender);
     }
-    async fetchAndRender() {
-      try {
-        this.regionData = await await CustomFetch_default.fetch(
-          "../../../assets/json/region.json"
-        );
-        this.render();
-        CustomEventEmitter_default.dispatch(FETCH_REGION_DATA_EVENT, {
-          regionData: this.regionData
-        });
-      } catch (error) {
-        console.error(error);
-        throw new Error("Fail to get region data.");
-      }
+    fetchAndRender() {
+      return __async(this, null, function* () {
+        try {
+          this.regionData = yield yield CustomFetch_default.fetch(
+            "../../../assets/json/region.json"
+          );
+          this.render();
+          CustomEventEmitter_default.dispatch(FETCH_REGION_DATA_EVENT, {
+            regionData: this.regionData
+          });
+        } catch (error) {
+          console.error(error);
+          throw new Error("Fail to get region data.");
+        }
+      });
     }
     render() {
       const regionElementsFragment = this.createRegionElementsFragment();
@@ -1398,29 +1439,29 @@
         a.click();
         URL.revokeObjectURL(a.href);
       };
-      this.setDefaultState = async () => {
+      this.setDefaultState = () => __async(this, null, function* () {
         try {
-          const data = await CustomFetch_default.fetch(SAMPLE_JSON_URL);
+          const data = yield CustomFetch_default.fetch(SAMPLE_JSON_URL);
           model_default.state = data;
           console.log("Saved local stronage by base data!");
         } catch (error) {
           console.error(error);
           throw new Error("Fail to get storage sample data.");
         }
-      };
+      });
       this.resetStorage = () => {
         model_default.resetState();
       };
-      this.regisKey = async () => {
+      this.regisKey = () => __async(this, null, function* () {
         const keyString = this.regisKeyTextarea.value;
         if (!this.validateKey(keyString))
           return;
         const key = keyString.replace(/\n/g, "aaaaa");
-        const response = await CustomFetch_default.fetch(`/regis-key?key=${key}`);
+        const response = yield CustomFetch_default.fetch(`/regis-key?key=${key}`);
         if (response) {
           console.log("success");
         }
-      };
+      });
       this.saveButton = this.querySelector(
         ".saveStorage button"
       );

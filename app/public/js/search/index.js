@@ -1,5 +1,57 @@
 "use strict";
 (() => {
+  var __defProp = Object.defineProperty;
+  var __defProps = Object.defineProperties;
+  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __propIsEnum = Object.prototype.propertyIsEnumerable;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __spreadValues = (a, b) => {
+    for (var prop in b || (b = {}))
+      if (__hasOwnProp.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    if (__getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(b)) {
+        if (__propIsEnum.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      }
+    return a;
+  };
+  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+  var __objRest = (source, exclude) => {
+    var target = {};
+    for (var prop in source)
+      if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
+        target[prop] = source[prop];
+    if (source != null && __getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(source)) {
+        if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
+          target[prop] = source[prop];
+      }
+    return target;
+  };
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
+
   // app/src/scripts/components/BookDescription.ts
   var BookDescription = class extends HTMLElement {
     constructor() {
@@ -105,11 +157,11 @@
     constructor(categories, sortedKeys) {
       this.categoriesUpdatePublisher = new Publisher();
       this.bookUpdatePublisher = new Publisher();
-      this._favorites = categories;
-      this._sortedKeys = sortedKeys;
+      this._favorites = categories || {};
+      this._sortedKeys = sortedKeys || [];
     }
     get favorites() {
-      return { ...this._favorites };
+      return __spreadValues({}, this._favorites);
     }
     set favorites(newCategories) {
       this._favorites = newCategories;
@@ -217,7 +269,7 @@
       this._libraries = libraries;
     }
     get libraries() {
-      return { ...this._libraries };
+      return __spreadValues({}, this._libraries);
     }
     set libraries(newLibries) {
       this._libraries = newLibries;
@@ -264,7 +316,7 @@
       this._regions = regions;
     }
     get regions() {
-      return { ...this._regions };
+      return __spreadValues({}, this._regions);
     }
     set regions(newRegions) {
       this._regions = newRegions;
@@ -651,32 +703,31 @@
   // app/src/scripts/utils/CustomFetch.ts
   var CustomFetch = class {
     constructor(baseOptions = {}) {
-      this.defaultOptions = {
+      this.defaultOptions = __spreadValues({
         method: "GET",
         headers: {
           "Content-Type": "application/json"
           // 'Authorization': `Bearer ${getToken()}`
-        },
-        ...baseOptions
-      };
-    }
-    async fetch(url, options) {
-      const finalOptions = {
-        ...this.defaultOptions,
-        ...options,
-        timeout: 5e3
-      };
-      try {
-        const response = await fetch(url, finalOptions);
-        if (!response.ok) {
-          throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
         }
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error(`Error fetching data: ${error}`);
-        throw new Error(`Error fetching data: ${error}`);
-      }
+      }, baseOptions);
+    }
+    fetch(url, options) {
+      return __async(this, null, function* () {
+        const finalOptions = __spreadProps(__spreadValues(__spreadValues({}, this.defaultOptions), options), {
+          timeout: 5e3
+        });
+        try {
+          const response = yield fetch(url, finalOptions);
+          if (!response.ok) {
+            throw new Error(`Http error! status: ${response.status}, message: ${response.statusText}`);
+          }
+          const data = yield response.json();
+          return data;
+        } catch (error) {
+          console.error(`Error fetching data: ${error}`);
+          throw new Error(`Error fetching data: ${error}`);
+        }
+      });
     }
   };
   var CustomFetch_default = new CustomFetch();
@@ -1256,28 +1307,30 @@
     connectedCallback() {
       this.itemTemplate = this.template();
     }
-    async onLibraryBookExist(button, isbn13, library) {
-      const entries = Object.entries(library);
-      this.loading(entries.length);
-      if (button)
-        button.disabled = true;
-      const promises = entries.map(async ([libCode, libName], index) => {
+    onLibraryBookExist(button, isbn13, library) {
+      return __async(this, null, function* () {
+        const entries = Object.entries(library);
+        this.loading(entries.length);
+        if (button)
+          button.disabled = true;
+        const promises = entries.map((_0, _1) => __async(this, [_0, _1], function* ([libCode, libName], index) {
+          try {
+            const data = yield CustomFetch_default.fetch(
+              `/book-exist?isbn13=${isbn13}&libCode=${libCode}`
+            );
+            this.renderBookExist(data, libName, index);
+          } catch (error) {
+            console.error(error);
+            throw new Error(`Fail to get usage analysis list.`);
+          }
+        }));
         try {
-          const data = await CustomFetch_default.fetch(
-            `/book-exist?isbn13=${isbn13}&libCode=${libCode}`
-          );
-          this.renderBookExist(data, libName, index);
+          yield Promise.all(promises);
+          this.removeLoading();
         } catch (error) {
-          console.error(error);
-          throw new Error(`Fail to get usage analysis list.`);
+          console.error("Failed to fetch data for some libraries");
         }
       });
-      try {
-        await Promise.all(promises);
-        this.removeLoading();
-      } catch (error) {
-        console.error("Failed to fetch data for some libraries");
-      }
     }
     renderBookExist(data, libName, index) {
       const { hasBook, loanAvailable } = data;
@@ -1468,15 +1521,19 @@
 
   // app/src/scripts/pages/search/renderBooItem.ts
   function renderBookItem(bookItem, data) {
-    const {
+    const _a = data, {
       description,
       image,
       isbn,
       link,
-      title,
-      ...otherData
-      // author, discount, pubdate, publisher
-    } = data;
+      title
+    } = _a, otherData = __objRest(_a, [
+      "description",
+      "image",
+      "isbn",
+      "link",
+      "title"
+    ]);
     const summaryLinkElement = bookItem.querySelector(
       ".book-summary a"
     );
@@ -1491,7 +1548,7 @@
       descriptionEl.data = description;
     const anchorEl = bookItem.querySelector("a");
     anchorEl.href = `/book?isbn=${isbn}`;
-    fillElementsWithData({ ...otherData, title }, bookItem);
+    fillElementsWithData(__spreadProps(__spreadValues({}, otherData), { title }), bookItem);
     bookItem.dataset.isbn = isbn;
   }
 
@@ -1522,12 +1579,11 @@
       );
     }
     renderView() {
-      const { discount, pubdate, ...others } = this.data;
-      const renderData = {
-        ...others,
+      const _a = this.data, { discount, pubdate } = _a, others = __objRest(_a, ["discount", "pubdate"]);
+      const renderData = __spreadProps(__spreadValues({}, others), {
         discount: Number(discount).toLocaleString(),
         pubdate: this.getPubdate(pubdate)
-      };
+      });
       renderBookItem(this, renderData);
     }
     getPubdate(pubdate) {
@@ -1591,25 +1647,27 @@
       this.fetchBooks();
       (_b = this.loadingComponent) == null ? void 0 : _b.hide();
     }
-    async fetchBooks() {
-      if (!this.keyword || !this.sortingOrder) {
-        return;
-      }
-      const searchUrl = `${URL2.search}?keyword=${encodeURIComponent(
-        this.keyword
-      )}&display=${this.itemsPerPage}&start=${this.currentItemCount + 1}&sort=${this.sortingOrder}`;
-      try {
-        const data = await CustomFetch_default.fetch(
-          searchUrl
-        );
-        this.render(data);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(`Error fetching books: ${error.message}`);
-        } else {
-          console.error("An unexpected error occurred");
+    fetchBooks() {
+      return __async(this, null, function* () {
+        if (!this.keyword || !this.sortingOrder) {
+          return;
         }
-      }
+        const searchUrl = `${URL2.search}?keyword=${encodeURIComponent(
+          this.keyword
+        )}&display=${this.itemsPerPage}&start=${this.currentItemCount + 1}&sort=${this.sortingOrder}`;
+        try {
+          const data = yield CustomFetch_default.fetch(
+            searchUrl
+          );
+          this.render(data);
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(`Error fetching books: ${error.message}`);
+          } else {
+            console.error("An unexpected error occurred");
+          }
+        }
+      });
     }
     render(bookData) {
       var _a;
@@ -1681,23 +1739,25 @@
       this.fetch();
     }
     // disconnectedCallback() {}
-    async fetch() {
-      const date = /* @__PURE__ */ new Date();
-      date.setMonth(date.getMonth() - 1);
-      const month = date.getMonth() + 1;
-      const formatMonth = month < 10 ? `0${month}` : month.toString();
-      const searchParams = new URLSearchParams({
-        month: `${date.getFullYear()}-${formatMonth}`
+    fetch() {
+      return __async(this, null, function* () {
+        const date = /* @__PURE__ */ new Date();
+        date.setMonth(date.getMonth() - 1);
+        const month = date.getMonth() + 1;
+        const formatMonth = month < 10 ? `0${month}` : month.toString();
+        const searchParams = new URLSearchParams({
+          month: `${date.getFullYear()}-${formatMonth}`
+        });
+        try {
+          const data = yield CustomFetch_default.fetch(
+            `/monthly-keywords?${searchParams}`
+          );
+          this.render(data.keywords);
+        } catch (error) {
+          console.error(error);
+          throw new Error(`Fail to get monthly keyword.`);
+        }
       });
-      try {
-        const data = await CustomFetch_default.fetch(
-          `/monthly-keywords?${searchParams}`
-        );
-        this.render(data.keywords);
-      } catch (error) {
-        console.error(error);
-        throw new Error(`Fail to get monthly keyword.`);
-      }
     }
     render(keywords) {
       const fragment = new DocumentFragment();

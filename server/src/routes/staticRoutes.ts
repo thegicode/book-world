@@ -3,7 +3,7 @@ import path from "path";
 import { Application } from "express";
 import { finalBuildPath } from "../config";
 
-export const setStaticRoutes = (app: Application) => {
+const staticRoutes = (app: Application) => {
     const routes = [
         "",
         "search",
@@ -25,10 +25,14 @@ export const setStaticRoutes = (app: Application) => {
             fs.readFile(htmlPath, "utf8", (err, data) => {
                 if (err) {
                     console.error(err);
-                    return res.status(500).send("Failed to load HTML file");
+                    return res
+                        .status(500)
+                        .send("Failed to load HTML file: ", htmlPath);
                 }
                 res.send(data);
             });
         });
     });
 };
+
+export default staticRoutes;

@@ -1,19 +1,19 @@
 import express from "express";
 import { isProduction, finalBuildPath, PORT } from "./config";
 import { watchAndCopy } from "./watchAndCopy";
-import { setApiRoutes } from "./routes/apiRoutes";
-import { setStaticRoutes } from "./routes/staticRoutes";
+import apiRoutes from "./routes/apiRoutes";
+import staticRoutes from "./routes/staticRoutes";
 
 const app = express();
 
-console.log("***[Server]*** isProduction: ", isProduction);
+app.use(express.static(finalBuildPath));
+
+apiRoutes(app);
+staticRoutes(app);
 
 watchAndCopy();
 
-app.use(express.static(finalBuildPath));
-
-setApiRoutes(app);
-setStaticRoutes(app);
+console.log("***[Server]*** isProduction: ", isProduction);
 
 app.listen(PORT, () => {
     console.log(`Start : http://localhost:${PORT}`);

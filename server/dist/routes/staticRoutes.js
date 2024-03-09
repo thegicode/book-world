@@ -3,11 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setStaticRoutes = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const config_1 = require("../config");
-const setStaticRoutes = (app) => {
+const staticRoutes = (app) => {
     const routes = [
         "",
         "search",
@@ -31,4 +30,4 @@ const setStaticRoutes = (app) => {
         });
     });
 };
-exports.setStaticRoutes = setStaticRoutes;
+exports.default = staticRoutes;

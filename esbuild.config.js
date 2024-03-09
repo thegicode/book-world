@@ -1,7 +1,7 @@
 const esbuild = require("esbuild");
 const glob = require("glob");
 
-async function startEsbuid() {
+(async () => {
     const isProduction = process.env.NODE_ENV === "production";
 
     const entryPoints = glob.sync(`app/src/scripts/pages/**/index.ts`);
@@ -21,6 +21,4 @@ async function startEsbuid() {
     await context.watch();
 
     esbuild.build(options).catch(() => process.exit(1));
-}
-
-startEsbuid();
+})();
