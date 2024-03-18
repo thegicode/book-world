@@ -27,7 +27,7 @@ const staticRoutes = (app: Application) => {
                     console.error(err);
                     return res
                         .status(500)
-                        .send("Failed to load HTML file: ", htmlPath);
+                        .send(`Failed to load HTML file: ${htmlPath}`);
                 }
                 res.send(data);
             });
