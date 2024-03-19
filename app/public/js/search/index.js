@@ -1519,39 +1519,6 @@
     });
   }
 
-  // app/src/scripts/pages/search/renderBooItem.ts
-  function renderBookItem(bookItem, data) {
-    const _a = data, {
-      description,
-      image,
-      isbn,
-      link,
-      title
-    } = _a, otherData = __objRest(_a, [
-      "description",
-      "image",
-      "isbn",
-      "link",
-      "title"
-    ]);
-    const summaryLinkElement = bookItem.querySelector(
-      ".book-summary a"
-    );
-    const bookImage = new BookImage(image, title);
-    summaryLinkElement.appendChild(bookImage);
-    const linkEl = bookItem.querySelector(".link");
-    linkEl.href = link;
-    const descriptionEl = bookItem.querySelector(
-      "book-description"
-    );
-    if (descriptionEl)
-      descriptionEl.data = description;
-    const anchorEl = bookItem.querySelector("a");
-    anchorEl.href = `/book?isbn=${isbn}`;
-    fillElementsWithData(__spreadProps(__spreadValues({}, otherData), { title }), bookItem);
-    bookItem.dataset.isbn = isbn;
-  }
-
   // app/src/scripts/pages/search/BookItem.ts
   var BookItem = class extends HTMLElement {
     constructor(data) {
@@ -1560,6 +1527,9 @@
       this.libraryBookExist = null;
       this.data = data;
       this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
+      this.itemTemplate = document.querySelector(
+        "#tp-book-item"
+      );
     }
     connectedCallback() {
       this.renderView();
@@ -1584,7 +1554,9 @@
         discount: Number(discount).toLocaleString(),
         pubdate: this.getPubdate(pubdate)
       });
-      renderBookItem(this, renderData);
+      const cloned = this.itemTemplate.content.cloneNode(true);
+      this.appendChild(cloned);
+      this.renderContents(renderData);
     }
     getPubdate(pubdate) {
       return `${pubdate.substring(0, 4)}.${pubdate.substring(
@@ -1600,6 +1572,37 @@
         this.dataset.isbn || "",
         model_default.libraries
       );
+    }
+    renderContents(data) {
+      const _a = data, {
+        description,
+        image,
+        isbn,
+        link,
+        title
+      } = _a, otherData = __objRest(_a, [
+        "description",
+        "image",
+        "isbn",
+        "link",
+        "title"
+      ]);
+      const summaryLinkElement = this.querySelector(
+        ".book-summary a"
+      );
+      const bookImage = new BookImage(image, title);
+      summaryLinkElement.appendChild(bookImage);
+      const linkEl = this.querySelector(".link");
+      linkEl.href = link;
+      const descriptionEl = this.querySelector(
+        "book-description"
+      );
+      if (descriptionEl)
+        descriptionEl.data = description;
+      const anchorEl = this.querySelector("a");
+      anchorEl.href = `/book?isbn=${isbn}`;
+      fillElementsWithData(__spreadProps(__spreadValues({}, otherData), { title }), this);
+      this.dataset.isbn = isbn;
     }
   };
 
@@ -1618,9 +1621,6 @@
       this.bookContainer = this.querySelector(".books");
       this.loadingComponent = this.querySelector("loading-component");
       this.observeTarget = this.querySelector(".observe");
-      this.itemTemplate = document.querySelector(
-        "#tp-book-item"
-      );
       this.itemsPerPage = 10;
       this.fetchBooks = this.fetchBooks.bind(this);
       this.initializeSearchPage = this.initializeSearchPage.bind(this);
@@ -1707,7 +1707,6 @@
     createItem(data, index) {
       const bookItem = new BookItem(data);
       bookItem.dataset.index = this.getIndex(index).toString();
-      bookItem.appendChild(this.itemTemplate.content.cloneNode(true));
       return bookItem;
     }
     getIndex(index) {

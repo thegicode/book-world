@@ -1,17 +1,25 @@
-import { LibraryBookExist } from "../../components/index";
+import {
+    BookDescription,
+    BookImage,
+    LibraryBookExist,
+} from "../../components/index";
 import bookModel from "../../model";
-import renderBookItem from "./renderBooItem";
+import { fillElementsWithData } from "../../utils/helpers";
 
 export default class BookItem extends HTMLElement {
     private data: ISearchBook;
     private libraryButton: HTMLButtonElement | null = null;
     private libraryBookExist: LibraryBookExist | null = null;
+    private itemTemplate: HTMLTemplateElement;
 
     constructor(data: ISearchBook) {
         super();
 
         this.data = data;
         this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
+        this.itemTemplate = document.querySelector(
+            "#tp-book-item"
+        ) as HTMLTemplateElement;
     }
 
     connectedCallback() {
@@ -44,7 +52,10 @@ export default class BookItem extends HTMLElement {
             pubdate: this.getPubdate(pubdate),
         };
 
-        renderBookItem(this, renderData);
+        const cloned = this.itemTemplate.content.cloneNode(true);
+        this.appendChild(cloned);
+
+        this.renderContents(renderData);
     }
 
     private getPubdate(pubdate: string) {
@@ -61,5 +72,42 @@ export default class BookItem extends HTMLElement {
             this.dataset.isbn || "",
             bookModel.libraries
         );
+    }
+
+    private renderContents(data: ISearchBook) {
+        const {
+            description,
+            image,
+            isbn,
+            link,
+            title,
+            ...otherData // author, discount, pubdate, publisher
+        } = data;
+
+        // 썸네일 이미지
+        const summaryLinkElement = this.querySelector(
+            ".book-summary a"
+        ) as HTMLAnchorElement;
+        const bookImage = new BookImage(image, title);
+        summaryLinkElement.appendChild(bookImage);
+
+        // 네이버 바로가기
+        const linkEl = this.querySelector(".link") as HTMLAnchorElement;
+        linkEl.href = link;
+
+        // description
+        const descriptionEl = this.querySelector(
+            "book-description"
+        ) as BookDescription;
+        if (descriptionEl) descriptionEl.data = description as string;
+
+        // 상세화면 이동
+        const anchorEl = this.querySelector("a") as HTMLAnchorElement;
+        anchorEl.href = `/book?isbn=${isbn}`;
+
+        // element.textContent
+        fillElementsWithData({ ...otherData, title }, this);
+
+        this.dataset.isbn = isbn;
     }
 }

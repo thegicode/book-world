@@ -12,7 +12,6 @@ export default class SearchResult extends HTMLElement {
     private sortingOrder?: string;
     private currentItemCount!: number;
     private observeTarget: HTMLElement;
-    private itemTemplate: HTMLTemplateElement;
     private itemsPerPage: number;
 
     constructor() {
@@ -25,9 +24,6 @@ export default class SearchResult extends HTMLElement {
         this.loadingComponent =
             this.querySelector<LoadingComponent>("loading-component");
         this.observeTarget = this.querySelector(".observe") as HTMLElement;
-        this.itemTemplate = document.querySelector(
-            "#tp-book-item"
-        ) as HTMLTemplateElement;
 
         this.itemsPerPage = 10;
 
@@ -136,7 +132,6 @@ export default class SearchResult extends HTMLElement {
     private createItem(data: ISearchBook, index: number) {
         const bookItem = new BookItem(data);
         bookItem.dataset.index = this.getIndex(index).toString();
-        bookItem.appendChild(this.itemTemplate.content.cloneNode(true));
         return bookItem;
     }
 
