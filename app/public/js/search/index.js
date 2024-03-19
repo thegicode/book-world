@@ -1432,7 +1432,7 @@
   customElements.define("loading-component", LoadingComponent);
 
   // app/src/scripts/pages/search/selectors.ts
-  var bookList = document.querySelector("book-list");
+  var searchResult = document.querySelector("search-result");
   var searchForm = document.querySelector(
     "input-search form"
   );
@@ -1447,7 +1447,7 @@
       this.boundPopStateHandler = null;
     }
     connectedCallback() {
-      this.renderBookList();
+      this.renderSearchResult();
       this.boundPopStateHandler = this.onPopState.bind(this);
       window.addEventListener("popstate", this.boundPopStateHandler);
     }
@@ -1457,15 +1457,15 @@
       }
     }
     onPopState() {
-      this.renderBookList();
+      this.renderSearchResult();
     }
-    renderBookList() {
+    renderSearchResult() {
       var _a;
       const params = new URLSearchParams(location.search);
       const keyword = params.get("keyword");
       const sort = params.get("sort") || "sim";
       if (keyword && sort) {
-        (_a = bookList) == null ? void 0 : _a.initializeSearchPage(keyword, sort);
+        (_a = searchResult) == null ? void 0 : _a.initializeSearchPage(keyword, sort);
         searchInputElement.value = keyword;
       }
     }
@@ -1490,7 +1490,7 @@
         url.searchParams.set("keyword", keyword);
         url.searchParams.set("sort", sort);
         window.history.pushState({}, "", url.toString());
-        (_a = bookList) == null ? void 0 : _a.initializeSearchPage(keyword, sort);
+        (_a = searchResult) == null ? void 0 : _a.initializeSearchPage(keyword, sort);
       };
       this.form = this.querySelector("form");
       this.input = this.querySelector(
@@ -1608,8 +1608,8 @@
     search: "/search-naver-book"
   };
 
-  // app/src/scripts/pages/search/BookList.ts
-  var BookList = class extends HTMLElement {
+  // app/src/scripts/pages/search/SearchResult.ts
+  var SearchResult = class extends HTMLElement {
     constructor() {
       super();
       this.paginationElement = this.querySelector(
@@ -1784,14 +1784,14 @@
       url.searchParams.set("sort", sort);
       window.history.pushState({}, "", url.toString());
       searchInputElement.value = word;
-      (_b = bookList) == null ? void 0 : _b.initializeSearchPage(word, sort);
+      (_b = searchResult) == null ? void 0 : _b.initializeSearchPage(word, sort);
     }
   };
 
   // app/src/scripts/pages/search/index.ts
   customElements.define("book-image", BookImage);
   customElements.define("nav-gnb", NavGnb);
-  customElements.define("book-list", BookList);
+  customElements.define("search-result", SearchResult);
   customElements.define("app-search", AppSearch);
   customElements.define("input-search", InputSearch);
   customElements.define("book-item", BookItem);

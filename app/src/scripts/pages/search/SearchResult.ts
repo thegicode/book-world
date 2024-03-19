@@ -3,7 +3,7 @@ import { Observer, CustomFetch } from "../../utils/index";
 import { LoadingComponent } from "../../components";
 import { URL } from "../../utils/constants";
 
-export default class BookList extends HTMLElement {
+export default class SearchResult extends HTMLElement {
     private paginationElement!: HTMLElement;
     private bookContainer!: HTMLElement;
     private loadingComponent: LoadingComponent | null;

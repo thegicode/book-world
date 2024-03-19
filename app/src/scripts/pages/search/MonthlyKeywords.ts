@@ -1,5 +1,5 @@
 import { CustomFetch } from "../../utils";
-import { bookList, searchForm, searchInputElement } from "./selectors";
+import { searchResult, searchForm, searchInputElement } from "./selectors";
 
 export default class MonthlyKeywords extends HTMLElement {
     constructor() {
@@ -61,6 +61,6 @@ export default class MonthlyKeywords extends HTMLElement {
         window.history.pushState({}, "", url.toString());
 
         searchInputElement.value = word;
-        bookList?.initializeSearchPage(word, sort);
+        searchResult?.initializeSearchPage(word, sort);
     }
 }

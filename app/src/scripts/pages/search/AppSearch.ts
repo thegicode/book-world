@@ -1,6 +1,6 @@
 // import { CustomEventEmitter } from "../../utils/index";
 // import { SEARCH_PAGE_INIT } from "./constant";
-import { bookList, searchInputElement } from "./selectors";
+import { searchResult, searchInputElement } from "./selectors";
 
 export default class AppSearch extends HTMLElement {
     private boundPopStateHandler: ((ev: PopStateEvent) => void) | null = null;
@@ -10,7 +10,7 @@ export default class AppSearch extends HTMLElement {
     }
 
     connectedCallback() {
-        this.renderBookList();
+        this.renderSearchResult();
 
         this.boundPopStateHandler = this.onPopState.bind(this);
         window.addEventListener("popstate", this.boundPopStateHandler);
@@ -23,16 +23,16 @@ export default class AppSearch extends HTMLElement {
     }
 
     private onPopState() {
-        this.renderBookList();
+        this.renderSearchResult();
     }
 
-    private renderBookList() {
+    private renderSearchResult() {
         const params = new URLSearchParams(location.search);
         const keyword = params.get("keyword");
         const sort = params.get("sort") || "sim";
 
         if (keyword && sort) {
-            bookList?.initializeSearchPage(keyword, sort);
+            searchResult?.initializeSearchPage(keyword, sort);
             searchInputElement.value = keyword;
         }
     }

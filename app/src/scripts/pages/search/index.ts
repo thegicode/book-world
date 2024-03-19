@@ -8,14 +8,14 @@ import {
 
 import AppSearch from "./AppSearch";
 import InputSearch from "./InputSearch";
-import BookList from "./BookList";
+import SearchResult from "./SearchResult";
 import BookItem from "./BookItem";
 import MonthlyKeywords from "./MonthlyKeywords";
 // import TestElement from './TestElement'
 
 customElements.define("book-image", BookImage);
 customElements.define("nav-gnb", NavGnb);
-customElements.define("book-list", BookList);
+customElements.define("search-result", SearchResult);
 customElements.define("app-search", AppSearch);
 customElements.define("input-search", InputSearch);
 customElements.define("book-item", BookItem);

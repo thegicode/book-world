@@ -1,6 +1,6 @@
 // import { CustomEventEmitter } from "../../utils/index";
 // import { SEARCH_PAGE_INIT } from "./constant";
-import { bookList } from "./selectors";
+import { searchResult } from "./selectors";
 
 export default class InputSearch extends HTMLElement {
     private form: HTMLFormElement;
@@ -48,7 +48,7 @@ export default class InputSearch extends HTMLElement {
 
         window.history.pushState({}, "", url.toString());
 
-        bookList?.initializeSearchPage(keyword, sort);
+        searchResult?.initializeSearchPage(keyword, sort);
         // CustomEventEmitter.dispatch(SEARCH_PAGE_INIT, { keyword, sort });
     };
 }

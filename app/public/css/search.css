@@ -312,7 +312,7 @@ monthly-keywords a:hover {
   font-size: 14px;
 }
 
-.book-list {
+.search-result {
   flex: 1;
   overflow: auto;
   position: relative;

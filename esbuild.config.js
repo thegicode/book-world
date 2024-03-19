@@ -1,9 +1,9 @@
-const path = require("path");
-const fs = require("fs");
+// const path = require("path");
+// const fs = require("fs");
 const esbuild = require("esbuild");
 const glob = require("glob");
-const http = require("node:http");
-const { finalBuildPath } = require("./server/dist/config");
+// const http = require("node:http");
+// const { finalBuildPath } = require("./server/dist/config");
 
 (async () => {
     const isProduction = process.env.NODE_ENV === "production";
