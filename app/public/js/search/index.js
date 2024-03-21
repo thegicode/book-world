@@ -1518,6 +1518,33 @@
       element.textContent = String(value);
     });
   }
+  function fetchHTMLTemplate(url) {
+    return __async(this, null, function* () {
+      try {
+        const response = yield fetch(url);
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch template: ${response.status} ${response.statusText}`
+          );
+        }
+        return yield response.text();
+      } catch (error) {
+        console.error("Error fetching HTML template:", error);
+        return null;
+      }
+    });
+  }
+  function parseHTMLTemplate(html) {
+    return __async(this, null, function* () {
+      try {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.querySelector("template");
+      } catch (error) {
+        console.error("Error parsing HTML template:", error);
+        return null;
+      }
+    });
+  }
 
   // app/src/scripts/pages/search/BookItem.ts
   var BookItem = class extends HTMLElement {
@@ -1647,12 +1674,15 @@
     fetchAndParseTemplate() {
       return __async(this, null, function* () {
         try {
-          const response = yield fetch("./html/templates/book-item.html");
-          const html = yield response.text();
-          const doc = new DOMParser().parseFromString(html, "text/html");
-          return doc.querySelector("template");
+          const html = yield fetchHTMLTemplate(
+            "./html/templates/book-item.html"
+          );
+          if (!html)
+            return null;
+          return parseHTMLTemplate(html);
         } catch (error) {
-          console.error("Error fetching template:", error);
+          console.error("Error fetching and parsing template:", error);
+          return null;
         }
       });
     }

@@ -2,6 +2,7 @@ import BookItem from "./BookItem";
 import { Observer, CustomFetch } from "../../utils/index";
 import { LoadingComponent } from "../../components";
 import { URL } from "../../utils/constants";
+import { fetchHTMLTemplate, parseHTMLTemplate } from "../../utils/helpers";
 
 export default class SearchResult extends HTMLElement {
     private paginationElement!: HTMLElement;
@@ -55,14 +56,17 @@ export default class SearchResult extends HTMLElement {
         this.keyword ? this.loadBooks() : this.showDefaultMessage();
     }
 
-    private async fetchAndParseTemplate() {
+    private async fetchAndParseTemplate(): Promise<HTMLTemplateElement | null> {
         try {
-            const response = await fetch("./html/templates/book-item.html");
-            const html = await response.text();
-            const doc = new DOMParser().parseFromString(html, "text/html");
-            return doc.querySelector("template");
+            const html = await fetchHTMLTemplate(
+                "./html/templates/book-item.html"
+            );
+            if (!html) return null;
+
+            return parseHTMLTemplate(html);
         } catch (error) {
-            console.error("Error fetching template:", error);
+            console.error("Error fetching and parsing template:", error);
+            return null;
         }
     }
 
