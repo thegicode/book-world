@@ -13,6 +13,7 @@ export default class SearchResult extends HTMLElement {
     private currentItemCount!: number;
     private observeTarget: HTMLElement;
     private itemsPerPage: number;
+    private itemTemplate: HTMLTemplateElement;
 
     constructor() {
         super();
@@ -24,6 +25,7 @@ export default class SearchResult extends HTMLElement {
         this.loadingComponent =
             this.querySelector<LoadingComponent>("loading-component");
         this.observeTarget = this.querySelector(".observe") as HTMLElement;
+        this.itemTemplate = document.createElement("template");
 
         this.itemsPerPage = 10;
 
@@ -31,7 +33,10 @@ export default class SearchResult extends HTMLElement {
         this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        this.itemTemplate =
+            (await this.fetchAndParseTemplate()) as HTMLTemplateElement;
+
         this.observer = new Observer(this.observeTarget, this.fetchBooks);
     }
 
@@ -39,7 +44,7 @@ export default class SearchResult extends HTMLElement {
         this.observer?.disconnect();
     }
 
-    initializeSearchPage(keyword: string, sortValue: string) {
+    async initializeSearchPage(keyword: string, sortValue: string) {
         this.keyword = keyword;
         this.sortingOrder = sortValue;
         this.currentItemCount = 0;
@@ -48,6 +53,17 @@ export default class SearchResult extends HTMLElement {
         // loadBooks: onSubmit으로 들어온 경우와 브라우저
         // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
         this.keyword ? this.loadBooks() : this.showDefaultMessage();
+    }
+
+    private async fetchAndParseTemplate() {
+        try {
+            const response = await fetch("./html/templates/book-item.html");
+            const html = await response.text();
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            return doc.querySelector("template");
+        } catch (error) {
+            console.error("Error fetching template:", error);
+        }
     }
 
     private loadBooks() {
@@ -130,7 +146,7 @@ export default class SearchResult extends HTMLElement {
     }
 
     private createItem(data: ISearchBook, index: number) {
-        const bookItem = new BookItem(data);
+        const bookItem = new BookItem(data, this.itemTemplate);
         bookItem.dataset.index = this.getIndex(index).toString();
         return bookItem;
     }

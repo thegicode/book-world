@@ -1521,15 +1521,13 @@
 
   // app/src/scripts/pages/search/BookItem.ts
   var BookItem = class extends HTMLElement {
-    constructor(data) {
+    constructor(data, template) {
       super();
       this.libraryButton = null;
       this.libraryBookExist = null;
       this.data = data;
+      this.template = template;
       this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
-      this.itemTemplate = document.querySelector(
-        "#tp-book-item"
-      );
     }
     connectedCallback() {
       this.renderView();
@@ -1554,7 +1552,7 @@
         discount: Number(discount).toLocaleString(),
         pubdate: this.getPubdate(pubdate)
       });
-      const cloned = this.itemTemplate.content.cloneNode(true);
+      const cloned = this.template.content.cloneNode(true);
       this.appendChild(cloned);
       this.renderContents(renderData);
     }
@@ -1621,24 +1619,42 @@
       this.bookContainer = this.querySelector(".books");
       this.loadingComponent = this.querySelector("loading-component");
       this.observeTarget = this.querySelector(".observe");
+      this.itemTemplate = document.createElement("template");
       this.itemsPerPage = 10;
       this.fetchBooks = this.fetchBooks.bind(this);
       this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
     connectedCallback() {
-      this.observer = new Observer(this.observeTarget, this.fetchBooks);
+      return __async(this, null, function* () {
+        this.itemTemplate = yield this.fetchAndParseTemplate();
+        this.observer = new Observer(this.observeTarget, this.fetchBooks);
+      });
     }
     disconnectedCallback() {
       var _a;
       (_a = this.observer) == null ? void 0 : _a.disconnect();
     }
     initializeSearchPage(keyword, sortValue) {
-      var _a;
-      this.keyword = keyword;
-      this.sortingOrder = sortValue;
-      this.currentItemCount = 0;
-      (_a = this.observer) == null ? void 0 : _a.disconnect();
-      this.keyword ? this.loadBooks() : this.showDefaultMessage();
+      return __async(this, null, function* () {
+        var _a;
+        this.keyword = keyword;
+        this.sortingOrder = sortValue;
+        this.currentItemCount = 0;
+        (_a = this.observer) == null ? void 0 : _a.disconnect();
+        this.keyword ? this.loadBooks() : this.showDefaultMessage();
+      });
+    }
+    fetchAndParseTemplate() {
+      return __async(this, null, function* () {
+        try {
+          const response = yield fetch("./html/templates/book-item.html");
+          const html = yield response.text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          return doc.querySelector("template");
+        } catch (error) {
+          console.error("Error fetching template:", error);
+        }
+      });
     }
     loadBooks() {
       var _a, _b;
@@ -1705,7 +1721,7 @@
       this.bookContainer.appendChild(fragment);
     }
     createItem(data, index) {
-      const bookItem = new BookItem(data);
+      const bookItem = new BookItem(data, this.itemTemplate);
       bookItem.dataset.index = this.getIndex(index).toString();
       return bookItem;
     }

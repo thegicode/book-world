@@ -8,18 +8,17 @@ import { fillElementsWithData } from "../../utils/helpers";
 
 export default class BookItem extends HTMLElement {
     private data: ISearchBook;
+    private template: HTMLTemplateElement;
     private libraryButton: HTMLButtonElement | null = null;
     private libraryBookExist: LibraryBookExist | null = null;
-    private itemTemplate: HTMLTemplateElement;
 
-    constructor(data: ISearchBook) {
+    constructor(data: ISearchBook, template: HTMLTemplateElement) {
         super();
 
         this.data = data;
+        this.template = template;
+
         this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
-        this.itemTemplate = document.querySelector(
-            "#tp-book-item"
-        ) as HTMLTemplateElement;
     }
 
     connectedCallback() {
@@ -52,7 +51,7 @@ export default class BookItem extends HTMLElement {
             pubdate: this.getPubdate(pubdate),
         };
 
-        const cloned = this.itemTemplate.content.cloneNode(true);
+        const cloned = this.template.content.cloneNode(true);
         this.appendChild(cloned);
 
         this.renderContents(renderData);
