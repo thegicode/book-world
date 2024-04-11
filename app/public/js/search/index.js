@@ -1545,6 +1545,19 @@
       }
     });
   }
+  function fetchAndParseTemplate(templateURL) {
+    return __async(this, null, function* () {
+      try {
+        const html = yield fetchHTMLTemplate(templateURL);
+        if (!html)
+          return null;
+        return parseHTMLTemplate(html);
+      } catch (error) {
+        console.error("Error fetching and parsing template", error);
+        return null;
+      }
+    });
+  }
 
   // app/src/scripts/pages/search/BookItem.ts
   var BookItem = class extends HTMLElement {
@@ -1640,20 +1653,22 @@
   var SearchResult = class extends HTMLElement {
     constructor() {
       super();
+      this.itemTemplate = null;
       this.paginationElement = this.querySelector(
         ".paging-info"
       );
       this.bookContainer = this.querySelector(".books");
       this.loadingComponent = this.querySelector("loading-component");
       this.observeTarget = this.querySelector(".observe");
-      this.itemTemplate = document.createElement("template");
       this.itemsPerPage = 10;
       this.fetchBooks = this.fetchBooks.bind(this);
       this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
     connectedCallback() {
       return __async(this, null, function* () {
-        this.itemTemplate = yield this.fetchAndParseTemplate();
+        this.itemTemplate = yield fetchAndParseTemplate(
+          "./html/templates/book-item.html"
+        );
         this.observer = new Observer(this.observeTarget, this.fetchBooks);
       });
     }
@@ -1669,21 +1684,6 @@
         this.currentItemCount = 0;
         (_a = this.observer) == null ? void 0 : _a.disconnect();
         this.keyword ? this.loadBooks() : this.showDefaultMessage();
-      });
-    }
-    fetchAndParseTemplate() {
-      return __async(this, null, function* () {
-        try {
-          const html = yield fetchHTMLTemplate(
-            "./html/templates/book-item.html"
-          );
-          if (!html)
-            return null;
-          return parseHTMLTemplate(html);
-        } catch (error) {
-          console.error("Error fetching and parsing template:", error);
-          return null;
-        }
       });
     }
     loadBooks() {
@@ -1747,10 +1747,12 @@
     }
     renderList(searchBookData) {
       const fragment = new DocumentFragment();
-      searchBookData.map((data, index) => this.createItem(data, index)).forEach((bookItem) => fragment.appendChild(bookItem));
+      searchBookData.map((data, index) => this.createItem(data, index)).forEach((bookItem) => bookItem && fragment.appendChild(bookItem));
       this.bookContainer.appendChild(fragment);
     }
     createItem(data, index) {
+      if (!this.itemTemplate)
+        return;
       const bookItem = new BookItem(data, this.itemTemplate);
       bookItem.dataset.index = this.getIndex(index).toString();
       return bookItem;

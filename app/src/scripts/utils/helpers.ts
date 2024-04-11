@@ -29,7 +29,7 @@ export function fillElementsWithData<T>(data: T, container: HTMLElement) {
     });
 }
 
-export async function fetchHTMLTemplate(url: string) {
+async function fetchHTMLTemplate(url: string) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -44,12 +44,24 @@ export async function fetchHTMLTemplate(url: string) {
     }
 }
 
-export async function parseHTMLTemplate(html: string) {
+async function parseHTMLTemplate(html: string) {
     try {
         const doc = new DOMParser().parseFromString(html, "text/html");
         return doc.querySelector("template");
     } catch (error) {
         console.error("Error parsing HTML template:", error);
+        return null;
+    }
+}
+
+export async function fetchAndParseTemplate(templateURL: string) {
+    try {
+        const html = await fetchHTMLTemplate(templateURL);
+        if (!html) return null;
+
+        return parseHTMLTemplate(html);
+    } catch (error) {
+        console.error("Error fetching and parsing template", error);
         return null;
     }
 }

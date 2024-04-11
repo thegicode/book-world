@@ -2,7 +2,7 @@ import BookItem from "./BookItem";
 import { Observer, CustomFetch } from "../../utils/index";
 import { LoadingComponent } from "../../components";
 import { URL } from "../../utils/constants";
-import { fetchHTMLTemplate, parseHTMLTemplate } from "../../utils/helpers";
+import { fetchAndParseTemplate } from "../../utils/helpers";
 
 export default class SearchResult extends HTMLElement {
     private paginationElement!: HTMLElement;
@@ -14,7 +14,7 @@ export default class SearchResult extends HTMLElement {
     private currentItemCount!: number;
     private observeTarget: HTMLElement;
     private itemsPerPage: number;
-    private itemTemplate: HTMLTemplateElement;
+    private itemTemplate: HTMLTemplateElement | null = null;
 
     constructor() {
         super();
@@ -26,7 +26,7 @@ export default class SearchResult extends HTMLElement {
         this.loadingComponent =
             this.querySelector<LoadingComponent>("loading-component");
         this.observeTarget = this.querySelector(".observe") as HTMLElement;
-        this.itemTemplate = document.createElement("template");
+        // this.itemTemplate = HTMLTemplateElement | null;
 
         this.itemsPerPage = 10;
 
@@ -35,8 +35,9 @@ export default class SearchResult extends HTMLElement {
     }
 
     async connectedCallback() {
-        this.itemTemplate =
-            (await this.fetchAndParseTemplate()) as HTMLTemplateElement;
+        this.itemTemplate = (await fetchAndParseTemplate(
+            "./html/templates/book-item.html"
+        )) as HTMLTemplateElement;
 
         this.observer = new Observer(this.observeTarget, this.fetchBooks);
     }
@@ -54,20 +55,6 @@ export default class SearchResult extends HTMLElement {
         // loadBooks: onSubmit으로 들어온 경우와 브라우저
         // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
         this.keyword ? this.loadBooks() : this.showDefaultMessage();
-    }
-
-    private async fetchAndParseTemplate(): Promise<HTMLTemplateElement | null> {
-        try {
-            const html = await fetchHTMLTemplate(
-                "./html/templates/book-item.html"
-            );
-            if (!html) return null;
-
-            return parseHTMLTemplate(html);
-        } catch (error) {
-            console.error("Error fetching and parsing template:", error);
-            return null;
-        }
     }
 
     private loadBooks() {
@@ -144,12 +131,13 @@ export default class SearchResult extends HTMLElement {
 
         searchBookData
             .map((data, index) => this.createItem(data, index))
-            .forEach((bookItem) => fragment.appendChild(bookItem));
+            .forEach((bookItem) => bookItem && fragment.appendChild(bookItem));
 
         this.bookContainer.appendChild(fragment);
     }
 
     private createItem(data: ISearchBook, index: number) {
+        if (!this.itemTemplate) return;
         const bookItem = new BookItem(data, this.itemTemplate);
         bookItem.dataset.index = this.getIndex(index).toString();
         return bookItem;
