@@ -10,6 +10,7 @@ interface IBook {
     publication_year: string;
     publisher: string;
     vol?: string;
+    addition_symbol: string;
 }
 
 interface ICategoryPayload {
@@ -213,11 +214,12 @@ type TFavoriteFavorites = Record<string, string[]>;
 
 type TKyeboInfoProps = { href: string; prodType: string; prodPrice: string };
 
-type TLibraries = Record<string, string>;
+type TLibraries = Record<string, ILibraryData>;
 
 type TLibraryPayload = {
     code: string;
-    name?: string;
+    // name?: string;
+    data?: ILibraryData;
 };
 
 type TLibraryUpdateProps = {

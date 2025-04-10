@@ -25,6 +25,10 @@ export function cloneTemplate<T extends HTMLElement>(
 export function fillElementsWithData<T>(data: T, container: HTMLElement) {
     Object.entries(data as Record<string, unknown>).forEach(([key, value]) => {
         const element = container.querySelector(`.${key}`) as HTMLElement;
+        if (!element) {
+            console.error(`${key} element is not exist. Please check ${key}.`);
+            return;
+        }
         element.textContent = String(value);
     });
 }

@@ -1,12 +1,11 @@
 # Book World
 
--   [책 검색](./src/html/search.html)
--   [책 즐겨찾기](./src/html/favorite.html)
--   [정보공개 도서관](./src/html/library.html)
-
 ## url
 
 -   http://localhost:7777/
+-   [책 검색](./src/html/search.html)
+-   [책 즐겨찾기](./src/html/favorite.html)
+-   [정보공개 도서관](./src/html/library.html)
 
 ## API
 
@@ -25,6 +24,11 @@
 -   test 추가
 -   접근성, lighthouse
 
+## 컨텐츠는?
+
+-   책을 찾을 때 사람들은 주로 책을 어떻게 검색하나 : 도서관, 전자도서관, 알라딘 중고서점, yes24, 교보문고
+-   도서 리뷰는 주로 어디롤 보나 - 네이버, 교보문고
+
 ## 참조
 
 -   도서관 공개 API : https://solomon.data4library.kr/
@@ -36,3 +40,12 @@
 ## package.json
 
 -   개발환경용 : dev, 프로덕션 환경용 : prod
+
+## 찾아볼 것
+
+-   공공데이터포털 '전국공공도서관통계', '전국버스정류장위치정보'
+-   국립중앙도서관 Open API
+-   국가도서관 통계시스템 : 공공도서관 통계
+-   KOSIS 국가통계포털
+-   문화빅데이터플랫폼 '도서관 정보'
+-   yes24 '도서 리뷰'

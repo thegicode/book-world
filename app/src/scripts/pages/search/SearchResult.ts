@@ -26,7 +26,6 @@ export default class SearchResult extends HTMLElement {
         this.loadingComponent =
             this.querySelector<LoadingComponent>("loading-component");
         this.observeTarget = this.querySelector(".observe") as HTMLElement;
-        // this.itemTemplate = HTMLTemplateElement | null;
 
         this.itemsPerPage = 10;
 

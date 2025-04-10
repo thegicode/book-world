@@ -32,8 +32,8 @@ export default class LibraryStored extends HTMLElement {
         const libraries = bookModel.libraries;
 
         const fragment = new DocumentFragment();
-        for (const [code, name] of Object.entries(libraries)) {
-            const element = this.createElement(code, name);
+        for (const [code, data] of Object.entries(libraries)) {
+            const element = this.createElement(code, data.libName);
             if (!element) return;
             fragment.appendChild(element);
         }
@@ -76,9 +76,9 @@ export default class LibraryStored extends HTMLElement {
         }
     }
 
-    private add({ code, name }: TLibraryPayload) {
-        if (!this.listElement || !name) return;
-        const element = this.createElement(code, name) as HTMLElement;
+    private add({ code, data }: TLibraryPayload) {
+        if (!this.listElement || !data) return;
+        const element = this.createElement(code, data.libName) as HTMLElement;
         this.listElement.appendChild(element);
     }
 

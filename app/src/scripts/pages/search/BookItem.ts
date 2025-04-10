@@ -43,13 +43,16 @@ export default class BookItem extends HTMLElement {
     }
 
     private renderView() {
-        const { discount, pubdate, ...others } = this.data;
+        const { discount, pubdate, isbn, ...others } = this.data;
 
         const renderData = {
             ...others,
+            isbn,
             discount: Number(discount).toLocaleString(),
             pubdate: this.getPubdate(pubdate),
         };
+
+        this.dataset.isbn = isbn;
 
         const cloned = this.template.content.cloneNode(true);
         this.appendChild(cloned);
@@ -107,6 +110,6 @@ export default class BookItem extends HTMLElement {
         // element.textContent
         fillElementsWithData({ ...otherData, title }, this);
 
-        this.dataset.isbn = isbn;
+        // this.dataset.isbn = isbn;
     }
 }

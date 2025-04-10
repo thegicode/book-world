@@ -183,13 +183,14 @@
     set libraries(newLibries) {
       this._libraries = newLibries;
     }
-    add(code, name) {
-      this._libraries[code] = name;
+    add(code, data) {
+      this._libraries[code] = data;
       this.publisher.notify({
         type: "add",
         payload: {
           code,
-          name
+          // name,
+          data
         }
       });
     }
@@ -377,8 +378,8 @@
       newState.libraries = this.libraries;
       this.setStorage(newState);
     }
-    addLibraries(code, name) {
-      this.libraryModel.add(code, name);
+    addLibraries(code, data) {
+      this.libraryModel.add(code, data);
       this.setLibraries();
     }
     removeLibraries(code) {

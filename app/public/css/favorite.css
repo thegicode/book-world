@@ -91,7 +91,7 @@ book-description .more-description-button[aria-hidden=true] {
 library-book-exist .library-list {
   list-style: none;
   margin: 5px 0 0;
-  padding: 0;
+  padding: 5px;
   border-radius: 7px;
 }
 library-book-exist .library-item {
@@ -102,6 +102,13 @@ library-book-exist .library-item {
 }
 library-book-exist .library-item span {
   margin-right: 5px;
+}
+library-book-exist .library-item a {
+  color: #767676;
+  text-decoration: none;
+}
+library-book-exist .library-item a:hover {
+  text-decoration: underline;
 }
 library-book-exist .library-item[data-loading=true] {
   width: 100%;
@@ -329,6 +336,11 @@ favorite-item[data-fail=true] .book-info .authors ~ p {
 favorite-item[data-fail=true] book-description {
   display: none;
 }
+favorite-item h6.bookname {
+  margin: 0 1rem 1rem 1rem;
+  font-size: 20px;
+  color: #377376;
+}
 favorite-item .book-summary {
   position: relative;
   margin: 0 1rem 7px;
@@ -384,10 +396,11 @@ favorite-item .book-info .loanCnt {
 }
 
 library-book-exist {
-  margin: 10px 1rem 1rem;
+  margin: 1.5rem 1rem 0;
 }
 library-book-exist h5 {
   margin: 0;
+  color: #666;
 }
 
 .favorite-message {

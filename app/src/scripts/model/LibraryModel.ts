@@ -16,13 +16,14 @@ export default class LibraryModel {
         this._libraries = newLibries;
     }
 
-    add(code: string, name: string) {
-        this._libraries[code] = name;
+    add(code: string, data: ILibraryData) {
+        this._libraries[code] = data;
         this.publisher.notify({
             type: "add",
             payload: {
                 code,
-                name,
+                // name,
+                data,
             },
         });
     }

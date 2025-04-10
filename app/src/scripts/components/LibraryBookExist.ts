@@ -17,18 +17,18 @@ export default class LibraryBookExist extends HTMLElement {
     async onLibraryBookExist(
         button: HTMLButtonElement | null,
         isbn13: string,
-        library: Record<string, string>
+        library: TLibraries
     ): Promise<void> {
         const entries = Object.entries(library);
         this.loading(entries.length);
         if (button) button.disabled = true;
 
-        const promises = entries.map(async ([libCode, libName], index) => {
+        const promises = entries.map(async ([libCode, libData], index) => {
             try {
                 const data = await CustomFetch.fetch<IBookExist>(
                     `/book-exist?isbn13=${isbn13}&libCode=${libCode}`
                 );
-                this.renderBookExist(data, libName, index);
+                this.renderBookExist(data, libData, index);
             } catch (error) {
                 console.error(error);
                 throw new Error(`Fail to get usage analysis list.`);
@@ -45,10 +45,12 @@ export default class LibraryBookExist extends HTMLElement {
 
     protected renderBookExist(
         data: IBookExist,
-        libName: string,
+        libData: ILibraryData,
         index: number
     ): void {
         const { hasBook, loanAvailable } = data;
+        // 대출 가능여부는 조회일 기준 전날의 대출 상태를 기준으로 제공
+        const { libName, homepage } = libData;
 
         const loanAvailableText =
             hasBook === "Y"
@@ -63,13 +65,14 @@ export default class LibraryBookExist extends HTMLElement {
 
         (
             element.querySelector(".name") as HTMLElement
-        ).textContent = `∙ ${libName} : `;
+        ).textContent = `${libName}`;
 
         (element.querySelector(".hasBook") as HTMLElement).textContent =
-            hasBook === "Y" ? "소장" : "미소장";
+            hasBook === "Y" ? ": 소장" : ": 미소장";
 
         (element.querySelector(".loanAvailable") as HTMLElement).textContent =
             loanAvailableText;
+        (element.querySelector("a") as HTMLAnchorElement).href = homepage;
     }
 
     protected loading(size: number) {
@@ -93,7 +96,7 @@ export default class LibraryBookExist extends HTMLElement {
 
     protected template() {
         return `<li class="library-item" data-loading="true">
-            <span class="name"></span>
+            <a href="" target="_blank"><span class="name"></span></a>
             <span class="hasBook"></span>
             <span class="loanAvailable"></span>
         </li>`;

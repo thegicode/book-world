@@ -2,7 +2,7 @@ library-book-exist {
     .library-list {
         list-style: none;
         margin: 5px 0 0;
-        padding: 0;
+        padding: 5px;
         border-radius: 7px;
     }
     .library-item {
@@ -13,6 +13,14 @@ library-book-exist {
 
         span {
             margin-right: 5px;
+        }
+
+        a {
+            color: #767676;
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
         }
 
         &[data-loading="true"] {

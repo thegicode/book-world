@@ -41,7 +41,7 @@ button:disabled {
 library-book-exist .library-list {
   list-style: none;
   margin: 5px 0 0;
-  padding: 0;
+  padding: 5px;
   border-radius: 7px;
 }
 library-book-exist .library-item {
@@ -52,6 +52,13 @@ library-book-exist .library-item {
 }
 library-book-exist .library-item span {
   margin-right: 5px;
+}
+library-book-exist .library-item a {
+  color: #767676;
+  text-decoration: none;
+}
+library-book-exist .library-item a:hover {
+  text-decoration: underline;
 }
 library-book-exist .library-item[data-loading=true] {
   width: 100%;

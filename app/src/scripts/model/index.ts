@@ -159,9 +159,8 @@ class BookModel {
         this.setStorage(newState);
     }
 
-    addLibraries(code: string, name: string) {
-        this.libraryModel.add(code, name);
-
+    addLibraries(code: string, data: ILibraryData) {
+        this.libraryModel.add(code, data);
         this.setLibraries();
     }
 

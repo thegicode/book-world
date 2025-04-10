@@ -274,13 +274,14 @@
     set libraries(newLibries) {
       this._libraries = newLibries;
     }
-    add(code, name) {
-      this._libraries[code] = name;
+    add(code, data) {
+      this._libraries[code] = data;
       this.publisher.notify({
         type: "add",
         payload: {
           code,
-          name
+          // name,
+          data
         }
       });
     }
@@ -468,8 +469,8 @@
       newState.libraries = this.libraries;
       this.setStorage(newState);
     }
-    addLibraries(code, name) {
-      this.libraryModel.add(code, name);
+    addLibraries(code, data) {
+      this.libraryModel.add(code, data);
       this.setLibraries();
     }
     removeLibraries(code) {
@@ -1286,12 +1287,12 @@
         this.loading(entries.length);
         if (button)
           button.disabled = true;
-        const promises = entries.map((_0, _1) => __async(this, [_0, _1], function* ([libCode, libName], index) {
+        const promises = entries.map((_0, _1) => __async(this, [_0, _1], function* ([libCode, libData], index) {
           try {
             const data = yield CustomFetch_default.fetch(
               `/book-exist?isbn13=${isbn13}&libCode=${libCode}`
             );
-            this.renderBookExist(data, libName, index);
+            this.renderBookExist(data, libData, index);
           } catch (error) {
             console.error(error);
             throw new Error(`Fail to get usage analysis list.`);
@@ -1305,13 +1306,15 @@
         }
       });
     }
-    renderBookExist(data, libName, index) {
+    renderBookExist(data, libData, index) {
       const { hasBook, loanAvailable } = data;
+      const { libName, homepage } = libData;
       const loanAvailableText = hasBook === "Y" ? loanAvailable === "Y" ? "| \uB300\uCD9C\uAC00\uB2A5" : "| \uB300\uCD9C\uBD88\uAC00" : "";
       const element = this.querySelectorAll(".library-item")[index];
-      element.querySelector(".name").textContent = `\u2219 ${libName} : `;
-      element.querySelector(".hasBook").textContent = hasBook === "Y" ? "\uC18C\uC7A5" : "\uBBF8\uC18C\uC7A5";
+      element.querySelector(".name").textContent = `${libName}`;
+      element.querySelector(".hasBook").textContent = hasBook === "Y" ? ": \uC18C\uC7A5" : ": \uBBF8\uC18C\uC7A5";
       element.querySelector(".loanAvailable").textContent = loanAvailableText;
+      element.querySelector("a").href = homepage;
     }
     loading(size) {
       let text = "";
@@ -1330,7 +1333,7 @@
     }
     template() {
       return `<li class="library-item" data-loading="true">
-            <span class="name"></span>
+            <a href="" target="_blank"><span class="name"></span></a>
             <span class="hasBook"></span>
             <span class="loanAvailable"></span>
         </li>`;
@@ -1415,6 +1418,10 @@
   function fillElementsWithData(data, container) {
     Object.entries(data).forEach(([key, value]) => {
       const element = container.querySelector(`.${key}`);
+      if (!element) {
+        console.error(`${key} element is not exist. Please check ${key}.`);
+        return;
+      }
       element.textContent = String(value);
     });
   }

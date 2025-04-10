@@ -183,13 +183,14 @@
     set libraries(newLibries) {
       this._libraries = newLibries;
     }
-    add(code, name) {
-      this._libraries[code] = name;
+    add(code, data) {
+      this._libraries[code] = data;
       this.publisher.notify({
         type: "add",
         payload: {
           code,
-          name
+          // name,
+          data
         }
       });
     }
@@ -377,8 +378,8 @@
       newState.libraries = this.libraries;
       this.setStorage(newState);
     }
-    addLibraries(code, name) {
-      this.libraryModel.add(code, name);
+    addLibraries(code, data) {
+      this.libraryModel.add(code, data);
       this.setLibraries();
     }
     removeLibraries(code) {
@@ -1230,8 +1231,8 @@
         return;
       const libraries = model_default.libraries;
       const fragment = new DocumentFragment();
-      for (const [code, name] of Object.entries(libraries)) {
-        const element = this.createElement(code, name);
+      for (const [code, data] of Object.entries(libraries)) {
+        const element = this.createElement(code, data.libName);
         if (!element)
           return;
         fragment.appendChild(element);
@@ -1270,10 +1271,10 @@
           console.error("Unknown type");
       }
     }
-    add({ code, name }) {
-      if (!this.listElement || !name)
+    add({ code, data }) {
+      if (!this.listElement || !data)
         return;
-      const element = this.createElement(code, name);
+      const element = this.createElement(code, data.libName);
       this.listElement.appendChild(element);
     }
     delete(code) {
@@ -1385,26 +1386,26 @@
       super();
       this.checkbox = null;
       this.libCode = "";
-      this.libName = "";
       this.checkbox = this.querySelector("[name=myLibrary]");
       this.onChange = this.onChange.bind(this);
+      this.subscribeUpdate = this.subscribeUpdate.bind(this);
     }
     connectedCallback() {
       var _a;
       this.render();
       (_a = this.checkbox) == null ? void 0 : _a.addEventListener("click", this.onChange);
+      model_default.subscribeLibraryUpdate(this.subscribeUpdate);
     }
     disconnectedCallback() {
       var _a;
       (_a = this.checkbox) == null ? void 0 : _a.removeEventListener("click", this.onChange);
+      model_default.unsubscribeLibraryUpdate(this.subscribeUpdate);
     }
     render() {
       const { data } = this;
       if (data === null)
         return;
-      const { libCode, libName } = data;
-      this.libCode = libCode;
-      this.libName = libName;
+      this.libCode = data.libCode;
       Object.entries(data).forEach(([key, value]) => {
         const element = this.querySelector(`.${key}`);
         if (element) {
@@ -1415,15 +1416,22 @@
       if (hoempageLink)
         hoempageLink.href = data.homepage;
       if (this.checkbox) {
-        this.checkbox.checked = model_default.hasLibrary(libCode);
+        this.checkbox.checked = model_default.hasLibrary(this.libCode);
       }
     }
     onChange() {
       var _a;
       if ((_a = this.checkbox) == null ? void 0 : _a.checked) {
-        model_default.addLibraries(this.libCode, this.libName);
+        model_default.addLibraries(this.libCode, this.data);
       } else {
         model_default.removeLibraries(this.libCode);
+      }
+    }
+    subscribeUpdate({ type, payload }) {
+      if (type == "delete" && payload.code == this.libCode) {
+        if (this.checkbox) {
+          this.checkbox.checked = false;
+        }
       }
     }
   };

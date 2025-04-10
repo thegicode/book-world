@@ -70,9 +70,12 @@ export default class Book extends HTMLElement {
             bookname,
             bookImageURL,
             description,
+            // addition_symbol,
             ...otherData
             // authors, class_nm,  class_no, description, isbn13,  loanCnt, publication_year,  publisher,
         } = book;
+
+        // console.log(addition_symbol);
 
         const bookNames = bookname
             .split(/[=/:]/)

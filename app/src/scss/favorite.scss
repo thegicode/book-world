@@ -132,6 +132,12 @@ favorite-item {
         }
     }
 
+    h6.bookname {
+        margin: 0 1rem 1rem 1rem;
+        font-size: 20px;
+        color: #377376;
+    }
+
     .book-summary {
         position: relative;
         margin: 0 1rem 7px;
@@ -182,9 +188,10 @@ favorite-item {
 }
 
 library-book-exist {
-    margin: 10px 1rem 1rem;
+    margin: 1.5rem 1rem 0;
     h5 {
         margin: 0;
+        color: #666;
     }
 }
 
