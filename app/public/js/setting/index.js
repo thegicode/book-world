@@ -1380,9 +1380,11 @@
       this.render();
       model_default.subscribeToBookStateUpdate(this.render);
       model_default.subscribeDetailRegionUpdate(this.render);
+      model_default.subscribeRegionUpdate(this.render);
     }
     disconnectedCallback() {
       model_default.unsubscribeToBookStateUpdate(this.render);
+      model_default.unsubscribeDetailRegionUpdate(this.render);
       model_default.unsubscribeDetailRegionUpdate(this.render);
     }
     render() {
