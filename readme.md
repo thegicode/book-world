@@ -19,7 +19,6 @@
 -   도서 상세 모듈화
 -   template 파일 별도, fetch로 받아올 것
 -   Intersection Observer 오류 수정, 클래스 이름 변경
--   설정 : 지역 삭제 시 즐겨찾기 도서관 삭제 -> 보류
 -   test 추가
 -   접근성, lighthouse
 -   책제목 site:사이트

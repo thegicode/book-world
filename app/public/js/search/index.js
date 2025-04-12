@@ -1648,7 +1648,7 @@
         descriptionEl.data = description;
       const anchorEl = this.querySelector("a");
       anchorEl.href = `/book?isbn=${isbn}`;
-      fillElementsWithData(__spreadProps(__spreadValues({}, otherData), { title }), this);
+      fillElementsWithData(__spreadProps(__spreadValues({}, otherData), { title, isbn }), this);
     }
   };
 

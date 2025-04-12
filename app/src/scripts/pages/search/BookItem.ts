@@ -108,7 +108,7 @@ export default class BookItem extends HTMLElement {
         anchorEl.href = `/book?isbn=${isbn}`;
 
         // element.textContent
-        fillElementsWithData({ ...otherData, title }, this);
+        fillElementsWithData({ ...otherData, title, isbn }, this);
 
         // this.dataset.isbn = isbn;
     }
