@@ -1,24 +1,24 @@
-import { fetchBooksFromNaver } from "./naverApi";
-import { fetchKyoboBookInfo } from "./kyoboApi";
+import { searchNaverBooks } from "./naverApi";
+import { getKyoboBookInfoByIsbn } from "./kyoboApi";
 import {
-    fetchBookAvailability,
-    fetchMonthlyKeywords,
-    fetchPopularBooksByCriteria,
-    fetchLibrariesByBookISBN,
-    fetchLibrariesByCriteria,
-    fetchBookUsageAnalysis,
+    checkBookAvailability,
+    getMonthlyKeywords,
+    searchPopularBooks,
+    searchLibrariesByBook,
+    searchLibrariesByCriteria,
+    getBookUsageAnalysis,
 } from "./libraryApi";
 
-import { saveRegistrationKey } from "./keyManager";
+import { saveApiKey } from "./keyManager";
 
 export {
-    fetchBooksFromNaver,
-    fetchKyoboBookInfo,
-    fetchBookAvailability,
-    fetchMonthlyKeywords,
-    fetchPopularBooksByCriteria,
-    fetchLibrariesByBookISBN,
-    fetchLibrariesByCriteria,
-    fetchBookUsageAnalysis,
-    saveRegistrationKey,
+    searchNaverBooks,
+    getKyoboBookInfoByIsbn,
+    checkBookAvailability,
+    getMonthlyKeywords,
+    searchPopularBooks,
+    searchLibrariesByBook,
+    searchLibrariesByCriteria,
+    getBookUsageAnalysis,
+    saveApiKey,
 };

@@ -121,3 +121,50 @@
 
 ### 5. 확인 방법
 1.  **빌드 확인:** `npx tsc --project ./tsconfig.json` (프론트엔드 타입체크) 및 `npx tsc --project ./server/src/tsconfig.json` (서버 컴파일) 명령을 실행하여 오류 없이 성공하는지 확인합니다.
+
+---
+
+## 2026년 1월 25일 - API: 오류 처리 및 응답 형식 표준화
+
+### 1. 개요
+백엔드 API의 오류 처리를 중앙화하고 응답 형식을 `{ status, data }` 구조로 표준화했습니다. 이로 인해 영향을 받는 모든 프론트엔드 API 호출 코드를 함께 수정하여 런타임 에러를 해결하고 시스템 전반의 안정성을 높였습니다.
+
+### 2. 변경 내용
+*   **백엔드:**
+    *   HTTP 상태 코드를 포함하는 `AppError` 커스텀 에러 클래스를 도입했습니다.
+    *   모든 오류를 일괄 처리하는 `errorHandler` 미들웨어를 생성하고 등록했습니다.
+    *   비동기 컨트롤러의 오류 처리를 간소화하는 `asyncHandler` 유틸리티를 구현했습니다.
+    *   모든 API 서비스(`naverApi`, `kyoboApi` 등)를 `req`/`res`에 의존하지 않는 순수 데이터 처리 함수로 리팩토링했습니다.
+    *   모든 컨트롤러가 `asyncHandler`를 사용하고, 입력값을 검증하며, `{ status: 'success', data: ... }` 또는 `{ status: 'error', ... }` 형식의 일관된 응답만 보내도록 수정했습니다.
+*   **프론트엔드:**
+    *   새로운 표준 API 응답을 위한 `IApiResponse<T>` 제네릭 타입을 `type.d.ts`에 추가했습니다.
+    *   `FetchListComponent`, `MonthlyKeywords`, `FavoriteItem`, `LibraryBookExist`, `Popular` 등 API를 호출하는 모든 컴포넌트가 새로운 `{ status, data }` 응답 구조를 올바르게 처리하도록 수정했습니다.
+
+### 3. 기대 효과
+*   **안정성 및 예측 가능성:** 모든 API가 일관된 형식의 성공/실패 응답을 반환하여 프론트엔드에서의 처리가 용이해지고 안정성이 향상되었습니다.
+*   **코드 중복 감소 및 유지보수성 향상:** 백엔드의 오류 처리 로직과 프론트엔드의 데이터 파싱 로직이 중앙화/표준화되어 유지보수성이 크게 향상되었습니다.
+*   **계층 분리 강화:** 컨트롤러, 서비스, 오류 핸들러의 역할이 명확해져 백엔드 아키텍처가 더욱 견고해졌습니다.
+
+### 4. 변경된 파일 목록
+*   `server/src/utils/AppError.ts` (새로 생성)
+*   `server/src/utils/asyncHandler.ts` (새로 생성)
+*   `server/src/middleware/errorHandler.ts` (새로 생성)
+*   `server/src/index.ts` (수정됨)
+*   `server/src/controllers/apiController.ts` (수정됨)
+*   `server/src/apis/naverApi.ts` (수정됨)
+*   `server/src/apis/kyoboApi.ts` (수정됨)
+*   `server/src/apis/libraryApi.ts` (수정됨)
+*   `server/src/apis/keyManager.ts` (수정됨)
+*   `server/src/apis/index.ts` (수정됨)
+*   `app/src/type.d.ts` (수정됨)
+*   `app/src/scripts/pages/search/MonthlyKeywords.ts` (수정됨)
+*   `app/src/scripts/components/FetchListComponent.ts` (수정됨)
+*   `app/src/scripts/pages/favorite/FavoriteItem.ts` (수정됨)
+*   `app/src/scripts/components/LibraryBookExist.ts` (수정됨)
+*   `app/src/scripts/pages/popular/Popular.ts` (수정됨)
+
+
+### 5. 확인 방법
+1.  **빌드 확인:** `npx tsc --project ./server/src/tsconfig.json` 및 `npx tsc --project ./tsconfig.json` 명령을 실행하여 서버와 프론트엔드 모두 컴파일 오류가 없는지 확인합니다.
+2.  **기능 테스트:** API를 사용하는 모든 기능(도서 검색, 즐겨찾기, 인기 도서 등)이 이전과 같이 정상적으로 동작하는지 확인합니다.
+3.  **오류 테스트:** 의도적으로 잘못된 파라미터로 API를 요청했을 때, 서버는 400 Bad Request 응답을, 프론트엔드는 해당 오류를 적절히 처리하는지 확인합니다.

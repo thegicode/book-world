@@ -9,7 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchBooksFromNaver = void 0;
+exports.searchNaverBooks = void 0;
+const AppError_1 = require("../utils/AppError");
 function fetchNaver(url) {
     return __awaiter(this, void 0, void 0, function* () {
         const headers = {
@@ -18,22 +19,22 @@ function fetchNaver(url) {
         };
         const response = yield fetch(url, { headers });
         if (!response.ok) {
-            throw new Error(`Failed to fetch data: ${response.statusText}`);
+            throw new AppError_1.AppError(`Naver API request failed: ${response.statusText}`, response.status);
         }
-        return yield response.json();
+        return response.json();
     });
 }
-function fetchBooksFromNaver(req, res) {
+function searchNaverBooks(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const queryParams = new URLSearchParams({
-            query: req.query.keyword,
-            display: req.query.display,
-            start: req.query.start,
-            sort: req.query.sort,
+            query: params.keyword,
+            display: params.display,
+            start: params.start,
+            sort: params.sort,
         });
         const data = yield fetchNaver(`https://openapi.naver.com/v1/search/book.json?${queryParams}`);
         const { total, start, display, items } = data;
-        res.send({ total, start, display, items });
+        return { total, start, display, items };
     });
 }
-exports.fetchBooksFromNaver = fetchBooksFromNaver;
+exports.searchNaverBooks = searchNaverBooks;

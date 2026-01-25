@@ -25,13 +25,19 @@ export default class LibraryBookExist extends HTMLElement {
 
         const promises = entries.map(async ([libCode, libData], index) => {
             try {
-                const data = await CustomFetch.fetch<IBookExist>(
+                const response = await CustomFetch.fetch<IApiResponse<IBookExist>>(
                     `/book-exist?isbn13=${isbn13}&libCode=${libCode}`
                 );
-                this.renderBookExist(data, libData, index);
+
+                if (response.status === 'success') {
+                    this.renderBookExist(response.data, libData, index);
+                } else {
+                    throw new Error(response.message || 'API call failed');
+                }
             } catch (error) {
                 console.error(error);
-                throw new Error(`Fail to get usage analysis list.`);
+                // Optionally render an error state for this specific item
+                throw new Error(`Fail to get book existence for ${libData.libName}.`);
             }
         });
 

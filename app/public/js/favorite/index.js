@@ -1289,13 +1289,17 @@
           button.disabled = true;
         const promises = entries.map((_0, _1) => __async(this, [_0, _1], function* ([libCode, libData], index) {
           try {
-            const data = yield CustomFetch_default.fetch(
+            const response = yield CustomFetch_default.fetch(
               `/book-exist?isbn13=${isbn13}&libCode=${libCode}`
             );
-            this.renderBookExist(data, libData, index);
+            if (response.status === "success") {
+              this.renderBookExist(response.data, libData, index);
+            } else {
+              throw new Error(response.message || "API call failed");
+            }
           } catch (error) {
             console.error(error);
-            throw new Error(`Fail to get usage analysis list.`);
+            throw new Error(`Fail to get book existence for ${libData.libName}.`);
           }
         }));
         try {
@@ -1553,8 +1557,12 @@
         var _a;
         const url = `/usage-analysis-list?isbn13=${this._isbn}`;
         try {
-          const data = yield CustomFetch_default.fetch(url);
-          this.renderUI(data.book);
+          const response = yield CustomFetch_default.fetch(url);
+          if (response.status === "success") {
+            this.renderUI(response.data.book);
+          } else {
+            throw new Error(response.message);
+          }
         } catch (error) {
           this.ui.renderError();
           console.error(`${error}, Fail to get usage-analysis-list.`);

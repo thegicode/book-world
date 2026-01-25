@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { AppError } from "../utils/AppError";
 
 async function fetchNaver(url: string) {
     const headers = {
@@ -8,24 +8,37 @@ async function fetchNaver(url: string) {
 
     const response = await fetch(url, { headers });
     if (!response.ok) {
-        throw new Error(`Failed to fetch data: ${response.statusText}`);
+        // Create a more specific error
+        throw new AppError(
+            `Naver API request failed: ${response.statusText}`,
+            response.status
+        );
     }
 
-    return await response.json();
+    return response.json();
+}
+
+interface NaverBookSearchParams {
+    keyword: string;
+    display: string;
+    start: string;
+    sort: string;
 }
 
 // 키워드 검색
-export async function fetchBooksFromNaver(req: Request, res: Response) {
+export async function searchNaverBooks(params: NaverBookSearchParams) {
     const queryParams = new URLSearchParams({
-        query: req.query.keyword as string,
-        display: req.query.display as string,
-        start: req.query.start as string,
-        sort: req.query.sort as string,
+        query: params.keyword,
+        display: params.display,
+        start: params.start,
+        sort: params.sort,
     });
 
     const data = await fetchNaver(
         `https://openapi.naver.com/v1/search/book.json?${queryParams}`
     );
+
+    // Return only the necessary fields
     const { total, start, display, items } = data;
-    res.send({ total, start, display, items });
+    return { total, start, display, items };
 }

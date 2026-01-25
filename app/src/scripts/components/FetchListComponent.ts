@@ -25,8 +25,12 @@ export abstract class FetchListComponent<T, U> extends HTMLElement {
     protected async fetchData(url: string) {
         this.loadingComponent?.show();
         try {
-            const data = await CustomFetch.fetch<T>(url);
-            this.handleFetchSuccess(data);
+            const response = await CustomFetch.fetch<IApiResponse<T>>(url);
+            if (response.status === 'success') {
+                this.handleFetchSuccess(response.data);
+            } else {
+                throw new Error(response.message || 'API returned an error');
+            }
         } catch (error: unknown) {
             this.handleFetchError(error);
         } finally {

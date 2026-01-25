@@ -22,10 +22,10 @@ export default class MonthlyKeywords extends HTMLElement {
         });
 
         try {
-            const data = await CustomFetch.fetch<IMonthlyKeywordsBookResponse>(
+            const response = await CustomFetch.fetch<IApiResponse<IMonthlyKeywordsBookResponse>>(
                 `/monthly-keywords?${searchParams}`
             );
-            this.render(data.keywords);
+            this.render(response.data.keywords);
         } catch (error) {
             console.error(error);
             throw new Error(`Fail to get monthly keyword.`);

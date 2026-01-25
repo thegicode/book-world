@@ -181,9 +181,15 @@ interface IBookState {
     regions: TRegions;
 }
 
+interface IApiResponse<T> {
+    status: 'success' | 'error';
+    data: T;
+    message?: string;
+}
+
 interface IMonthlyKeywordsBookResponse {
     resultNum: number;
-    keywords: Record<TMonthlyKeyword>;
+    keywords: TMonthlyKeyword[];
     request: {
         month: string;
     };

@@ -75,19 +75,25 @@ export default class Popular extends HTMLElement {
         );
 
         try {
-            const data = await CustomFetch.fetch<IPopularBookResponse>(
+            const response = await CustomFetch.fetch<IApiResponse<IPopularBookResponse>>(
                 `/popular-book?${searchParams}`
             );
-            this.render(data);
 
-            if (params.pageNo === "1") {
-                CustomEventEmitter.dispatch("renderPageNav", {
-                    pageSize: params.pageSize,
-                });
+            if (response.status === 'success') {
+                this.render(response.data);
+
+                if (params.pageNo === "1") {
+                    CustomEventEmitter.dispatch("renderPageNav", {
+                        total: response.data.resultNum,
+                        pageSize: params.pageSize,
+                    });
+                }
+            } else {
+                throw new Error(response.message);
             }
         } catch (error) {
             console.error(error);
-            throw new Error(`Fail to get library search by book.`);
+            throw new Error(`Fail to get popular books.`);
         }
 
         this.loadingComponent?.hide();

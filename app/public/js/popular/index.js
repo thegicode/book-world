@@ -1361,18 +1361,23 @@
           Object.entries(params).filter(([, value]) => value !== void 0).map(([key, value]) => [key, String(value)])
         );
         try {
-          const data = yield CustomFetch_default.fetch(
+          const response = yield CustomFetch_default.fetch(
             `/popular-book?${searchParams}`
           );
-          this.render(data);
-          if (params.pageNo === "1") {
-            CustomEventEmitter_default.dispatch("renderPageNav", {
-              pageSize: params.pageSize
-            });
+          if (response.status === "success") {
+            this.render(response.data);
+            if (params.pageNo === "1") {
+              CustomEventEmitter_default.dispatch("renderPageNav", {
+                total: response.data.resultNum,
+                pageSize: params.pageSize
+              });
+            }
+          } else {
+            throw new Error(response.message);
           }
         } catch (error) {
           console.error(error);
-          throw new Error(`Fail to get library search by book.`);
+          throw new Error(`Fail to get popular books.`);
         }
         (_b = this.loadingComponent) == null ? void 0 : _b.hide();
       });

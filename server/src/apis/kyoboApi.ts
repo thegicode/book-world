@@ -1,33 +1,37 @@
-import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 import cheerio from "cheerio";
 import { fetchWeb } from "./apiUtils";
+import { AppError } from "../utils/AppError";
 
 const KEYBO_JSON_PATH = path.resolve("./server/kyobo.json");
 
-export async function fetchKyoboBookInfo(req: Request, res: Response) {
+export async function getKyoboBookInfoByIsbn(isbn: string) {
     try {
-        const bookIsbn = req.query.isbn as string;
         const kyoboJson = JSON.parse(fs.readFileSync(KEYBO_JSON_PATH, "utf-8"));
 
-        if (kyoboJson.hasOwnProperty(bookIsbn)) {
-            res.send(kyoboJson[bookIsbn]);
+        if (kyoboJson.hasOwnProperty(isbn)) {
+            return kyoboJson[isbn];
         } else {
-            console.log("writeFile", bookIsbn);
+            console.log("writeFile", isbn);
 
-            const href = await getAnchorHref(req.query.isbn as string);
-            if (!href) return;
+            const href = await getAnchorHref(isbn);
+            if (!href) {
+                // If no link is found, it's a valid "not found" case, return empty.
+                return [];
+            }
 
             const bookData = await getKyoboInfoData(href);
 
-            kyoboJson[bookIsbn] = bookData;
-            fs.writeFileSync(KEYBO_JSON_PATH, JSON.stringify(kyoboJson));
+            kyoboJson[isbn] = bookData;
+            // Write with indentation for readability
+            fs.writeFileSync(KEYBO_JSON_PATH, JSON.stringify(kyoboJson, null, 4));
 
-            res.send(bookData);
+            return bookData;
         }
     } catch (error) {
-        console.error(`Fail to read file, ${error}`);
+        console.error(`Fail to process Kyobo data: ${error}`);
+        throw new AppError("Failed to get Kyobo book information", 500);
     }
 }
 

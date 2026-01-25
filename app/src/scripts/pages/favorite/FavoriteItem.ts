@@ -57,8 +57,12 @@ export default class FavoriteItem extends BaseItemComponent {
     protected async fetchData() {
         const url = `/usage-analysis-list?isbn13=${this._isbn}`;
         try {
-            const data = await CustomFetch.fetch<IUsageAnalysisResult>(url);
-            this.renderUI(data.book);
+            const response = await CustomFetch.fetch<IApiResponse<IUsageAnalysisResult>>(url);
+            if (response.status === 'success') {
+                this.renderUI(response.data.book);
+            } else {
+                throw new Error(response.message);
+            }
         } catch (error) {
             this.ui.renderError();
             console.error(`${error}, Fail to get usage-analysis-list.`);

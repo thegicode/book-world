@@ -1184,8 +1184,12 @@
         var _a, _b;
         (_a = this.loadingComponent) == null ? void 0 : _a.show();
         try {
-          const data = yield CustomFetch_default.fetch(url);
-          this.handleFetchSuccess(data);
+          const response = yield CustomFetch_default.fetch(url);
+          if (response.status === "success") {
+            this.handleFetchSuccess(response.data);
+          } else {
+            throw new Error(response.message || "API returned an error");
+          }
         } catch (error) {
           this.handleFetchError(error);
         } finally {
