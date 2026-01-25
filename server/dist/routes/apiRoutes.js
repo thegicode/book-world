@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const apis_1 = require("../apis");
+const apiController_1 = require("../controllers/apiController");
 const apiRoutes = (app) => {
-    app.get("/search-naver-book", apis_1.fetchBooksFromNaver);
-    app.get("/library-search", apis_1.fetchLibrariesByCriteria);
-    app.get("/book-exist", apis_1.fetchBookAvailability);
-    app.get("/usage-analysis-list", apis_1.fetchBookUsageAnalysis);
-    app.get("/library-search-by-book", apis_1.fetchLibrariesByBookISBN);
-    app.get("/popular-book", apis_1.fetchPopularBooksByCriteria);
-    app.get("/monthly-keywords", apis_1.fetchMonthlyKeywords);
-    app.get("/kyobo-book", apis_1.fetchKyoboBookInfo);
-    app.get("/regis-key", apis_1.saveRegistrationKey);
+    app.get("/search-naver-book", apiController_1.searchNaverBook);
+    app.get("/library-search", apiController_1.searchLibraries);
+    app.get("/book-exist", apiController_1.checkBookExistence);
+    app.get("/usage-analysis-list", apiController_1.getUsageAnalysis);
+    app.get("/library-search-by-book", apiController_1.searchLibrariesByBook);
+    app.get("/popular-book", apiController_1.getPopularBooks);
+    app.get("/monthly-keywords", apiController_1.getMonthlyKeywords);
+    app.get("/kyobo-book", apiController_1.getKyoboBookInfo);
+    app.get("/regis-key", apiController_1.registerKey);
 };
 exports.default = apiRoutes;

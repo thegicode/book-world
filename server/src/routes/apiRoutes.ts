@@ -1,27 +1,27 @@
 import { Application } from "express";
 
 import {
-    fetchBooksFromNaver,
-    fetchKyoboBookInfo,
-    fetchBookAvailability,
-    fetchMonthlyKeywords,
-    fetchLibrariesByCriteria,
-    fetchPopularBooksByCriteria,
-    fetchLibrariesByBookISBN,
-    fetchBookUsageAnalysis,
-    saveRegistrationKey,
-} from "../apis";
+    searchNaverBook,
+    searchLibraries,
+    checkBookExistence,
+    getUsageAnalysis,
+    searchLibrariesByBook,
+    getPopularBooks,
+    getMonthlyKeywords,
+    getKyoboBookInfo,
+    registerKey,
+} from "../controllers/apiController";
 
 const apiRoutes = (app: Application) => {
-    app.get("/search-naver-book", fetchBooksFromNaver);
-    app.get("/library-search", fetchLibrariesByCriteria);
-    app.get("/book-exist", fetchBookAvailability);
-    app.get("/usage-analysis-list", fetchBookUsageAnalysis);
-    app.get("/library-search-by-book", fetchLibrariesByBookISBN);
-    app.get("/popular-book", fetchPopularBooksByCriteria);
-    app.get("/monthly-keywords", fetchMonthlyKeywords);
-    app.get("/kyobo-book", fetchKyoboBookInfo);
-    app.get("/regis-key", saveRegistrationKey);
+    app.get("/search-naver-book", searchNaverBook);
+    app.get("/library-search", searchLibraries);
+    app.get("/book-exist", checkBookExistence);
+    app.get("/usage-analysis-list", getUsageAnalysis);
+    app.get("/library-search-by-book", searchLibrariesByBook);
+    app.get("/popular-book", getPopularBooks);
+    app.get("/monthly-keywords", getMonthlyKeywords);
+    app.get("/kyobo-book", getKyoboBookInfo);
+    app.get("/regis-key", registerKey);
 };
 
 export default apiRoutes;
