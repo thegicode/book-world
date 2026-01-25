@@ -1566,25 +1566,40 @@
     });
   }
 
-  // app/src/scripts/pages/search/BookItem.ts
-  var BookItem = class extends HTMLElement {
-    constructor(data, template) {
+  // app/src/scripts/components/BaseItemComponent.ts
+  var BaseItemComponent = class extends HTMLElement {
+    constructor(template) {
       super();
+      this.template = template;
+    }
+    connectedCallback() {
+      this.appendChild(this.template.content.cloneNode(true));
+      this.onMount();
+    }
+    /**
+     *  Called when the component is mounted to the DOM.
+     *  Subclasses can override this method to perform actions
+     *  after the template is rendered.
+     */
+    onMount() {
+    }
+  };
+
+  // app/src/scripts/pages/search/BookItem.ts
+  var BookItem = class extends BaseItemComponent {
+    constructor(data, template) {
+      super(template);
       this.libraryButton = null;
       this.libraryBookExist = null;
       this.data = data;
-      this.template = template;
       this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }
-    connectedCallback() {
+    onMount() {
+      var _a;
       this.renderView();
-      this.libraryButton = this.querySelector(
-        ".library-button"
-      );
-      this.libraryBookExist = this.querySelector(
-        "library-book-exist"
-      );
-      this.libraryButton.addEventListener("click", this.onLibraryButtonClick);
+      this.libraryButton = this.querySelector(".library-button");
+      this.libraryBookExist = this.querySelector("library-book-exist");
+      (_a = this.libraryButton) == null ? void 0 : _a.addEventListener("click", this.onLibraryButtonClick);
     }
     disconnectedCallback() {
       var _a;
@@ -1601,8 +1616,6 @@
         pubdate: this.getPubdate(pubdate)
       });
       this.dataset.isbn = isbn;
-      const cloned = this.template.content.cloneNode(true);
-      this.appendChild(cloned);
       this.renderContents(renderData);
     }
     getPubdate(pubdate) {
@@ -1611,43 +1624,34 @@
         6
       )}.${pubdate.substring(6)}`;
     }
-    // 도서관 소장 | 대출 조회
     onLibraryButtonClick() {
-      var _a;
-      (_a = this.libraryBookExist) == null ? void 0 : _a.onLibraryBookExist(
+      if (!this.libraryBookExist)
+        return;
+      this.libraryBookExist.onLibraryBookExist(
         this.libraryButton,
         this.dataset.isbn || "",
         model_default.libraries
       );
     }
     renderContents(data) {
-      const _a = data, {
-        description,
-        image,
-        isbn,
-        link,
-        title
-      } = _a, otherData = __objRest(_a, [
-        "description",
-        "image",
-        "isbn",
-        "link",
-        "title"
-      ]);
+      const _a = data, { description, image, isbn, link, title } = _a, otherData = __objRest(_a, ["description", "image", "isbn", "link", "title"]);
+      const detailLink = `/book?isbn=${isbn}`;
       const summaryLinkElement = this.querySelector(
         ".book-summary a"
       );
-      const bookImage = new BookImage(image, title);
-      summaryLinkElement.appendChild(bookImage);
-      const linkEl = this.querySelector(".link");
-      linkEl.href = link;
+      if (summaryLinkElement) {
+        summaryLinkElement.href = detailLink;
+        const bookImage = new BookImage(image, title);
+        summaryLinkElement.appendChild(bookImage);
+      }
+      const naverLinkEl = this.querySelector(".link");
+      if (naverLinkEl)
+        naverLinkEl.href = link;
       const descriptionEl = this.querySelector(
         "book-description"
       );
       if (descriptionEl)
         descriptionEl.data = description;
-      const anchorEl = this.querySelector("a");
-      anchorEl.href = `/book?isbn=${isbn}`;
       fillElementsWithData(__spreadProps(__spreadValues({}, otherData), { title, isbn }), this);
     }
   };

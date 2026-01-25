@@ -1489,16 +1489,36 @@
     }
   };
 
-  // app/src/scripts/pages/favorite/FavoriteItem.ts
-  var FavoriteItem = class extends HTMLElement {
-    constructor(isbn) {
+  // app/src/scripts/components/BaseItemComponent.ts
+  var BaseItemComponent = class extends HTMLElement {
+    constructor(template) {
       super();
+      this.template = template;
+    }
+    connectedCallback() {
+      this.appendChild(this.template.content.cloneNode(true));
+      this.onMount();
+    }
+    /**
+     *  Called when the component is mounted to the DOM.
+     *  Subclasses can override this method to perform actions
+     *  after the template is rendered.
+     */
+    onMount() {
+    }
+  };
+
+  // app/src/scripts/pages/favorite/FavoriteItem.ts
+  var FavoriteItem = class extends BaseItemComponent {
+    constructor(isbn, template) {
+      super(template);
       this.loadingComponent = null;
       this._isbn = null;
       this.kyoboButton = null;
       this.kyoboInfoCpnt = null;
       this.libraryButton = null;
       this._isbn = isbn;
+      this.dataset.isbn = isbn;
       this.ui = new FavoriteItemUI(this);
       this.onLibrary = this.onLibrary.bind(this);
       this.onHideLibrary = this.onHideLibrary.bind(this);
@@ -1507,7 +1527,7 @@
     get isbn() {
       return this._isbn;
     }
-    connectedCallback() {
+    onMount() {
       var _a, _b, _c;
       this.loadingComponent = this.querySelector("loading-component");
       this.libraryButton = this.querySelector(".library-button");
@@ -1543,8 +1563,8 @@
       });
     }
     renderUI(book) {
-      delete book.vol;
-      this.ui.render(book);
+      const _a = book, { vol } = _a, renderData = __objRest(_a, ["vol"]);
+      this.ui.render(renderData);
     }
     onLibrary() {
       if (!this.libraryBookExist || !this.libraryButton)
@@ -1614,9 +1634,7 @@
       this.listElement.appendChild(fragment);
     }
     createItem(isbn) {
-      const favoriteItem = new FavoriteItem(isbn);
-      favoriteItem.appendChild(this.itemTemplate.content.cloneNode(true));
-      favoriteItem.dataset.isbn = isbn;
+      const favoriteItem = new FavoriteItem(isbn, this.itemTemplate);
       return favoriteItem;
     }
     renderMessage(message) {
