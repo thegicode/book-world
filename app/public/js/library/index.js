@@ -1120,18 +1120,123 @@
     }
     return content.cloneNode(true);
   }
+  function fetchHTMLTemplate(url) {
+    return __async(this, null, function* () {
+      try {
+        const response = yield fetch(url);
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch template: ${response.status} ${response.statusText}`
+          );
+        }
+        return yield response.text();
+      } catch (error) {
+        console.error("Error fetching HTML template:", error);
+        return null;
+      }
+    });
+  }
+  function parseHTMLTemplate(html) {
+    return __async(this, null, function* () {
+      try {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.querySelector("template");
+      } catch (error) {
+        console.error("Error parsing HTML template:", error);
+        return null;
+      }
+    });
+  }
+  function fetchAndParseTemplate(templateURL) {
+    return __async(this, null, function* () {
+      try {
+        const html = yield fetchHTMLTemplate(templateURL);
+        if (!html)
+          return null;
+        return parseHTMLTemplate(html);
+      } catch (error) {
+        console.error("Error fetching and parsing template", error);
+        return null;
+      }
+    });
+  }
+
+  // app/src/scripts/components/FetchListComponent.ts
+  var FetchListComponent = class extends HTMLElement {
+    constructor() {
+      super();
+      this.itemTemplate = null;
+      this.currentItemCount = 0;
+      this.itemsPerPage = 10;
+      this.total = 0;
+      this.listContainer = this.querySelector("[data-list-container]");
+      this.loadingComponent = this.querySelector("loading-component");
+    }
+    loadTemplate(path) {
+      return __async(this, null, function* () {
+        this.itemTemplate = yield fetchAndParseTemplate(
+          path
+        );
+      });
+    }
+    fetchData(url) {
+      return __async(this, null, function* () {
+        var _a, _b;
+        (_a = this.loadingComponent) == null ? void 0 : _a.show();
+        try {
+          const data = yield CustomFetch_default.fetch(url);
+          this.handleFetchSuccess(data);
+        } catch (error) {
+          this.handleFetchError(error);
+        } finally {
+          (_b = this.loadingComponent) == null ? void 0 : _b.hide();
+        }
+      });
+    }
+    handleFetchSuccess(data) {
+      const items = this.getItems(data);
+      this.total = this.getTotal(data);
+      if (this.total === 0) {
+        this.renderMessage("notFound");
+        return;
+      }
+      this.currentItemCount += items.length;
+      this.renderList(items);
+      this.onRenderComplete(data);
+    }
+    handleFetchError(error) {
+      if (error instanceof Error) {
+        console.error(`Error fetching data: ${error.message}`);
+      } else {
+        console.error("An unexpected error occurred");
+      }
+      this.renderMessage("error");
+    }
+    renderList(items) {
+      const fragment = new DocumentFragment();
+      items.map((item, index) => this.createItem(item, index)).forEach((itemElement) => itemElement && fragment.appendChild(itemElement));
+      this.listContainer.appendChild(fragment);
+    }
+    renderMessage(type) {
+      const messageTemplate = document.querySelector(
+        `#tp-${type}`
+      );
+      if (!messageTemplate)
+        return;
+      this.listContainer.innerHTML = "";
+      this.listContainer.appendChild(messageTemplate.content.cloneNode(true));
+    }
+  };
 
   // app/src/scripts/pages/library/Library.ts
-  var Library = class extends HTMLElement {
+  var Library = class extends FetchListComponent {
     constructor() {
       super();
       this._regionCode = null;
       this.PAGE_SIZE = 20;
-      this.listElement = this.querySelector(".library-list");
       this.itemTemplate = document.querySelector(
         "#tp-item"
       );
-      this.loadingComponent = this.querySelector("loading-component");
     }
     set regionCode(value) {
       this._regionCode = value;
@@ -1140,69 +1245,52 @@
     get regionCode() {
       return this._regionCode;
     }
-    connectedCallback() {
-    }
     handleRegionCodeChange() {
       if (!this.regionCode)
         return;
-      this.fetchLibrarySearch(this.regionCode);
+      this.listContainer.innerHTML = "";
+      const url = `/library-search?dtl_region=${this.regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
+      this.fetchData(url);
     }
-    fetchLibrarySearch(regionCode) {
-      return __async(this, null, function* () {
-        var _a, _b;
-        if (this.listElement)
-          this.listElement.innerHTML = "";
-        (_a = this.loadingComponent) == null ? void 0 : _a.show();
-        const url = `/library-search?dtl_region=${regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
-        try {
-          const data = yield CustomFetch_default.fetch(
-            url
-          );
-          this.renderLibraryList(data);
-        } catch (error) {
-          console.error(error);
-          throw new Error("Fail to get library search data.");
-        }
-        (_b = this.loadingComponent) == null ? void 0 : _b.hide();
-      });
+    // --- Implementation of abstract/overridden methods from FetchListComponent ---
+    getItems(data) {
+      return data.libraries;
     }
-    renderLibraryList(data) {
-      if (!this.listElement)
-        return;
-      const {
-        // pageNo, pageSize, numFound, resultNum,
-        libraries
-      } = data;
-      if (libraries.length === 0) {
-        this.showMessage("notFound");
-        return;
-      }
-      const fragment = libraries.reduce(
-        (fragment2, lib) => this.createLibraryItem(fragment2, lib),
-        new DocumentFragment()
-      );
-      this.listElement.appendChild(fragment);
+    getTotal(data) {
+      return data.libraries.length;
     }
-    createLibraryItem(fragment, lib) {
+    createItem(lib) {
       const libraryItem = cloneTemplate(this.itemTemplate);
       libraryItem.data = lib;
-      if (model_default.hasLibrary(lib.libCode)) {
-        libraryItem.dataset.has = "true";
-        fragment.prepend(libraryItem);
-      } else {
-        fragment.appendChild(libraryItem);
-      }
-      return fragment;
+      return libraryItem;
     }
-    showMessage(type) {
-      const template = document.querySelector(
-        `#tp-${type}`
-      );
-      if (template && this.listElement) {
-        this.listElement.innerHTML = "";
-        const clone = cloneTemplate(template);
-        this.listElement.appendChild(clone);
-      }
+    /**
+     * @override
+     * Sorts libraries to show favorite ones first, then renders the list.
+     */
+    renderList(items) {
+      this.listContainer.innerHTML = "";
+      const fragment = new DocumentFragment();
+      const sortedItems = [...items].sort((a, b) => {
+        const aHas = model_default.hasLibrary(a.libCode);
+        const bHas = model_default.hasLibrary(b.libCode);
+        if (aHas === bHas)
+          return 0;
+        return aHas ? -1 : 1;
+      });
+      sortedItems.map((item) => this.createItem(item)).forEach((itemElement) => {
+        if (itemElement) {
+          if (model_default.hasLibrary(
+            itemElement.data.libCode
+          )) {
+            itemElement.dataset.has = "true";
+          }
+          fragment.appendChild(itemElement);
+        }
+      });
+      this.listContainer.appendChild(fragment);
+    }
+    onRenderComplete() {
     }
   };
 
