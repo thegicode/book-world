@@ -68,9 +68,7 @@ export default class Favorite extends HTMLElement {
     }
 
     private createItem(isbn: string) {
-        const favoriteItem = new FavoriteItem(isbn);
-        favoriteItem.appendChild(this.itemTemplate.content.cloneNode(true));
-        favoriteItem.dataset.isbn = isbn;
+        const favoriteItem = new FavoriteItem(isbn, this.itemTemplate);
         return favoriteItem;
     }
 

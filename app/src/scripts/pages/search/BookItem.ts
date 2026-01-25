@@ -5,34 +5,26 @@ import {
 } from "../../components/index";
 import bookModel from "../../model";
 import { fillElementsWithData } from "../../utils/helpers";
+import BaseItemComponent from "../../components/BaseItemComponent";
 
-export default class BookItem extends HTMLElement {
+export default class BookItem extends BaseItemComponent {
     private data: ISearchBook;
-    private template: HTMLTemplateElement;
     private libraryButton: HTMLButtonElement | null = null;
     private libraryBookExist: LibraryBookExist | null = null;
 
     constructor(data: ISearchBook, template: HTMLTemplateElement) {
-        super();
-
+        super(template);
         this.data = data;
-        this.template = template;
-
         this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }
 
-    connectedCallback() {
+    protected onMount() {
         this.renderView();
 
-        this.libraryButton = this.querySelector(
-            ".library-button"
-        ) as HTMLButtonElement;
+        this.libraryButton = this.querySelector(".library-button");
+        this.libraryBookExist = this.querySelector("library-book-exist");
 
-        this.libraryBookExist = this.querySelector(
-            "library-book-exist"
-        ) as LibraryBookExist;
-
-        this.libraryButton.addEventListener("click", this.onLibraryButtonClick);
+        this.libraryButton?.addEventListener("click", this.onLibraryButtonClick);
     }
 
     disconnectedCallback() {
@@ -53,10 +45,6 @@ export default class BookItem extends HTMLElement {
         };
 
         this.dataset.isbn = isbn;
-
-        const cloned = this.template.content.cloneNode(true);
-        this.appendChild(cloned);
-
         this.renderContents(renderData);
     }
 
@@ -67,9 +55,9 @@ export default class BookItem extends HTMLElement {
         )}.${pubdate.substring(6)}`;
     }
 
-    // 도서관 소장 | 대출 조회
     private onLibraryButtonClick() {
-        this.libraryBookExist?.onLibraryBookExist(
+        if (!this.libraryBookExist) return;
+        this.libraryBookExist.onLibraryBookExist(
             this.libraryButton,
             this.dataset.isbn || "",
             bookModel.libraries
@@ -77,39 +65,30 @@ export default class BookItem extends HTMLElement {
     }
 
     private renderContents(data: ISearchBook) {
-        const {
-            description,
-            image,
-            isbn,
-            link,
-            title,
-            ...otherData // author, discount, pubdate, publisher
-        } = data;
+        const { description, image, isbn, link, title, ...otherData } = data;
 
-        // 썸네일 이미지
+        // Set the link for the book detail page
+        const detailLink = `/book?isbn=${isbn}`;
         const summaryLinkElement = this.querySelector(
             ".book-summary a"
         ) as HTMLAnchorElement;
-        const bookImage = new BookImage(image, title);
-        summaryLinkElement.appendChild(bookImage);
+        if (summaryLinkElement) {
+            summaryLinkElement.href = detailLink;
+            const bookImage = new BookImage(image, title);
+            summaryLinkElement.appendChild(bookImage);
+        }
 
-        // 네이버 바로가기
-        const linkEl = this.querySelector(".link") as HTMLAnchorElement;
-        linkEl.href = link;
+        // Set the link for Naver books
+        const naverLinkEl = this.querySelector(".link") as HTMLAnchorElement;
+        if (naverLinkEl) naverLinkEl.href = link;
 
-        // description
+        // Set the description
         const descriptionEl = this.querySelector(
             "book-description"
         ) as BookDescription;
         if (descriptionEl) descriptionEl.data = description as string;
 
-        // 상세화면 이동
-        const anchorEl = this.querySelector("a") as HTMLAnchorElement;
-        anchorEl.href = `/book?isbn=${isbn}`;
-
-        // element.textContent
+        // Fill in the rest of the data
         fillElementsWithData({ ...otherData, title, isbn }, this);
-
-        // this.dataset.isbn = isbn;
     }
 }

@@ -3,8 +3,9 @@ import { LibraryBookExist, LoadingComponent } from "../../components/index";
 import bookModel from "../../model";
 import FavoriteItemUI from "./FavoriteItemUI";
 import KyoboInfo from "./KyoboInfo";
+import BaseItemComponent from "../../components/BaseItemComponent";
 
-export default class FavoriteItem extends HTMLElement {
+export default class FavoriteItem extends BaseItemComponent {
     private loadingComponent: LoadingComponent | null = null;
     private _isbn: string | null = null;
     private kyoboButton: HTMLButtonElement | null = null;
@@ -15,9 +16,10 @@ export default class FavoriteItem extends HTMLElement {
     libraryButton?: HTMLButtonElement | null = null;
     libraryHideButton?: HTMLButtonElement | null;
 
-    constructor(isbn: string) {
-        super();
+    constructor(isbn: string, template: HTMLTemplateElement) {
+        super(template);
         this._isbn = isbn;
+        this.dataset.isbn = isbn;
         this.ui = new FavoriteItemUI(this);
 
         this.onLibrary = this.onLibrary.bind(this);
@@ -29,7 +31,7 @@ export default class FavoriteItem extends HTMLElement {
         return this._isbn;
     }
 
-    connectedCallback() {
+    protected onMount() {
         this.loadingComponent = this.querySelector("loading-component");
         this.libraryButton = this.querySelector(".library-button");
         this.libraryHideButton = this.querySelector(".hide-button");
@@ -66,8 +68,10 @@ export default class FavoriteItem extends HTMLElement {
     }
 
     protected renderUI(book: IBook) {
-        delete book.vol;
-        this.ui.render(book);
+        // The original implementation deleted vol, which is a side effect on the cached data.
+        // It's better to create a new object without it.
+        const { vol, ...renderData } = book;
+        this.ui.render(renderData as IBook);
     }
 
     private onLibrary() {
