@@ -1,44 +1,33 @@
 import BookItem from "./BookItem";
-import { Observer, CustomFetch } from "../../utils/index";
-import { LoadingComponent } from "../../components";
+import { Observer } from "../../utils/index";
 import { URL } from "../../utils/constants";
-import { fetchAndParseTemplate } from "../../utils/helpers";
+import { FetchListComponent } from "../../components/FetchListComponent";
 
-export default class SearchResult extends HTMLElement {
+export default class SearchResult extends FetchListComponent<
+    ISearchNaverBookResult,
+    ISearchBook
+> {
     private paginationElement!: HTMLElement;
-    private bookContainer!: HTMLElement;
-    private loadingComponent: LoadingComponent | null;
     private observer?: Observer;
     private keyword?: string;
     private sortingOrder?: string;
-    private currentItemCount!: number;
     private observeTarget: HTMLElement;
-    private itemsPerPage: number;
-    private itemTemplate: HTMLTemplateElement | null = null;
 
     constructor() {
         super();
-
         this.paginationElement = this.querySelector(
             ".paging-info"
         ) as HTMLElement;
-        this.bookContainer = this.querySelector(".books") as HTMLElement;
-        this.loadingComponent =
-            this.querySelector<LoadingComponent>("loading-component");
         this.observeTarget = this.querySelector(".observe") as HTMLElement;
-
         this.itemsPerPage = 10;
-
-        this.fetchBooks = this.fetchBooks.bind(this);
         this.initializeSearchPage = this.initializeSearchPage.bind(this);
     }
 
     async connectedCallback() {
-        this.itemTemplate = (await fetchAndParseTemplate(
-            "./html/templates/book-item.html"
-        )) as HTMLTemplateElement;
-
-        this.observer = new Observer(this.observeTarget, this.fetchBooks);
+        await this.loadTemplate("./html/templates/book-item.html");
+        this.observer = new Observer(this.observeTarget, () =>
+            this.loadMoreBooks()
+        );
     }
 
     disconnectedCallback() {
@@ -49,70 +38,70 @@ export default class SearchResult extends HTMLElement {
         this.keyword = keyword;
         this.sortingOrder = sortValue;
         this.currentItemCount = 0;
+        this.total = 0;
+        this.listContainer.innerHTML = "";
         this.observer?.disconnect();
 
-        // loadBooks: onSubmit으로 들어온 경우와 브라우저
-        // showDefaultMessage: keyword 없을 때 기본 화면 노출, 브라우저
-        this.keyword ? this.loadBooks() : this.showDefaultMessage();
+        if (this.keyword) {
+            this.loadMoreBooks();
+        } else {
+            this.showDefaultMessage();
+        }
     }
 
-    private loadBooks() {
-        this.bookContainer.innerHTML = "";
-
-        this.loadingComponent?.show();
-
-        this.fetchBooks();
-
-        this.loadingComponent?.hide();
-    }
-
-    private async fetchBooks() {
+    private loadMoreBooks() {
         if (!this.keyword || !this.sortingOrder) {
             return;
         }
-
         const searchUrl = `${URL.search}?keyword=${encodeURIComponent(
             this.keyword
         )}&display=${this.itemsPerPage}&start=${
             this.currentItemCount + 1
         }&sort=${this.sortingOrder}`;
 
-        try {
-            const data = await CustomFetch.fetch<ISearchNaverBookResult>(
-                searchUrl
-            );
-            this.render(data);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                console.error(`Error fetching books: ${error.message}`);
-            } else {
-                console.error("An unexpected error occurred");
-            }
-        }
+        this.fetchData(searchUrl);
     }
 
-    private render(bookData: ISearchNaverBookResult) {
-        if (!bookData) return;
+    // --- Implementation of abstract methods from FetchListComponent ---
 
-        if (bookData.total === 0) {
-            this.renderMessage("notFound");
-            return;
-        }
+    protected getItems(data: ISearchNaverBookResult): ISearchBook[] {
+        return data.items;
+    }
 
-        this.currentItemCount += bookData.display;
-        this.updatePagingInfo(bookData.total);
-        this.renderList(bookData.items);
+    protected getTotal(data: ISearchNaverBookResult): number {
+        return data.total;
+    }
 
-        if (bookData.total !== this.currentItemCount) {
+    protected createItem(data: ISearchBook, index: number): HTMLElement | null {
+        if (!this.itemTemplate) return null;
+        const bookItem = new BookItem(data, this.itemTemplate);
+        bookItem.dataset.index = this.getGlobalIndex(index).toString();
+        return bookItem;
+    }
+
+    protected onRenderComplete() {
+        this.updatePagingInfo();
+        if (this.total > this.currentItemCount) {
             this.observer?.observe();
         }
     }
 
-    private updatePagingInfo(total: number) {
+    // --- Helper methods specific to SearchResult ---
+
+    private getGlobalIndex(index: number): number {
+        const page = Math.ceil(
+            (this.currentItemCount - this.itemsPerPage) / this.itemsPerPage
+        );
+        return page * this.itemsPerPage + index;
+    }
+
+    private updatePagingInfo() {
+        if (!this.keyword) return;
+
         const obj = {
             keyword: `${this.keyword}`,
             length: `${this.currentItemCount.toLocaleString()}`,
-            total: `${total.toLocaleString()}`,
+            total: `${this.total.toLocaleString()}`,
             display: `${this.itemsPerPage}개씩`,
         };
 
@@ -120,59 +109,13 @@ export default class SearchResult extends HTMLElement {
             const element = this.paginationElement.querySelector(
                 `.__${key}`
             ) as HTMLElement;
-            element.textContent = value;
+            if (element) element.textContent = value;
         }
         this.paginationElement.hidden = false;
-    }
-
-    private renderList(searchBookData: ISearchBook[]) {
-        const fragment = new DocumentFragment();
-
-        searchBookData
-            .map((data, index) => this.createItem(data, index))
-            .forEach((bookItem) => bookItem && fragment.appendChild(bookItem));
-
-        this.bookContainer.appendChild(fragment);
-    }
-
-    private createItem(data: ISearchBook, index: number) {
-        if (!this.itemTemplate) return;
-        const bookItem = new BookItem(data, this.itemTemplate);
-        bookItem.dataset.index = this.getIndex(index).toString();
-        return bookItem;
-    }
-
-    private getIndex(index: number) {
-        return (
-            Math.ceil(
-                (this.currentItemCount - this.itemsPerPage) / this.itemsPerPage
-            ) *
-                this.itemsPerPage +
-            index
-        );
     }
 
     private showDefaultMessage() {
         this.paginationElement.hidden = true;
         this.renderMessage("message");
     }
-
-    private renderMessage(type: string) {
-        const messageTemplate = document.querySelector(
-            `#tp-${type}`
-        ) as HTMLTemplateElement;
-        if (!messageTemplate) return;
-
-        this.bookContainer.innerHTML = "";
-        this.bookContainer.appendChild(messageTemplate.content.cloneNode(true));
-    }
 }
-
-// this.observer = new IntersectionObserver( changes => {
-//     changes.forEach( change => {
-//         if (change.isIntersecting) {
-//             this.observer.unobserve(change.target)
-//             this.fetchBooks()
-//         }
-//     })
-// })
