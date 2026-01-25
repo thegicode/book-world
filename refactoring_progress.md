@@ -94,3 +94,30 @@
 2.  **기능 테스트:**
     *   도서 검색 페이지에서 검색 결과 아이템들이 정상적으로 표시되는지 확인합니다.
     *   즐겨찾기 페이지에서 등록된 책 아이템들이 정상적으로 표시되는지 확인합니다.
+
+---
+
+## 2026년 1월 25일 - 설정: tsconfig 파일 통합
+
+### 1. 개요
+프로젝트 내에 분산되어 있던 `tsconfig.json` (루트), `server/src/tsconfig.json` 파일들의 공통 설정을 `tsconfig.base.json`으로 추출하고, 각 파일이 이를 상속(`extends`)받도록 하여 설정의 중복을 제거하고 관리를 용이하게 했습니다.
+
+### 2. 변경 내용
+*   **새 기본 설정 파일 생성:** 공통 컴파일러 옵션을 포함하는 `tsconfig.base.json` 파일을 프로젝트 루트에 생성했습니다.
+*   **기존 설정 파일 리팩토링:**
+    *   루트 `tsconfig.json`이 `tsconfig.base.json`을 상속받도록 수정하고, 프론트엔드 관련 특화 옵션만 남겼습니다.
+    *   `server/src/tsconfig.json`이 `tsconfig.base.json`을 상속받도록 수정하고, 백엔드 관련 특화 옵션만 남겼습니다.
+    *   `tsconfig.test.json`은 이미 상속 구조를 잘 활용하고 있어 별도의 수정은 필요하지 않았습니다.
+
+### 3. 기대 효과
+*   **설정 중앙 관리:** 공통 설정이 `tsconfig.base.json` 한 곳에서 관리되므로 일관성 유지가 쉬워지고, 변경이 필요할 때 한 파일만 수정하면 됩니다.
+*   **가독성 향상:** 각 `tsconfig` 파일이 더 간결해져 어떤 부분이 특화된 설정인지 파악하기 쉬워졌습니다.
+*   **유지보수성 향상:** 새로운 TypeScript 프로젝트(예: 별도의 워커)가 추가될 경우, `tsconfig.base.json`을 상속받아 쉽게 설정을 구성할 수 있습니다.
+
+### 4. 변경된 파일 목록
+*   `tsconfig.base.json` (새로 생성)
+*   `tsconfig.json` (수정됨)
+*   `server/src/tsconfig.json` (수정됨)
+
+### 5. 확인 방법
+1.  **빌드 확인:** `npx tsc --project ./tsconfig.json` (프론트엔드 타입체크) 및 `npx tsc --project ./server/src/tsconfig.json` (서버 컴파일) 명령을 실행하여 오류 없이 성공하는지 확인합니다.
