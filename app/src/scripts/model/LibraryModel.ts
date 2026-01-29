@@ -44,13 +44,13 @@ export default class LibraryModel {
 
     subscribeUpdate(subscriber: TLibrarysUpdateSubscriber) {
         this.publisher.subscribe(
-            subscriber as TSubscriberCallback<TLibraryUpdateProps>
+            subscriber as TSubscriberCallback<TLibraryUpdateProps>,
         );
     }
 
     unsubscribeUpdate(subscriber: TLibrarysUpdateSubscriber) {
         this.publisher.subscribe(
-            subscriber as TSubscriberCallback<TLibraryUpdateProps>
+            subscriber as TSubscriberCallback<TLibraryUpdateProps>,
         );
     }
 }

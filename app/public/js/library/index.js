@@ -1308,7 +1308,6 @@
     }
     connectedCallback() {
       this.template = this.querySelector("#tp-stored-item");
-      console.log(this.template);
       this.listElement = this.querySelector("ul");
       if (!this.listElement)
         return;
@@ -1321,10 +1320,12 @@
     render() {
       if (!this.listElement)
         return;
+      this.listElement.innerHTML = "";
       const libraries = model_default.libraries;
       const fragment = new DocumentFragment();
       for (const [code, data] of Object.entries(libraries)) {
-        const element = this.createElement(code, data.libName);
+        const libName = typeof data === "string" ? data : data.libName;
+        const element = this.createElement(code, libName);
         if (!element)
           return;
         fragment.appendChild(element);
@@ -1366,7 +1367,8 @@
     add({ code, data }) {
       if (!this.listElement || !data)
         return;
-      const element = this.createElement(code, data.libName);
+      const libName = typeof data === "string" ? data : data.libName;
+      const element = this.createElement(code, libName);
       this.listElement.appendChild(element);
     }
     delete(code) {

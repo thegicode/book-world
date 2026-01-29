@@ -182,7 +182,7 @@ interface IBookState {
 }
 
 interface IApiResponse<T> {
-    status: 'success' | 'error';
+    status: "success" | "error";
     data: T;
     message?: string;
 }
@@ -213,7 +213,7 @@ type TSubscriberCallback<T = undefined> = (payload?: T) => void;
 
 type TActionProps = (
     type: keyof TPublishers,
-    params: IFavoritesUpdateProps
+    params: IFavoritesUpdateProps,
 ) => void;
 
 type TFavoriteFavorites = Record<string, string[]>;
@@ -224,7 +224,7 @@ type TLibraries = Record<string, ILibraryData>;
 
 type TLibraryPayload = {
     code: string;
-    // name?: string;
+    name?: string;
     data?: ILibraryData;
 };
 

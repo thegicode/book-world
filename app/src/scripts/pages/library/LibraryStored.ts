@@ -13,7 +13,6 @@ export default class LibraryStored extends HTMLElement {
 
     connectedCallback() {
         this.template = this.querySelector("#tp-stored-item");
-        console.log(this.template);
         this.listElement = this.querySelector("ul");
 
         if (!this.listElement) return;
@@ -28,12 +27,14 @@ export default class LibraryStored extends HTMLElement {
 
     private render() {
         if (!this.listElement) return;
+        this.listElement.innerHTML = "";
 
         const libraries = bookModel.libraries;
 
         const fragment = new DocumentFragment();
         for (const [code, data] of Object.entries(libraries)) {
-            const element = this.createElement(code, data.libName);
+            const libName = typeof data === "string" ? data : data.libName;
+            const element = this.createElement(code, libName);
             if (!element) return;
             fragment.appendChild(element);
         }
@@ -53,7 +54,7 @@ export default class LibraryStored extends HTMLElement {
 
     private addEvents(element: HTMLElement) {
         const cancelButton = element.querySelector(
-            ".cancelButton"
+            ".cancelButton",
         ) as HTMLButtonElement;
 
         cancelButton.addEventListener("click", () => {
@@ -78,7 +79,8 @@ export default class LibraryStored extends HTMLElement {
 
     private add({ code, data }: TLibraryPayload) {
         if (!this.listElement || !data) return;
-        const element = this.createElement(code, data.libName) as HTMLElement;
+        const libName = typeof data === "string" ? data : data.libName;
+        const element = this.createElement(code, libName) as HTMLElement;
         this.listElement.appendChild(element);
     }
 
