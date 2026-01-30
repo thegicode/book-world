@@ -12,24 +12,28 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
 
     protected async fetch(isbn: string): Promise<void> {
-        const libries = Object.values(bookModel.regions);
-        if (libries.length === 0) return;
+        const regions = Object.values(bookModel.regions);
+        if (regions.length === 0) return;
 
-        const promises: Promise<void>[] = [];
+        const allDetailCodes = regions.flatMap((region) =>
+            Object.values(region)
+        );
 
-        libries.forEach((region) => {
-            Object.values(region).forEach((detailCode) => {
-                promises.push(
-                    this.fetchLibrarySearchByBook(
-                        isbn,
-                        detailCode.slice(0, 2),
-                        detailCode
-                    )
-                );
-            });
-        });
+        if (allDetailCodes.length === 0) return;
 
-        await Promise.all(promises);
+        const BATCH_SIZE = 5;
+
+        for (let i = 0; i < allDetailCodes.length; i += BATCH_SIZE) {
+            const batch = allDetailCodes.slice(i, i + BATCH_SIZE);
+            const promises = batch.map((detailCode) =>
+                this.fetchLibrarySearchByBook(
+                    isbn,
+                    detailCode.slice(0, 2),
+                    detailCode
+                )
+            );
+            await Promise.all(promises);
+        }
     }
 
     protected async fetchLibrarySearchByBook(
