@@ -5,4 +5,6 @@
 user.js
 test.js
 .DS_Store
+/app/public/
+/app/build/
 
