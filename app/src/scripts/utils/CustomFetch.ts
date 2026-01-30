@@ -32,6 +32,14 @@ class CustomFetch {
 
         }
     }
+
+    async fetchData<T>(url: string, options?: RequestInit): Promise<T> {
+        const response = await this.fetch<IApiResponse<T>>(url, options);
+        if (response.status === 'success') {
+            return response.data;
+        }
+        throw new Error(response.message || `API request failed with status: ${response.status}`);
+    }
 }
 
 export default new CustomFetch()

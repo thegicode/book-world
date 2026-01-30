@@ -48,23 +48,16 @@ export default class LibrarySearchByBook extends HTMLElement {
         });
 
         try {
-            const response =
-                await CustomFetch.fetch<IApiResponse<ILibrarySearchByBookResult>>(
+            const data =
+                await CustomFetch.fetchData<ILibrarySearchByBookResult>(
                     `/library-search-by-book?${searchParams}`
                 );
-
-            if (response.status === "success") {
-                this.render(response.data, isbn);
-            } else {
-                console.warn(
-                    `API call for region ${dtl_region} failed: ${
-                        response.message || "Unknown error"
-                    }`
-                );
-            }
+            this.render(data, isbn);
         } catch (error) {
-            console.error(error);
-            throw new Error(`Fail to get library search by book.`);
+            console.warn(
+                `API call for region ${dtl_region} failed:`,
+                error
+            );
         }
     }
 

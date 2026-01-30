@@ -25,16 +25,9 @@ export default class Book extends HTMLElement {
 
     protected async fetchUsageAnalysisList(isbn: string): Promise<void> {
         try {
-            const response =
-                await CustomFetch.fetch<IApiResponse<IUsageAnalysisListData>>(
-                    `/usage-analysis-list?isbn13=${isbn}`
-                );
-
-            if (response.status === "success") {
-                this.data = response.data;
-            } else {
-                throw new Error(response.message || "API request failed");
-            }
+            this.data = await CustomFetch.fetchData<IUsageAnalysisListData>(
+                `/usage-analysis-list?isbn13=${isbn}`
+            );
         } catch (error) {
             this.renderError();
             console.error(error);
