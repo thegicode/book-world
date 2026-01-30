@@ -25,10 +25,16 @@ export default class Book extends HTMLElement {
 
     protected async fetchUsageAnalysisList(isbn: string): Promise<void> {
         try {
-            const data = await CustomFetch.fetch<IUsageAnalysisListData>(
-                `/usage-analysis-list?isbn13=${isbn}`
-            );
-            this.data = data;
+            const response =
+                await CustomFetch.fetch<IApiResponse<IUsageAnalysisListData>>(
+                    `/usage-analysis-list?isbn13=${isbn}`
+                );
+
+            if (response.status === "success") {
+                this.data = response.data;
+            } else {
+                throw new Error(response.message || "API request failed");
+            }
         } catch (error) {
             this.renderError();
             console.error(error);
@@ -37,8 +43,12 @@ export default class Book extends HTMLElement {
     }
 
     protected render() {
-        if (!this.data) {
-            console.error("Data is null");
+        if (!this.data || !this.data.book) {
+            console.error(
+                "Failed to render book component: 'book' data is missing from the API response.",
+                this.data,
+            );
+            this.renderError();
             return;
         }
 
@@ -70,7 +80,7 @@ export default class Book extends HTMLElement {
             bookname,
             bookImageURL,
             description,
-            // addition_symbol,
+            addition_symbol,
             ...otherData
             // authors, class_nm,  class_no, description, isbn13,  loanCnt, publication_year,  publisher,
         } = book;
@@ -95,7 +105,7 @@ export default class Book extends HTMLElement {
 
         const bookImage = new BookImage(bookImageURL, bookname);
         const bookImageContainer = this.querySelector(
-            ".book-image-container"
+            ".book-image-container",
         ) as HTMLElement;
         bookImageContainer.appendChild(bookImage);
 
@@ -106,7 +116,9 @@ export default class Book extends HTMLElement {
         const fragment = new DocumentFragment();
         loanHistory.forEach((history) => {
             const cloned = cloneTemplate(
-                this.querySelector("#tp-loanHistoryItem") as HTMLTemplateElement
+                this.querySelector(
+                    "#tp-loanHistoryItem",
+                ) as HTMLTemplateElement,
             );
             fillElementsWithData(history, cloned);
 
@@ -114,13 +126,13 @@ export default class Book extends HTMLElement {
         });
 
         (this.querySelector(".loanHistory tbody") as HTMLElement).appendChild(
-            fragment
+            fragment,
         );
     }
 
     renderLoanGroups(loanGrps: ILoanGroups[]) {
         const template = document.querySelector(
-            "#tp-loanGrpItem"
+            "#tp-loanGrpItem",
         ) as HTMLTemplateElement;
         if (!template) return;
 
@@ -134,7 +146,7 @@ export default class Book extends HTMLElement {
         });
 
         (this.querySelector(".loanGrps tbody") as HTMLElement).appendChild(
-            fragment
+            fragment,
         );
     }
 
