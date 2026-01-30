@@ -24,6 +24,11 @@ export default class KyoboInfo extends HTMLElement {
         this.fetch();
     }
 
+    hide() {
+        this.hidden = true;
+        this.listElement.innerHTML = "";
+    }
+
     private getIsbn() {
         const cloeset = this.closest("[data-isbn]") as HTMLElement;
         if (!cloeset) return;
@@ -51,9 +56,9 @@ export default class KyoboInfo extends HTMLElement {
             //     },
             // ];
 
-            const infoArray = (await CustomFetch.fetch(
+            const infoArray = await CustomFetch.fetchData<TKyeboInfoProps[]>(
                 bookUrl
-            )) as TKyeboInfoProps[];
+            );
 
             this.render(infoArray);
         } catch (error: unknown) {

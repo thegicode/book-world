@@ -101,6 +101,12 @@ export default class FavoriteItem extends BaseItemComponent {
     }
 
     private onShowKyobo() {
-        this.kyoboInfoCpnt?.show();
+        if (!this.kyoboInfoCpnt) return;
+
+        if (this.kyoboInfoCpnt.hidden) {
+            this.kyoboInfoCpnt.show();
+        } else {
+            this.kyoboInfoCpnt.hide();
+        }
     }
 }
