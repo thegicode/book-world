@@ -5,6 +5,11 @@ import bookModel from "../../model";
 export default class LibrarySearchByBook extends HTMLElement {
     protected librarySearchByBookContainer: HTMLElement | null = null;
     protected librarySearchByBookItemTemplate: HTMLTemplateElement | null = null;
+    protected feedbackElement: HTMLElement | null = null;
+    
+    private totalRequestCount = 0;
+    private processedRequestCount = 0;
+    private failedRequestCount = 0;
 
     constructor() {
         super();
@@ -15,6 +20,7 @@ export default class LibrarySearchByBook extends HTMLElement {
 
         this.librarySearchByBookContainer = document.querySelector(".library-search-by-book");
         this.librarySearchByBookItemTemplate = document.querySelector("#tp-librarySearchByBookItem");
+        this.feedbackElement = this.querySelector(".library-search-feedback");
     }
 
     protected async fetch(isbn: string): Promise<void> {
@@ -27,6 +33,7 @@ export default class LibrarySearchByBook extends HTMLElement {
 
         if (allDetailCodes.length === 0) return;
 
+        this.totalRequestCount = allDetailCodes.length;
         const BATCH_SIZE = 5;
 
         for (let i = 0; i < allDetailCodes.length; i += BATCH_SIZE) {
@@ -60,10 +67,24 @@ export default class LibrarySearchByBook extends HTMLElement {
                 );
             this.render(data, isbn);
         } catch (error) {
+            this.failedRequestCount++;
             console.warn(
                 `API call for region ${dtl_region} failed:`,
                 error
             );
+        } finally {
+            this.processedRequestCount++;
+            this.updateFeedback();
+        }
+    }
+
+    protected updateFeedback(): void {
+        if (this.processedRequestCount < this.totalRequestCount) {
+            return;
+        }
+
+        if (this.failedRequestCount > 0 && this.feedbackElement) {
+            this.feedbackElement.textContent = `${this.failedRequestCount}개 지역의 도서관 정보를 불러오는 데 실패했습니다.`;
         }
     }
 
