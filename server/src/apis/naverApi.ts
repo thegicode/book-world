@@ -1,4 +1,4 @@
-import { AppError } from "../utils/AppError";
+import { NaverApiError } from "../errors/apiErrors";
 
 async function fetchNaver(url: string) {
     const headers = {
@@ -8,11 +8,7 @@ async function fetchNaver(url: string) {
 
     const response = await fetch(url, { headers });
     if (!response.ok) {
-        // Create a more specific error
-        throw new AppError(
-            `Naver API request failed: ${response.statusText}`,
-            response.status
-        );
+        throw new NaverApiError(response.status, response.statusText);
     }
 
     return response.json();

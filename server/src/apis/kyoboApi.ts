@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import cheerio from "cheerio";
+import cheerio, { Element } from "cheerio";
 import { fetchWeb } from "./apiUtils";
-import { AppError } from "../utils/AppError";
+import { KyoboApiError } from '../errors/apiErrors';
 
 const KEYBO_JSON_PATH = path.resolve("./server/kyobo.json");
 
@@ -10,7 +10,7 @@ export async function getKyoboBookInfoByIsbn(isbn: string) {
     try {
         const kyoboJson = JSON.parse(fs.readFileSync(KEYBO_JSON_PATH, "utf-8"));
 
-        if (kyoboJson.hasOwnProperty(isbn)) {
+        if (Object.prototype.hasOwnProperty.call(kyoboJson, isbn)) {
             return kyoboJson[isbn];
         } else {
             console.log("writeFile", isbn);
@@ -29,9 +29,11 @@ export async function getKyoboBookInfoByIsbn(isbn: string) {
 
             return bookData;
         }
-    } catch (error) {
-        console.error(`Fail to process Kyobo data: ${error}`);
-        throw new AppError("Failed to get Kyobo book information", 500);
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error(`Fail to process Kyobo data: ${errorMessage}`);
+        // Create a more specific error, preserving the original message
+        throw new KyoboApiError(500, `Failed to get Kyobo book information: ${errorMessage}`);
     }
 }
 
@@ -48,7 +50,7 @@ async function getKyoboInfoData(url: string) {
     const $ = cheerio.load(webPageContent);
 
     return $(".btn_prod_type")
-        .map((index, element: any) => {
+        .map((index, element: Element) => {
             return {
                 prodType: $(element).find(".prod_type").text().trim(),
                 prodPrice: $(element).find(".prod_price").text().trim(),

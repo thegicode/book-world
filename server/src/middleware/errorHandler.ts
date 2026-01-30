@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError';
+import { ApiError } from '../errors/apiErrors';
 
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
     let statusCode = 500;
     let message = 'Something went wrong';
 
-    if (err instanceof AppError) {
-        statusCode = err.statusCode;
+    if (err instanceof ApiError || err instanceof AppError) {
+        statusCode = (err as ApiError | AppError).statusCode;
         message = err.message;
     } else {
         // For developers, log the unexpected error
@@ -14,7 +15,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
     }
     
     // In production, you might not want to send the internal error message to the client
-    if (process.env.NODE_ENV === 'production' && !(err instanceof AppError)) {
+    if (process.env.NODE_ENV === 'production' && !(err instanceof ApiError || err instanceof AppError)) {
         message = 'An unexpected error occurred. Please try again later.';
     } else {
         message = err.message;
