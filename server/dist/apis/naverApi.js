@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.searchNaverBooks = void 0;
-const AppError_1 = require("../utils/AppError");
+const apiErrors_1 = require("../errors/apiErrors");
 function fetchNaver(url) {
     return __awaiter(this, void 0, void 0, function* () {
         const headers = {
@@ -19,7 +19,7 @@ function fetchNaver(url) {
         };
         const response = yield fetch(url, { headers });
         if (!response.ok) {
-            throw new AppError_1.AppError(`Naver API request failed: ${response.statusText}`, response.status);
+            throw new apiErrors_1.NaverApiError(response.status, response.statusText);
         }
         return response.json();
     });

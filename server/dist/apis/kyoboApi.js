@@ -17,13 +17,13 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const cheerio_1 = __importDefault(require("cheerio"));
 const apiUtils_1 = require("./apiUtils");
-const AppError_1 = require("../utils/AppError");
+const apiErrors_1 = require("../errors/apiErrors");
 const KEYBO_JSON_PATH = path_1.default.resolve("./server/kyobo.json");
 function getKyoboBookInfoByIsbn(isbn) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const kyoboJson = JSON.parse(fs_1.default.readFileSync(KEYBO_JSON_PATH, "utf-8"));
-            if (kyoboJson.hasOwnProperty(isbn)) {
+            if (Object.prototype.hasOwnProperty.call(kyoboJson, isbn)) {
                 return kyoboJson[isbn];
             }
             else {
@@ -39,8 +39,9 @@ function getKyoboBookInfoByIsbn(isbn) {
             }
         }
         catch (error) {
-            console.error(`Fail to process Kyobo data: ${error}`);
-            throw new AppError_1.AppError("Failed to get Kyobo book information", 500);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Fail to process Kyobo data: ${errorMessage}`);
+            throw new apiErrors_1.KyoboApiError(500, `Failed to get Kyobo book information: ${errorMessage}`);
         }
     });
 }

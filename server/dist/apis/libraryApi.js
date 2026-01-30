@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.searchLibrariesByCriteria = void 0;
 const apiUtils_1 = require("./apiUtils");
-const AppError_1 = require("../utils/AppError");
+const apiErrors_1 = require("../errors/apiErrors");
 const LIBRARY_API_BASE_URL = "http://data4library.kr/api";
 const AUTH_KEY = process.env.LIBRARY_KEY;
 const API_FORMAT = "json";
@@ -24,7 +24,7 @@ function searchLibrariesByCriteria(params) {
         const url = parseURL("libSrch", params);
         const data = yield (0, apiUtils_1.fetchData)(url);
         if (!data.response)
-            throw new AppError_1.AppError("Invalid API response from library server", 502);
+            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
         const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
         return {
             pageNo,
@@ -41,7 +41,7 @@ function checkBookAvailability(params) {
         const url = parseURL("bookExist", params);
         const data = yield (0, apiUtils_1.fetchData)(url);
         if (!data.response)
-            throw new AppError_1.AppError("Invalid API response from library server", 502);
+            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
         return data.response.result;
     });
 }
@@ -51,7 +51,7 @@ function getBookUsageAnalysis(params) {
         const url = parseURL("usageAnalysisList", Object.assign(Object.assign({}, params), { loaninfoYN: "Y" }));
         const data = yield (0, apiUtils_1.fetchData)(url);
         if (!data.response)
-            throw new AppError_1.AppError("Invalid API response from library server", 502);
+            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
         const { book, loanHistory, loanGrps, keywords, coLoanBooks, maniaRecBooks, readerRecBooks } = data.response;
         return {
             book,
@@ -70,7 +70,7 @@ function searchLibrariesByBook(params) {
         const url = parseURL("libSrchByBook", params);
         const data = yield (0, apiUtils_1.fetchData)(url, { method: "GET" });
         if (!data.response)
-            throw new AppError_1.AppError("Invalid API response from library server", 502);
+            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
         const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
         return {
             pageNo,
@@ -87,7 +87,7 @@ function searchPopularBooks(params) {
         const url = parseURL("loanItemSrch", params);
         const data = yield (0, apiUtils_1.fetchData)(url, { method: "GET" });
         if (!data.response)
-            throw new AppError_1.AppError("Invalid API response from library server", 502);
+            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
         const { resultNum, docs } = data.response;
         const docs2 = docs.map((item) => item.doc);
         return { resultNum, data: docs2 };
@@ -99,7 +99,7 @@ function getMonthlyKeywords(params) {
         const url = parseURL("monthlyKeywords", params);
         const data = yield (0, apiUtils_1.fetchData)(url);
         if (!data.response)
-            throw new AppError_1.AppError("Invalid API response from library server", 502);
+            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
         const { keywords, request, resultNum } = data.response;
         return {
             keywords: keywords.map((keyword) => keyword.keyword),

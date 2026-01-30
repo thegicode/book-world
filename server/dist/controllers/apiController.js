@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -41,13 +45,9 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerKey = exports.getMonthlyKeywords = exports.getPopularBooks = exports.searchLibrariesByBook = exports.getUsageAnalysis = exports.checkBookExistence = exports.searchLibraries = exports.getKyoboBookInfo = exports.searchNaverBook = void 0;
 const asyncHandler_1 = require("../utils/asyncHandler");
-const AppError_1 = require("../utils/AppError");
 const BookService = __importStar(require("../apis"));
 exports.searchNaverBook = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { keyword, display, start, sort } = req.query;
-    if (!keyword || !display || !start || !sort) {
-        throw new AppError_1.AppError("Missing required query parameters for Naver search", 400);
-    }
     const books = yield BookService.searchNaverBooks({
         keyword: keyword,
         display: display,
@@ -58,17 +58,11 @@ exports.searchNaverBook = (0, asyncHandler_1.asyncHandler)((req, res) => __await
 }));
 exports.getKyoboBookInfo = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { isbn } = req.query;
-    if (!isbn) {
-        throw new AppError_1.AppError("Missing required query parameter: isbn", 400);
-    }
     const bookInfo = yield BookService.getKyoboBookInfoByIsbn(isbn);
     res.status(200).json({ status: "success", data: bookInfo });
 }));
 exports.searchLibraries = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { dtl_region, page, pageSize } = req.query;
-    if (!dtl_region || !page || !pageSize) {
-        throw new AppError_1.AppError("Missing required library search parameters", 400);
-    }
     const libraries = yield BookService.searchLibrariesByCriteria({
         dtl_region: dtl_region,
         page: page,
@@ -78,9 +72,6 @@ exports.searchLibraries = (0, asyncHandler_1.asyncHandler)((req, res) => __await
 }));
 exports.checkBookExistence = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { isbn13, libCode } = req.query;
-    if (!isbn13 || !libCode) {
-        throw new AppError_1.AppError("Missing required parameters for book existence check", 400);
-    }
     const result = yield BookService.checkBookAvailability({
         isbn13: isbn13,
         libCode: libCode,
@@ -89,17 +80,11 @@ exports.checkBookExistence = (0, asyncHandler_1.asyncHandler)((req, res) => __aw
 }));
 exports.getUsageAnalysis = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { isbn13 } = req.query;
-    if (!isbn13) {
-        throw new AppError_1.AppError("Missing required parameter: isbn13", 400);
-    }
     const analysis = yield BookService.getBookUsageAnalysis({ isbn13: isbn13 });
     res.status(200).json({ status: "success", data: analysis });
 }));
 exports.searchLibrariesByBook = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { isbn, region, dtl_region } = req.query;
-    if (!isbn || !region || !dtl_region) {
-        throw new AppError_1.AppError("Missing required parameters for library by book search", 400);
-    }
     const libraries = yield BookService.searchLibrariesByBook({
         isbn: isbn,
         region: region,
@@ -109,9 +94,6 @@ exports.searchLibrariesByBook = (0, asyncHandler_1.asyncHandler)((req, res) => _
 }));
 exports.getPopularBooks = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const _a = req.query, { startDt, endDt, pageNo, pageSize } = _a, optionalParams = __rest(_a, ["startDt", "endDt", "pageNo", "pageSize"]);
-    if (!startDt || !endDt || !pageNo || !pageSize) {
-        throw new AppError_1.AppError("Missing required parameters for popular book search", 400);
-    }
     const books = yield BookService.searchPopularBooks({
         startDt: startDt,
         endDt: endDt,
@@ -127,17 +109,11 @@ exports.getPopularBooks = (0, asyncHandler_1.asyncHandler)((req, res) => __await
 }));
 exports.getMonthlyKeywords = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { month } = req.query;
-    if (!month) {
-        throw new AppError_1.AppError("Missing required parameter: month", 400);
-    }
     const keywords = yield BookService.getMonthlyKeywords({ month: month });
     res.status(200).json({ status: "success", data: keywords });
 }));
 exports.registerKey = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { key } = req.query;
-    if (!key) {
-        throw new AppError_1.AppError("Missing required query parameter: key", 400);
-    }
     BookService.saveApiKey(key);
     res.status(200).json({ status: "success", message: "API key saved." });
 }));

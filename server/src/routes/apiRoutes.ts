@@ -11,17 +11,28 @@ import {
     getKyoboBookInfo,
     registerKey,
 } from "../controllers/apiController";
+import {
+    validateNaverBookSearch,
+    validateSearchLibraries,
+    validateCheckBookExistence,
+    validateGetUsageAnalysis,
+    validateSearchLibrariesByBook,
+    validateGetPopularBooks,
+    validateGetMonthlyKeywords,
+    validateKyoboBookInfo,
+    validateRegisterKey,
+} from "../middleware/validationMiddleware";
 
 const apiRoutes = (app: Application) => {
-    app.get("/search-naver-book", searchNaverBook);
-    app.get("/library-search", searchLibraries);
-    app.get("/book-exist", checkBookExistence);
-    app.get("/usage-analysis-list", getUsageAnalysis);
-    app.get("/library-search-by-book", searchLibrariesByBook);
-    app.get("/popular-book", getPopularBooks);
-    app.get("/monthly-keywords", getMonthlyKeywords);
-    app.get("/kyobo-book", getKyoboBookInfo);
-    app.get("/regis-key", registerKey);
+    app.get("/search-naver-book", validateNaverBookSearch, searchNaverBook);
+    app.get("/library-search", validateSearchLibraries, searchLibraries);
+    app.get("/book-exist", validateCheckBookExistence, checkBookExistence);
+    app.get("/usage-analysis-list", validateGetUsageAnalysis, getUsageAnalysis);
+    app.get("/library-search-by-book", validateSearchLibrariesByBook, searchLibrariesByBook);
+    app.get("/popular-book", validateGetPopularBooks, getPopularBooks);
+    app.get("/monthly-keywords", validateGetMonthlyKeywords, getMonthlyKeywords);
+    app.get("/kyobo-book", validateKyoboBookInfo, getKyoboBookInfo);
+    app.get("/regis-key", validateRegisterKey, registerKey);
 };
 
 export default apiRoutes;

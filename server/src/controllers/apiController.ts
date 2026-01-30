@@ -1,16 +1,11 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { MissingParameterError } from "../errors/apiErrors";
 import * as BookService from "../apis";
 
 // Naver Book Search
 export const searchNaverBook = asyncHandler(
     async (req: Request, res: Response) => {
-        const { keyword, display, start, sort } = req.query;
-        if (!keyword) throw new MissingParameterError("keyword");
-        if (!display) throw new MissingParameterError("display");
-        if (!start) throw new MissingParameterError("start");
-        if (!sort) throw new MissingParameterError("sort");
+        const { keyword, display, start, sort } = req.query as { keyword: string, display: string, start: string, sort: string };
 
         const books = await BookService.searchNaverBooks({
             keyword: keyword as string,
@@ -25,8 +20,7 @@ export const searchNaverBook = asyncHandler(
 // Kyobo Book Info
 export const getKyoboBookInfo = asyncHandler(
     async (req: Request, res: Response) => {
-        const { isbn } = req.query;
-        if (!isbn) throw new MissingParameterError("isbn");
+        const { isbn } = req.query as { isbn: string };
         const bookInfo = await BookService.getKyoboBookInfoByIsbn(isbn as string);
         res.status(200).json({ status: "success", data: bookInfo });
     }
@@ -35,10 +29,7 @@ export const getKyoboBookInfo = asyncHandler(
 // Search Libraries by Criteria
 export const searchLibraries = asyncHandler(
     async (req: Request, res: Response) => {
-        const { dtl_region, page, pageSize } = req.query;
-        if (!dtl_region) throw new MissingParameterError("dtl_region");
-        if (!page) throw new MissingParameterError("page");
-        if (!pageSize) throw new MissingParameterError("pageSize");
+        const { dtl_region, page, pageSize } = req.query as { dtl_region: string, page: string, pageSize: string };
 
         const libraries = await BookService.searchLibrariesByCriteria({
             dtl_region: dtl_region as string,
@@ -52,9 +43,7 @@ export const searchLibraries = asyncHandler(
 // Check Book Existence in a Library
 export const checkBookExistence = asyncHandler(
     async (req: Request, res: Response) => {
-        const { isbn13, libCode } = req.query;
-        if (!isbn13) throw new MissingParameterError("isbn13");
-        if (!libCode) throw new MissingParameterError("libCode");
+        const { isbn13, libCode } = req.query as { isbn13: string, libCode: string };
 
         const result = await BookService.checkBookAvailability({
             isbn13: isbn13 as string,
@@ -67,8 +56,7 @@ export const checkBookExistence = asyncHandler(
 // Get Book Usage Analysis
 export const getUsageAnalysis = asyncHandler(
     async (req: Request, res: Response) => {
-        const { isbn13 } = req.query;
-        if (!isbn13) throw new MissingParameterError("isbn13");
+        const { isbn13 } = req.query as { isbn13: string };
         const analysis = await BookService.getBookUsageAnalysis({ isbn13: isbn13 as string });
         res.status(200).json({ status: "success", data: analysis });
     }
@@ -77,10 +65,7 @@ export const getUsageAnalysis = asyncHandler(
 // Search Libraries by Book ISBN
 export const searchLibrariesByBook = asyncHandler(
     async (req: Request, res: Response) => {
-        const { isbn, region, dtl_region } = req.query;
-        if (!isbn) throw new MissingParameterError("isbn");
-        if (!region) throw new MissingParameterError("region");
-        if (!dtl_region) throw new MissingParameterError("dtl_region");
+        const { isbn, region, dtl_region } = req.query as { isbn: string, region: string, dtl_region: string };
 
         const libraries = await BookService.searchLibrariesByBook({
             isbn: isbn as string,
@@ -94,11 +79,7 @@ export const searchLibrariesByBook = asyncHandler(
 // Search Popular Books
 export const getPopularBooks = asyncHandler(
     async (req: Request, res: Response) => {
-        const { startDt, endDt, pageNo, pageSize, ...optionalParams } = req.query;
-        if (!startDt) throw new MissingParameterError("startDt");
-        if (!endDt) throw new MissingParameterError("endDt");
-        if (!pageNo) throw new MissingParameterError("pageNo");
-        if (!pageSize) throw new MissingParameterError("pageSize");
+        const { startDt, endDt, pageNo, pageSize, ...optionalParams } = req.query as { startDt: string, endDt: string, pageNo: string, pageSize: string, gender?: string, age?: string, region?: string, addCode?: string, kdc?: string };
 
         const books = await BookService.searchPopularBooks({
             startDt: startDt as string,
@@ -118,8 +99,7 @@ export const getPopularBooks = asyncHandler(
 // Get Monthly Keywords
 export const getMonthlyKeywords = asyncHandler(
     async (req: Request, res: Response) => {
-        const { month } = req.query;
-        if (!month) throw new MissingParameterError("month");
+        const { month } = req.query as { month: string };
         const keywords = await BookService.getMonthlyKeywords({ month: month as string });
         res.status(200).json({ status: "success", data: keywords });
     }
@@ -128,8 +108,7 @@ export const getMonthlyKeywords = asyncHandler(
 // Register API Key
 export const registerKey = asyncHandler(
     async (req: Request, res: Response) => {
-        const { key } = req.query;
-        if (!key) throw new MissingParameterError("key");
+        const { key } = req.query as { key: string };
         BookService.saveApiKey(key as string);
         res.status(200).json({ status: "success", message: "API key saved." });
     }
