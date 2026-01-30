@@ -3,12 +3,18 @@ import { cloneTemplate } from "../../utils/helpers";
 import bookModel from "../../model";
 
 export default class LibrarySearchByBook extends HTMLElement {
+    protected librarySearchByBookContainer: HTMLElement | null = null;
+    protected librarySearchByBookItemTemplate: HTMLTemplateElement | null = null;
+
     constructor() {
         super();
     }
 
     connectedCallback() {
         this.fetch(new URLSearchParams(location.search).get("isbn") as string);
+
+        this.librarySearchByBookContainer = document.querySelector(".library-search-by-book");
+        this.librarySearchByBookItemTemplate = document.querySelector("#tp-librarySearchByBookItem");
     }
 
     protected async fetch(isbn: string): Promise<void> {
@@ -84,9 +90,9 @@ export default class LibrarySearchByBook extends HTMLElement {
 
         listElement.appendChild(fragment);
 
-        (
-            document.querySelector(".library-search-by-book") as HTMLElement
-        ).appendChild(listElement);
+        if (this.librarySearchByBookContainer) {
+            this.librarySearchByBookContainer.appendChild(listElement);
+        }
     }
 
     protected createLibrarySearchResultItem(
@@ -95,9 +101,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         libCode: string,
         libName: string
     ) {
-        const template = document.querySelector(
-            "#tp-librarySearchByBookItem"
-        ) as HTMLTemplateElement;
+        const template = this.librarySearchByBookItemTemplate;
         if (!template) return null;
 
         const cloned = cloneTemplate(template);

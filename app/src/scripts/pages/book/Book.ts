@@ -5,6 +5,14 @@ import { cloneTemplate, fillElementsWithData } from "../../utils/helpers";
 export default class Book extends HTMLElement {
     protected loadingElement: HTMLElement | null;
     protected data: IUsageAnalysisListData | null;
+    protected booknameElement: HTMLElement | null = null;
+    protected descriptionElement: HTMLElement | null = null;
+    protected bookImageContainer: HTMLElement | null = null;
+    protected loanHistoryTbody: HTMLElement | null = null;
+    protected loanGrpsTbody: HTMLElement | null = null;
+    protected keywordElement: HTMLElement | null = null;
+    protected loanHistoryItemTemplate: HTMLTemplateElement | null = null;
+    protected loanGrpItemTemplate: HTMLTemplateElement | null = null;
 
     constructor() {
         super();
@@ -17,6 +25,16 @@ export default class Book extends HTMLElement {
 
         const isbn = new URLSearchParams(location.search).get("isbn") as string;
         this.dataset.isbn = isbn;
+
+        this.booknameElement = this.querySelector(".bookname");
+        this.descriptionElement = this.querySelector(".description");
+        this.bookImageContainer = this.querySelector(".book-image-container");
+        this.loanHistoryTbody = this.querySelector(".loanHistory tbody");
+        this.loanGrpsTbody = this.querySelector(".loanGrps tbody");
+        this.keywordElement = this.querySelector(".keyword");
+        this.loanHistoryItemTemplate = this.querySelector("#tp-loanHistoryItem");
+        this.loanGrpItemTemplate = document.querySelector("#tp-loanGrpItem");
+
 
         this.fetchUsageAnalysisList(isbn).then(() => {
             this.render();
@@ -85,9 +103,8 @@ export default class Book extends HTMLElement {
             .map((item) => `<p>${item}</p>`)
             .join("");
 
-        (this.querySelector(".bookname") as HTMLElement).innerHTML = bookNames;
-        (this.querySelector(".description") as HTMLElement).innerHTML =
-            description;
+        if (this.booknameElement) this.booknameElement.innerHTML = bookNames;
+        if (this.descriptionElement) this.descriptionElement.innerHTML = description;
 
         // const bookImageElement = this.querySelector<BookImage>("book-image");
         // if (!bookImageElement) return;
@@ -97,10 +114,7 @@ export default class Book extends HTMLElement {
         // };
 
         const bookImage = new BookImage(bookImageURL, bookname);
-        const bookImageContainer = this.querySelector(
-            ".book-image-container",
-        ) as HTMLElement;
-        bookImageContainer.appendChild(bookImage);
+        if (this.bookImageContainer) this.bookImageContainer.appendChild(bookImage);
 
         fillElementsWithData(otherData, this);
     }
@@ -109,24 +123,18 @@ export default class Book extends HTMLElement {
         const fragment = new DocumentFragment();
         loanHistory.forEach((history) => {
             const cloned = cloneTemplate(
-                this.querySelector(
-                    "#tp-loanHistoryItem",
-                ) as HTMLTemplateElement,
+                this.loanHistoryItemTemplate as HTMLTemplateElement,
             );
             fillElementsWithData(history, cloned);
 
             fragment.appendChild(cloned);
         });
 
-        (this.querySelector(".loanHistory tbody") as HTMLElement).appendChild(
-            fragment,
-        );
+        if (this.loanHistoryTbody) this.loanHistoryTbody.appendChild(fragment);
     }
 
     renderLoanGroups(loanGrps: ILoanGroups[]) {
-        const template = document.querySelector(
-            "#tp-loanGrpItem",
-        ) as HTMLTemplateElement;
+        const template = this.loanGrpItemTemplate;
         if (!template) return;
 
         const fragment = new DocumentFragment();
@@ -138,9 +146,7 @@ export default class Book extends HTMLElement {
             fragment.appendChild(clone);
         });
 
-        (this.querySelector(".loanGrps tbody") as HTMLElement).appendChild(
-            fragment,
-        );
+        if (this.loanGrpsTbody) this.loanGrpsTbody.appendChild(fragment);
     }
 
     renderKeyword(keywords: IKeyword[]) {
@@ -151,8 +157,7 @@ export default class Book extends HTMLElement {
             })
             .join("");
 
-        (this.querySelector(".keyword") as HTMLElement).innerHTML =
-            keywordsString;
+        if (this.keywordElement) this.keywordElement.innerHTML = keywordsString;
     }
 
     renderRecBooks(selector: string, books: IRecBook[], template: string) {
