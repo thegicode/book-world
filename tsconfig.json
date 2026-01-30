@@ -4,7 +4,7 @@
         "lib": ["ES6", "ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
         "module": "ESNext",
         "moduleResolution": "node",
-        "types": ["jest"],
+
         "noEmit": true,
         "sourceMap": true
     },

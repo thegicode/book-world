@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import cheerio, { Element } from "cheerio";
+import cheerio from "cheerio";
 import { fetchWeb } from "./apiUtils";
 import { KyoboApiError } from '../errors/apiErrors';
 
@@ -50,7 +50,7 @@ async function getKyoboInfoData(url: string) {
     const $ = cheerio.load(webPageContent);
 
     return $(".btn_prod_type")
-        .map((index, element: Element) => {
+        .map((index, element) => {
             return {
                 prodType: $(element).find(".prod_type").text().trim(),
                 prodPrice: $(element).find(".prod_price").text().trim(),
