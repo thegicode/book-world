@@ -7,6 +7,29 @@
 -   [책 즐겨찾기](./src/html/favorite.html)
 -   [정보공개 도서관](./src/html/library.html)
 
+## 설치 및 실행
+
+1.  **환경 변수 설정**
+
+    프로젝트 루트 디렉토리에 `.env` 파일을 생성하고, `.env.example` 파일을 참고하여 필요한 환경 변수를 추가합니다. API 키는 도서관 정보나루에서 발급받아야 합니다.
+
+    ```bash
+    # .env
+    LIBRARY_KEY=YOUR_API_KEY_HERE
+    ```
+
+2.  **의존성 설치**
+
+    ```bash
+    npm install
+    ```
+
+3.  **개발 서버 실행**
+
+    ```bash
+    npm run start
+    ```
+
 ## API
 
 -   도서관 정보나루 : https://www.data4library.kr

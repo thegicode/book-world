@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRegisterKey = exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookExistence = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
+exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookExistence = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
 const express_validator_1 = require("express-validator");
 const apiErrors_1 = require("../errors/apiErrors");
 const validate = (req, res, next) => {
@@ -53,9 +53,5 @@ exports.validateGetPopularBooks = [
 ];
 exports.validateGetMonthlyKeywords = [
     (0, express_validator_1.query)('month').notEmpty().withMessage('month is required').matches(/^\d{4}-(0[1-9]|1[0-2])$/).withMessage('month must be in YYYY-MM format'),
-    validate,
-];
-exports.validateRegisterKey = [
-    (0, express_validator_1.query)('key').notEmpty().withMessage('key is required'),
     validate,
 ];

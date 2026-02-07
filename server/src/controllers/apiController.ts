@@ -104,12 +104,3 @@ export const getMonthlyKeywords = asyncHandler(
         res.status(200).json({ status: "success", data: keywords });
     }
 );
-
-// Register API Key
-export const registerKey = asyncHandler(
-    async (req: Request, res: Response) => {
-        const { key } = req.query as { key: string };
-        BookService.saveApiKey(key as string);
-        res.status(200).json({ status: "success", message: "API key saved." });
-    }
-);

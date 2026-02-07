@@ -4,11 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const dotenv_1 = __importDefault(require("dotenv"));
 const config_1 = require("./config");
 const watchAndCopyAssets_1 = __importDefault(require("./scripts/watchAndCopyAssets"));
 const apiRoutes_1 = __importDefault(require("./routes/apiRoutes"));
 const staticRoutes_1 = __importDefault(require("./routes/staticRoutes"));
 const errorHandler_1 = require("./middleware/errorHandler");
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.static(config_1.finalBuildPath));
 (0, apiRoutes_1.default)(app);

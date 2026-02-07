@@ -64,8 +64,3 @@ export const validateGetMonthlyKeywords = [
     query('month').notEmpty().withMessage('month is required').matches(/^\d{4}-(0[1-9]|1[0-2])$/).withMessage('month must be in YYYY-MM format'),
     validate,
 ];
-
-export const validateRegisterKey = [
-    query('key').notEmpty().withMessage('key is required'),
-    validate,
-];

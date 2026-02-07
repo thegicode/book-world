@@ -43,7 +43,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerKey = exports.getMonthlyKeywords = exports.getPopularBooks = exports.searchLibrariesByBook = exports.getUsageAnalysis = exports.checkBookExistence = exports.searchLibraries = exports.getKyoboBookInfo = exports.searchNaverBook = void 0;
+exports.getMonthlyKeywords = exports.getPopularBooks = exports.searchLibrariesByBook = exports.getUsageAnalysis = exports.checkBookExistence = exports.searchLibraries = exports.getKyoboBookInfo = exports.searchNaverBook = void 0;
 const asyncHandler_1 = require("../utils/asyncHandler");
 const BookService = __importStar(require("../apis"));
 exports.searchNaverBook = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -111,9 +111,4 @@ exports.getMonthlyKeywords = (0, asyncHandler_1.asyncHandler)((req, res) => __aw
     const { month } = req.query;
     const keywords = yield BookService.getMonthlyKeywords({ month: month });
     res.status(200).json({ status: "success", data: keywords });
-}));
-exports.registerKey = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { key } = req.query;
-    BookService.saveApiKey(key);
-    res.status(200).json({ status: "success", message: "API key saved." });
 }));
