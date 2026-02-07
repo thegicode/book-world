@@ -61,7 +61,7 @@ export const validateGetPopularBooks = [
 ];
 
 export const validateGetMonthlyKeywords = [
-    query('month').notEmpty().withMessage('month is required').isInt({ gt: 0, lt: 13 }).withMessage('month must be an integer between 1 and 12'),
+    query('month').notEmpty().withMessage('month is required').matches(/^\d{4}-(0[1-9]|1[0-2])$/).withMessage('month must be in YYYY-MM format'),
     validate,
 ];
 
