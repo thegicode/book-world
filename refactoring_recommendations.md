@@ -11,7 +11,7 @@
 1.  **컴포넌트 기반 아키텍처**:
     *   재사용 가능한 컴포넌트를 만들기 위해 Custom Elements를 사용하는 것은 좋습니다. 하지만 `pages` 디렉토리는 주로 커스텀 엘리먼트를 등록하는 데 사용되는 것 같습니다. 페이지에 대한 보다 구조화된 접근 방식을 만드는 것을 고려해 보세요. 각 페이지는 자체 레이아웃 및 데이터 가져오기를 담당하는 컴포넌트가 될 수 있습니다.
     *   `BaseItemComponent`는 기본 클래스로 좋은 시작입니다. 정리를 위한 `disconnectedCallback`과 같은 더 많은 생명주기 메소드나 자동으로 호출되는 `render` 메소드를 추가하는 것을 고려해 보세요.
-    *   `services` 디렉토리가 비어 있습니다. `CustomFetch.ts` 로직을 이 디렉토리 내의 전용 서비스 파일로 옮겨야 합니다. 예를 들어, `BookApiService.ts`는 책과 관련된 모든 API 호출을 캡슐화할 수 있습니다.
+    *   - [x] `services` 디렉토리가 비어 있습니다. `CustomFetch.ts` 로직을 이 디렉토리 내의 전용 서비스 파일로 옮겨야 합니다. 예를 들어, `BookApiService.ts`는 책과 관련된 모든 API 호출을 캡슐화할 수 있습니다. (완료: `CustomFetch.ts`를 `services` 디렉토리로 이동하여 API 서비스 로직을 분리함)
 
 2.  **상태 관리**:
     *   작은 애플리케이션의 경우 컴포넌트 내에서 상태를 관리할 수 있습니다. 그러나 애플리케이션이 커짐에 따라 더 강력한 상태 관리 솔루션을 고려해 보세요. `Observer`와 `Publisher`를 사용하는 것은 좋은 경량 솔루션입니다. 더 복잡한 시나리오의 경우 Redux나 Zustand와 같은 라이브러리를 고려할 수 있지만 현재로서는 사용자 지정 솔루션으로 충분해 보입니다. 일관성 있게 사용되는지 확인하기만 하면 됩니다.
@@ -32,7 +32,7 @@
     *   - [x] 사용자 지정 `AppError` 클래스와 `asyncHandler` 미들웨어를 사용하는 것은 훌륭한 패턴입니다. 모든 컨트롤러에서 일관되게 사용되는지 확인하세요. (완료: 일반 `AppError`를 도메인별 `ApiError` 서브클래스로 표준화하여 개선함)
 
 3.  **API 서비스 레이어**:
-    *   `server/src/apis/index.ts`의 `BookService`는 매우 커질 단일 파일인 것 같습니다.
+    *   - [x] `server/src/apis/index.ts`의 `BookService`는 매우 커질 단일 파일인 것 같습니다. (완료: `index.ts`에서 각 API 서비스 파일을 재내보내도록 하여 모듈성을 향상시킴)
     *   **리팩토링 제안**: `BookService`를 호출하는 외부 API를 기반으로 더 작고 집중된 서비스로 분할하세요. 예를 들어 `NaverBookApiService.ts`, `LibraryApiService.ts`, `KyoboBookApiService.ts`가 있을 수 있습니다. 이렇게 하면 코드를 더 쉽게 유지 관리하고 테스트할 수 있습니다.
 
 4.  **구성 관리**:
