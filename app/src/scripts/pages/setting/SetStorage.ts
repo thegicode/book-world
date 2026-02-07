@@ -1,4 +1,4 @@
-import { CustomFetch } from "../../utils/index";
+import { CustomFetch } from "../../services/index";
 import bookModel from "../../model";
 const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
 

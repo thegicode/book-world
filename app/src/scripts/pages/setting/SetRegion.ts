@@ -1,4 +1,5 @@
-import { CustomEventEmitter, CustomFetch } from "../../utils/index";
+import { CustomEventEmitter } from "../../utils/index";
+import { CustomFetch } from "../../services/index";
 import { cloneTemplate } from "../../utils/helpers";
 import { FETCH_REGION_DATA_EVENT } from "./constants";
 import bookModel from "../../model";

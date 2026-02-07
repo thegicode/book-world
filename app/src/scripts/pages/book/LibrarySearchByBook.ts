@@ -1,4 +1,4 @@
-import { CustomFetch } from "../../utils/index";
+import { CustomFetch } from "../../services/index";
 import { cloneTemplate } from "../../utils/helpers";
 import bookModel from "../../model";
 

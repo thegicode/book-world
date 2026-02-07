@@ -1,6 +1,7 @@
 // import { BookImage } from "../../components/index";
 import { BookImage, LoadingComponent } from "../../components";
-import { CustomEventEmitter, CustomFetch } from "../../utils";
+import { CustomEventEmitter } from "../../utils";
+import { CustomFetch } from "../../services";
 import { cloneTemplate, getCurrentDates } from "../../utils/helpers";
 
 export default class Popular extends HTMLElement {

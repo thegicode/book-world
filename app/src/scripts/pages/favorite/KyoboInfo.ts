@@ -1,4 +1,4 @@
-import { CustomFetch } from "../../utils";
+import { CustomFetch } from "../../services";
 import { cloneTemplate } from "../../utils/helpers";
 
 export default class KyoboInfo extends HTMLElement {

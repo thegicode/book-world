@@ -1,4 +1,4 @@
-import { CustomFetch } from "../utils";
+import { CustomFetch } from "../services";
 import { fetchAndParseTemplate } from "../utils/helpers";
 import LoadingComponent from "./LoadingComponent";
 

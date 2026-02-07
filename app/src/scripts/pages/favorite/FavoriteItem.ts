@@ -1,4 +1,4 @@
-import { CustomFetch } from "../../utils/index";
+import { CustomFetch } from "../../services/index";
 import { LibraryBookExist, LoadingComponent } from "../../components/index";
 import bookModel from "../../model";
 import FavoriteItemUI from "./FavoriteItemUI";
