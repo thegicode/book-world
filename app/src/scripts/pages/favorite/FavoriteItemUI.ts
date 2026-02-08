@@ -20,15 +20,21 @@ export default class FavoriteItemUI {
         const linkElement = this.component.querySelector(
             ".book-summary a"
         ) as HTMLElement;
-        linkElement.appendChild(new BookImage(bookImageURL, bookname));
+        if (linkElement) {
+            linkElement.appendChild(new BookImage(bookImageURL, bookname));
+        }
 
         const descNode = this.component.querySelector(
             "book-description"
         ) as BookDescription;
-        descNode.data = description;
+        if (descNode) {
+            descNode.data = description;
+        }
 
         const anchorEl = this.component.querySelector("a") as HTMLAnchorElement;
-        anchorEl.href = `/book?isbn=${isbn13}`;
+        if (anchorEl) {
+            anchorEl.href = `/book?isbn=${isbn13}`;
+        }
 
         const others = {
             ...otherData,
@@ -47,11 +53,14 @@ export default class FavoriteItemUI {
 
     renderError() {
         this.component.dataset.fail = "true";
-        (
-            this.component.querySelector(".bookname") as HTMLElement
-        ).textContent = `ISBN : ${this.component.isbn}`;
-        (this.component.querySelector(".authors") as HTMLElement).textContent =
-            "정보가 없습니다.";
+        const booknameEl = this.component.querySelector(".bookname") as HTMLElement;
+        if (booknameEl) {
+            booknameEl.textContent = `ISBN : ${this.component.isbn}`;
+        }
+        const authorsEl = this.component.querySelector(".authors") as HTMLElement;
+        if (authorsEl) {
+            authorsEl.textContent = "정보가 없습니다.";
+        }
     }
 
     updateOnLibrary() {

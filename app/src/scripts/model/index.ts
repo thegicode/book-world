@@ -205,13 +205,51 @@ class BookModel {
         this._commit();
     }
 
+    public subscribeFavoriteCategoriesUpdate(subscriber: TFavoritesUpdateSubscriber) {
+        this.favoriteModel.subscribeCategoriesUpdate(subscriber);
+    }
+    public unsubscribeFavoriteCategoriesUpdate(
+        subscriber: TFavoritesUpdateSubscriber
+    ) {
+        this.favoriteModel.unsubscribeCategoriesUpdate(subscriber);
+    }
+
+    public subscribeFavoriteBookUpdate(subscriber: TSubscriberVoid) {
+        this.favoriteModel.subscribeBookUpdate(subscriber);
+    }
+    public unsubscribeFavoriteBookUpdate(subscriber: TSubscriberVoid) {
+        this.favoriteModel.unsubscribeBookUpdate(subscriber);
+    }
+
+    public subscribeLibraryUpdate(subscriber: TLibrarysUpdateSubscriber) {
+        this.libraryModel.subscribeUpdate(subscriber);
+    }
+    public unsubscribeLibraryUpdate(subscriber: TLibrarysUpdateSubscriber) {
+        this.libraryModel.unsubscribeUpdate(subscriber);
+    }
+
+    public subscribeRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regionModel.subscribeUpdatePublisher(subscriber);
+    }
+    public unsubscribeRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regionModel.unsubscribeUpdatePublisher(subscriber);
+    }
+
+    public subscribeDetailRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regionModel.subscribeDetailUpdatePublisher(subscriber);
+    }
+    public unsubscribeDetailRegionUpdate(subscriber: TSubscriberVoid) {
+        this.regionModel.unsubscribeDetailUpdatePublisher(subscriber);
+    }
+
     // subscribe
-    subscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
+    public subscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
         this.bookStateUpdatePublisher.subscribe(subscriber);
     }
     unsubscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
         this.bookStateUpdatePublisher.unsubscribe(subscriber);
     }
+}
 
 const bookModel = new BookModel();
 
