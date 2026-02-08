@@ -1,11 +1,9 @@
 import { CustomFetch } from "../services";
-import { fetchAndParseTemplate } from "../utils/helpers";
 import LoadingComponent from "./LoadingComponent";
 
 export abstract class FetchListComponent<T, U> extends HTMLElement {
     protected listContainer: HTMLElement;
     protected loadingComponent: LoadingComponent | null;
-    protected itemTemplate: HTMLTemplateElement | null = null;
     protected currentItemCount: number = 0;
     protected itemsPerPage: number = 10;
     protected total: number = 0;
@@ -14,12 +12,6 @@ export abstract class FetchListComponent<T, U> extends HTMLElement {
         super();
         this.listContainer = this.querySelector("[data-list-container]") as HTMLElement;
         this.loadingComponent = this.querySelector<LoadingComponent>("loading-component");
-    }
-
-    protected async loadTemplate(path: string) {
-        this.itemTemplate = (await fetchAndParseTemplate(
-            path
-        )) as HTMLTemplateElement;
     }
 
     protected async fetchData(url: string) {

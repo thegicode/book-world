@@ -1,31 +1,22 @@
-// import { BookImage } from "../../components/index";
-import { BookImage, LoadingComponent } from "../../components";
 import { CustomEventEmitter } from "../../utils";
-import { CustomFetch } from "../../services";
-import { cloneTemplate, getCurrentDates } from "../../utils/helpers";
+import { getCurrentDates } from "../../utils/helpers";
+import PopularList from "./PopularList";
 
 export default class Popular extends HTMLElement {
-    private itemTemplate: HTMLTemplateElement | null;
-    private list: HTMLElement;
-    private loadingComponent: LoadingComponent | null;
+    private popularList!: PopularList;
     private params: IPopularFetchParams | null;
 
     constructor() {
         super();
-
-        this.itemTemplate = document.querySelector("#tp-popular-item");
-        this.list = this.querySelector(".popular-list") as HTMLElement;
-        this.loadingComponent =
-            this.querySelector<LoadingComponent>("loading-component");
-
         this.onRequestPopular = this.onRequestPopular.bind(this);
         this.onClickPageNav = this.onClickPageNav.bind(this);
         this.params = null;
     }
 
     connectedCallback() {
+        this.popularList = this.querySelector('popular-list') as PopularList;
         this.params = this.getParams();
-        this.fetch(this.params);
+        this.popularList.loadPopularBooks(this.params);
 
         CustomEventEmitter.add(
             "requestPopular",
@@ -49,7 +40,7 @@ export default class Popular extends HTMLElement {
         );
     }
 
-    private getParams() {
+    private getParams(): IPopularFetchParams {
         const { currentYear, currentMonth, currentDay } = getCurrentDates();
         return {
             startDt: "2023-01-01",
@@ -64,105 +55,16 @@ export default class Popular extends HTMLElement {
         };
     }
 
-    private async fetch(params: IPopularFetchParams): Promise<void> {
-        this.loadingComponent?.show();
-
-        this.list.innerHTML = "";
-
-        const searchParams = new URLSearchParams(
-            Object.entries(params)
-                .filter(([, value]) => value !== undefined)
-                .map(([key, value]) => [key, String(value)])
-        );
-
-        try {
-            const response = await CustomFetch.fetch<IApiResponse<IPopularBookResponse>>(
-                `/popular-book?${searchParams}`
-            );
-
-            if (response.status === 'success') {
-                this.render(response.data);
-
-                if (params.pageNo === "1") {
-                    CustomEventEmitter.dispatch("renderPageNav", {
-                        total: response.data.resultNum,
-                        pageSize: params.pageSize,
-                    });
-                }
-            } else {
-                throw new Error(response.message);
-            }
-        } catch (error) {
-            console.error(error);
-            throw new Error(`Fail to get popular books.`);
-        }
-
-        this.loadingComponent?.hide();
-    }
-
-    private render({ data, resultNum }: IPopularBookResponse) {
-        if (!this.list) return;
-
-        console.log(resultNum);
-
-        const fragment = new DocumentFragment();
-        data.map((item) => this.createItem(item)).forEach(
-            (element) => element && fragment.appendChild(element)
-        );
-        this.list.appendChild(fragment);
-    }
-
-    private createItem(item: IPopularBook) {
-        const {
-            // addition_symbol,
-            bookImageURL,
-            // bookname,
-            bookDtlUrl,
-
-            ...otherData
-
-            // authors,  class_nm, isbn13, class_no, loan_count,  no,  publication_year,  publisher, ranking, vol,
-        } = item;
-
-        if (!this.itemTemplate) return;
-        const cloned = cloneTemplate(this.itemTemplate);
-
-        cloned.dataset.isbn = item.isbn13;
-
-        const linkEl = cloned.querySelector(".link") as HTMLLinkElement;
-        linkEl.insertBefore(
-            new BookImage(bookImageURL, item.bookname),
-            linkEl.querySelector(".ranking")
-        );
-
-        const bookDtlUrlNode = cloned.querySelector(
-            ".bookDtlUrl"
-        ) as HTMLAnchorElement;
-        if (bookDtlUrlNode) {
-            bookDtlUrlNode.href = bookDtlUrl;
-        }
-
-        Object.entries(otherData).forEach(([key, value]) => {
-            const element = cloned.querySelector(`.${key}`) as HTMLElement;
-            if (element) element.textContent = value as string;
-        });
-
-        const anchorEl = cloned.querySelector("a") as HTMLAnchorElement;
-        if (anchorEl) anchorEl.href = `/book?isbn=${item.isbn13}`;
-
-        return cloned;
-    }
-
     private onRequestPopular(
         event: ICustomEvent<{ params: IPopularFetchParams }>
     ) {
         this.params = event.detail.params;
-        this.fetch(this.params);
+        this.popularList.loadPopularBooks(this.params);
     }
 
     private onClickPageNav(event: ICustomEvent<{ pageIndex: number }>) {
         if (!this.params) return;
         this.params.pageNo = event.detail.pageIndex.toString();
-        this.fetch(this.params);
+        this.popularList.loadPopularBooks(this.params);
     }
 }

@@ -1,7 +1,6 @@
 import LibraryItem from "./LibraryItem";
 import bookModel from "../../model";
 import { FetchListComponent } from "../../components/FetchListComponent";
-import { cloneTemplate } from "../../utils/helpers";
 
 export default class Library extends FetchListComponent<
     ILibrarySearchByBookResult,
@@ -12,9 +11,6 @@ export default class Library extends FetchListComponent<
 
     constructor() {
         super();
-        this.itemTemplate = document.querySelector(
-            "#tp-item"
-        ) as HTMLTemplateElement;
     }
 
     set regionCode(value: string | null) {
@@ -45,8 +41,7 @@ export default class Library extends FetchListComponent<
     }
 
     protected createItem(lib: ILibraryData): HTMLElement {
-        const libraryItem = cloneTemplate<LibraryItem>(this.itemTemplate!);
-        libraryItem.data = lib;
+        const libraryItem = new LibraryItem(lib);
         return libraryItem;
     }
 

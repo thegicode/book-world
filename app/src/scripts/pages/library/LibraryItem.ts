@@ -1,22 +1,22 @@
 import bookModel from "../../model";
+import { BaseItemComponent } from "../../components";
 
-export default class LibraryItem extends HTMLElement {
+export default class LibraryItem extends BaseItemComponent {
     protected checkbox: HTMLInputElement | null = null;
     private libCode = "";
     data!: ILibraryData;
 
-    constructor() {
-        super();
-
-        this.checkbox =
-            this.querySelector<HTMLInputElement>("[name=myLibrary]");
-
+    constructor(data: ILibraryData) {
+        super("/html/templates/library-item.html");
+        this.data = data;
         this.onChange = this.onChange.bind(this);
-
         this.subscribeUpdate = this.subscribeUpdate.bind(this);
     }
 
-    connectedCallback() {
+    protected onMount(): void {
+        this.checkbox =
+            this.querySelector<HTMLInputElement>("[name=myLibrary]");
+            
         this.render();
 
         this.checkbox?.addEventListener("click", this.onChange);

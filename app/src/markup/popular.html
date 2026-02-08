@@ -689,43 +689,12 @@
                         </div>
                     </form>
                 </popular-search>
-                <main class="popular-body">
-                    <ul class="popular-list"></ul>
+                <popular-list class="popular-body">
+                    <div class="popular-list" data-list-container></div>
                     <loading-component hidden>Loading...</loading-component>
-                </main>
+                </popular-list>
             </app-popular>
         </div>
 
-        <template id="tp-popular-item">
-            <li class="popular-item">
-                <a class="link" href="">
-                    <!-- <img src="" alt="" class="bookImage" /> -->
-                    <span class="ranking"></span>
-                </a>
-                <ul class="book-info">
-                    <li class="bookname"></li>
-                    <li class="authors"></li>
-                    <li class="publicationYear">
-                        출판년도 : <span class="publication_year"></span>
-                    </li>
-                    <li class="publisherCompany">
-                        출판사 : <span class="publisher"></span>
-                    </li>
-                    <li class="class_nm"></li>
-                    <li class="class_no"></li>
-                    <li class="isbn">ISBN13 : <span class="isbn13"></span></li>
-                    <li class="loanCount">
-                        대출 : <span class="loan_count"></span>
-                    </li>
-                    <li class="vol"></li>
-                    <li>
-                        <a href="" class="bookDtlUrl" target="_blank"
-                            >도서 상세조회(정보나루)</a
-                        >
-                    </li>
-                </ul>
-                <category-selector></category-selector>
-            </li>
-        </template>
     </body>
 </html>
