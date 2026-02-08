@@ -31,6 +31,10 @@
 **개선 방안:**
 페이지 스크립트들을 분석하여 공통적으로 사용되는 기능들을 식별하고, 이를 별도의 **재사용 가능한 함수 또는 모듈**로 추출합니다.
 
+*   **상태 관리 모델(`BookModel`) 리팩토링:**
+    *   `BookModel`의 상태 관리 로직을 리팩토링하여 `localStorage` 접근을 최소화하고 성능을 개선했습니다.
+    *   메모리 내 상태 캐시(`_state`)를 도입하여, 상태 변경 시마다 `localStorage`를 읽고 쓰는 비효율적인 구조를 개선했습니다.
+    *   상태 변경 로직을 중앙화된 `_commit` 메서드로 통합하여 코드 중복을 제거하고 유지보수성을 향상시켰습니다.
 *   **`FetchListComponent` 도입 및 `popular` 페이지 리팩토링:**
     *   `search` 페이지에서 사용되던 `FetchListComponent`를 활용하여 `popular` 페이지의 데이터 로딩 및 리스트 렌더링 로직을 리팩토링했습니다.
     *   `PopularList`와 `PopularItem` 컴포넌트를 새로 만들어, API 호출, 데이터 파싱, DOM 생성을 `FetchListComponent` 기반의 재사용 가능한 구조로 통합했습니다.
