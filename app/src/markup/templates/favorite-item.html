@@ -1,0 +1,54 @@
+<!-- <favorite-item> -->
+<h6 class="bookname"></h6>
+<div class="book-summary">
+    <a href=""> </a>
+    <ul class="book-info">
+        <!-- <li class="bookname"></li> -->
+        <li class="authors"></li>
+        <li class="class_nm"></li>
+        <li>주제분류 : <span class="class_no"></span></li>
+        <li>ISBN : <span class="isbn13"></span></li>
+        <li>출판사 : <span class="publisher"></span></li>
+        <li>
+            출판년도 :
+            <span class="publication_year"></span>
+        </li>
+                                <li>대출권수 : <span class="loanCnt"></span></li>
+                                <li>부가기호 : <span class="addition_symbol"></span></li>                </ul>
+
+    <category-selector></category-selector>
+</div>
+<book-description></book-description>
+
+<div class="favorite-actions">
+    <button type="button" class="kyoboInfo-button">
+        교보문고 정보 조회
+    </button>
+
+    <button type="button" class="library-button">
+        관심 도서관 소장 | 대출 조회
+    </button>
+    <button type="button" class="hide-button" hidden>
+        대출정보 접기
+    </button>
+</div>
+
+<kyobo-info hidden>
+    <h5>교보문고 조회</h5>
+    <ul></ul>
+    <template id="tp-kyoboInfoItem">
+        <li>
+            <a href="" target="_blank">
+                <span></span>
+            </a>
+        </li>
+    </template>
+</kyobo-info>
+
+<library-book-exist hidden>
+    <h5>관심 도서관 소장 | 대출 조회</h5>
+    <ul class="library-list"></ul>
+</library-book-exist>
+
+<loading-component>Loading...</loading-component>
+<!-- </favorite-item> -->

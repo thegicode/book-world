@@ -12,8 +12,8 @@ export default class BookItem extends BaseItemComponent {
     private libraryButton: HTMLButtonElement | null = null;
     private libraryBookExist: LibraryBookExist | null = null;
 
-    constructor(data: ISearchBook, template: HTMLTemplateElement) {
-        super(template);
+    constructor(data: ISearchBook) {
+        super('/html/templates/book-item.html');
         this.data = data;
         this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }

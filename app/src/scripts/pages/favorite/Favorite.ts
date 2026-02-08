@@ -5,7 +5,6 @@ import FavoriteItem from "./FavoriteItem";
 export default class Favorite extends HTMLElement {
     private currentCategory: string | null;
     private listElement: HTMLElement | null;
-    private itemTemplate: HTMLTemplateElement;
     private messageTemplate: HTMLTemplateElement;
 
     constructor() {
@@ -15,9 +14,6 @@ export default class Favorite extends HTMLElement {
             "category"
         );
         this.listElement = this.querySelector(".favorite-books");
-        this.itemTemplate = document.querySelector(
-            "#tp-favorite-item"
-        ) as HTMLTemplateElement;
         this.messageTemplate = document.querySelector(
             "#tp-message"
         ) as HTMLTemplateElement;
@@ -68,7 +64,7 @@ export default class Favorite extends HTMLElement {
     }
 
     private createItem(isbn: string) {
-        const favoriteItem = new FavoriteItem(isbn, this.itemTemplate);
+        const favoriteItem = new FavoriteItem(isbn);
         return favoriteItem;
     }
 

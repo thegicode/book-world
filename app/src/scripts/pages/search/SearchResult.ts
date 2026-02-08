@@ -24,7 +24,6 @@ export default class SearchResult extends FetchListComponent<
     }
 
     async connectedCallback() {
-        await this.loadTemplate("./html/templates/book-item.html");
         this.observer = new Observer(this.observeTarget, () =>
             this.loadMoreBooks()
         );
@@ -73,8 +72,7 @@ export default class SearchResult extends FetchListComponent<
     }
 
     protected createItem(data: ISearchBook, index: number): HTMLElement | null {
-        if (!this.itemTemplate) return null;
-        const bookItem = new BookItem(data, this.itemTemplate);
+        const bookItem = new BookItem(data);
         bookItem.dataset.index = this.getGlobalIndex(index).toString();
         return bookItem;
     }

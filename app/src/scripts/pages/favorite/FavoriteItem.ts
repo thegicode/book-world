@@ -16,8 +16,8 @@ export default class FavoriteItem extends BaseItemComponent {
     libraryButton?: HTMLButtonElement | null = null;
     libraryHideButton?: HTMLButtonElement | null;
 
-    constructor(isbn: string, template: HTMLTemplateElement) {
-        super(template);
+    constructor(isbn: string) {
+        super("/html/templates/favorite-item.html");
         this._isbn = isbn;
         this.dataset.isbn = isbn;
         this.ui = new FavoriteItemUI(this);
