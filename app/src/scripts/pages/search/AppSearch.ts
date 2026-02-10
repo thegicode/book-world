@@ -1,6 +1,5 @@
-// import { CustomEventEmitter } from "../../utils/index";
-// import { SEARCH_PAGE_INIT } from "./constant";
-import { searchResult, searchInputElement } from "./selectors";
+import store from "../../model/Store";
+import { searchInputElement } from "./selectors";
 
 export default class AppSearch extends HTMLElement {
     private boundPopStateHandler: ((ev: PopStateEvent) => void) | null = null;
@@ -31,9 +30,11 @@ export default class AppSearch extends HTMLElement {
         const keyword = params.get("keyword");
         const sort = params.get("sort") || "sim";
 
-        if (keyword && sort) {
-            searchResult?.initializeSearchPage(keyword, sort);
-            searchInputElement.value = keyword;
+        if (keyword) {
+            store.searchBooks(keyword, sort);
+            if (searchInputElement) {
+                searchInputElement.value = keyword;
+            }
         }
     }
 }

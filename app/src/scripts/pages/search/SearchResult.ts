@@ -1,119 +1,127 @@
 import BookItem from "./BookItem";
 import { Observer } from "../../utils/index";
-import { URL } from "../../utils/constants";
-import { FetchListComponent } from "../../components/FetchListComponent";
+import store, { AppState } from "../../model/Store";
+import LoadingComponent from "../../components/LoadingComponent";
 
-export default class SearchResult extends FetchListComponent<
-    ISearchNaverBookResult,
-    ISearchBook
-> {
-    private paginationElement!: HTMLElement;
-    private observer?: Observer;
-    private keyword?: string;
-    private sortingOrder?: string;
+export default class SearchResult extends HTMLElement {
+    private listContainer: HTMLElement;
+    private paginationElement: HTMLElement;
     private observeTarget: HTMLElement;
+    private loadingComponent: LoadingComponent | null;
+    private observer?: Observer;
+    
+    private boundHandleStateChange: (state: AppState | undefined) => void;
 
     constructor() {
         super();
-        this.paginationElement = this.querySelector(
-            ".paging-info"
-        ) as HTMLElement;
+        this.listContainer = this.querySelector("[data-list-container]") as HTMLElement;
+        this.paginationElement = this.querySelector(".paging-info") as HTMLElement;
         this.observeTarget = this.querySelector(".observe") as HTMLElement;
-        this.itemsPerPage = 10;
-        this.initializeSearchPage = this.initializeSearchPage.bind(this);
+        this.loadingComponent = this.querySelector<LoadingComponent>("loading-component");
+
+        this.boundHandleStateChange = this.handleStateChange.bind(this);
     }
 
-    async connectedCallback() {
-        this.observer = new Observer(this.observeTarget, () =>
-            this.loadMoreBooks()
-        );
+    connectedCallback() {
+        store.subscribe(this.boundHandleStateChange);
+        this.observer = new Observer(this.observeTarget, () => store.loadMoreBooks());
+        
+        // 초기 상태로 렌더링
+        this.handleStateChange(store.getState());
     }
 
     disconnectedCallback() {
+        store.unsubscribe(this.boundHandleStateChange);
         this.observer?.disconnect();
     }
 
-    async initializeSearchPage(keyword: string, sortValue: string) {
-        this.keyword = keyword;
-        this.sortingOrder = sortValue;
-        this.currentItemCount = 0;
-        this.total = 0;
-        this.listContainer.innerHTML = "";
-        this.observer?.disconnect();
-
-        if (this.keyword) {
-            this.loadMoreBooks();
+    private handleStateChange(state: AppState | undefined) {
+        if (!state) return;
+        this.render(state);
+    }
+    
+    private render(state: AppState) {
+        const { searchResults, total, currentItemCount, apiStatus, searchKeyword } = state;
+        
+        // 초기 로딩 시에만 스켈레톤 UI 표시
+        if (apiStatus === 'loading' && currentItemCount === 0) {
+            this.loadingComponent?.show();
         } else {
-            this.showDefaultMessage();
+            this.loadingComponent?.hide();
         }
-    }
 
-    private loadMoreBooks() {
-        if (!this.keyword || !this.sortingOrder) {
+        if (apiStatus === 'error') {
+            this.renderMessage("error");
             return;
         }
-        const searchUrl = `${URL.search}?keyword=${encodeURIComponent(
-            this.keyword
-        )}&display=${this.itemsPerPage}&start=${
-            this.currentItemCount + 1
-        }&sort=${this.sortingOrder}`;
 
-        this.fetchData(searchUrl);
+        // 새 검색 시작 시 목록 초기화
+        if (apiStatus === 'success' && currentItemCount === searchResults.length && this.listContainer.children.length > searchResults.length) {
+            this.listContainer.innerHTML = "";
+        }
+        
+        if (apiStatus === 'success' && total === 0) {
+            this.listContainer.innerHTML = "";
+            this.renderMessage("notFound");
+            this.updatePagingInfo(state);
+            return;
+        }
+
+        // 새로운 아이템만 선택하여 추가
+        const existingItemCount = this.listContainer.children.length;
+        const newItems = searchResults.slice(existingItemCount);
+
+        if (newItems.length > 0) {
+            const fragment = new DocumentFragment();
+            newItems
+                .map((item, index) => this.createItem(item, existingItemCount + index))
+                .forEach(itemElement => itemElement && fragment.appendChild(itemElement));
+            this.listContainer.appendChild(fragment);
+        }
+        
+        this.updatePagingInfo(state);
+
+        // Observer 관리
+        this.observer?.disconnect();
+        if (searchKeyword && currentItemCount < total) {
+             this.observer?.observe();
+        }
     }
 
-    // --- Implementation of abstract methods from FetchListComponent ---
-
-    protected getItems(data: ISearchNaverBookResult): ISearchBook[] {
-        return data.items;
-    }
-
-    protected getTotal(data: ISearchNaverBookResult): number {
-        return data.total;
-    }
-
-    protected createItem(data: ISearchBook, index: number): HTMLElement | null {
+    private createItem(data: ISearchBook, index: number): HTMLElement | null {
         const bookItem = new BookItem(data);
-        bookItem.dataset.index = this.getGlobalIndex(index).toString();
+        bookItem.dataset.index = index.toString();
         return bookItem;
     }
 
-    protected onRenderComplete() {
-        this.updatePagingInfo();
-        if (this.total > this.currentItemCount) {
-            this.observer?.observe();
+    private updatePagingInfo(state: AppState) {
+        const { searchKeyword, currentItemCount, total, itemsPerPage } = state;
+
+        if (!searchKeyword) {
+            this.paginationElement.hidden = true;
+            return;
         }
-    }
-
-    // --- Helper methods specific to SearchResult ---
-
-    private getGlobalIndex(index: number): number {
-        const page = Math.ceil(
-            (this.currentItemCount - this.itemsPerPage) / this.itemsPerPage
-        );
-        return page * this.itemsPerPage + index;
-    }
-
-    private updatePagingInfo() {
-        if (!this.keyword) return;
 
         const obj = {
-            keyword: `${this.keyword}`,
-            length: `${this.currentItemCount.toLocaleString()}`,
-            total: `${this.total.toLocaleString()}`,
-            display: `${this.itemsPerPage}개씩`,
+            keyword: `${searchKeyword}`,
+            length: `${currentItemCount.toLocaleString()}`,
+            total: `${total.toLocaleString()}`,
+            display: `${itemsPerPage}개씩`,
         };
 
         for (const [key, value] of Object.entries(obj)) {
-            const element = this.paginationElement.querySelector(
-                `.__${key}`
-            ) as HTMLElement;
+            const element = this.paginationElement.querySelector(`.__${key}`) as HTMLElement;
             if (element) element.textContent = value;
         }
         this.paginationElement.hidden = false;
     }
 
-    private showDefaultMessage() {
+    private renderMessage(type: "notFound" | "error" | "message" = "message") {
+        const messageTemplate = document.querySelector(`#tp-${type}`) as HTMLTemplateElement;
+        if (!messageTemplate) return;
+
+        this.listContainer.innerHTML = "";
+        this.listContainer.appendChild(messageTemplate.content.cloneNode(true));
         this.paginationElement.hidden = true;
-        this.renderMessage("message");
     }
 }
