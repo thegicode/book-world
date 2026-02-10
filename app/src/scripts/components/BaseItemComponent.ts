@@ -1,41 +1,37 @@
-
+// 템플릿 문자열을 한 번 파싱한 결과를 저장하는 캐시
 const templateCache = new Map<string, HTMLTemplateElement>();
 
 export default class BaseItemComponent extends HTMLElement {
-    protected templatePath: string;
+    protected templateString: string;
     protected template: HTMLTemplateElement | null = null;
 
-    constructor(templatePath: string) {
+    constructor(templateString: string) {
         super();
-        this.templatePath = templatePath;
+        this.templateString = templateString;
     }
 
-    async connectedCallback() {
-        await this.loadTemplate();
+    connectedCallback() {
+        this.loadTemplate();
         if (this.template) {
             this.appendChild(this.template.content.cloneNode(true));
             this.onMount();
         }
     }
 
-    protected async loadTemplate() {
-        if (templateCache.has(this.templatePath)) {
-            this.template = templateCache.get(this.templatePath)!;
+    protected loadTemplate() {
+        // 동일한 템플릿 문자열에 대해서는 파싱을 한 번만 수행
+        if (templateCache.has(this.templateString)) {
+            this.template = templateCache.get(this.templateString)!;
             return;
         }
 
         try {
-            const response = await fetch(this.templatePath);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch template: ${this.templatePath}`);
-            }
-            const html = await response.text();
             const template = document.createElement('template');
-            template.innerHTML = html;
+            template.innerHTML = this.templateString;
             this.template = template;
-            templateCache.set(this.templatePath, template);
+            templateCache.set(this.templateString, template);
         } catch (error) {
-            console.error(error);
+            console.error("Failed to parse template string", error);
         }
     }
 

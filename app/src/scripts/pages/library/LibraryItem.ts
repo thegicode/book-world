@@ -1,3 +1,4 @@
+import template from "../../../markup/templates/library-item.html";
 import bookModel from "../../model";
 import { BaseItemComponent } from "../../components";
 
@@ -7,7 +8,7 @@ export default class LibraryItem extends BaseItemComponent {
     data!: ILibraryData;
 
     constructor(data: ILibraryData) {
-        super("/html/templates/library-item.html");
+        super(template);
         this.data = data;
         this.onChange = this.onChange.bind(this);
         this.subscribeUpdate = this.subscribeUpdate.bind(this);

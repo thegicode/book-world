@@ -41,8 +41,20 @@ export default class SearchResult extends HTMLElement {
     }
     
     private render(state: AppState) {
-        const { searchResults, total, currentItemCount, apiStatus, searchKeyword } = state;
+        const { searchResults, total, currentItemCount, apiStatus, searchKeyword, prevSearchKeyword } = state;
         
+        const clearListContainer = (element: HTMLElement) => {
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+        };
+
+        // 새로운 검색어인 경우, 목록을 완전히 초기화
+        if (searchKeyword !== prevSearchKeyword) {
+            clearListContainer(this.listContainer);
+            this.paginationElement.hidden = true; // 새 검색 시작 시 페이징 정보 숨김
+        }
+
         // 초기 로딩 시에만 스켈레톤 UI 표시
         if (apiStatus === 'loading' && currentItemCount === 0) {
             this.loadingComponent?.show();
@@ -51,17 +63,13 @@ export default class SearchResult extends HTMLElement {
         }
 
         if (apiStatus === 'error') {
+            clearListContainer(this.listContainer); // 오류 발생 시 목록 비우기
             this.renderMessage("error");
             return;
         }
 
-        // 새 검색 시작 시 목록 초기화
-        if (apiStatus === 'success' && currentItemCount === searchResults.length && this.listContainer.children.length > searchResults.length) {
-            this.listContainer.innerHTML = "";
-        }
-        
         if (apiStatus === 'success' && total === 0) {
-            this.listContainer.innerHTML = "";
+            clearListContainer(this.listContainer); // 결과 없을 시 목록 비우기
             this.renderMessage("notFound");
             this.updatePagingInfo(state);
             return;
@@ -115,12 +123,14 @@ export default class SearchResult extends HTMLElement {
         }
         this.paginationElement.hidden = false;
     }
-
+    
     private renderMessage(type: "notFound" | "error" | "message" = "message") {
         const messageTemplate = document.querySelector(`#tp-${type}`) as HTMLTemplateElement;
         if (!messageTemplate) return;
 
-        this.listContainer.innerHTML = "";
+        while (this.listContainer.firstChild) {
+            this.listContainer.removeChild(this.listContainer.firstChild);
+        }
         this.listContainer.appendChild(messageTemplate.content.cloneNode(true));
         this.paginationElement.hidden = true;
     }

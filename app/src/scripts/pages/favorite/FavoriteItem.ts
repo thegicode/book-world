@@ -1,3 +1,4 @@
+import template from "../../../markup/templates/favorite-item.html";
 import { CustomFetch } from "../../services/index";
 import { LibraryBookExist, LoadingComponent } from "../../components/index";
 import bookModel from "../../model";
@@ -17,7 +18,7 @@ export default class FavoriteItem extends BaseItemComponent {
     libraryHideButton?: HTMLButtonElement | null;
 
     constructor(isbn: string) {
-        super("/html/templates/favorite-item.html");
+        super(template);
         this._isbn = isbn;
         this.dataset.isbn = isbn;
         this.ui = new FavoriteItemUI(this);

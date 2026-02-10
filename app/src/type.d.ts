@@ -240,3 +240,9 @@ type TRegions = Record<string, Record<string, string>>;
 type TSortedFavoriteKeys = string[];
 
 type TSubscriberVoid = () => void;
+
+declare module "*.html" {
+    const content: string;
+    export default content;
+}
+

@@ -1,3 +1,4 @@
+import template from "../../../markup/templates/book-item.html";
 import {
     BookDescription,
     BookImage,
@@ -13,7 +14,7 @@ export default class BookItem extends BaseItemComponent {
     private libraryBookExist: LibraryBookExist | null = null;
 
     constructor(data: ISearchBook) {
-        super('/html/templates/book-item.html');
+        super(template);
         this.data = data;
         this.onLibraryButtonClick = this.onLibraryButtonClick.bind(this);
     }

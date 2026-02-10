@@ -5,6 +5,7 @@ import { URL } from "../utils/constants";
 // 검색 기능과 관련된 애플리케이션의 상태를 정의하는 인터페이스
 export interface AppState {
     searchKeyword: string;
+    prevSearchKeyword: string; // 이전 검색 키워드 추가
     sort: string;
     searchResults: ISearchBook[];
     total: number;
@@ -23,7 +24,7 @@ class Store extends Publisher<AppState> {
     }
 
     public getState(): AppState {
-        return { ...this.state }; // 상태의 복사본을 반환하여 외부에서의 직접적인 변경을 방지
+        return { ...this.state };
     }
 
     public setState(newState: Partial<AppState>): void {
@@ -31,14 +32,9 @@ class Store extends Publisher<AppState> {
         this.notify(this.getState());
     }
     
-    /**
-     * 새로운 키워드로 검색을 시작합니다.
-     * @param {string} keyword - 검색할 키워드
-     * @param {string} sort - 정렬 순서
-     */
     public async searchBooks(keyword: string, sort: string) {
-        // 이전 검색 결과 초기화 및 로딩 상태 설정
         this.setState({
+            prevSearchKeyword: this.state.searchKeyword, // 현재 검색어를 이전 검색어로 저장
             searchKeyword: keyword,
             sort: sort,
             searchResults: [],
@@ -49,22 +45,16 @@ class Store extends Publisher<AppState> {
         await this._fetchBooks();
     }
 
-    /**
-     * 현재 검색 조건으로 다음 페이지의 책을 불러옵니다.
-     */
     public async loadMoreBooks() {
         const { apiStatus, currentItemCount, total } = this.state;
         if (apiStatus === 'loading' || currentItemCount >= total) {
-            return; // 이미 로딩 중이거나 모든 결과를 가져왔으면 중단
+            return;
         }
 
         this.setState({ apiStatus: 'loading' });
         await this._fetchBooks();
     }
 
-    /**
-     * API를 통해 책 데이터를 실제로 가져오는 내부 메서드
-     */
     private async _fetchBooks() {
         const { searchKeyword, sort, itemsPerPage, currentItemCount } = this.state;
 
@@ -100,9 +90,9 @@ class Store extends Publisher<AppState> {
     }
 }
 
-// 스토어의 초기 상태
 const initialState: AppState = {
     searchKeyword: '',
+    prevSearchKeyword: '', // 초기 상태에 prevSearchKeyword 추가
     sort: 'sim',
     searchResults: [],
     total: 0,
