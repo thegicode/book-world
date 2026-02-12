@@ -26,6 +26,14 @@ nav-gnb {
     flex-direction: column;
     font-size: 14px;
     color: #4f4f4f;
+
+    main {
+        overflow: auto;
+
+        display: flex;
+        flex-direction: column;
+    }
+
     &-books {
         overflow: auto;
         flex: 1;

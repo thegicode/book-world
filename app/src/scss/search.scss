@@ -25,6 +25,10 @@ app-search {
     display: flex;
     flex-direction: column;
     height: 100%;
+
+    main {
+        overflow: auto;
+    }
 }
 
 .header {
@@ -204,9 +208,8 @@ book-item {
                 // text-decoration: none;
                 // color: #555;
                 // &:hover {
-                //     background-color: rgba(10, 100, 200, 0.05);
-                // }
-;
+                ; // } //     background-color: rgba(10, 100, 200, 0.05);
+
         }
     }
 

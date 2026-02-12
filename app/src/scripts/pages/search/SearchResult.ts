@@ -1,3 +1,4 @@
+import { manageFocus } from "../../utils/helpers";
 import BookItem from "./BookItem";
 import { Observer } from "../../utils/index";
 import store, { AppState } from "../../model/Store";
@@ -88,6 +89,11 @@ export default class SearchResult extends HTMLElement {
         }
         
         this.updatePagingInfo(state);
+        
+        // 검색 성공 후, 접근성을 위해 포커스를 검색 결과 요약으로 이동
+        if (apiStatus === 'success') {
+            manageFocus(this.paginationElement, '.__keyword');
+        }
 
         // Observer 관리
         this.observer?.disconnect();

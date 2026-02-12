@@ -20,19 +20,21 @@
     </head>
     <body>
         <div class="root">
-            <nav-gnb></nav-gnb>
+            <nav-gnb role="navigation"></nav-gnb>
 
             <app-favorite class="favorite">
-                <favorite-nav class="favorite-header" hidden>
-                    <nav class="favorite-category"></nav>
-                    <button class="favorite-changeButton">설정</button>
-                </favorite-nav>
-                <div class="favorite-books">
-                    <!-- <header class="favorite-header">
-                <h2>즐겨찾기</h2>
-                <p class="count"></p>
-            </header> -->
-                </div>
+                <main id="main-content">
+                    <favorite-nav class="favorite-header" hidden>
+                        <nav class="favorite-category"></nav>
+                        <button class="favorite-changeButton">설정</button>
+                    </favorite-nav>
+                    <div class="favorite-books">
+                        <!-- <header class="favorite-header">
+                    <h2>즐겨찾기</h2>
+                    <p class="count"></p>
+                </header> -->
+                    </div>
+                </main>
             </app-favorite>
         </div>
 
