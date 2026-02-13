@@ -1,10 +1,10 @@
-@import "./base/_reset.scss";
-@import "./components/_gnb.scss";
-@import "./components/_toast.scss";
-@import "./components/_category-selector.scss";
-@import "./components/_book-image.scss";
-@import "./components/_loading.scss";
-@import "./components/_button.scss";
+@use "./base/reset";
+@use "./components/gnb";
+@use "./components/toast";
+@use "./components/category-selector";
+@use "./components/book-image";
+@use "./components/loading";
+@use "./components/button" as button;
 
 .root {
     display: flex;
@@ -134,7 +134,7 @@ popular-search {
     margin-top: 1rem;
     button {
         flex: auto;
-        @include button2;
+        @include button.button2;
         // padding: 10px;
         // border-radius: 8px;
         // border: 1px solid #dbe8e6;

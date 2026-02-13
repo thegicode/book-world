@@ -1,7 +1,7 @@
-@import "./base/_reset.scss";
-@import "./components/_gnb.scss";
-@import "./components/_toast.scss";
-@import "./components/_button.scss";
+@use "./base/reset";
+@use "./components/gnb";
+@use "./components/toast";
+@use "./components/button" as button;
 
 .root {
     display: flex;
@@ -92,10 +92,10 @@ set-detail-region {
                 visibility: hidden;
             }
             span {
-                @include button2;
+                @include button.button2;
             }
             input[type="radio"]:checked + span {
-                @include button2-active;
+                @include button.button2-active;
             }
         }
     }
@@ -116,7 +116,7 @@ set-storage {
     padding: 1rem;
 
     button {
-        @include button1;
+        @include button.button1;
         // padding: 5px 10px;
         // border: 1px solid #ddd;
         // font-size: 12px;

@@ -1,8 +1,8 @@
-@import "./base/_reset.scss";
-@import "./components/_gnb.scss";
-@import "./components/_toast.scss";
-@import "./components/_loading";
-@import "./components/_button";
+@use "./base/reset";
+@use "./components/gnb";
+@use "./components/toast";
+@use "./components/loading";
+@use "./components/button" as button;
 
 h2 {
     margin: 0;
@@ -198,10 +198,10 @@ library-item {
         // margin-right: 7px;
     }
     span {
-        @include button2;
+        @include button.button2;
     }
     input[name="myLibrary"]:checked + span {
-        @include button2-active;
+        @include button.button2-active;
     }
 }
 

@@ -1,4 +1,4 @@
-@import "./_button.scss";
+@use "./button" as button;
 
 book-description {
     display: flex;
@@ -22,7 +22,7 @@ book-description {
     .more-description-button {
         width: auto;
         margin-left: auto;
-        @include button1;
+        @include button.button1;
         &[aria-hidden="true"] {
             display: none;
         }
