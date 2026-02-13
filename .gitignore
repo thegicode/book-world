@@ -7,4 +7,5 @@ test.js
 .DS_Store
 /app/public/
 /app/build/
+/server/dist/
 
