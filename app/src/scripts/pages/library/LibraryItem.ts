@@ -1,5 +1,5 @@
 import template from "../../../markup/templates/library-item.html";
-import bookModel from "../../model";
+import bookModel, { BookModelEvent } from "../../model";
 import { BaseItemComponent } from "../../components";
 
 export default class LibraryItem extends BaseItemComponent {
@@ -22,12 +22,15 @@ export default class LibraryItem extends BaseItemComponent {
 
         this.checkbox?.addEventListener("click", this.onChange);
 
-        bookModel.subscribeLibraryUpdate(this.subscribeUpdate);
+        bookModel.subscribe(BookModelEvent.LibraryUpdate, this.subscribeUpdate);
     }
 
     disconnectedCallback() {
         this.checkbox?.removeEventListener("click", this.onChange);
-        bookModel.unsubscribeLibraryUpdate(this.subscribeUpdate);
+        bookModel.unsubscribe(
+            BookModelEvent.LibraryUpdate,
+            this.subscribeUpdate
+        );
     }
 
     protected render() {
@@ -59,7 +62,10 @@ export default class LibraryItem extends BaseItemComponent {
         }
     }
 
-    private subscribeUpdate({ type, payload }: TLibraryUpdateProps) {
+    private subscribeUpdate(update?: TLibraryUpdateProps) {
+        if (!update) return;
+        const { type, payload } = update;
+
         if (type == "delete" && payload.code == this.libCode) {
             if (this.checkbox) {
                 this.checkbox.checked = false;

@@ -1,4 +1,4 @@
-import bookModel from "../../model";
+import bookModel, { BookModelEvent } from "../../model";
 
 export default class FavoriteNav extends HTMLElement {
     private nav: HTMLElement;
@@ -28,7 +28,8 @@ export default class FavoriteNav extends HTMLElement {
         this.render();
 
         this.changButton.addEventListener("click", this.handleOverlayCatalog);
-        bookModel.subscribeFavoriteCategoriesUpdate(
+        bookModel.subscribe(
+            BookModelEvent.FavoriteCategoriesUpdate,
             this
                 .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
         );
@@ -39,7 +40,8 @@ export default class FavoriteNav extends HTMLElement {
             "click",
             this.handleOverlayCatalog
         );
-        bookModel.unsubscribeFavoriteCategoriesUpdate(
+        bookModel.unsubscribe(
+            BookModelEvent.FavoriteCategoriesUpdate,
             this
                 .subscribeCategoryChange as TSubscriberCallback<IFavoritesUpdateProps>
         );

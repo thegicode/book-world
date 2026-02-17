@@ -42,15 +42,7 @@ export default class LibraryModel {
         return code in this._libraries;
     }
 
-    subscribeUpdate(subscriber: TLibrarysUpdateSubscriber) {
-        this.publisher.subscribe(
-            subscriber as TSubscriberCallback<TLibraryUpdateProps>,
-        );
-    }
-
-    unsubscribeUpdate(subscriber: TLibrarysUpdateSubscriber) {
-        this.publisher.subscribe(
-            subscriber as TSubscriberCallback<TLibraryUpdateProps>,
-        );
+    public getUpdatePublisher(): Publisher<TLibraryUpdateProps> {
+        return this.publisher;
     }
 }

@@ -1,4 +1,4 @@
-import bookModel from "../model";
+import bookModel, { BookModelEvent } from "../model";
 
 export default class CategorySelector extends HTMLElement {
     protected isbn: string | null;
@@ -23,7 +23,10 @@ export default class CategorySelector extends HTMLElement {
         this.render();
 
         this.button?.addEventListener("click", this.onClickCategory);
-        bookModel.subscribeFavoriteCategoriesUpdate(this.handleCategoryUpdate);
+        bookModel.subscribe(
+            BookModelEvent.FavoriteCategoriesUpdate,
+            this.handleCategoryUpdate
+        );
     }
 
     protected render() {
@@ -108,13 +111,10 @@ export default class CategorySelector extends HTMLElement {
         checkbox.checked = !isBookInCategory;
     }
 
-    private handleCategoryUpdate({
-        type,
-        payload,
-    }: {
-        type: string;
-        payload: ICategoryPayload;
-    }) {
+    private handleCategoryUpdate(update?: IFavoritesUpdateProps) {
+        if (!update) return;
+
+        const { type, payload } = update;
         const actions: Record<string, () => void> = {
             add: () => this.handleAdd(payload.name as string),
             rename: () => this.reanmeCategory(payload.newName as string),

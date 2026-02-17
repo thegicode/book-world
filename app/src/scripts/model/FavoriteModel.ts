@@ -119,21 +119,11 @@ export default class FavoriteModel {
         this.bookUpdatePublisher.notify();
     }
 
-    subscribeCategoriesUpdate(subscriber: TFavoritesUpdateSubscriber) {
-        this.categoriesUpdatePublisher.subscribe(
-            subscriber as TSubscriberCallback<IFavoritesUpdateProps>
-        );
-    }
-    unsubscribeCategoriesUpdate(subscriber: TFavoritesUpdateSubscriber) {
-        this.categoriesUpdatePublisher.unsubscribe(
-            subscriber as TSubscriberCallback<IFavoritesUpdateProps>
-        );
+    public getCategoriesUpdatePublisher(): Publisher<IFavoritesUpdateProps> {
+        return this.categoriesUpdatePublisher;
     }
 
-    subscribeBookUpdate(subscriber: TSubscriberVoid) {
-        this.bookUpdatePublisher.subscribe(subscriber);
-    }
-    unsubscribeBookUpdate(subscriber: TSubscriberVoid) {
-        this.bookUpdatePublisher.unsubscribe(subscriber);
+    public getBookUpdatePublisher(): Publisher {
+        return this.bookUpdatePublisher;
     }
 }

@@ -1,4 +1,4 @@
-import bookModel from "../model";
+import bookModel, { BookModelEvent } from "../model";
 
 export default class NavGnb extends HTMLElement {
     private PATHS: string[];
@@ -26,13 +26,13 @@ export default class NavGnb extends HTMLElement {
 
         this.sizeElement = this.querySelector(".size") as HTMLElement;
 
-        bookModel.subscribeFavoriteBookUpdate(this.renderBookSize);
-        bookModel.subscribeToBookStateUpdate(this.renderBookSize);
+        bookModel.subscribe(BookModelEvent.FavoriteBookUpdate, this.renderBookSize);
+        bookModel.subscribe(BookModelEvent.BookStateUpdate, this.renderBookSize);
     }
 
     disconnectedCallback() {
-        bookModel.unsubscribeFavoriteBookUpdate(this.renderBookSize);
-        bookModel.unsubscribeFavoriteBookUpdate(this.renderBookSize);
+        bookModel.unsubscribe(BookModelEvent.FavoriteBookUpdate, this.renderBookSize);
+        bookModel.unsubscribe(BookModelEvent.BookStateUpdate, this.renderBookSize);
     }
 
     get bookSize() {

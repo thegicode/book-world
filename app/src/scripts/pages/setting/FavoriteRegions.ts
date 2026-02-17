@@ -1,4 +1,4 @@
-import bookModel from "../../model";
+import bookModel, { BookModelEvent } from "../../model";
 import { cloneTemplate } from "../../utils/helpers";
 
 export default class FavoriteRegions extends HTMLElement {
@@ -16,15 +16,15 @@ export default class FavoriteRegions extends HTMLElement {
 
         this.render();
 
-        bookModel.subscribeToBookStateUpdate(this.render);
-        bookModel.subscribeDetailRegionUpdate(this.render);
-        bookModel.subscribeRegionUpdate(this.render);
+        bookModel.subscribe(BookModelEvent.BookStateUpdate, this.render);
+        bookModel.subscribe(BookModelEvent.DetailRegionUpdate, this.render);
+        bookModel.subscribe(BookModelEvent.RegionUpdate, this.render);
     }
 
     disconnectedCallback() {
-        bookModel.unsubscribeToBookStateUpdate(this.render);
-        bookModel.unsubscribeDetailRegionUpdate(this.render);
-        bookModel.unsubscribeDetailRegionUpdate(this.render);
+        bookModel.unsubscribe(BookModelEvent.BookStateUpdate, this.render);
+        bookModel.unsubscribe(BookModelEvent.DetailRegionUpdate, this.render);
+        bookModel.unsubscribe(BookModelEvent.RegionUpdate, this.render);
     }
 
     private render() {

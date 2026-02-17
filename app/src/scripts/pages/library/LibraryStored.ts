@@ -1,4 +1,4 @@
-import bookModel from "../../model";
+import bookModel, { BookModelEvent } from "../../model";
 import { cloneTemplate } from "../../utils/helpers";
 
 export default class LibraryStored extends HTMLElement {
@@ -18,11 +18,14 @@ export default class LibraryStored extends HTMLElement {
         if (!this.listElement) return;
 
         this.render();
-        bookModel.subscribeLibraryUpdate(this.subscribeUpdate);
+        bookModel.subscribe(BookModelEvent.LibraryUpdate, this.subscribeUpdate);
     }
 
     disconnectedCallback() {
-        bookModel.unsubscribeLibraryUpdate(this.subscribeUpdate);
+        bookModel.unsubscribe(
+            BookModelEvent.LibraryUpdate,
+            this.subscribeUpdate
+        );
     }
 
     private render() {
@@ -64,7 +67,10 @@ export default class LibraryStored extends HTMLElement {
         });
     }
 
-    private subscribeUpdate({ type, payload }: TLibraryUpdateProps) {
+    private subscribeUpdate(update?: TLibraryUpdateProps) {
+        if (!update) return;
+        const { type, payload } = update;
+
         switch (type) {
             case "add":
                 this.add(payload);

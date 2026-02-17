@@ -4,6 +4,15 @@ import FavoriteModel from "./FavoriteModel";
 import LibraryModel from "./LibraryModel";
 import RegionModel from "./RegionModel";
 
+export enum BookModelEvent {
+    FavoriteCategoriesUpdate = "favoriteCategoriesUpdate",
+    FavoriteBookUpdate = "favoriteBookUpdate",
+    LibraryUpdate = "libraryUpdate",
+    RegionUpdate = "regionUpdate",
+    DetailRegionUpdate = "detailRegionUpdate",
+    BookStateUpdate = "bookStateUpdate",
+}
+
 const cloneDeep = <T>(obj: T): T => {
     return JSON.parse(JSON.stringify(obj));
 };
@@ -20,6 +29,8 @@ class BookModel {
     private libraryModel: LibraryModel;
     private regionModel: RegionModel;
     private bookStateUpdatePublisher: Publisher = new Publisher();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private publishers: Record<string, Publisher<any>>;
 
     private _state: IBookState;
 
@@ -30,6 +41,19 @@ class BookModel {
         this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
         this.libraryModel = new LibraryModel(libraries);
         this.regionModel = new RegionModel(regions);
+
+        this.publishers = {
+            [BookModelEvent.FavoriteCategoriesUpdate]:
+                this.favoriteModel.getCategoriesUpdatePublisher(),
+            [BookModelEvent.FavoriteBookUpdate]:
+                this.favoriteModel.getBookUpdatePublisher(),
+            [BookModelEvent.LibraryUpdate]:
+                this.libraryModel.getUpdatePublisher(),
+            [BookModelEvent.RegionUpdate]: this.regionModel.getUpdatePublisher(),
+            [BookModelEvent.DetailRegionUpdate]:
+                this.regionModel.getDetailUpdatePublisher(),
+            [BookModelEvent.BookStateUpdate]: this.bookStateUpdatePublisher,
+        };
     }
 
     // localStorage 관련
@@ -205,51 +229,28 @@ class BookModel {
         this._commit();
     }
 
-    public subscribeFavoriteCategoriesUpdate(subscriber: TFavoritesUpdateSubscriber) {
-        this.favoriteModel.subscribeCategoriesUpdate(subscriber);
-    }
-    public unsubscribeFavoriteCategoriesUpdate(
-        subscriber: TFavoritesUpdateSubscriber
+    public subscribe<T>(
+        eventName: BookModelEvent,
+        subscriber: TSubscriberCallback<T>
     ) {
-        this.favoriteModel.unsubscribeCategoriesUpdate(subscriber);
+        const publisher = this.publishers[eventName];
+        if (publisher) {
+            publisher.subscribe(subscriber);
+        }
     }
 
-    public subscribeFavoriteBookUpdate(subscriber: TSubscriberVoid) {
-        this.favoriteModel.subscribeBookUpdate(subscriber);
-    }
-    public unsubscribeFavoriteBookUpdate(subscriber: TSubscriberVoid) {
-        this.favoriteModel.unsubscribeBookUpdate(subscriber);
-    }
-
-    public subscribeLibraryUpdate(subscriber: TLibrarysUpdateSubscriber) {
-        this.libraryModel.subscribeUpdate(subscriber);
-    }
-    public unsubscribeLibraryUpdate(subscriber: TLibrarysUpdateSubscriber) {
-        this.libraryModel.unsubscribeUpdate(subscriber);
-    }
-
-    public subscribeRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regionModel.subscribeUpdatePublisher(subscriber);
-    }
-    public unsubscribeRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regionModel.unsubscribeUpdatePublisher(subscriber);
-    }
-
-    public subscribeDetailRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regionModel.subscribeDetailUpdatePublisher(subscriber);
-    }
-    public unsubscribeDetailRegionUpdate(subscriber: TSubscriberVoid) {
-        this.regionModel.unsubscribeDetailUpdatePublisher(subscriber);
-    }
-
-    // subscribe
-    public subscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
-        this.bookStateUpdatePublisher.subscribe(subscriber);
-    }
-    unsubscribeToBookStateUpdate(subscriber: TSubscriberVoid) {
-        this.bookStateUpdatePublisher.unsubscribe(subscriber);
+    public unsubscribe<T>(
+        eventName: BookModelEvent,
+        subscriber: TSubscriberCallback<T>
+    ) {
+        const publisher = this.publishers[eventName];
+        if (publisher) {
+            publisher.unsubscribe(subscriber);
+        }
     }
 }
+
+
 
 const bookModel = new BookModel();
 

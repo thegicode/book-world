@@ -2,7 +2,7 @@ import { CustomEventEmitter } from "../../utils/index";
 import { CustomFetch } from "../../services/index";
 import { cloneTemplate } from "../../utils/helpers";
 import { FETCH_REGION_DATA_EVENT } from "./constants";
-import bookModel from "../../model";
+import bookModel, { BookModelEvent } from "../../model";
 
 export default class SetRegion extends HTMLElement {
     private regionData: TotalRegions | null;
@@ -21,11 +21,14 @@ export default class SetRegion extends HTMLElement {
     connectedCallback() {
         this.fetchAndRender();
 
-        bookModel.subscribeToBookStateUpdate(this.fetchAndRender);
+        bookModel.subscribe(BookModelEvent.BookStateUpdate, this.fetchAndRender);
     }
 
     discinnectedCallback() {
-        bookModel.unsubscribeToBookStateUpdate(this.fetchAndRender);
+        bookModel.unsubscribe(
+            BookModelEvent.BookStateUpdate,
+            this.fetchAndRender
+        );
     }
 
     private async fetchAndRender() {
