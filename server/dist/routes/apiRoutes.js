@@ -4,7 +4,7 @@ const apiController_1 = require("../controllers/apiController");
 const validationMiddleware_1 = require("../middleware/validationMiddleware");
 const apiRoutes = (app) => {
     app.get("/search-naver-book", validationMiddleware_1.validateNaverBookSearch, apiController_1.searchNaverBook);
-    app.get("/library-search", validationMiddleware_1.validateSearchLibraries, apiController_1.searchLibraries);
+    app.get("/api/library-search", validationMiddleware_1.validateSearchLibraries, apiController_1.searchLibraries);
     app.get("/book-exist", validationMiddleware_1.validateCheckBookExistence, apiController_1.checkBookExistence);
     app.get("/usage-analysis-list", validationMiddleware_1.validateGetUsageAnalysis, apiController_1.getUsageAnalysis);
     app.get("/library-search-by-book", validationMiddleware_1.validateSearchLibrariesByBook, apiController_1.searchLibrariesByBook);

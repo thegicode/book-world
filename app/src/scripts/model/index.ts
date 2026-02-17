@@ -36,6 +36,7 @@ class BookModel {
 
     constructor() {
         this._state = this.loadStorage() || cloneDeep(initialState);
+        console.log("BookModel Initialized with state:", this._state);
 
         const { favorites, sortedFavoriteKeys, libraries, regions } = this._state;
         this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);

@@ -1,8 +1,8 @@
 import { cloneTemplate } from "../../utils/helpers";
-import { libraryElement } from "./selectors";
+import { librarySearchElement } from "./selectors";
 import bookModel from "../../model";
 
-export default class LibraryRegion extends HTMLElement {
+export default class LibrarySearchHeader extends HTMLElement {
     private regionCode: string | null = null;
     private template: HTMLTemplateElement | null = null;
     private detailSelectElement!: HTMLSelectElement;
@@ -37,7 +37,10 @@ export default class LibraryRegion extends HTMLElement {
     private renderFavoriteRegions() {
         const favoriteRegions = bookModel.regions;
 
-        if (Object.keys(favoriteRegions).length === 0) return;
+        if (Object.keys(favoriteRegions).length === 0) {
+            this.innerHTML = `<p>설정에서 관심 지역을 추가해 주세요.</p>`;
+            return;
+        }
 
         const container = this.querySelector(".region") as HTMLElement;
         const fragment = new DocumentFragment();
@@ -103,6 +106,6 @@ export default class LibraryRegion extends HTMLElement {
     private handleDetailSelectChange = () => {
         const { value } = this.detailSelectElement;
 
-        if (libraryElement) libraryElement.regionCode = value;
+        if (librarySearchElement) librarySearchElement.regionCode = value;
     };
 }

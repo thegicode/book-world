@@ -2,7 +2,7 @@
 <html lang="ko">
     <head>
         <meta charset="UTF-8" />
-        <title>도서관 조회 | Book World</title>
+        <title>도서관 검색 | Book World</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="noindex, nofollow" />
         <link
@@ -15,14 +15,14 @@
             href="/assets/images/favicon.ico"
             type="image/x-icon"
         />
-        <link rel="stylesheet" href="/css/library.css" />
-        <script type="module" src="/js/library/index.js" async></script>
+        <link rel="stylesheet" href="/css/library-search.css" />
+        <script type="module" src="/js/library-search/index.js" async></script>
     </head>
     <body>
         <div class="root">
             <nav-gnb></nav-gnb>
-            <app-library>
-                <library-stored>
+            <app-library-search>
+                <library-search-stored>
                     <h3 class="title">저장된 관심 도서관</h3>
                     <ul class="libries"></ul>
                     <template id="tp-stored-item">
@@ -33,18 +33,18 @@
                             </button>
                         </li>
                     </template>
-                </library-stored>
+                </library-search-stored>
 
-                <library-header>
+                <library-search-header>
                     <div class="region"></div>
                     <select class="detailRegion"></select>
-                </library-header>
+                </library-search-header>
 
                 <form class="library-body">
                     <div class="library-list" data-list-container></div>
                     <loading-component>Loading...</loading-component>
                 </form>
-            </app-library>
+            </app-library-search>
         </div>
 
         <template id="tp-region">

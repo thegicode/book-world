@@ -11,7 +11,7 @@ const staticRoutes = (app) => {
         "",
         "search",
         "favorite",
-        "library",
+        "library-search",
         "book",
         "popular",
         "setting",

@@ -1,7 +1,7 @@
 import bookModel, { BookModelEvent } from "../../model";
 import { cloneTemplate } from "../../utils/helpers";
 
-export default class LibraryStored extends HTMLElement {
+export default class LibrarySearchStored extends HTMLElement {
     private template: HTMLTemplateElement | null = null;
     private listElement: HTMLElement | null = null;
 

@@ -1,8 +1,8 @@
-import template from "../../../markup/templates/library-item.html";
+import template from "../../../markup/templates/library-search-item.html";
 import bookModel, { BookModelEvent } from "../../model";
 import { BaseItemComponent } from "../../components";
 
-export default class LibraryItem extends BaseItemComponent {
+export default class LibrarySearchItem extends BaseItemComponent {
     protected checkbox: HTMLInputElement | null = null;
     private libCode = "";
     data!: ILibraryData;

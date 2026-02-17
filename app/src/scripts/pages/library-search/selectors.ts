@@ -1,6 +1,6 @@
 import { LoadingComponent } from "../../components";
-import Library from "./Library";
+import LibrarySearch from "./LibrarySearch";
 
-export const libraryElement = document.querySelector<Library>("app-library");
+export const librarySearchElement = document.querySelector<LibrarySearch>("app-library-search");
 export const loadingComponent =
     document.querySelector<LoadingComponent>("loading-component");

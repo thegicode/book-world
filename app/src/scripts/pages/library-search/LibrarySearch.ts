@@ -1,8 +1,8 @@
-import LibraryItem from "./LibraryItem";
+import LibrarySearchItem from "./LibrarySearchItem";
 import bookModel from "../../model";
 import { FetchListComponent } from "../../components/FetchListComponent";
 
-export default class Library extends FetchListComponent<
+export default class LibrarySearch extends FetchListComponent<
     ILibrarySearchByBookResult,
     ILibraryData
 > {
@@ -26,7 +26,7 @@ export default class Library extends FetchListComponent<
         if (!this.regionCode) return;
 
         this.listContainer.innerHTML = "";
-        const url = `/library-search?dtl_region=${this.regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
+        const url = `/api/library-search?dtl_region=${this.regionCode}&page=1&pageSize=${this.PAGE_SIZE}`;
         this.fetchData(url);
     }
 
@@ -41,7 +41,7 @@ export default class Library extends FetchListComponent<
     }
 
     protected createItem(lib: ILibraryData): HTMLElement {
-        const libraryItem = new LibraryItem(lib);
+        const libraryItem = new LibrarySearchItem(lib);
         return libraryItem;
     }
 
@@ -68,7 +68,7 @@ export default class Library extends FetchListComponent<
                     // Mark favorite items visually
                     if (
                         bookModel.hasLibrary(
-                            (itemElement as LibraryItem).data.libCode
+                            (itemElement as LibrarySearchItem).data.libCode
                         )
                     ) {
                         itemElement.dataset.has = "true";
