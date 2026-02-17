@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookExistence = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
+exports.validateSrchBooksInLibrary = exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookExistence = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
 const express_validator_1 = require("express-validator");
 const apiErrors_1 = require("../errors/apiErrors");
 const validate = (req, res, next) => {
@@ -53,5 +53,12 @@ exports.validateGetPopularBooks = [
 ];
 exports.validateGetMonthlyKeywords = [
     (0, express_validator_1.query)('month').notEmpty().withMessage('month is required').matches(/^\d{4}-(0[1-9]|1[0-2])$/).withMessage('month must be in YYYY-MM format'),
+    validate,
+];
+exports.validateSrchBooksInLibrary = [
+    (0, express_validator_1.query)('libCode').notEmpty().withMessage('libCode is required'),
+    (0, express_validator_1.query)('keyword').notEmpty().withMessage('keyword is required'),
+    (0, express_validator_1.query)('pageNo').notEmpty().withMessage('pageNo is required').isInt({ gt: 0 }).withMessage('pageNo must be a positive integer'),
+    (0, express_validator_1.query)('pageSize').notEmpty().withMessage('pageSize is required').isInt({ gt: 0 }).withMessage('pageSize must be a positive integer'),
     validate,
 ];

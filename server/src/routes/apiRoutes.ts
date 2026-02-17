@@ -9,6 +9,7 @@ import {
     getPopularBooks,
     getMonthlyKeywords,
     getKyoboBookInfo,
+    srchBooksInLibrary,
 } from "../controllers/apiController";
 import {
     validateNaverBookSearch,
@@ -19,6 +20,7 @@ import {
     validateGetPopularBooks,
     validateGetMonthlyKeywords,
     validateKyoboBookInfo,
+    validateSrchBooksInLibrary,
 } from "../middleware/validationMiddleware";
 
 const apiRoutes = (app: Application) => {
@@ -30,6 +32,7 @@ const apiRoutes = (app: Application) => {
     app.get("/popular-book", validateGetPopularBooks, getPopularBooks);
     app.get("/monthly-keywords", validateGetMonthlyKeywords, getMonthlyKeywords);
     app.get("/kyobo-book", validateKyoboBookInfo, getKyoboBookInfo);
+    app.get("/api/srch-books", validateSrchBooksInLibrary, srchBooksInLibrary);
 };
 
 export default apiRoutes;

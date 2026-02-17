@@ -9,6 +9,7 @@ const staticRoutes = (app: Application) => {
         "search",
         "favorite",
         "library-search",
+        "library",
         "book",
         "popular",
         "setting",

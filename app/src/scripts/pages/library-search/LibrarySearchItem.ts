@@ -39,7 +39,18 @@ export default class LibrarySearchItem extends BaseItemComponent {
 
         this.libCode = data.libCode;
 
+        const libNameElement = this.querySelector('.libName');
+        if (libNameElement) {
+            const link = document.createElement('a');
+            link.href = `/library?libCode=${this.libCode}`;
+            link.textContent = data.libName;
+            libNameElement.innerHTML = ''; // Clear existing content
+            libNameElement.appendChild(link);
+        }
+        
+        // Populate other fields as before
         Object.entries(data).forEach(([key, value]) => {
+            if (key === 'libName') return; // Skip libName as it's handled above
             const element = this.querySelector(`.${key}`);
             if (element) {
                 element.innerHTML = value;

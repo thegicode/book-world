@@ -75,6 +75,12 @@ interface ILibraryData {
     libCode: string;
     libName: string;
     telephone: string;
+    fax?: string; // Add fax
+    latitude?: string; // Add latitude
+    longitude?: string; // Add longitude
+    closed?: string; // Add closed
+    operatingTime?: string; // Add operatingTime
+    BookCount?: string; // Add BookCount
 }
 
 interface ILibrarySearchByBookResult {

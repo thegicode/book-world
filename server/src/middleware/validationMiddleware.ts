@@ -64,3 +64,11 @@ export const validateGetMonthlyKeywords = [
     query('month').notEmpty().withMessage('month is required').matches(/^\d{4}-(0[1-9]|1[0-2])$/).withMessage('month must be in YYYY-MM format'),
     validate,
 ];
+
+export const validateSrchBooksInLibrary = [
+    query('libCode').notEmpty().withMessage('libCode is required'),
+    query('keyword').notEmpty().withMessage('keyword is required'),
+    query('pageNo').notEmpty().withMessage('pageNo is required').isInt({ gt: 0 }).withMessage('pageNo must be a positive integer'),
+    query('pageSize').notEmpty().withMessage('pageSize is required').isInt({ gt: 0 }).withMessage('pageSize must be a positive integer'),
+    validate,
+];

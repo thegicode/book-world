@@ -104,3 +104,17 @@ export const getMonthlyKeywords = asyncHandler(
         res.status(200).json({ status: "success", data: keywords });
     }
 );
+
+// Search Books in a Library
+export const srchBooksInLibrary = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { libCode, keyword, pageNo, pageSize } = req.query as { libCode: string, keyword: string, pageNo: string, pageSize: string };
+        const books = await BookService.srchBooksInLibrary({
+            libCode,
+            keyword,
+            pageNo,
+            pageSize,
+        });
+        res.status(200).json({ status: "success", data: books });
+    }
+);

@@ -104,3 +104,14 @@ export async function getMonthlyKeywords(params: { month: string }) {
         resultNum,
     };
 }
+
+// Search books within a library
+export async function srchBooksInLibrary(params: { libCode: string; keyword: string; pageNo: string; pageSize: string; }) {
+    const url = parseURL("srchBooks", params);
+    const data = await fetchData(url, { method: "GET" });
+    if (!data.response) throw new LibraryApiError(502, "Invalid API response from library server");
+
+    const { pageNo, pageSize, numFound, resultNum, docs } = data.response;
+    const docs2 = docs.map((item: DocItem) => item.doc);
+    return { pageNo, pageSize, numFound, resultNum, data: docs2 };
+}

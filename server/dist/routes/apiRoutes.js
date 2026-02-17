@@ -11,5 +11,6 @@ const apiRoutes = (app) => {
     app.get("/popular-book", validationMiddleware_1.validateGetPopularBooks, apiController_1.getPopularBooks);
     app.get("/monthly-keywords", validationMiddleware_1.validateGetMonthlyKeywords, apiController_1.getMonthlyKeywords);
     app.get("/kyobo-book", validationMiddleware_1.validateKyoboBookInfo, apiController_1.getKyoboBookInfo);
+    app.get("/api/srch-books", validationMiddleware_1.validateSrchBooksInLibrary, apiController_1.srchBooksInLibrary);
 };
 exports.default = apiRoutes;

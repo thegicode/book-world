@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <title>도서관 상세 | Book World</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex, nofollow" />
+        <link
+            rel="shortcut icon"
+            href="/assets/images/favicon.ico"
+            type="image/x-icon"
+        />
+        <link
+            rel="icon"
+            href="/assets/images/favicon.ico"
+            type="image/x-icon"
+        />
+        <link rel="stylesheet" href="/css/library.css" />
+        <script type="module" src="/js/library/index.js" async></script>
+    </head>
+    <body>
+        <div class="root">
+            <nav-gnb></nav-gnb>
+            <app-library-detail>
+                <div class="library-info">
+                    <!-- Library details will be rendered here -->
+                </div>
+                <div class="book-search-section">
+                    <h3>도서관 소장 자료 검색</h3>
+                    <div class="search-bar">
+                        <input type="search" placeholder="도서명을 입력하세요..." />
+                        <button type="button">검색</button>
+                    </div>
+                    <div class="search-results" data-list-container>
+                        <!-- Search results will be rendered here -->
+                    </div>
+                </div>
+            </app-library-detail>
+        </div>
+
+        <template id="tp-book-item">
+            <li data-isbn="">
+                <strong class="book-name"></strong>
+                <span class="authors"></span>
+                <span class="publisher"></span>
+            </li>
+        </template>
+    </body>
+</html>

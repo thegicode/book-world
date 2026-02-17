@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.searchLibrariesByCriteria = void 0;
+exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.searchLibrariesByCriteria = void 0;
 const apiUtils_1 = require("./apiUtils");
 const apiErrors_1 = require("../errors/apiErrors");
 const LIBRARY_API_BASE_URL = "http://data4library.kr/api";
@@ -109,3 +109,15 @@ function getMonthlyKeywords(params) {
     });
 }
 exports.getMonthlyKeywords = getMonthlyKeywords;
+function srchBooksInLibrary(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = parseURL("srchBooks", params);
+        const data = yield (0, apiUtils_1.fetchData)(url, { method: "GET" });
+        if (!data.response)
+            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
+        const { pageNo, pageSize, numFound, resultNum, docs } = data.response;
+        const docs2 = docs.map((item) => item.doc);
+        return { pageNo, pageSize, numFound, resultNum, data: docs2 };
+    });
+}
+exports.srchBooksInLibrary = srchBooksInLibrary;

@@ -1,0 +1,129 @@
+@use "./base/reset";
+@use "./components/gnb";
+@use "./components/toast";
+@use "./components/loading";
+@use "./components/button" as button;
+
+app-library-detail {
+    display: block;
+    padding: 1rem;
+    color: #333;
+
+    .library-info {
+        padding: 1rem;
+        margin-bottom: 2rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            h2 {
+                margin: 0;
+                font-size: 1.5rem;
+                color: #2c6e49;
+            }
+
+            button {
+                @include button.button2;
+            }
+        }
+
+        .library-details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+
+            &.is-hidden {
+                display: none;
+            }
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        li {
+            padding: 0;
+        }
+
+        a {
+            color: #2c6e49;
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .book-search-section {
+        h3 {
+            margin: 0 0 1rem;
+            font-size: 1.25rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+
+            input[type="search"] {
+                flex: 1;
+                padding: 0.75rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 1rem;
+                &:focus {
+                    outline: none;
+                    border-color: #2c6e49;
+                    box-shadow: 0 0 0 2px rgba(44, 110, 73, 0.2);
+                }
+            }
+
+            button {
+                @include button.button1;
+                padding: 0.75rem 1.5rem;
+            }
+        }
+
+        .search-results {
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            li {
+                padding: 1rem;
+                border-bottom: 1px solid #eee;
+
+                &:hover {
+                    background-color: #f8f9fa;
+                }
+            }
+
+            .book-name {
+                font-weight: bold;
+                font-size: 1.1rem;
+                color: #333;
+            }
+
+            .authors,
+            .publisher {
+                display: block;
+                font-size: 0.9rem;
+                color: #666;
+                margin-top: 0.25rem;
+            }
+        }
+    }
+}
