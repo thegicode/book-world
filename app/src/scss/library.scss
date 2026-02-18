@@ -90,22 +90,25 @@ app-library-detail {
 
         .search-bar {
             display: flex;
-            gap: 5px;
+            gap: 10px;
+            margin-bottom: 5px;
 
             input[type="search"] {
                 flex: 1;
-                padding: 7px 10px;
-                border-radius: 5px;
-                border: 1px solid #cde1d1;
+                padding: 12px 15px;
+                border-radius: 8px;
+                border: 2px solid #cde1d1;
                 background-color: #fff;
-                font-size: 13px;
+                font-size: 16px;
                 color: #4a754a;
+                font-weight: 500;
                 
                 &:focus {
                     outline: none;
                     border-color: #50ad50;
                     color: #107214;
-                    background-color: #f8f8b1c9;
+                    background-color: #fff;
+                    box-shadow: 0 0 0 3px rgba(80, 173, 80, 0.2);
                 }
                 
                 &::placeholder {
@@ -115,7 +118,10 @@ app-library-detail {
 
             button {
                 @include button.button2;
-                padding: 0 12px;
+                padding: 0 25px;
+                font-size: 16px;
+                font-weight: bold;
+                border-radius: 8px;
             }
         }
     }
@@ -132,7 +138,6 @@ app-library-detail {
         }
 
         li {
-            padding: 1rem;
             border-bottom: 1px solid #ededed;
             
             &.is-hidden {
@@ -142,6 +147,13 @@ app-library-detail {
             &:hover {
                 background-color: #fafafa;
             }
+        }
+
+        .book-item-link {
+            display: block;
+            padding: 1rem;
+            color: inherit;
+            text-decoration: none;
         }
 
         .book-item-content {

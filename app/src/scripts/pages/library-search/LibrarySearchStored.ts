@@ -48,11 +48,15 @@ export default class LibrarySearchStored extends HTMLElement {
     private createElement(code: string, name: string): HTMLElement | void {
         if (!this.template) return;
 
-        const element = cloneTemplate(this.template);
-        (element.querySelector(".name") as HTMLElement).textContent = name;
-        element.dataset.library = code;
-        this.addEvents(element);
-        return element;
+        const template = cloneTemplate(this.template);
+        const nameElement = template.querySelector(".name") as HTMLAnchorElement;
+        nameElement.textContent = name;
+        nameElement.href = `/library?libCode=${code}`;
+
+        template.dataset.library = code;
+
+        this.addEvents(template);
+        return template;
     }
 
     private addEvents(element: HTMLElement) {
