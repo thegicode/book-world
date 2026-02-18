@@ -4,98 +4,53 @@
 @use "./components/loading";
 @use "./components/button" as button;
 
+.root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 app-library-detail {
-    display: block;
-    padding: 1rem;
-    color: #333;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    color: #666;
 
     .library-info {
         padding: 1rem;
-        margin-bottom: 2rem;
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: #364d4e;
+        color: #c5c4c4;
 
         .library-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 10px;
 
             h2 {
                 margin: 0;
-                font-size: 1.5rem;
-                color: #2c6e49;
+                font-size: 1.2rem;
+                font-weight: bold;
+                color: #dfe4aa;
             }
 
             button {
                 @include button.button2;
+                font-size: 12px;
+                padding: 3px 8px;
             }
         }
 
         .library-details {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #dee2e6;
+            margin-top: 10px;
+            font-size: 13px;
+            line-height: 1.6;
 
             &.is-hidden {
                 display: none;
             }
-        }
 
-        ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            font-size: 1rem;
-            line-height: 1.8;
-        }
-
-        li {
-            padding: 0;
-        }
-
-        a {
-            color: #2c6e49;
-            text-decoration: none;
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-    }
-
-    .book-search-section {
-        h3 {
-            margin: 0 0 1rem;
-            font-size: 1.25rem;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 0.5rem;
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-
-            input[type="search"] {
-                flex: 1;
-                padding: 0.75rem;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                font-size: 1rem;
-                &:focus {
-                    outline: none;
-                    border-color: #2c6e49;
-                    box-shadow: 0 0 0 2px rgba(44, 110, 73, 0.2);
-                }
-            }
-
-            button {
-                @include button.button1;
-                padding: 0.75rem 1.5rem;
-            }
-        }
-
-        .search-results {
             ul {
                 list-style: none;
                 margin: 0;
@@ -103,27 +58,145 @@ app-library-detail {
             }
 
             li {
-                padding: 1rem;
-                border-bottom: 1px solid #eee;
-
-                &:hover {
-                    background-color: #f8f9fa;
+                padding: 2px 0;
+                strong {
+                    color: #a8bdbf;
+                    margin-right: 5px;
                 }
             }
 
-            .book-name {
-                font-weight: bold;
-                font-size: 1.1rem;
-                color: #333;
+            a {
+                color: #dfe4aa;
+                text-decoration: none;
+                border-bottom: 1px dashed #dfe4aa;
+                &:hover {
+                    color: #fff;
+                    border-bottom-style: solid;
+                }
+            }
+        }
+    }
+
+    .book-search-section {
+        padding: 10px 1rem;
+        border-top: 1px solid #f1f1f1;
+        background-color: #f1fff4;
+
+        h3 {
+            margin: 0 0 10px;
+            font-size: 14px;
+            color: #4a754a;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 5px;
+
+            input[type="search"] {
+                flex: 1;
+                padding: 7px 10px;
+                border-radius: 5px;
+                border: 1px solid #cde1d1;
+                background-color: #fff;
+                font-size: 13px;
+                color: #4a754a;
+                
+                &:focus {
+                    outline: none;
+                    border-color: #50ad50;
+                    color: #107214;
+                    background-color: #f8f8b1c9;
+                }
+                
+                &::placeholder {
+                    color: #8db58d;
+                }
             }
 
-            .authors,
-            .publisher {
-                display: block;
-                font-size: 0.9rem;
-                color: #666;
-                margin-top: 0.25rem;
+            button {
+                @include button.button2;
+                padding: 0 12px;
             }
+        }
+    }
+    
+    .search-results {
+        flex: 1;
+        position: relative;
+        border-top: 1px solid #ecf7f5;
+        
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            padding: 1rem;
+            border-bottom: 1px solid #ededed;
+            
+            &:hover {
+                background-color: #fafafa;
+            }
+        }
+
+        .book-item-content {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .book-cover-wrap {
+            width: 60px;
+            flex-shrink: 0;
+            background-color: #f0f0f0;
+            aspect-ratio: 2 / 3;
+            overflow: hidden;
+            border-radius: 4px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+        }
+
+        .book-info {
+            flex: 1;
+        }
+
+        .book-name {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #417f80;
+            line-height: 1.4;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            row-gap: 5px;
+        }
+
+        .authors,
+        .publisher,
+        .pub-year {
+            display: inline-block;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.2;
+        }
+        
+        .authors::after,
+        .publisher::after {
+            content: "|";
+            display: inline-block;
+            margin: 0 5px;
+            color: #ddd;
         }
     }
 }

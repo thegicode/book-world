@@ -40,9 +40,19 @@
 
         <template id="tp-book-item">
             <li data-isbn="">
-                <strong class="book-name"></strong>
-                <span class="authors"></span>
-                <span class="publisher"></span>
+                <div class="book-item-content">
+                    <div class="book-cover-wrap">
+                        <img class="book-cover" src="" alt="" loading="lazy" />
+                    </div>
+                    <div class="book-info">
+                        <strong class="book-name"></strong>
+                        <div class="meta-info">
+                            <span class="authors"></span>
+                            <span class="publisher"></span>
+                            <span class="pub-year"></span>
+                        </div>
+                    </div>
+                </div>
             </li>
         </template>
     </body>

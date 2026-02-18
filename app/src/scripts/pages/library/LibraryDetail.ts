@@ -1,6 +1,6 @@
-import bookModel from '../../model';
 import { CustomFetch } from '../../services';
 import { cloneTemplate } from '../../utils/helpers';
+import { NO_IMAGE_PLACEHOLDER } from '../../utils/constants';
 
 interface ISrchBook {
     bookname: string;
@@ -8,7 +8,7 @@ interface ISrchBook {
     publisher: string;
     publication_year: string;
     isbn13: string;
-    // ... other properties
+    bookImageURL: string;
 }
 
 interface ISrchBooksResponse {
@@ -35,6 +35,14 @@ export default class LibraryDetail extends HTMLElement {
     private searchResultsContainer: HTMLElement | null = null;
     private bookItemTemplate: HTMLTemplateElement | null = null;
     private libCode: string | null = null;
+    private observer: IntersectionObserver | null = null;
+    private sentinel: HTMLElement | null = null;
+
+    private currentPage = 1;
+    private pageSize = 20;
+    private totalResults = 0;
+    private isLoading = false;
+    private currentKeyword = '';
 
     constructor() {
         super();
@@ -48,13 +56,32 @@ export default class LibraryDetail extends HTMLElement {
         this.bookItemTemplate = document.querySelector('#tp-book-item');
         
         await this.renderInfo();
-        this.searchButton?.addEventListener('click', this.handleSearch);
+        this.searchButton?.addEventListener('click', () => this.handleSearch());
         this.searchInput?.addEventListener('keydown', this.handleInputKeydown);
+
+        this.initIntersectionObserver();
     }
 
     disconnectedCallback() {
-        this.searchButton?.removeEventListener('click', this.handleSearch);
+        this.searchButton?.removeEventListener('click', () => this.handleSearch());
         this.searchInput?.removeEventListener('keydown', this.handleInputKeydown);
+        if (this.observer && this.sentinel) {
+            this.observer.unobserve(this.sentinel);
+        }
+    }
+
+    private initIntersectionObserver() {
+        const options = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        this.observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                this.loadMore();
+            }
+        }, options);
     }
 
     private handleInputKeydown = (event: KeyboardEvent) => {
@@ -66,38 +93,90 @@ export default class LibraryDetail extends HTMLElement {
     private handleSearch = async () => {
         if (!this.libCode || !this.searchInput || !this.searchResultsContainer) return;
 
-        const keyword = this.searchInput.value;
+        const keyword = this.searchInput.value.trim();
         if (!keyword) {
             alert('검색어를 입력하세요.');
             return;
         }
 
-        this.searchResultsContainer.innerHTML = '검색 중...';
+        // Reset state
+        this.currentPage = 1;
+        this.totalResults = 0;
+        this.currentKeyword = keyword;
+        this.searchResultsContainer.innerHTML = '';
+        
+        // Remove existing sentinel if any
+        if (this.sentinel) {
+            this.sentinel.remove();
+            this.sentinel = null;
+        }
+
+        await this.fetchBooks(this.currentPage);
+    }
+
+    private loadMore = async () => {
+        if (this.isLoading || !this.currentKeyword) return;
+        
+        // Check if there are more results to load
+        if (this.currentPage * this.pageSize >= this.totalResults) return;
+
+        this.currentPage++;
+        await this.fetchBooks(this.currentPage);
+    }
+
+    private fetchBooks = async (page: number) => {
+        if (this.isLoading || !this.libCode || !this.searchResultsContainer) return;
+        this.isLoading = true;
+
+        if (page === 1) {
+             this.searchResultsContainer.innerHTML = '<p style="padding:1rem;">검색 중...</p>';
+        }
 
         try {
             const params = new URLSearchParams({
                 libCode: this.libCode,
-                keyword: keyword,
-                pageNo: '1',
-                pageSize: '10',
+                keyword: this.currentKeyword,
+                pageNo: page.toString(),
+                pageSize: this.pageSize.toString(),
             });
+            
             const response = await CustomFetch.fetch<IApiResponse<ISrchBooksResponse>>(`/api/srch-books?${params.toString()}`);
 
-            if (response.status === 'success' && response.data.data.length > 0) {
-                this.renderSearchResults(response.data.data);
+            if (page === 1) {
+                this.searchResultsContainer.innerHTML = '';
+            }
+
+            if (response.status === 'success') {
+                this.totalResults = response.data.resultNum; // Assuming resultNum is total count
+                if (response.data.data.length > 0) {
+                    this.renderSearchResults(response.data.data);
+                } else if (page === 1) {
+                    this.searchResultsContainer.innerHTML = '<p style="padding:1rem;">검색 결과가 없습니다.</p>';
+                }
             } else {
-                this.searchResultsContainer.innerHTML = '검색 결과가 없습니다.';
+                if (page === 1) {
+                    this.searchResultsContainer.innerHTML = '<p style="padding:1rem;">검색 중 오류가 발생했습니다.</p>';
+                }
             }
         } catch (error) {
             console.error('Search failed:', error);
-            this.searchResultsContainer.innerHTML = '검색 중 오류가 발생했습니다.';
+            if (page === 1) {
+                this.searchResultsContainer.innerHTML = '<p style="padding:1rem;">검색 중 오류가 발생했습니다.</p>';
+            }
+        } finally {
+            this.isLoading = false;
         }
     }
 
     private renderSearchResults(books: ISrchBook[]) {
         if (!this.searchResultsContainer) return;
 
-        const list = document.createElement('ul');
+        let list = this.searchResultsContainer.querySelector('ul');
+        if (!list) {
+            list = document.createElement('ul');
+            this.searchResultsContainer.appendChild(list);
+        }
+
         const fragment = new DocumentFragment();
         books.forEach(book => {
             const itemElement = this.createBookItemElement(book);
@@ -106,8 +185,18 @@ export default class LibraryDetail extends HTMLElement {
             }
         });
         list.appendChild(fragment);
-        this.searchResultsContainer.innerHTML = '';
-        this.searchResultsContainer.appendChild(list);
+
+        // Update sentinel position
+        if (!this.sentinel) {
+            this.sentinel = document.createElement('div');
+            this.sentinel.className = 'sentinel';
+            this.sentinel.style.height = '10px';
+            this.searchResultsContainer.appendChild(this.sentinel);
+            if (this.observer) this.observer.observe(this.sentinel);
+        } else {
+             // Move sentinel to the end
+             this.searchResultsContainer.appendChild(this.sentinel);
+        }
     }
 
     private createBookItemElement(book: ISrchBook): HTMLElement | null {
@@ -119,13 +208,28 @@ export default class LibraryDetail extends HTMLElement {
             item.dataset.isbn = book.isbn13;
         }
 
+        const coverEl = item.querySelector('.book-cover') as HTMLImageElement;
         const bookNameEl = item.querySelector('.book-name');
         const authorsEl = item.querySelector('.authors');
         const publisherEl = item.querySelector('.publisher');
+        const pubYearEl = item.querySelector('.pub-year');
 
+        if (coverEl) {
+            if (book.bookImageURL) {
+                coverEl.src = book.bookImageURL;
+                coverEl.onerror = () => {
+                    coverEl.src = NO_IMAGE_PLACEHOLDER;
+                    coverEl.onerror = null; // Infinite loop prevention
+                };
+            } else {
+                coverEl.src = NO_IMAGE_PLACEHOLDER;
+            }
+            coverEl.alt = book.bookname;
+        }
         if (bookNameEl) bookNameEl.textContent = book.bookname;
         if (authorsEl) authorsEl.textContent = book.authors;
         if (publisherEl) publisherEl.textContent = book.publisher;
+        if (pubYearEl) pubYearEl.textContent = book.publication_year;
 
         return item;
     }
