@@ -16,11 +16,58 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
 
     connectedCallback() {
-        this.fetch(new URLSearchParams(location.search).get("isbn") as string);
+        setTimeout(async () => {
+            this.librarySearchByBookContainer = this.querySelector(".library-search-by-book");
+            if (!this.librarySearchByBookContainer) {
+                console.error("LibrarySearchByBook: Container .library-search-by-book not found");
+            }
+            
+            this.librarySearchByBookItemTemplate = document.querySelector("#tp-librarySearchByBookItem");
+            this.feedbackElement = this.querySelector(".library-search-feedback");
 
-        this.librarySearchByBookContainer = document.querySelector(".library-search-by-book");
-        this.librarySearchByBookItemTemplate = document.querySelector("#tp-librarySearchByBookItem");
-        this.feedbackElement = this.querySelector(".library-search-feedback");
+            const params = new URLSearchParams(location.search);
+            const isbn = params.get("isbn") as string;
+            const libCode = params.get("libCode");
+
+            const titleEl = this.querySelector(".title");
+            if (libCode && titleEl) {
+                titleEl.textContent = "해당 도서관 소장 여부";
+            }
+
+            if (libCode) {
+                await this.fetchSpecificLibrary(isbn, libCode);
+            } else {
+                this.fetch(isbn);
+            }
+        }, 0);
+    }
+
+    protected async fetchSpecificLibrary(isbn: string, libCode: string): Promise<void> {
+        try {
+            const response = await CustomFetch.fetch<IApiResponse<{
+                libName: string;
+                homepage: string;
+                address: string;
+                tel: string;
+            }>>(`/api/library-detail?libCode=${libCode}`);
+            
+            if (response.status === 'success' && response.data) {
+                const { libName, homepage, address, tel } = response.data;
+                const dummyResult: ILibrarySearchByBookResult = {
+                    libraries: [{
+                        libCode,
+                        libName,
+                        homepage,
+                        address: address || '',
+                        telephone: tel || '',
+                    }]
+                };
+                
+                this.render(dummyResult, isbn);
+            }
+        } catch (error) {
+            console.warn(`Failed to fetch specific library ${libCode}`, error);
+        }
     }
 
     protected async fetch(isbn: string): Promise<void> {
@@ -168,10 +215,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         });
         const url = `/book-exist?${searchParams}`;
         try {
-            const result = await CustomFetch.fetch<IBookExist>(url, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-            });
+            const result = await CustomFetch.fetchData<IBookExist>(url);
             return result;
         } catch (error) {
             console.error(error);

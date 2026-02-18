@@ -208,6 +208,12 @@ export default class LibraryDetail extends HTMLElement {
 
         if (item instanceof HTMLElement) {
             item.dataset.isbn = book.isbn13;
+            item.style.cursor = 'pointer';
+            item.addEventListener('click', () => {
+                if (this.libCode) {
+                    window.location.href = `/book?isbn=${book.isbn13}&libCode=${this.libCode}`;
+                }
+            });
         }
 
         const coverEl = item.querySelector('.book-cover') as HTMLImageElement;
