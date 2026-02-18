@@ -40,6 +40,15 @@ export const searchLibraries = asyncHandler(
     }
 );
 
+// Get Library Detail by libCode
+export const getLibraryDetail = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { libCode } = req.query as { libCode: string };
+        const library = await BookService.getLibraryDetail({ libCode: libCode as string });
+        res.status(200).json({ status: "success", data: library });
+    }
+);
+
 // Check Book Existence in a Library
 export const checkBookExistence = asyncHandler(
     async (req: Request, res: Response) => {

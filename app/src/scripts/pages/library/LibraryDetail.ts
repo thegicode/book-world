@@ -19,6 +19,15 @@ interface ISrchBooksResponse {
     data: ISrchBook[];
 }
 
+interface ILibraryInfo {
+    libName: string;
+    address: string;
+    tel: string;
+    homepage: string;
+    operatingTime: string;
+    closed: string;
+}
+
 export default class LibraryDetail extends HTMLElement {
     private infoContainer: HTMLElement | null = null;
     private searchButton: HTMLButtonElement | null = null;
@@ -31,14 +40,14 @@ export default class LibraryDetail extends HTMLElement {
         super();
     }
 
-    connectedCallback() {
+    async connectedCallback() {
         this.infoContainer = this.querySelector('.library-info');
         this.searchButton = this.querySelector('.search-bar button');
         this.searchInput = this.querySelector('.search-bar input');
         this.searchResultsContainer = this.querySelector('.search-results');
         this.bookItemTemplate = document.querySelector('#tp-book-item');
         
-        this.renderInfo();
+        await this.renderInfo();
         this.searchButton?.addEventListener('click', this.handleSearch);
         this.searchInput?.addEventListener('keydown', this.handleInputKeydown);
     }
@@ -121,7 +130,7 @@ export default class LibraryDetail extends HTMLElement {
         return item;
     }
 
-    private renderInfo() {
+    private async renderInfo() {
         const params = new URLSearchParams(window.location.search);
         this.libCode = params.get('libCode');
 
@@ -135,43 +144,44 @@ export default class LibraryDetail extends HTMLElement {
             return;
         }
 
-        const libraryData = bookModel.libraries[this.libCode];
+        this.infoContainer.innerHTML = '<p>정보를 불러오는 중...</p>';
 
-        if (!libraryData) {
-            this.infoContainer.innerHTML = `<p>도서관 코드 '${this.libCode}'에 해당하는 정보를 찾을 수 없습니다.</p>`;
-            return;
-        }
-        
-        const libName = typeof libraryData === 'string' ? libraryData : libraryData.libName;
-        
-        this.infoContainer.innerHTML = `
-            <div class="library-header">
-                <h2>${libName}</h2>
-                ${typeof libraryData !== 'string' ? '<button type="button" class="btn-toggle-info">정보보기</button>' : ''}
-            </div>
-            ${typeof libraryData !== 'string' ? `
-                <div class="library-details is-hidden">
-                    <ul>
-                        <li><strong>주소:</strong> ${libraryData.address}</li>
-                        <li><strong>연락처:</strong> ${libraryData.telephone}</li>
-                        <li><strong>운영시간:</strong> ${libraryData.operatingTime}</li>
-                        <li><strong>휴관일:</strong> ${libraryData.closed}</li>
-                        <li><a href="${libraryData.homepage}" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a></li>
-                    </ul>
-                </div>
-            ` : ''}
-        `;
-
-        if (typeof libraryData !== 'string') {
-            const toggleBtn = this.infoContainer.querySelector('.btn-toggle-info');
-            const details = this.infoContainer.querySelector('.library-details');
+        try {
+            const response = await CustomFetch.fetch<IApiResponse<ILibraryInfo>>(`/api/library-detail?libCode=${this.libCode}`);
             
-            toggleBtn?.addEventListener('click', () => {
-                const isHidden = details?.classList.toggle('is-hidden');
-                if (toggleBtn) {
-                    toggleBtn.textContent = isHidden ? '정보보기' : '정보닫기';
-                }
-            });
+            if (response.status === 'success' && response.data) {
+                const libraryData = response.data;
+                this.infoContainer.innerHTML = `
+                    <div class="library-header">
+                        <h2>${libraryData.libName}</h2>
+                        <button type="button" class="btn-toggle-info">정보보기</button>
+                    </div>
+                    <div class="library-details is-hidden">
+                        <ul>
+                            <li><strong>주소:</strong> ${libraryData.address}</li>
+                            <li><strong>연락처:</strong> ${libraryData.tel}</li>
+                            <li><strong>운영시간:</strong> ${libraryData.operatingTime}</li>
+                            <li><strong>휴관일:</strong> ${libraryData.closed}</li>
+                            <li><a href="${libraryData.homepage}" target="_blank" rel="noopener noreferrer">홈페이지 바로가기</a></li>
+                        </ul>
+                    </div>
+                `;
+
+                const toggleBtn = this.infoContainer.querySelector('.btn-toggle-info');
+                const details = this.infoContainer.querySelector('.library-details');
+                
+                toggleBtn?.addEventListener('click', () => {
+                    const isHidden = details?.classList.toggle('is-hidden');
+                    if (toggleBtn) {
+                        toggleBtn.textContent = isHidden ? '정보보기' : '정보닫기';
+                    }
+                });
+            } else {
+                this.infoContainer.innerHTML = `<p>도서관 정보를 찾을 수 없습니다.</p>`;
+            }
+        } catch (error) {
+            console.error('Failed to fetch library info:', error);
+            this.infoContainer.innerHTML = '<p>정보를 가져오는 중 오류가 발생했습니다.</p>';
         }
     }
 }

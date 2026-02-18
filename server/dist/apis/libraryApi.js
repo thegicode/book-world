@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.searchLibrariesByCriteria = void 0;
+exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchLibrariesByCriteria = void 0;
 const apiUtils_1 = require("./apiUtils");
 const apiErrors_1 = require("../errors/apiErrors");
 const LIBRARY_API_BASE_URL = "http://data4library.kr/api";
@@ -36,6 +36,16 @@ function searchLibrariesByCriteria(params) {
     });
 }
 exports.searchLibrariesByCriteria = searchLibrariesByCriteria;
+function getLibraryDetail(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = parseURL("libSrch", params);
+        const data = yield (0, apiUtils_1.fetchData)(url);
+        if (!data.response || !data.response.libs || data.response.libs.length === 0)
+            throw new apiErrors_1.LibraryApiError(404, "Library not found");
+        return data.response.libs[0].lib;
+    });
+}
+exports.getLibraryDetail = getLibraryDetail;
 function checkBookAvailability(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = parseURL("bookExist", params);
@@ -52,15 +62,17 @@ function getBookUsageAnalysis(params) {
         const data = yield (0, apiUtils_1.fetchData)(url);
         if (!data.response)
             throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
-        const { book, loanHistory, loanGrps, keywords, coLoanBooks, maniaRecBooks, readerRecBooks } = data.response;
+        const { book, loanHistory, loanGrps, keywords, coLoanBooks, maniaRecBooks, readerRecBooks, } = data.response;
         return {
             book,
             loanHistory: (loanHistory === null || loanHistory === void 0 ? void 0 : loanHistory.map((item) => item.loan)) || [],
-            loanGrps: (loanGrps === null || loanGrps === void 0 ? void 0 : loanGrps.slice(0, 5).map((item) => item.loanGrp)) || [],
+            loanGrps: (loanGrps === null || loanGrps === void 0 ? void 0 : loanGrps.slice(0, 5).map((item) => item.loanGrp)) ||
+                [],
             keywords: (keywords === null || keywords === void 0 ? void 0 : keywords.map((item) => item.keyword)) || [],
             coLoanBooks: (coLoanBooks === null || coLoanBooks === void 0 ? void 0 : coLoanBooks.slice(0, 5).map((item) => item.book)) || [],
             maniaRecBooks: (maniaRecBooks === null || maniaRecBooks === void 0 ? void 0 : maniaRecBooks.slice(0, 5).map((item) => item.book)) || [],
-            readerRecBooks: (readerRecBooks === null || readerRecBooks === void 0 ? void 0 : readerRecBooks.slice(0, 5).map((item) => item.book)) || [],
+            readerRecBooks: (readerRecBooks === null || readerRecBooks === void 0 ? void 0 : readerRecBooks.slice(0, 5).map((item) => item.book)) ||
+                [],
         };
     });
 }
@@ -111,7 +123,14 @@ function getMonthlyKeywords(params) {
 exports.getMonthlyKeywords = getMonthlyKeywords;
 function srchBooksInLibrary(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = parseURL("srchBooks", params);
+        const title = params.keyword.replace(/\s+/g, "");
+        const searchParams = {
+            libCode: params.libCode,
+            pageNo: params.pageNo,
+            pageSize: params.pageSize,
+            title,
+        };
+        const url = parseURL("srchBooks", searchParams);
         const data = yield (0, apiUtils_1.fetchData)(url, { method: "GET" });
         if (!data.response)
             throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
