@@ -135,6 +135,10 @@ app-library-detail {
             padding: 1rem;
             border-bottom: 1px solid #ededed;
             
+            &.is-hidden {
+                display: none;
+            }
+
             &:hover {
                 background-color: #fafafa;
             }
@@ -197,6 +201,36 @@ app-library-detail {
             display: inline-block;
             margin: 0 5px;
             color: #ddd;
+        }
+
+        .loan-status {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff;
+            margin-left: 5px;
+            
+            &.checking {
+                background-color: #aaa;
+            }
+            
+            &.available {
+                background-color: #28a745;
+            }
+            
+            &.loaned {
+                background-color: #fd7e14;
+            }
+            
+            &.not-owned {
+                background-color: #6c757d;
+            }
+
+            &.error {
+                background-color: #dc3545;
+            }
         }
     }
 }

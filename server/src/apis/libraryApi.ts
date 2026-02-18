@@ -25,6 +25,16 @@ interface DocItem {
     doc: unknown;
 }
 
+interface BookDoc {
+    isbn13: string;
+    [key: string]: unknown;
+}
+
+interface BookWithAvailability extends BookDoc {
+    hasBook?: string;
+    loanAvailable?: string;
+}
+
 const parseURL = (apiPath: string, params: Record<string, string>) => {
     const queryParams = new URLSearchParams({
         ...params,
@@ -213,7 +223,29 @@ export async function srchBooksInLibrary(params: {
             "Invalid API response from library server",
         );
 
-    const { pageNo, pageSize, numFound, resultNum, docs } = data.response;
-    const docs2 = docs.map((item: DocItem) => item.doc);
-    return { pageNo, pageSize, numFound, resultNum, data: docs2 };
+    const { pageNo, pageSize, numFound, docs } = data.response;
+    const docs2 = docs.map((item: DocItem) => item.doc as BookDoc);
+
+    // Filter books by ownership
+    const availabilityPromises = docs2.map(async (book: BookDoc) => {
+        try {
+            const availability = await checkBookAvailability({
+                isbn13: book.isbn13,
+                libCode: params.libCode,
+            });
+            return { ...book, ...availability } as BookWithAvailability;
+        } catch (error) {
+            console.error(`Failed to check availability for book ${book.isbn13}`, error);
+            return null; // Treat error as not owned or skip
+        }
+    });
+
+    const booksWithAvailability = await Promise.all(availabilityPromises);
+    
+    // Filter out books that are not owned (hasBook !== 'Y') or failed to check
+    const ownedBooks = booksWithAvailability.filter((book: BookWithAvailability | null): book is BookWithAvailability => 
+        book !== null && book.hasBook === 'Y'
+    );
+
+    return { pageNo, pageSize, numFound, resultNum: ownedBooks.length, data: ownedBooks };
 }

@@ -9,6 +9,8 @@ interface ISrchBook {
     publication_year: string;
     isbn13: string;
     bookImageURL: string;
+    hasBook?: string;
+    loanAvailable?: string;
 }
 
 interface ISrchBooksResponse {
@@ -213,6 +215,7 @@ export default class LibraryDetail extends HTMLElement {
         const authorsEl = item.querySelector('.authors');
         const publisherEl = item.querySelector('.publisher');
         const pubYearEl = item.querySelector('.pub-year');
+        const statusEl = item.querySelector('.loan-status');
 
         if (coverEl) {
             if (book.bookImageURL) {
@@ -230,6 +233,19 @@ export default class LibraryDetail extends HTMLElement {
         if (authorsEl) authorsEl.textContent = book.authors;
         if (publisherEl) publisherEl.textContent = book.publisher;
         if (pubYearEl) pubYearEl.textContent = book.publication_year;
+        
+        if (statusEl && book.loanAvailable) {
+            if (book.loanAvailable === 'Y') {
+                statusEl.textContent = '대출 가능';
+                statusEl.className = 'loan-status available';
+            } else if (book.loanAvailable === 'N') {
+                statusEl.textContent = '대출 중';
+                statusEl.className = 'loan-status loaned';
+            } else {
+                statusEl.textContent = '상태 알 수 없음';
+                statusEl.className = 'loan-status error';
+            }
+        }
 
         return item;
     }

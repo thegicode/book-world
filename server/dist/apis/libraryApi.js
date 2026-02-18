@@ -134,9 +134,24 @@ function srchBooksInLibrary(params) {
         const data = yield (0, apiUtils_1.fetchData)(url, { method: "GET" });
         if (!data.response)
             throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
-        const { pageNo, pageSize, numFound, resultNum, docs } = data.response;
+        const { pageNo, pageSize, numFound, docs } = data.response;
         const docs2 = docs.map((item) => item.doc);
-        return { pageNo, pageSize, numFound, resultNum, data: docs2 };
+        const availabilityPromises = docs2.map((book) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const availability = yield checkBookAvailability({
+                    isbn13: book.isbn13,
+                    libCode: params.libCode,
+                });
+                return Object.assign(Object.assign({}, book), availability);
+            }
+            catch (error) {
+                console.error(`Failed to check availability for book ${book.isbn13}`, error);
+                return null;
+            }
+        }));
+        const booksWithAvailability = yield Promise.all(availabilityPromises);
+        const ownedBooks = booksWithAvailability.filter((book) => book !== null && book.hasBook === 'Y');
+        return { pageNo, pageSize, numFound, resultNum: ownedBooks.length, data: ownedBooks };
     });
 }
 exports.srchBooksInLibrary = srchBooksInLibrary;
