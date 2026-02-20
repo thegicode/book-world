@@ -6,10 +6,6 @@ export default class LibrarySearchByBook extends HTMLElement {
     protected librarySearchByBookContainer: HTMLElement | null = null;
     protected librarySearchByBookItemTemplate: HTMLTemplateElement | null = null;
     protected feedbackElement: HTMLElement | null = null;
-    
-    private totalRequestCount = 0;
-    private processedRequestCount = 0;
-    private failedRequestCount = 0;
 
     constructor() {
         super();
@@ -30,8 +26,12 @@ export default class LibrarySearchByBook extends HTMLElement {
             const libCode = params.get("libCode");
 
             const titleEl = this.querySelector(".title");
-            if (libCode && titleEl) {
-                titleEl.textContent = "해당 도서관 소장 여부";
+            if (titleEl) {
+                if (libCode) {
+                    titleEl.textContent = "해당 도서관 소장 여부";
+                } else {
+                    titleEl.textContent = "관심 도서관 소장 정보";
+                }
             }
 
             if (libCode) {
@@ -71,68 +71,20 @@ export default class LibrarySearchByBook extends HTMLElement {
     }
 
     protected async fetch(isbn: string): Promise<void> {
-        const regions = Object.values(bookModel.regions);
-        if (regions.length === 0) return;
+        const libraries = Object.values(bookModel.libraries);
 
-        const allDetailCodes = regions.flatMap((region) =>
-            Object.values(region)
-        );
-
-        if (allDetailCodes.length === 0) return;
-
-        this.totalRequestCount = allDetailCodes.length;
-        const BATCH_SIZE = 5;
-
-        for (let i = 0; i < allDetailCodes.length; i += BATCH_SIZE) {
-            const batch = allDetailCodes.slice(i, i + BATCH_SIZE);
-            const promises = batch.map((detailCode) =>
-                this.fetchLibrarySearchByBook(
-                    isbn,
-                    detailCode.slice(0, 2),
-                    detailCode
-                )
-            );
-            await Promise.all(promises);
-        }
-    }
-
-    protected async fetchLibrarySearchByBook(
-        isbn: string,
-        region: string,
-        dtl_region: string
-    ): Promise<void> {
-        const searchParams = new URLSearchParams({
-            isbn,
-            region,
-            dtl_region,
-        });
-
-        try {
-            const data =
-                await CustomFetch.fetchData<ILibrarySearchByBookResult>(
-                    `/library-search-by-book?${searchParams}`
-                );
-            this.render(data, isbn);
-        } catch (error) {
-            this.failedRequestCount++;
-            console.warn(
-                `API call for region ${dtl_region} failed:`,
-                error
-            );
-        } finally {
-            this.processedRequestCount++;
-            this.updateFeedback();
-        }
-    }
-
-    protected updateFeedback(): void {
-        if (this.processedRequestCount < this.totalRequestCount) {
+        if (libraries.length === 0) {
+            if (this.feedbackElement) {
+                this.feedbackElement.textContent = "즐겨찾기한 도서관이 없습니다.";
+            }
             return;
         }
 
-        if (this.failedRequestCount > 0 && this.feedbackElement) {
-            this.feedbackElement.textContent = `${this.failedRequestCount}개 지역의 도서관 정보를 불러오는 데 실패했습니다.`;
-        }
+        const result: ILibrarySearchByBookResult = {
+            libraries: libraries
+        };
+
+        this.render(result, isbn);
     }
 
     protected render(
@@ -188,23 +140,28 @@ export default class LibrarySearchByBook extends HTMLElement {
         libCode: string,
         el: HTMLElement
     ) {
-        const { hasBook, loanAvailable } = await this.fetchLoadnAvailabilty(
-            isbn,
-            libCode
-        );
-        const hasBookEl = el.querySelector(".hasBook");
-        const isAvailableEl = el.querySelector(".loanAvailable");
-        if (hasBookEl) {
-            hasBookEl.textContent = hasBook === "Y" ? "소장" : "미소장";
-        }
-        if (isAvailableEl) {
-            const isLoanAvailable = loanAvailable === "Y";
-            isAvailableEl.textContent = isLoanAvailable
-                ? "대출 가능"
-                : "대출 불가";
-            if (isLoanAvailable) {
-                el.dataset.available = "true";
+        try {
+            const { hasBook, loanAvailable } = await this.fetchLoadnAvailabilty(
+                isbn,
+                libCode
+            );
+            const hasBookEl = el.querySelector(".hasBook");
+            const isAvailableEl = el.querySelector(".loanAvailable");
+            if (hasBookEl) {
+                hasBookEl.textContent = hasBook === "Y" ? "소장" : "미소장";
             }
+            if (isAvailableEl) {
+                const isLoanAvailable = loanAvailable === "Y";
+                isAvailableEl.textContent = isLoanAvailable
+                    ? "대출 가능"
+                    : "대출 불가";
+                if (isLoanAvailable) {
+                    el.dataset.available = "true";
+                }
+            }
+        } catch (error) {
+            console.warn(`Failed to check availability for ${libCode}`, error);
+            // Optionally update UI to show check failed
         }
     }
 
