@@ -184,7 +184,6 @@ interface IBookState {
     favorites: TFavoriteFavorites;
     sortedFavoriteKeys: TSortedFavoriteKeys;
     libraries: TLibraries;
-    regions: TRegions;
 }
 
 interface IApiResponse<T> {
@@ -208,17 +207,10 @@ type TMonthlyKeyword = {
     weight: number;
 };
 
-type TPublishers = {
-    bookStateUpdate: Publisher<undefined>;
-    categoryUpdate: Publisher<IFavoritesUpdateProps>;
-    categoryBookUpdate: Publisher<undefined>;
-    regionUpdate: Publisher<undefined>;
-    detailRegionUpdate: Publisher<undefined>;
-};
 type TSubscriberCallback<T = undefined> = (payload?: T) => void;
 
 type TActionProps = (
-    type: keyof TPublishers,
+    type: string,
     params: IFavoritesUpdateProps,
 ) => void;
 
@@ -240,8 +232,6 @@ type TLibraryUpdateProps = {
 };
 
 type TLibrarysUpdateSubscriber = (params: TLibraryUpdateProps) => void;
-
-type TRegions = Record<string, Record<string, string>>;
 
 type TSortedFavoriteKeys = string[];
 

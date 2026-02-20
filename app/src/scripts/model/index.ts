@@ -2,14 +2,11 @@ import { STORAGE_NAME } from "./constants";
 import Publisher from "../utils/Publisher";
 import FavoriteModel from "./FavoriteModel";
 import LibraryModel from "./LibraryModel";
-import RegionModel from "./RegionModel";
 
 export enum BookModelEvent {
     FavoriteCategoriesUpdate = "favoriteCategoriesUpdate",
     FavoriteBookUpdate = "favoriteBookUpdate",
     LibraryUpdate = "libraryUpdate",
-    RegionUpdate = "regionUpdate",
-    DetailRegionUpdate = "detailRegionUpdate",
     BookStateUpdate = "bookStateUpdate",
 }
 
@@ -21,13 +18,11 @@ const initialState: IBookState = {
     favorites: {},
     sortedFavoriteKeys: [],
     libraries: {},
-    regions: {},
 };
 
 class BookModel {
     private favoriteModel: FavoriteModel;
     private libraryModel: LibraryModel;
-    private regionModel: RegionModel;
     private bookStateUpdatePublisher: Publisher = new Publisher();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private publishers: Record<string, Publisher<any>>;
@@ -38,10 +33,9 @@ class BookModel {
         this._state = this.loadStorage() || cloneDeep(initialState);
         console.log("BookModel Initialized with state:", this._state);
 
-        const { favorites, sortedFavoriteKeys, libraries, regions } = this._state;
+        const { favorites, sortedFavoriteKeys, libraries } = this._state;
         this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
         this.libraryModel = new LibraryModel(libraries);
-        this.regionModel = new RegionModel(regions);
 
         this.publishers = {
             [BookModelEvent.FavoriteCategoriesUpdate]:
@@ -50,9 +44,6 @@ class BookModel {
                 this.favoriteModel.getBookUpdatePublisher(),
             [BookModelEvent.LibraryUpdate]:
                 this.libraryModel.getUpdatePublisher(),
-            [BookModelEvent.RegionUpdate]: this.regionModel.getUpdatePublisher(),
-            [BookModelEvent.DetailRegionUpdate]:
-                this.regionModel.getDetailUpdatePublisher(),
             [BookModelEvent.BookStateUpdate]: this.bookStateUpdatePublisher,
         };
     }
@@ -60,7 +51,14 @@ class BookModel {
     // localStorage 관련
     private loadStorage(): IBookState | null {
         const storageData = localStorage.getItem(STORAGE_NAME);
-        return storageData ? JSON.parse(storageData) : null;
+        if (!storageData) return null;
+        
+        const parsed = JSON.parse(storageData);
+        // Remove regions if it exists in stored data
+        if (parsed.regions) {
+            delete parsed.regions;
+        }
+        return parsed;
     }
 
     private _commit() {
@@ -80,11 +78,10 @@ class BookModel {
     set state(newState: IBookState) {
         this._state = newState;
 
-        const { favorites, sortedFavoriteKeys, libraries, regions } = newState;
+        const { favorites, sortedFavoriteKeys, libraries } = newState;
         this.favoriteModel.favorites = favorites;
         this.favoriteModel.sortedKeys = sortedFavoriteKeys;
         this.libraryModel.libraries = libraries;
-        this.regionModel.regions = regions;
 
         this._commit();
         console.log("set state");
@@ -100,10 +97,6 @@ class BookModel {
 
     get libraries() {
         return this.libraryModel.libraries;
-    }
-
-    get regions() {
-        return this.regionModel.regions;
     }
 
     resetState() {
@@ -195,39 +188,6 @@ class BookModel {
 
     hasLibrary(code: string) {
         return this.libraryModel.has(code);
-    }
-
-    // Region 관련 메서드
-    addRegion(name: string) {
-        this.regionModel.add(name);
-
-        this._state.regions = this.regions;
-        this._commit();
-    }
-
-    removeRegion(name: string) {
-        this.regionModel.remove(name);
-
-        this._state.regions = this.regions;
-        this._commit();
-    }
-
-    addDetailRegion(
-        regionName: string,
-        detailName: string,
-        detailCode: string
-    ) {
-        this.regionModel.addDetail(regionName, detailName, detailCode);
-
-        this._state.regions = this.regions;
-        this._commit();
-    }
-
-    removeDetailRegion(regionName: string, detailName: string) {
-        this.regionModel.removeDetail(regionName, detailName);
-
-        this._state.regions = this.regions;
-        this._commit();
     }
 
     public subscribe<T>(
