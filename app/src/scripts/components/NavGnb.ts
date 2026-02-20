@@ -12,7 +12,6 @@ export default class NavGnb extends HTMLElement {
             "/favorite",
             "/popular",
             "/library-search",
-            "/library-search-keyword",
             "/setting",
         ];
 
@@ -62,8 +61,7 @@ export default class NavGnb extends HTMLElement {
                 <a class="gnb-item" href=".${this.PATHS[1]}">나의 책 (<span class="size">${this.bookSize}</span>)</a>
                 <a class="gnb-item" href=".${this.PATHS[2]}">인기대출도서</a>
                 <a class="gnb-item" href=".${this.PATHS[3]}">도서관 검색</a>
-                <a class="gnb-item" href=".${this.PATHS[4]}">도서관 검색(이름)</a>
-                <a class="gnb-item" href=".${this.PATHS[5]}">설정</a>
+                <a class="gnb-item" href=".${this.PATHS[4]}">설정</a>
             </nav>`;
     }
 

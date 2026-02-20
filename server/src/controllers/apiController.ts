@@ -27,20 +27,6 @@ export const getKyoboBookInfo = asyncHandler(
     }
 );
 
-// Search Libraries by Criteria
-export const searchLibraries = asyncHandler(
-    async (req: Request, res: Response) => {
-        const { dtl_region, page, pageSize } = req.query as { dtl_region: string, page: string, pageSize: string };
-
-        const libraries = await BookService.searchLibrariesByCriteria({
-            dtl_region: dtl_region as string,
-            page: page as string,
-            pageSize: pageSize as string,
-        });
-        res.status(200).json({ status: "success", data: libraries });
-    }
-);
-
 // Search Libraries by Keyword
 export const searchLibrariesByKeyword = asyncHandler(
     async (req: Request, res: Response) => {

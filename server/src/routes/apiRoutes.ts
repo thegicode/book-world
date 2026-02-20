@@ -2,7 +2,6 @@ import { Application } from "express";
 
 import {
     searchNaverBook,
-    searchLibraries,
     getLibraryDetail,
     checkBookExistence,
     getUsageAnalysis,
@@ -15,7 +14,6 @@ import {
 } from "../controllers/apiController";
 import {
     validateNaverBookSearch,
-    validateSearchLibraries,
     validateCheckBookExistence,
     validateGetUsageAnalysis,
     validateSearchLibrariesByBook,
@@ -28,7 +26,6 @@ import {
 
 const apiRoutes = (app: Application) => {
     app.get("/search-naver-book", validateNaverBookSearch, searchNaverBook);
-    app.get("/api/library-search", validateSearchLibraries, searchLibraries);
     app.get("/api/library-search-by-keyword", validateSearchLibrariesByKeyword, searchLibrariesByKeyword);
     app.get("/api/library-detail", getLibraryDetail);
     app.get("/book-exist", validateCheckBookExistence, checkBookExistence);

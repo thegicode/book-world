@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchLibrariesByKeyword = exports.searchLibrariesByCriteria = void 0;
+exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchLibrariesByKeyword = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const apiUtils_1 = require("./apiUtils");
@@ -27,23 +27,6 @@ const parseURL = (apiPath, params) => {
     const queryParams = new URLSearchParams(Object.assign(Object.assign({}, params), { authKey: AUTH_KEY, format: API_FORMAT }));
     return `${LIBRARY_API_BASE_URL}/${apiPath}?${queryParams}`;
 };
-function searchLibrariesByCriteria(params) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = parseURL("libSrch", params);
-        const data = yield (0, apiUtils_1.fetchData)(url);
-        if (!data.response)
-            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
-        const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
-        return {
-            pageNo,
-            pageSize,
-            numFound,
-            resultNum,
-            libraries: libs.map((item) => item.lib),
-        };
-    });
-}
-exports.searchLibrariesByCriteria = searchLibrariesByCriteria;
 const ensureCacheDir = () => {
     if (!fs_1.default.existsSync(CACHE_DIR)) {
         fs_1.default.mkdirSync(CACHE_DIR, { recursive: true });

@@ -2,7 +2,7 @@
 <html lang="ko">
     <head>
         <meta charset="UTF-8" />
-        <title>도서관 검색 | Book World</title>
+        <title>도서관 검색 (키워드) | Book World</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="noindex, nofollow" />
         <link
@@ -35,24 +35,19 @@
                     </template>
                 </library-search-stored>
 
-                <library-search-header>
-                    <div class="region"></div>
-                    <select class="detailRegion"></select>
-                </library-search-header>
+                <div class="search-header">
+                    <form class="search-form">
+                        <input type="text" name="keyword" placeholder="도서관 이름을 입력하세요" required />
+                        <button type="submit">검색</button>
+                    </form>
+                </div>
 
-                <form class="library-body">
+                <div class="library-body">
                     <div class="library-list" data-list-container></div>
                     <loading-component>Loading...</loading-component>
-                </form>
+                </div>
             </app-library-search>
         </div>
-
-        <template id="tp-region">
-            <label>
-                <input type="radio" name="region" value="" />
-                <span></span>
-            </label>
-        </template>
 
         <template id="tp-notFound">
             <div class="notFound">데이터가 없습니다.</div>

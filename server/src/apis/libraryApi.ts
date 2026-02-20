@@ -58,29 +58,6 @@ const parseURL = (apiPath: string, params: Record<string, string>) => {
     return `${LIBRARY_API_BASE_URL}/${apiPath}?${queryParams}`;
 };
 
-// Information disclosure library search
-export async function searchLibrariesByCriteria(params: {
-    dtl_region: string;
-    page: string;
-    pageSize: string;
-}) {
-    const url = parseURL("libSrch", params);
-    const data = await fetchData(url);
-    if (!data.response)
-        throw new LibraryApiError(
-            502,
-            "Invalid API response from library server",
-        );
-    const { pageNo, pageSize, numFound, resultNum, libs } = data.response;
-    return {
-        pageNo,
-        pageSize,
-        numFound,
-        resultNum,
-        libraries: libs.map((item: LibItem) => item.lib),
-    };
-}
-
 // Helper to ensure cache directory exists
 const ensureCacheDir = () => {
     if (!fs.existsSync(CACHE_DIR)) {

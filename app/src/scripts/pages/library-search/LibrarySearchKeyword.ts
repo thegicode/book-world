@@ -1,5 +1,5 @@
 import { FetchListComponent } from "../../components";
-import LibrarySearchItem from "../library-search/LibrarySearchItem";
+import LibrarySearchItem from "./LibrarySearchItem";
 
 export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySearchByBookResult, ILibraryData> {
     private searchForm: HTMLFormElement | null;

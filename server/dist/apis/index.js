@@ -14,11 +14,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchLibrariesByKeyword = exports.searchLibrariesByCriteria = void 0;
+exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchLibrariesByKeyword = void 0;
 __exportStar(require("./naverApi"), exports);
 __exportStar(require("./kyoboApi"), exports);
 var libraryApi_1 = require("./libraryApi");
-Object.defineProperty(exports, "searchLibrariesByCriteria", { enumerable: true, get: function () { return libraryApi_1.searchLibrariesByCriteria; } });
 Object.defineProperty(exports, "searchLibrariesByKeyword", { enumerable: true, get: function () { return libraryApi_1.searchLibrariesByKeyword; } });
 Object.defineProperty(exports, "getLibraryDetail", { enumerable: true, get: function () { return libraryApi_1.getLibraryDetail; } });
 Object.defineProperty(exports, "checkBookAvailability", { enumerable: true, get: function () { return libraryApi_1.checkBookAvailability; } });
