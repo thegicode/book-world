@@ -15,6 +15,11 @@ const getHtmlFiles = async () => {
 };
 
 const generateCriticalCss = async () => {
+    if (!isProduction) {
+        console.log('Skipping critical CSS generation in development mode.');
+        return;
+    }
+
     const { generate } = await import('critical');
     console.log(`--- Generating Critical CSS for ${ENV_NAME} ---`);
 

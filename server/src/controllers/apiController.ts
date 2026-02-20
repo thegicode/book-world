@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler";
 import * as BookService from "../apis";
 
 // Naver Book Search
+
 export const searchNaverBook = asyncHandler(
     async (req: Request, res: Response) => {
         const { keyword, display, start, sort } = req.query as { keyword: string, display: string, start: string, sort: string };
@@ -33,6 +34,20 @@ export const searchLibraries = asyncHandler(
 
         const libraries = await BookService.searchLibrariesByCriteria({
             dtl_region: dtl_region as string,
+            page: page as string,
+            pageSize: pageSize as string,
+        });
+        res.status(200).json({ status: "success", data: libraries });
+    }
+);
+
+// Search Libraries by Keyword
+export const searchLibrariesByKeyword = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { keyword, page, pageSize } = req.query as { keyword: string, page: string, pageSize: string };
+
+        const libraries = await BookService.searchLibrariesByKeyword({
+            keyword: keyword as string,
             page: page as string,
             pageSize: pageSize as string,
         });

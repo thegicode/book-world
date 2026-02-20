@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSrchBooksInLibrary = exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookExistence = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
+exports.validateSrchBooksInLibrary = exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookExistence = exports.validateSearchLibrariesByKeyword = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
 const express_validator_1 = require("express-validator");
 const apiErrors_1 = require("../errors/apiErrors");
 const validate = (req, res, next) => {
@@ -25,6 +25,12 @@ exports.validateKyoboBookInfo = [
 ];
 exports.validateSearchLibraries = [
     (0, express_validator_1.query)('dtl_region').notEmpty().withMessage('dtl_region is required'),
+    (0, express_validator_1.query)('page').notEmpty().withMessage('page is required').isInt({ gt: 0 }).withMessage('page must be a positive integer'),
+    (0, express_validator_1.query)('pageSize').notEmpty().withMessage('pageSize is required').isInt({ gt: 0 }).withMessage('pageSize must be a positive integer'),
+    validate,
+];
+exports.validateSearchLibrariesByKeyword = [
+    (0, express_validator_1.query)('keyword').notEmpty().withMessage('keyword is required'),
     (0, express_validator_1.query)('page').notEmpty().withMessage('page is required').isInt({ gt: 0 }).withMessage('page must be a positive integer'),
     (0, express_validator_1.query)('pageSize').notEmpty().withMessage('pageSize is required').isInt({ gt: 0 }).withMessage('pageSize must be a positive integer'),
     validate,

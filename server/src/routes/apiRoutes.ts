@@ -11,6 +11,7 @@ import {
     getMonthlyKeywords,
     getKyoboBookInfo,
     srchBooksInLibrary,
+    searchLibrariesByKeyword,
 } from "../controllers/apiController";
 import {
     validateNaverBookSearch,
@@ -22,11 +23,13 @@ import {
     validateGetMonthlyKeywords,
     validateKyoboBookInfo,
     validateSrchBooksInLibrary,
+    validateSearchLibrariesByKeyword,
 } from "../middleware/validationMiddleware";
 
 const apiRoutes = (app: Application) => {
     app.get("/search-naver-book", validateNaverBookSearch, searchNaverBook);
     app.get("/api/library-search", validateSearchLibraries, searchLibraries);
+    app.get("/api/library-search-by-keyword", validateSearchLibrariesByKeyword, searchLibrariesByKeyword);
     app.get("/api/library-detail", getLibraryDetail);
     app.get("/book-exist", validateCheckBookExistence, checkBookExistence);
     app.get("/usage-analysis-list", validateGetUsageAnalysis, getUsageAnalysis);

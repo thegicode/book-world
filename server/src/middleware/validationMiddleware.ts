@@ -33,6 +33,13 @@ export const validateSearchLibraries = [
     validate,
 ];
 
+export const validateSearchLibrariesByKeyword = [
+    query('keyword').notEmpty().withMessage('keyword is required'),
+    query('page').notEmpty().withMessage('page is required').isInt({ gt: 0 }).withMessage('page must be a positive integer'),
+    query('pageSize').notEmpty().withMessage('pageSize is required').isInt({ gt: 0 }).withMessage('pageSize must be a positive integer'),
+    validate,
+];
+
 export const validateCheckBookExistence = [
     query('isbn13').notEmpty().withMessage('isbn13 is required'),
     query('libCode').notEmpty().withMessage('libCode is required'),

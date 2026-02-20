@@ -43,7 +43,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.getPopularBooks = exports.searchLibrariesByBook = exports.getUsageAnalysis = exports.checkBookExistence = exports.getLibraryDetail = exports.searchLibraries = exports.getKyoboBookInfo = exports.searchNaverBook = void 0;
+exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.getPopularBooks = exports.searchLibrariesByBook = exports.getUsageAnalysis = exports.checkBookExistence = exports.getLibraryDetail = exports.searchLibrariesByKeyword = exports.searchLibraries = exports.getKyoboBookInfo = exports.searchNaverBook = void 0;
 const asyncHandler_1 = require("../utils/asyncHandler");
 const BookService = __importStar(require("../apis"));
 exports.searchNaverBook = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,6 +65,15 @@ exports.searchLibraries = (0, asyncHandler_1.asyncHandler)((req, res) => __await
     const { dtl_region, page, pageSize } = req.query;
     const libraries = yield BookService.searchLibrariesByCriteria({
         dtl_region: dtl_region,
+        page: page,
+        pageSize: pageSize,
+    });
+    res.status(200).json({ status: "success", data: libraries });
+}));
+exports.searchLibrariesByKeyword = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { keyword, page, pageSize } = req.query;
+    const libraries = yield BookService.searchLibrariesByKeyword({
+        keyword: keyword,
         page: page,
         pageSize: pageSize,
     });

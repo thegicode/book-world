@@ -1,13 +1,27 @@
+import fs from "fs";
+import path from "path";
 import { fetchData } from "./apiUtils";
 import { LibraryApiError } from "../errors/apiErrors";
+import { rootDirectoryPath } from "../config";
 
 const LIBRARY_API_BASE_URL = "http://data4library.kr/api";
 const AUTH_KEY = process.env.LIBRARY_KEY as string;
 const API_FORMAT = "json";
+const CACHE_DIR = path.join(rootDirectoryPath, "server/data");
+const CACHE_FILE = path.join(CACHE_DIR, "libraries.json");
+
+interface ILibrary {
+    libCode: string;
+    libName: string;
+    address: string;
+    homepage: string;
+    telephone: string;
+    [key: string]: unknown;
+}
 
 // Define interfaces for API response items to avoid 'any'
 interface LibItem {
-    lib: unknown;
+    lib: ILibrary;
 }
 interface LoanItem {
     loan: unknown;
@@ -64,6 +78,72 @@ export async function searchLibrariesByCriteria(params: {
         numFound,
         resultNum,
         libraries: libs.map((item: LibItem) => item.lib),
+    };
+}
+
+// Helper to ensure cache directory exists
+const ensureCacheDir = () => {
+    if (!fs.existsSync(CACHE_DIR)) {
+        fs.mkdirSync(CACHE_DIR, { recursive: true });
+    }
+};
+
+// Helper to fetch all libraries and cache them
+const fetchAndCacheLibraries = async (): Promise<ILibrary[]> => {
+    // 1. Get total count
+    const countUrl = parseURL("libSrch", { pageNo: "1", pageSize: "1" });
+    const countData = await fetchData(countUrl);
+    if (!countData.response) throw new Error("Invalid API response for count");
+    
+    const totalCount = countData.response.numFound;
+
+    // 2. Fetch all
+    const allUrl = parseURL("libSrch", { pageNo: "1", pageSize: String(totalCount) });
+    const allData = await fetchData(allUrl);
+    if (!allData.response || !allData.response.libs) throw new Error("Invalid API response for all libraries");
+
+    const libraries = allData.response.libs.map((item: LibItem) => item.lib);
+
+    // 3. Save to file
+    ensureCacheDir();
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(libraries, null, 2));
+
+    return libraries;
+};
+
+// Search libraries by keyword (libName) using Cache
+export async function searchLibrariesByKeyword(params: {
+    keyword: string;
+    page: string;
+    pageSize: string;
+}) {
+    let libraries: ILibrary[] = [];
+
+    if (fs.existsSync(CACHE_FILE)) {
+        const fileContent = fs.readFileSync(CACHE_FILE, "utf-8");
+        libraries = JSON.parse(fileContent);
+    } else {
+        libraries = await fetchAndCacheLibraries();
+    }
+
+    // Filter by keyword
+    const filtered = libraries.filter(lib => 
+        lib.libName.includes(params.keyword)
+    );
+
+    // Pagination
+    const page = parseInt(params.page, 10);
+    const pageSize = parseInt(params.pageSize, 10);
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const paginated = filtered.slice(start, end);
+
+    return {
+        pageNo: params.page,
+        pageSize: params.pageSize,
+        numFound: filtered.length,
+        resultNum: paginated.length,
+        libraries: paginated,
     };
 }
 

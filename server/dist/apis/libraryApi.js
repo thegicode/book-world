@@ -8,13 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchLibrariesByCriteria = void 0;
+exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchLibrariesByKeyword = exports.searchLibrariesByCriteria = void 0;
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const apiUtils_1 = require("./apiUtils");
 const apiErrors_1 = require("../errors/apiErrors");
+const config_1 = require("../config");
 const LIBRARY_API_BASE_URL = "http://data4library.kr/api";
 const AUTH_KEY = process.env.LIBRARY_KEY;
 const API_FORMAT = "json";
+const CACHE_DIR = path_1.default.join(config_1.rootDirectoryPath, "server/data");
+const CACHE_FILE = path_1.default.join(CACHE_DIR, "libraries.json");
 const parseURL = (apiPath, params) => {
     const queryParams = new URLSearchParams(Object.assign(Object.assign({}, params), { authKey: AUTH_KEY, format: API_FORMAT }));
     return `${LIBRARY_API_BASE_URL}/${apiPath}?${queryParams}`;
@@ -36,6 +44,52 @@ function searchLibrariesByCriteria(params) {
     });
 }
 exports.searchLibrariesByCriteria = searchLibrariesByCriteria;
+const ensureCacheDir = () => {
+    if (!fs_1.default.existsSync(CACHE_DIR)) {
+        fs_1.default.mkdirSync(CACHE_DIR, { recursive: true });
+    }
+};
+const fetchAndCacheLibraries = () => __awaiter(void 0, void 0, void 0, function* () {
+    const countUrl = parseURL("libSrch", { pageNo: "1", pageSize: "1" });
+    const countData = yield (0, apiUtils_1.fetchData)(countUrl);
+    if (!countData.response)
+        throw new Error("Invalid API response for count");
+    const totalCount = countData.response.numFound;
+    const allUrl = parseURL("libSrch", { pageNo: "1", pageSize: String(totalCount) });
+    const allData = yield (0, apiUtils_1.fetchData)(allUrl);
+    if (!allData.response || !allData.response.libs)
+        throw new Error("Invalid API response for all libraries");
+    const libraries = allData.response.libs.map((item) => item.lib);
+    ensureCacheDir();
+    fs_1.default.writeFileSync(CACHE_FILE, JSON.stringify(libraries, null, 2));
+    return libraries;
+});
+function searchLibrariesByKeyword(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let libraries = [];
+        if (fs_1.default.existsSync(CACHE_FILE)) {
+            const fileContent = fs_1.default.readFileSync(CACHE_FILE, "utf-8");
+            libraries = JSON.parse(fileContent);
+        }
+        else {
+            libraries = yield fetchAndCacheLibraries();
+        }
+        const filtered = libraries.filter(lib => lib.libName.includes(params.keyword));
+        const page = parseInt(params.page, 10);
+        const pageSize = parseInt(params.pageSize, 10);
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        const paginated = filtered.slice(start, end);
+        return {
+            pageNo: params.page,
+            pageSize: params.pageSize,
+            numFound: filtered.length,
+            resultNum: paginated.length,
+            libraries: paginated,
+        };
+    });
+}
+exports.searchLibrariesByKeyword = searchLibrariesByKeyword;
 function getLibraryDetail(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = parseURL("libSrch", params);
