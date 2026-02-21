@@ -17,6 +17,7 @@
 - **Architecture**:
   - **@/ Alias**: `@/` 별칭을 사용하여 모듈 간 참조 경로 간소화
   - **Unified Build Pipeline**: HTML, CSS, JS, Image 최적화를 하나의 통합 빌드 스크립트(`build-assets.ts`)로 제어
+  - **Automated Quality Control**: Husky와 lint-staged를 통해 커밋 전 타입 체크, 린트, 테스트 자동 수행
 
 ## ⚙️ 설치 및 실행
 

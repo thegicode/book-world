@@ -1,9 +1,9 @@
 import bookModel, { BookModelEvent } from "@/model";
 
 export default class FavoriteNav extends HTMLElement {
-    private nav: HTMLElement;
-    private overlayCategory: HTMLElement;
-    private changButton: HTMLButtonElement;
+    private nav!: HTMLElement;
+    private overlayCategory!: HTMLElement;
+    private changButton!: HTMLButtonElement;
     private category: string | null;
 
     constructor() {

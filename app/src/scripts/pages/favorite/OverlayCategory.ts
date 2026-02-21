@@ -2,13 +2,13 @@ import bookModel from "@/model";
 import { cloneTemplate } from "@/utils/helpers";
 
 export default class OverlayCategory extends HTMLElement {
-    form: HTMLFormElement | null;
-    list: HTMLElement | null;
-    template: HTMLTemplateElement | null;
-    renameButton: HTMLButtonElement | null;
-    addButton: HTMLButtonElement | null;
-    addInput: HTMLInputElement | null;
-    closeButton: HTMLButtonElement | null;
+    form: HTMLFormElement | null = null;
+    list: HTMLElement | null = null;
+    template: HTMLTemplateElement | null = null;
+    renameButton: HTMLButtonElement | null = null;
+    addButton: HTMLButtonElement | null = null;
+    addInput: HTMLInputElement | null = null;
+    closeButton: HTMLButtonElement | null = null;
     draggedItem: HTMLLIElement | null = null;
 
     static get observedAttributes() {
