@@ -126,15 +126,22 @@ export async function searchLibrariesByKeyword(params: {
 
 // Get library detail by libCode
 export async function getLibraryDetail(params: { libCode: string }) {
-    const url = parseURL("libSrch", params);
-    const data = await fetchData(url);
-    if (!data.response || !data.response.libs || data.response.libs.length === 0)
-        throw new LibraryApiError(
-            404,
-            "Library not found",
-        );
-    
-    return data.response.libs[0].lib;
+    let libraries: ILibrary[] = [];
+
+    if (fs.existsSync(CACHE_FILE)) {
+        const fileContent = fs.readFileSync(CACHE_FILE, "utf-8");
+        libraries = JSON.parse(fileContent);
+    } else {
+        libraries = await fetchAndCacheLibraries();
+    }
+
+    const library = libraries.find(lib => lib.libCode === params.libCode);
+
+    if (!library) {
+        throw new LibraryApiError(404, "Library not found");
+    }
+
+    return library;
 }
 
 // Check book availability
