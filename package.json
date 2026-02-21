@@ -13,16 +13,18 @@
     "build-assets": "ts-node --project tsconfig.scripts.json server/src/scripts/build-assets.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-            "tsc": "npx tsc -w & npx tsc --project ./server/src",
-            "esbuild-dev": "NODE_ENV=development node esbuild.config.js",
-            "eslint": "eslint app --ext .ts"
-        },
-            "lint-staged": {
-                "*.ts": [
-                    "eslint --fix",
-                    "vitest run related --passWithNoTests"
-                ]
-            },        "repository": {    "type": "git",
+    "tsc": "npx tsc -w & npx tsc --project ./server/src",
+    "esbuild-dev": "NODE_ENV=development node esbuild.config.js",
+    "eslint": "eslint app --ext .ts"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "vitest run related --passWithNoTests"
+    ]
+  },
+  "repository": {
+    "type": "git",
     "url": "git+https://github.com/thegicode/book-world.git"
   },
   "author": "thegi.code@gmail.com",
@@ -73,6 +75,7 @@
   "dependencies": {
     "express-validator": "^7.3.1",
     "intersection-observer": "^0.12.2",
+    "lit": "^3.3.2",
     "typescript": "^4.5.4"
   }
 }

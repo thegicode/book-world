@@ -28,25 +28,26 @@ describe('CategorySelector', () => {
     
     expect(button).not.toBeNull();
     expect(container).not.toBeNull();
-    expect(button?.textContent).toBe('Category');
+    expect(button?.textContent?.trim()).toBe('Category');
   });
 
   it('bookModel의 카테고리 수만큼 아이템이 생성되어야 한다.', () => {
     const labels = element.querySelectorAll('.category label');
     expect(labels.length).toBe(2);
-    expect(labels[0].textContent).toBe('소설');
-    expect(labels[1].textContent).toBe('만화');
+    expect(labels[0].textContent?.trim()).toBe('소설');
+    expect(labels[1].textContent?.trim()).toBe('만화');
   });
 
   it('버튼 클릭 시 컨테이너의 hidden 상태가 토글되어야 한다.', () => {
     const button = element.querySelector('.category-button') as HTMLButtonElement;
     const container = element.querySelector('.category') as HTMLElement;
     
-    expect(container.hidden).toBe(true);
+    // lit-html의 ?hidden 바인딩은 속성 존재 여부로 결정됨
+    expect(container.hasAttribute('hidden')).toBe(true);
     button.click();
-    expect(container.hidden).toBe(false);
+    expect(container.hasAttribute('hidden')).toBe(false);
     button.click();
-    expect(container.hidden).toBe(true);
+    expect(container.hasAttribute('hidden')).toBe(true);
   });
 
   it('체크박스 클릭 시 bookModel에 책을 추가하거나 삭제해야 한다.', () => {

@@ -125,8 +125,8 @@ class BookModel {
 
     // favorites 관련 메서드
     addfavorite(name: string) {
-        this.favoriteModel.add(name);
         this.favoriteModel.addCategoryOrder(name);
+        this.favoriteModel.add(name);
 
         this._state.favorites = this.favorites;
         this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
@@ -134,9 +134,11 @@ class BookModel {
     }
 
     renameFavorite(prevName: string, newName: string) {
+        this.favoriteModel.renameCategoryOrder(prevName, newName);
         this.favoriteModel.rename(prevName, newName);
 
         this._state.favorites = this.favorites;
+        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
@@ -148,8 +150,8 @@ class BookModel {
     }
 
     deleteFavorite(name: string) {
-        this.favoriteModel.delete(name);
         this.favoriteModel.deleteCategoryOrder(name);
+        this.favoriteModel.delete(name);
 
         this._state.favorites = this.favorites;
         this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
