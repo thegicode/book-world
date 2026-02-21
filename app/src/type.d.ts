@@ -183,7 +183,7 @@ interface IPopularFetchParams {
 
 interface IBookState {
     favorites: TFavoriteFavorites;
-    sortedFavoriteKeys: TSortedFavoriteKeys;
+    favoriteCategoryOrder: TFavoriteCategoryOrder;
     libraries: TLibraries;
 }
 
@@ -234,7 +234,7 @@ type TLibraryUpdateProps = {
 
 type TLibrarysUpdateSubscriber = (params: TLibraryUpdateProps) => void;
 
-type TSortedFavoriteKeys = string[];
+type TFavoriteCategoryOrder = string[];
 
 type TSubscriberVoid = () => void;
 

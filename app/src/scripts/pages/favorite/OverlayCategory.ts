@@ -62,7 +62,7 @@ export default class OverlayCategory extends HTMLElement {
 
         const fragment = new DocumentFragment();
 
-        bookModel.sortedFavoriteKeys.forEach((favorite, index) => {
+        bookModel.favoriteCategoryOrder.forEach((favorite, index) => {
             const cloned = this.createItem(favorite, index);
             fragment.appendChild(cloned);
         });
@@ -199,7 +199,7 @@ export default class OverlayCategory extends HTMLElement {
 
         bookModel.addfavorite(favorite);
 
-        const index = bookModel.sortedFavoriteKeys.length;
+        const index = bookModel.favoriteCategoryOrder.length;
         const cloned = this.createItem(favorite, index);
         this.list?.appendChild(cloned);
 

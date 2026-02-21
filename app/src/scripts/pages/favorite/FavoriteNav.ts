@@ -50,17 +50,17 @@ export default class FavoriteNav extends HTMLElement {
     private intialize() {
         this.category =
             new URLSearchParams(location.search).get("category") ||
-            bookModel.sortedFavoriteKeys[0];
+            bookModel.favoriteCategoryOrder[0];
 
         // if (this.category === null) {
-        //     this.category = bookModel.sortedFavoriteKeys[0];
+        //     this.category = bookModel.favoriteCategoryOrder[0];
         //     location.search = this.getUrl(this.category);
         // }
     }
 
     private render() {
         const fragment = new DocumentFragment();
-        bookModel.sortedFavoriteKeys
+        bookModel.favoriteCategoryOrder
             .map((category) => this.createItem(category))
             .forEach((element) => fragment.appendChild(element));
 
@@ -119,11 +119,11 @@ export default class FavoriteNav extends HTMLElement {
     private handlRename(prevName: string, newName: string) {
         this.updateItem(
             this.nav.querySelectorAll("a")[
-                bookModel.sortedFavoriteKeys.indexOf(prevName)
+                bookModel.favoriteCategoryOrder.indexOf(prevName)
             ],
             newName
         );
-        bookModel.renameSortedFavoriteKey(prevName, newName);
+        bookModel.renameCategoryOrderKey(prevName, newName);
 
         if (this.category === prevName) {
             location.search = this.getUrl(newName);
@@ -131,7 +131,7 @@ export default class FavoriteNav extends HTMLElement {
     }
 
     private handlDelete(name: string) {
-        const deletedIndex = bookModel.deleteSortedFavoriteKey(name);
+        const deletedIndex = bookModel.deleteCategoryOrderKey(name);
         this.nav.querySelectorAll("a")[deletedIndex].remove();
     }
 

@@ -78,7 +78,7 @@ export default class LibraryBookExist extends HTMLElement {
 
         (element.querySelector(".loanAvailable") as HTMLElement).textContent =
             loanAvailableText;
-        (element.querySelector("a") as HTMLAnchorElement).href = homepage;
+        (element.querySelector("a") as HTMLAnchorElement).href = homepage || "";
     }
 
     protected loading(size: number) {

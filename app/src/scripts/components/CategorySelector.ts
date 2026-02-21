@@ -32,7 +32,7 @@ export default class CategorySelector extends HTMLElement {
     protected render() {
         if (!this.container || !this.button) return;
 
-        bookModel.sortedFavoriteKeys
+        bookModel.favoriteCategoryOrder
             .map(
                 (category: string) =>
                     this.createCategoryItem(category) as HTMLLabelElement
@@ -164,7 +164,7 @@ export default class CategorySelector extends HTMLElement {
     private reanmeCategory(newName: string) {
         const prevElement =
             this.querySelectorAll("label")[
-                bookModel.sortedFavoriteKeys.indexOf(newName)
+                bookModel.favoriteCategoryOrder.indexOf(newName)
             ];
 
         const newElement = this.createCategoryItem(newName) as HTMLLabelElement;

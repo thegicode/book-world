@@ -2,17 +2,17 @@ import Publisher from "../utils/Publisher";
 
 export default class FavoriteModel {
     private _favorites: TFavoriteFavorites;
-    private _sortedKeys: TSortedFavoriteKeys;
+    private _categoryOrder: TFavoriteCategoryOrder;
     private categoriesUpdatePublisher: Publisher<IFavoritesUpdateProps> =
         new Publisher();
     private bookUpdatePublisher: Publisher = new Publisher();
 
     constructor(
         categories: TFavoriteFavorites,
-        sortedKeys: TSortedFavoriteKeys
+        categoryOrder: TFavoriteCategoryOrder
     ) {
         this._favorites = categories || {};
-        this._sortedKeys = sortedKeys || [];
+        this._categoryOrder = categoryOrder || [];
     }
 
     get favorites(): TFavoriteFavorites {
@@ -23,12 +23,12 @@ export default class FavoriteModel {
         this._favorites = newCategories;
     }
 
-    get sortedKeys(): TSortedFavoriteKeys {
-        return [...this._sortedKeys];
+    get categoryOrder(): TFavoriteCategoryOrder {
+        return [...this._categoryOrder];
     }
 
-    set sortedKeys(newKeys: TSortedFavoriteKeys) {
-        this._sortedKeys = newKeys;
+    set categoryOrder(newKeys: TFavoriteCategoryOrder) {
+        this._categoryOrder = newKeys;
     }
 
     add(name: string) {
@@ -39,8 +39,8 @@ export default class FavoriteModel {
         });
     }
 
-    addSortedKeys(name: string) {
-        this._sortedKeys.push(name);
+    addCategoryOrder(name: string) {
+        this._categoryOrder.push(name);
     }
 
     rename(prevName: string, newName: string) {
@@ -55,18 +55,18 @@ export default class FavoriteModel {
         }
     }
 
-    renameSortedKeys(prevName: string, newName: string) {
-        const index = this._sortedKeys.indexOf(prevName);
+    renameCategoryOrder(prevName: string, newName: string) {
+        const index = this._categoryOrder.indexOf(prevName);
         if (index !== -1) {
-            this._sortedKeys[index] = newName;
+            this._categoryOrder[index] = newName;
         }
     }
 
     change(draggedKey: string, targetKey: string) {
-        const draggedIndex = this._sortedKeys.indexOf(draggedKey);
-        const targetIndex = this._sortedKeys.indexOf(targetKey);
-        this._sortedKeys[targetIndex] = draggedKey;
-        this._sortedKeys[draggedIndex] = targetKey;
+        const draggedIndex = this._categoryOrder.indexOf(draggedKey);
+        const targetIndex = this._categoryOrder.indexOf(targetKey);
+        this._categoryOrder[targetIndex] = draggedKey;
+        this._categoryOrder[draggedIndex] = targetKey;
 
         this.categoriesUpdatePublisher.notify({
             type: "change",
@@ -86,9 +86,9 @@ export default class FavoriteModel {
         });
     }
 
-    deleteSortedKeys(name: string): number {
-        const index = this._sortedKeys.indexOf(name);
-        this._sortedKeys.splice(index, 1);
+    deleteCategoryOrder(name: string): number {
+        const index = this._categoryOrder.indexOf(name);
+        this._categoryOrder.splice(index, 1);
         return index;
     }
 

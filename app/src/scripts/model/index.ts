@@ -16,7 +16,7 @@ const cloneDeep = <T>(obj: T): T => {
 
 const initialState: IBookState = {
     favorites: {},
-    sortedFavoriteKeys: [],
+    favoriteCategoryOrder: [],
     libraries: {},
 };
 
@@ -31,10 +31,10 @@ class BookModel {
 
     constructor() {
         this._state = this.loadStorage() || cloneDeep(initialState);
-        console.log("BookModel Initialized with state:", this._state);
+        console.log("BookModel Initialized (v2) with state:", this._state);
 
-        const { favorites, sortedFavoriteKeys, libraries } = this._state;
-        this.favoriteModel = new FavoriteModel(favorites, sortedFavoriteKeys);
+        const { favorites, favoriteCategoryOrder, libraries } = this._state;
+        this.favoriteModel = new FavoriteModel(favorites, favoriteCategoryOrder);
         this.libraryModel = new LibraryModel(libraries);
 
         this.publishers = {
@@ -54,6 +54,13 @@ class BookModel {
         if (!storageData) return null;
         
         const parsed = JSON.parse(storageData);
+
+        // Migrate sortedFavoriteKeys to favoriteCategoryOrder
+        if (parsed.sortedFavoriteKeys) {
+            parsed.favoriteCategoryOrder = parsed.sortedFavoriteKeys;
+            delete parsed.sortedFavoriteKeys;
+        }
+
         // Remove regions if it exists in stored data
         if (parsed.regions) {
             delete parsed.regions;
@@ -91,9 +98,9 @@ class BookModel {
     set state(newState: IBookState) {
         this._state = newState;
 
-        const { favorites, sortedFavoriteKeys, libraries } = newState;
+        const { favorites, favoriteCategoryOrder, libraries } = newState;
         this.favoriteModel.favorites = favorites;
-        this.favoriteModel.sortedKeys = sortedFavoriteKeys;
+        this.favoriteModel.categoryOrder = favoriteCategoryOrder;
         this.libraryModel.libraries = libraries;
 
         this._commit();
@@ -104,8 +111,8 @@ class BookModel {
         return this.favoriteModel.favorites;
     }
 
-    get sortedFavoriteKeys() {
-        return this.favoriteModel.sortedKeys;
+    get favoriteCategoryOrder() {
+        return this.favoriteModel.categoryOrder;
     }
 
     get libraries() {
@@ -119,10 +126,10 @@ class BookModel {
     // favorites 관련 메서드
     addfavorite(name: string) {
         this.favoriteModel.add(name);
-        this.favoriteModel.addSortedKeys(name);
+        this.favoriteModel.addCategoryOrder(name);
 
         this._state.favorites = this.favorites;
-        this._state.sortedFavoriteKeys = this.sortedFavoriteKeys;
+        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
@@ -133,10 +140,10 @@ class BookModel {
         this._commit();
     }
 
-    renameSortedFavoriteKey(prevName: string, newName: string) {
-        this.favoriteModel.renameSortedKeys(prevName, newName);
+    renameCategoryOrderKey(prevName: string, newName: string) {
+        this.favoriteModel.renameCategoryOrder(prevName, newName);
 
-        this._state.sortedFavoriteKeys = this.sortedFavoriteKeys;
+        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
@@ -147,10 +154,10 @@ class BookModel {
         this._commit();
     }
 
-    deleteSortedFavoriteKey(name: string) {
-        const index = this.favoriteModel.deleteSortedKeys(name);
+    deleteCategoryOrderKey(name: string) {
+        const index = this.favoriteModel.deleteCategoryOrder(name);
 
-        this._state.sortedFavoriteKeys = this.sortedFavoriteKeys;
+        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
         return index;
     }
@@ -162,7 +169,7 @@ class BookModel {
     changeFavorite(draggedKey: string, targetKey: string) {
         this.favoriteModel.change(draggedKey, targetKey);
 
-        this._state.sortedFavoriteKeys = this.sortedFavoriteKeys;
+        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 

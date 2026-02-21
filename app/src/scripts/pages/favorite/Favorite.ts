@@ -36,7 +36,7 @@ export default class Favorite extends HTMLElement {
     }
 
     private getIsbnsOfCategory(): string[] | undefined {
-        const categoryKeys = bookModel.sortedFavoriteKeys;
+        const categoryKeys = bookModel.favoriteCategoryOrder;
         if (categoryKeys.length === 0) {
             this.renderMessage("관심 카테고리를 등록해주세요.");
             return;

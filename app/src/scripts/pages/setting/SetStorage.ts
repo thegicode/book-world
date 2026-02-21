@@ -1,6 +1,6 @@
 import { CustomFetch } from "../../services/index";
 import bookModel from "../../model";
-const SAMPLE_JSON_URL = `../../../assets/json/storage-sample.json`;
+const SAMPLE_JSON_URL = `/assets/json/storage-sample.json`;
 
 export default class SetStorage extends HTMLElement {
     private saveButton: HTMLButtonElement;
