@@ -1,4 +1,4 @@
-import Publisher from "../utils/Publisher";
+import Publisher from "@/utils/Publisher";
 
 export default class FavoriteModel {
     private _favorites: TFavoriteFavorites;

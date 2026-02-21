@@ -1,5 +1,5 @@
-import { CustomEventEmitter } from "../../utils";
-import { getCurrentDates } from "../../utils/helpers";
+import { CustomEventEmitter } from "@/utils";
+import { getCurrentDates } from "@/utils/helpers";
 import PopularList from "./PopularList";
 
 export default class Popular extends HTMLElement {

@@ -1,5 +1,5 @@
-import bookModel from "../../model";
-import { cloneTemplate } from "../../utils/helpers";
+import bookModel from "@/model";
+import { cloneTemplate } from "@/utils/helpers";
 
 export default class OverlayCategory extends HTMLElement {
     form: HTMLFormElement | null;

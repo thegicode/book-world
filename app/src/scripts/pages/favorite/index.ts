@@ -4,7 +4,7 @@ import {
     LibraryBookExist,
     NavGnb,
     BookImage,
-} from "../../components/index";
+} from "@/components/index";
 
 import Favorite from "./Favorite";
 import FavoriteNav from "./FavoriteNav";

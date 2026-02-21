@@ -1,4 +1,4 @@
-import { NavGnb, CategorySelector, BookImage } from "../../components/index";
+import { NavGnb, CategorySelector, BookImage } from "@/components/index";
 
 import Book from "./Book";
 import LibrarySearchByBook from "./LibrarySearchByBook";

@@ -1,6 +1,6 @@
-import { BookImage } from "../../components/index";
-import { CustomFetch } from "../../services/index";
-import { cloneTemplate, fillElementsWithData } from "../../utils/helpers";
+import { BookImage } from "@/components/index";
+import { CustomFetch } from "@/services/index";
+import { cloneTemplate, fillElementsWithData } from "@/utils/helpers";
 
 export default class Book extends HTMLElement {
     protected loadingElement: HTMLElement | null;

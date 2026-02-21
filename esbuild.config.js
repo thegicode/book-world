@@ -1,5 +1,6 @@
 const esbuild = require("esbuild");
 const glob = require("glob");
+const path = require("path");
 const htmlLoaderPlugin = require("./esbuild-html-plugin");
 
 (async () => {
@@ -16,6 +17,9 @@ const htmlLoaderPlugin = require("./esbuild-html-plugin");
         minify: isProduction,
         sourcemap: !isProduction,
         target: ["es2016"],
+        alias: {
+            "@": path.resolve(__dirname, "app/src/scripts"),
+        },
         plugins: [htmlLoaderPlugin],
     };
 

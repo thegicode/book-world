@@ -1,6 +1,6 @@
-import { CustomFetch } from "../../services/index";
-import { cloneTemplate } from "../../utils/helpers";
-import bookModel from "../../model";
+import { CustomFetch } from "@/services/index";
+import { cloneTemplate } from "@/utils/helpers";
+import bookModel from "@/model";
 
 export default class LibrarySearchByBook extends HTMLElement {
     protected librarySearchByBookContainer: HTMLElement | null = null;

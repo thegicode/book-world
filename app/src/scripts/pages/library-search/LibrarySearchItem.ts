@@ -1,6 +1,6 @@
 import template from "../../../markup/templates/library-search-item.html";
-import bookModel, { BookModelEvent } from "../../model";
-import { BaseItemComponent } from "../../components";
+import bookModel, { BookModelEvent } from "@/model";
+import { BaseItemComponent } from "@/components";
 
 export default class LibrarySearchItem extends BaseItemComponent {
     protected checkbox: HTMLInputElement | null = null;

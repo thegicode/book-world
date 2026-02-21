@@ -1,5 +1,5 @@
-import { CustomEventEmitter } from "../../utils";
-import { getCurrentDates } from "../../utils/helpers";
+import { CustomEventEmitter } from "@/utils";
+import { getCurrentDates } from "@/utils/helpers";
 
 export default class PopularSearch extends HTMLElement {
     private form: HTMLFormElement;

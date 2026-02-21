@@ -1,5 +1,5 @@
-import { CustomFetch } from "../../services";
-import { cloneTemplate } from "../../utils/helpers";
+import { CustomFetch } from "@/services";
+import { cloneTemplate } from "@/utils/helpers";
 
 export default class KyoboInfo extends HTMLElement {
     private _isbn: string | null = null;

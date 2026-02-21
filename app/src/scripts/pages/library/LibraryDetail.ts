@@ -1,6 +1,6 @@
-import { CustomFetch } from '../../services';
-import { cloneTemplate } from '../../utils/helpers';
-import { NO_IMAGE_PLACEHOLDER } from '../../utils/constants';
+import { CustomFetch } from '@/services';
+import { cloneTemplate } from '@/utils/helpers';
+import { NO_IMAGE_PLACEHOLDER } from '@/utils/constants';
 
 interface ISrchBook {
     bookname: string;

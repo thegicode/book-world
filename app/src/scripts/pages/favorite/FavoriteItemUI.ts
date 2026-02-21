@@ -1,6 +1,6 @@
-import { BookDescription, BookImage } from "../../components";
-import bookModel from "../../model";
-import { fillElementsWithData } from "../../utils/helpers";
+import { BookDescription, BookImage } from "@/components";
+import bookModel from "@/model";
+import { fillElementsWithData } from "@/utils/helpers";
 import FavoriteItem from "./FavoriteItem";
 
 export default class FavoriteItemUI {

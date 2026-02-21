@@ -1,10 +1,10 @@
 import template from "../../../markup/templates/favorite-item.html";
-import { CustomFetch } from "../../services/index";
-import { LibraryBookExist, LoadingComponent } from "../../components/index";
-import bookModel from "../../model";
+import { CustomFetch } from "@/services/index";
+import { LibraryBookExist, LoadingComponent } from "@/components/index";
+import bookModel from "@/model";
 import FavoriteItemUI from "./FavoriteItemUI";
 import KyoboInfo from "./KyoboInfo";
-import BaseItemComponent from "../../components/BaseItemComponent";
+import BaseItemComponent from "@/components/BaseItemComponent";
 
 export default class FavoriteItem extends BaseItemComponent {
     private loadingComponent: LoadingComponent | null = null;

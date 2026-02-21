@@ -4,7 +4,7 @@ import {
     CategorySelector,
     LibraryBookExist,
     BookImage,
-} from "../../components/index";
+} from "@/components/index";
 
 import AppSearch from "./AppSearch";
 import InputSearch from "./InputSearch";

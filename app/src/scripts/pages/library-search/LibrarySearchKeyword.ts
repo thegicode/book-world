@@ -1,4 +1,4 @@
-import { FetchListComponent } from "../../components";
+import { FetchListComponent } from "@/components";
 import LibrarySearchItem from "./LibrarySearchItem";
 
 export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySearchByBookResult, ILibraryData> {

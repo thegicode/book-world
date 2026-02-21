@@ -1,5 +1,5 @@
-import bookModel, { BookModelEvent } from "../../model";
-import { cloneTemplate } from "../../utils/helpers";
+import bookModel, { BookModelEvent } from "@/model";
+import { cloneTemplate } from "@/utils/helpers";
 
 export default class LibrarySearchStored extends HTMLElement {
     private template: HTMLTemplateElement | null = null;

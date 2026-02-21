@@ -1,7 +1,7 @@
 import template from "../../../markup/templates/popular-item.html";
-import { BaseItemComponent } from "../../components";
-import { fillElementsWithData } from "../../utils/helpers";
-import { BookImage } from "../../components";
+import { BaseItemComponent } from "@/components";
+import { fillElementsWithData } from "@/utils/helpers";
+import { BookImage } from "@/components";
 
 export default class PopularItem extends BaseItemComponent {
     private data: IPopularBook;

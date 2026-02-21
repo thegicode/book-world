@@ -1,5 +1,5 @@
 import { STORAGE_NAME } from "./constants";
-import Publisher from "../utils/Publisher";
+import Publisher from "@/utils/Publisher";
 import FavoriteModel from "./FavoriteModel";
 import LibraryModel from "./LibraryModel";
 

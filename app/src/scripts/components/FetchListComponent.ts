@@ -1,4 +1,4 @@
-import { CustomFetch } from "../services";
+import { CustomFetch } from "@/services";
 import LoadingComponent from "./LoadingComponent";
 
 export abstract class FetchListComponent<T, U> extends HTMLElement {

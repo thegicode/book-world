@@ -1,5 +1,5 @@
-import { CustomFetch } from "../../services";
-import store from "../../model/Store";
+import { CustomFetch } from "@/services";
+import store from "@/model/Store";
 import { searchForm, searchInputElement } from "./selectors";
 
 export default class MonthlyKeywords extends HTMLElement {

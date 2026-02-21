@@ -1,6 +1,6 @@
-import Publisher from "../utils/Publisher";
-import { CustomFetch } from "../services";
-import { URL } from "../utils/constants";
+import Publisher from "@/utils/Publisher";
+import { CustomFetch } from "@/services";
+import { URL } from "@/utils/constants";
 
 // 검색 기능과 관련된 애플리케이션의 상태를 정의하는 인터페이스
 export interface AppState {

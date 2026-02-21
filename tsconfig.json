@@ -4,7 +4,10 @@
         "lib": ["ES6", "ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
         "module": "ESNext",
         "moduleResolution": "node",
-
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["app/src/scripts/*"]
+        },
         "noEmit": true,
         "sourceMap": true
     },

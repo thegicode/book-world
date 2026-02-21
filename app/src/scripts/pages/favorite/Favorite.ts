@@ -1,5 +1,5 @@
-import bookModel from "../../model";
-import { cloneTemplate } from "../../utils/helpers";
+import bookModel from "@/model";
+import { cloneTemplate } from "@/utils/helpers";
 import FavoriteItem from "./FavoriteItem";
 
 export default class Favorite extends HTMLElement {

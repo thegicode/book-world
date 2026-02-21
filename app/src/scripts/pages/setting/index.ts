@@ -1,4 +1,4 @@
-import { NavGnb } from "../../components/index";
+import { NavGnb } from "@/components/index";
 import AppSetting from "./AppSetting";
 import SetStorage from "./SetStorage";
 

@@ -1,5 +1,5 @@
-import { FetchListComponent } from "../../components";
-import { CustomEventEmitter } from "../../utils";
+import { FetchListComponent } from "@/components";
+import { CustomEventEmitter } from "@/utils";
 import PopularItem from "./PopularItem";
 
 export default class PopularList extends FetchListComponent<IPopularBookResponse, IPopularBook> {

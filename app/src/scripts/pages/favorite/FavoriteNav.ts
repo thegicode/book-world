@@ -1,4 +1,4 @@
-import bookModel, { BookModelEvent } from "../../model";
+import bookModel, { BookModelEvent } from "@/model";
 
 export default class FavoriteNav extends HTMLElement {
     private nav: HTMLElement;

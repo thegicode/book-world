@@ -1,4 +1,4 @@
-import { NavGnb } from "../../components/index";
+import { NavGnb } from "@/components/index";
 import LibrarySearchKeyword from "./LibrarySearchKeyword";
 import LibrarySearchStored from "./LibrarySearchStored";
 import LibrarySearchItem from "./LibrarySearchItem";

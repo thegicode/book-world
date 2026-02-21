@@ -1,4 +1,4 @@
-import store from "../../model/Store";
+import store from "@/model/Store";
 import { searchInputElement } from "./selectors";
 
 export default class AppSearch extends HTMLElement {

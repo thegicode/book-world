@@ -1,5 +1,5 @@
 
-import { showToast } from '../utils/toast';
+import { showToast } from '@/utils/toast';
 
 
 

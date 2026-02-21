@@ -1,4 +1,4 @@
-import bookModel, { BookModelEvent } from "../model";
+import bookModel, { BookModelEvent } from "@/model";
 
 export default class NavGnb extends HTMLElement {
     private PATHS: string[];

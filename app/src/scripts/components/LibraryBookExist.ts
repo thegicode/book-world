@@ -1,4 +1,4 @@
-import { CustomFetch } from "../services/index";
+import { CustomFetch } from "@/services/index";
 
 export default class LibraryBookExist extends HTMLElement {
     protected container: Element;

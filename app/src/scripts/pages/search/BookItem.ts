@@ -3,10 +3,10 @@ import {
     BookDescription,
     BookImage,
     LibraryBookExist,
-} from "../../components/index";
-import bookModel from "../../model";
-import { fillElementsWithData } from "../../utils/helpers";
-import BaseItemComponent from "../../components/BaseItemComponent";
+} from "@/components/index";
+import bookModel from "@/model";
+import { fillElementsWithData } from "@/utils/helpers";
+import BaseItemComponent from "@/components/BaseItemComponent";
 
 export default class BookItem extends BaseItemComponent {
     private data: ISearchBook;

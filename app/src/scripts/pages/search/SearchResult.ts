@@ -1,8 +1,8 @@
-import { manageFocus } from "../../utils/helpers";
+import { manageFocus } from "@/utils/helpers";
 import BookItem from "./BookItem";
-import { Observer } from "../../utils/index";
-import store, { AppState } from "../../model/Store";
-import LoadingComponent from "../../components/LoadingComponent";
+import { Observer } from "@/utils/index";
+import store, { AppState } from "@/model/Store";
+import LoadingComponent from "@/components/LoadingComponent";
 
 export default class SearchResult extends HTMLElement {
     private listContainer: HTMLElement;
