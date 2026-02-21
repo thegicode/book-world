@@ -88,7 +88,7 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
 
     protected getTotal(data: ILibrarySearchByBookResult): number {
         // server returns numFound as total count
-        return (data as any).numFound || 0;
+        return data.numFound || 0;
     }
 
     protected createItem(lib: ILibraryData): HTMLElement {

@@ -85,6 +85,7 @@ interface ILibraryData {
 
 interface ILibrarySearchByBookResult {
     libraries: ILibraryData[];
+    numFound?: number;
 }
 
 interface IBookExist {
