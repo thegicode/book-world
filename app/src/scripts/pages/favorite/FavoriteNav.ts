@@ -9,6 +9,13 @@ export default class FavoriteNav extends HTMLElement {
     constructor() {
         super();
 
+        this.category = null;
+
+        this.handleOverlayCatalog = this.handleOverlayCatalog.bind(this);
+        this.subscribeCategoryChange = this.subscribeCategoryChange.bind(this);
+    }
+
+    connectedCallback() {
         this.nav = this.querySelector(".favorite-category") as HTMLElement;
         this.overlayCategory = document.querySelector(
             "overlay-category"
@@ -17,13 +24,6 @@ export default class FavoriteNav extends HTMLElement {
             ".favorite-changeButton"
         ) as HTMLButtonElement;
 
-        this.category = null;
-
-        this.handleOverlayCatalog = this.handleOverlayCatalog.bind(this);
-        this.subscribeCategoryChange = this.subscribeCategoryChange.bind(this);
-    }
-
-    connectedCallback() {
         this.intialize();
         this.render();
 

@@ -18,19 +18,20 @@ export default class OverlayCategory extends HTMLElement {
     constructor() {
         super();
 
-        this.form = this.querySelector("form");
-        this.list = this.querySelector(".category-list");
-        this.template = document.querySelector("#tp-category-item");
-        this.renameButton = this.querySelector(".rename");
-        this.addButton = this.querySelector(".addButton");
-        this.addInput = this.querySelector("input[name='add']");
-        this.closeButton = this.querySelector(".closeButton");
         this.draggedItem = null;
 
         this.handleRename = this.handleRename.bind(this);
     }
 
     connectedCallback() {
+        this.form = this.querySelector("form");
+        this.list = this.querySelector(".category-list");
+        this.template = document.querySelector("#tp-category-item") as HTMLTemplateElement;
+        this.renameButton = this.querySelector(".rename");
+        this.addButton = this.querySelector(".addButton");
+        this.addInput = this.querySelector("input[name='add']");
+        this.closeButton = this.querySelector(".closeButton");
+
         this.render();
 
         this.addButton?.addEventListener("click", this.handleClickAdd);

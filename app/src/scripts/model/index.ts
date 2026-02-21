@@ -149,8 +149,10 @@ class BookModel {
 
     deleteFavorite(name: string) {
         this.favoriteModel.delete(name);
+        this.favoriteModel.deleteCategoryOrder(name);
 
         this._state.favorites = this.favorites;
+        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
