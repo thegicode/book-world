@@ -70,11 +70,11 @@ interface IUsageAnalysisListData {
 }
 
 interface ILibraryData {
-    address: string;
-    homepage: string;
+    address?: string;
+    homepage?: string;
     libCode: string;
     libName: string;
-    telephone: string;
+    telephone?: string;
     fax?: string; // Add fax
     latitude?: string; // Add latitude
     longitude?: string; // Add longitude

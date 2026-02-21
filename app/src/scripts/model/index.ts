@@ -58,6 +58,19 @@ class BookModel {
         if (parsed.regions) {
             delete parsed.regions;
         }
+
+        // Migrate libraries to keep only libCode and libName
+        if (parsed.libraries) {
+            const migratedLibraries: TLibraries = {};
+            for (const [code, data] of Object.entries(parsed.libraries as TLibraries)) {
+                migratedLibraries[code] = {
+                    libCode: data.libCode,
+                    libName: data.libName,
+                };
+            }
+            parsed.libraries = migratedLibraries;
+        }
+        
         return parsed;
     }
 
@@ -173,7 +186,10 @@ class BookModel {
 
     // Library 관련 메서드
     addLibraries(code: string, data: ILibraryData) {
-        this.libraryModel.add(code, data);
+        this.libraryModel.add(code, {
+            libCode: data.libCode,
+            libName: data.libName,
+        });
 
         this._state.libraries = this.libraries;
         this._commit();

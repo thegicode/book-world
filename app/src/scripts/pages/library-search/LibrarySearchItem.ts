@@ -52,13 +52,13 @@ export default class LibrarySearchItem extends BaseItemComponent {
         Object.entries(data).forEach(([key, value]) => {
             if (key === 'libName') return; // Skip libName as it's handled above
             const element = this.querySelector(`.${key}`);
-            if (element) {
+            if (element && value) {
                 element.innerHTML = value;
             }
         });
 
         const hoempageLink = this.querySelector<HTMLLinkElement>(".homepage");
-        if (hoempageLink) hoempageLink.href = data.homepage;
+        if (hoempageLink && data.homepage) hoempageLink.href = data.homepage;
 
         if (this.checkbox) {
             this.checkbox.checked = bookModel.hasLibrary(this.libCode);

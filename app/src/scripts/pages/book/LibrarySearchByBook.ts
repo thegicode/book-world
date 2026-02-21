@@ -117,7 +117,7 @@ export default class LibrarySearchByBook extends HTMLElement {
 
     protected createLibrarySearchResultItem(
         isbn: string,
-        homepage: string,
+        homepage: string | undefined,
         libCode: string,
         libName: string
     ) {
@@ -128,7 +128,9 @@ export default class LibrarySearchByBook extends HTMLElement {
         const link = cloned.querySelector("a") as HTMLAnchorElement;
         cloned.dataset.code = libCode;
         link.textContent = libName;
-        link.href = homepage;
+        if (homepage) {
+            link.href = homepage;
+        }
 
         this.loanAvailable(isbn, libCode, cloned);
 
