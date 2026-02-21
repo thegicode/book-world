@@ -75,11 +75,19 @@ function searchLibrariesByKeyword(params) {
 exports.searchLibrariesByKeyword = searchLibrariesByKeyword;
 function getLibraryDetail(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = parseURL("libSrch", params);
-        const data = yield (0, apiUtils_1.fetchData)(url);
-        if (!data.response || !data.response.libs || data.response.libs.length === 0)
+        let libraries = [];
+        if (fs_1.default.existsSync(CACHE_FILE)) {
+            const fileContent = fs_1.default.readFileSync(CACHE_FILE, "utf-8");
+            libraries = JSON.parse(fileContent);
+        }
+        else {
+            libraries = yield fetchAndCacheLibraries();
+        }
+        const library = libraries.find(lib => lib.libCode === params.libCode);
+        if (!library) {
             throw new apiErrors_1.LibraryApiError(404, "Library not found");
-        return data.response.libs[0].lib;
+        }
+        return library;
     });
 }
 exports.getLibraryDetail = getLibraryDetail;
