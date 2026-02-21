@@ -245,3 +245,5 @@ declare module "*.html" {
 
 declare module 'critical';
 
+declare module 'html-minifier-terser';
+

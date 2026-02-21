@@ -9,7 +9,7 @@ const IMAGE_OUTPUT_PATH =
         ? 'app/build/assets/images'
         : 'app/public/assets/images';
 
-const optimizeImages = async () => {
+export const optimizeImages = async () => {
     console.log('--- Optimizing images ---');
 
     try {
@@ -44,8 +44,10 @@ const optimizeImages = async () => {
         console.log('--- Image optimization complete ---');
     } catch (error) {
         console.error('Error during image optimization:', error);
-        process.exit(1);
+        throw error;
     }
 };
 
-optimizeImages();
+if (require.main === module) {
+    optimizeImages().catch(() => process.exit(1));
+}

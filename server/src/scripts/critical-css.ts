@@ -4,17 +4,11 @@ import fs from 'fs-extra';
 import path from 'path';
 import { glob } from 'glob';
 
-const isProduction = process.env.NODE_ENV === 'production';
-const BASE_PATH = isProduction ? 'app/build' : 'app/public';
-const ENV_NAME = isProduction ? 'Production' : 'Development';
+export const generateCriticalCss = async () => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const BASE_PATH = isProduction ? 'app/build' : 'app/public';
+    const ENV_NAME = isProduction ? 'Production' : 'Development';
 
-const getHtmlFiles = async () => {
-    const htmlDirPath = path.join(BASE_PATH, 'html');
-    const files = await glob('**/*.html', { cwd: htmlDirPath });
-    return files.filter(file => !file.startsWith('templates/'));
-};
-
-const generateCriticalCss = async () => {
     if (!isProduction) {
         console.log('Skipping critical CSS generation in development mode.');
         return;
@@ -23,12 +17,10 @@ const generateCriticalCss = async () => {
     const { generate } = await import('critical');
     console.log(`--- Generating Critical CSS for ${ENV_NAME} ---`);
 
-    const htmlFiles = await getHtmlFiles();
+    const htmlFiles = await getHtmlFiles(BASE_PATH);
 
     if (htmlFiles.length === 0) {
-        console.error(`Error: No HTML files found in ${path.join(BASE_PATH, 'html')}.`);
-        console.error(`Please run the ${ENV_NAME} build for HTML and CSS first.`);
-        process.exit(1);
+        throw new Error(`No HTML files found in ${path.join(BASE_PATH, 'html')}. Please run the build for HTML and CSS first.`);
     }
 
     for (const htmlFile of htmlFiles) {
@@ -63,7 +55,12 @@ const generateCriticalCss = async () => {
     }
 };
 
-generateCriticalCss().catch(error => {
-    console.error('An unexpected error occurred:', error);
-    process.exit(1);
-});
+const getHtmlFiles = async (BASE_PATH: string) => {
+    const htmlDirPath = path.join(BASE_PATH, 'html');
+    const files = await glob('**/*.html', { cwd: htmlDirPath });
+    return files.filter(file => !file.startsWith('templates/'));
+};
+
+if (require.main === module) {
+    generateCriticalCss().catch(() => process.exit(1));
+}

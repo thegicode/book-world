@@ -1,82 +1,59 @@
-# Book World
+# 📚 Book World
 
-## url
+프레임워크 없이 웹 표준 기술로 구현한 고성능 도서 검색 및 관심 도서 관리 애플리케이션입니다.
 
--   http://localhost:7777/
--   [책 검색](./src/html/search.html)
--   [책 즐겨찾기](./src/html/favorite.html)
--   [정보공개 도서관](./src/html/library.html)
+## 🚀 Key Features
 
-## 설치 및 실행
+- **도서 검색**: 네이버 API를 통한 정밀 도서 검색 및 상세 정보 제공
+- **관심 도서 관리**: 관심 도서를 카테고리별로 분류하고 순서를 지정 (LocalStorage 기반)
+- **도서관 연동**: 내 주변 도서관의 소장 여부 및 대출 가능 여부 실시간 확인 (도서관 정보나루 API)
+- **성능 최적화**: Critical CSS 인라인화, WebP 이미지 변환, HTML/JS 압축 적용
 
-1.  **환경 변수 설정**
+## 🛠️ Tech Stack & Architecture
 
-    프로젝트 루트 디렉토리에 `.env` 파일을 생성하고, `.env.example` 파일을 참고하여 필요한 환경 변수를 추가합니다. API 키는 도서관 정보나루에서 발급받아야 합니다.
+- **Frontend**: TypeScript, Web Components (Custom Elements), SCSS, Publisher/Observer Pattern
+- **Backend**: Node.js (Express), BFF(Backend For Frontend) Pattern
+- **Build**: [esbuild](https://esbuild.github.io/) (Ultra-fast bundler), [Sass](https://sass-lang.com/), [html-minifier-terser](https://github.com/terser/html-minifier-terser)
+- **Architecture**:
+  - **@/ Alias**: `@/` 별칭을 사용하여 모듈 간 참조 경로 간소화
+  - **Unified Build Pipeline**: HTML, CSS, JS, Image 최적화를 하나의 통합 빌드 스크립트(`build-assets.ts`)로 제어
 
-    ```bash
-    # .env
-    LIBRARY_KEY=YOUR_API_KEY_HERE
-    ```
+## ⚙️ 설치 및 실행
 
-2.  **의존성 설치**
+1. **환경 변수 설정**
+   루트 디렉토리에 `.env` 파일을 생성하고 필요한 API 키를 설정합니다.
+   ```bash
+   LIBRARY_KEY=YOUR_API_KEY_HERE
+   NAVER_CLIENT_ID=YOUR_CLIENT_ID
+   NAVER_CLIENT_SECRET=YOUR_CLIENT_SECRET
+   ```
 
-    ```bash
-    npm install
-    ```
+2. **의존성 설치**
+   ```bash
+   npm install
+   ```
 
-3.  **개발 서버 실행**
+3. **개발 서버 실행**
+   ```bash
+   npm run start
+   ```
 
-    ```bash
-    npm run start
-    ```
+4. **운영 빌드**
+   ```bash
+   npm run build
+   ```
 
-## API
+## 📂 프로젝트 구조
 
--   도서관 정보나루 : https://www.data4library.kr
--   네이버 책
+- `app/src/scripts`: 프론트엔드 소스 코드 (Model-View-Service 구조)
+- `app/src/markup`: HTML 마크업 및 템플릿
+- `app/src/scss`: SCSS 스타일시트
+- `server/src`: 백엔드 API 및 통합 빌드 스크립트
 
-## TODO
+## 🔗 API Reference
 
--   인증키 외부로 변경
--   버튼 디자인 통일, 모듈화
--   도서 상세 모듈화
--   template 파일 별도, fetch로 받아올 것
--   Intersection Observer 오류 수정, 클래스 이름 변경
--   test 추가
--   접근성, lighthouse
--   책제목 site:사이트
+- [도서관 정보나루](https://www.data4library.kr)
+- [네이버 책 검색 API](https://developers.naver.com/docs/serviceapi/search/book/book.md)
 
-## 찾아볼 것
-
--   공공데이터포털 '전국공공도서관통계', '전국버스정류장위치정보'
--   국립중앙도서관 Open API
--   국가도서관 통계시스템 : 공공도서관 통계
--   KOSIS 국가통계포털
--   문화빅데이터플랫폼 '도서관 정보'
--   yes24 '도서 리뷰'
--   전자도서관 데이터 어떻게 가져올 수 있나?
-
-## 컨텐츠는?
-
--   책을 찾을 때 사람들은 주로 책을 어떻게 검색하나
-    -   도서관, 전자도서관
-    -   알라딘 중고서점, 알라딘
-    -   yes24
-    -   교보문고
--   도서 리뷰는 주로 어디롤 보나 - 네이버, 교보문고
-
-## 참조
-
--   도서관 공개 API : https://solomon.data4library.kr/
-
-## IP 변경
-
--
-
-## package.json
-
--   개발환경용 : dev, 프로덕션 환경용 : prod
-
-## api 이용 확인
-
--   [알라딘 OpenAPI](https://blog.aladin.co.kr/openapi/category/29154404?start=we)
+---
+*Developed with a focus on web standards and performance.*
