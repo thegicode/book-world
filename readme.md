@@ -43,6 +43,11 @@
    npm run build
    ```
 
+5. **테스트 실행 (Unit Tests)**
+   ```bash
+   npm test
+   ```
+
 ## 📂 프로젝트 구조
 
 - `app/src/scripts`: 프론트엔드 소스 코드 (Model-View-Service 구조)

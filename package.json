@@ -11,6 +11,8 @@
         "watch:assets": "nodemon --watch app/src/markup --watch app/src/scss --ext html,scss --exec \"npm run build-assets\"",
         "build": "NODE_ENV=production npm run build-assets",
         "build-assets": "ts-node --project tsconfig.scripts.json server/src/scripts/build-assets.ts",
+        "test": "vitest run",
+        "test:watch": "vitest",
         "tsc": "npx tsc -w & npx tsc --project ./server/src",
         "esbuild-dev": "NODE_ENV=development node esbuild.config.js",
         "eslint": "eslint app --ext .ts"
@@ -54,11 +56,13 @@
         "glob": "^10.3.10",
         "html-minifier-terser": "^7.1.0",
         "install": "^0.13.0",
+        "jsdom": "^28.1.0",
         "nodemon": "^2.0.22",
         "npm": "^9.6.3",
         "sass": "^1.49.9",
         "sharp": "^0.34.5",
-        "ts-node": "^10.9.1"
+        "ts-node": "^10.9.1",
+        "vitest": "^4.0.18"
     },
     "dependencies": {
         "express-validator": "^7.3.1",
