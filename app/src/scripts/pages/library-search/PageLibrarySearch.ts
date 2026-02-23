@@ -139,6 +139,10 @@ export default class PageLibrarySearch extends HTMLElement {
                     this.currentPage = page;
                     this.currentItemCount += items.length;
                 }
+
+                if (this.libraryList) {
+                    this.libraryList.total = this.total;
+                }
                 
                 // Re-append sentinel to end of container if necessary
                 // (Depends on DOM structure, but if sentinel is sibling to library-list, it stays at bottom)

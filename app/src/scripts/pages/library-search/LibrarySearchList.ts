@@ -5,10 +5,28 @@ export default class LibrarySearchList extends HTMLElement {
     private listContainer: HTMLElement;
     private notFoundTemplate: HTMLTemplateElement | null = null;
 
+    static get observedAttributes() {
+        return ["total"];
+    }
+
     constructor() {
         super();
         this.listContainer = document.createElement("div");
         this.listContainer.className = "library-list";
+    }
+
+    get total() {
+        return parseInt(this.getAttribute("total") || "0", 10);
+    }
+
+    set total(value: number) {
+        this.setAttribute("total", String(value));
+    }
+
+    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+        if (name === "total" && oldValue !== newValue) {
+            // total이 바뀔 때 수행할 UI 업데이트가 있다면 여기 추가 (예: 개수 표시 레이블)
+        }
     }
 
     connectedCallback() {
@@ -35,6 +53,7 @@ export default class LibrarySearchList extends HTMLElement {
     appendItems(items: ILibraryData[]) {
         if (items.length === 0 && this.listContainer.children.length === 0) {
             this.renderNotFound();
+            this.total = 0;
             return;
         }
 
@@ -51,6 +70,7 @@ export default class LibrarySearchList extends HTMLElement {
      */
     clear() {
         this.listContainer.innerHTML = "";
+        this.total = 0;
     }
 
     /**

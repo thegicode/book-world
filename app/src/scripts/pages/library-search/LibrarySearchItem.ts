@@ -6,6 +6,10 @@ export default class LibrarySearchItem extends BaseItemComponent {
     private libCode = "";
     data!: ILibraryData;
 
+    static get observedAttributes() {
+        return ["selected"];
+    }
+
     constructor(data: ILibraryData) {
         super("#tp-library-search-item", true);
         this.data = data;
@@ -13,11 +17,38 @@ export default class LibrarySearchItem extends BaseItemComponent {
         this.subscribeUpdate = this.subscribeUpdate.bind(this);
     }
 
+    get selected() {
+        return this.hasAttribute("selected");
+    }
+
+    set selected(value: boolean) {
+        if (value) {
+            this.setAttribute("selected", "");
+        } else {
+            this.removeAttribute("selected");
+        }
+    }
+
+    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+        if (name === "selected" && oldValue !== newValue) {
+            if (this.checkbox) {
+                this.checkbox.checked = newValue !== null;
+            }
+        }
+    }
+
     protected onMount(): void {
         this.checkbox =
             this.querySelector<HTMLInputElement>("[name=myLibrary]");
         this.setAttribute("role", "listitem");
             
+        this.libCode = this.data.libCode;
+        
+        // 초기 상태 동기화 (Model -> Attribute)
+        if (bookModel.hasLibrary(this.libCode)) {
+            this.selected = true;
+        }
+
         this.render();
 
         this.checkbox?.addEventListener("change", this.onChange);
@@ -36,8 +67,6 @@ export default class LibrarySearchItem extends BaseItemComponent {
     protected render() {
         const { data } = this;
         if (data === null) return;
-
-        this.libCode = data.libCode;
 
         const libNameElement = this.querySelector('.libName');
         if (libNameElement) {
@@ -69,7 +98,7 @@ export default class LibrarySearchItem extends BaseItemComponent {
         }
 
         if (this.checkbox) {
-            this.checkbox.checked = bookModel.hasLibrary(this.libCode);
+            this.checkbox.checked = this.selected; // Use reflected property
             this.checkbox.id = `my-library-${this.libCode}`;
             this.checkbox.setAttribute("aria-label", `${data.libName} 관심 도서관`);
             const checkboxLabel = this.querySelector<HTMLLabelElement>(".my-library-label");
@@ -80,7 +109,10 @@ export default class LibrarySearchItem extends BaseItemComponent {
     }
 
     protected onChange() {
-        if (this.checkbox?.checked) {
+        const isChecked = this.checkbox?.checked ?? false;
+        this.selected = isChecked; // Sync UI -> Attribute
+
+        if (isChecked) {
             bookModel.addLibraries(this.libCode, this.data);
         } else {
             bookModel.removeLibraries(this.libCode);
@@ -92,9 +124,7 @@ export default class LibrarySearchItem extends BaseItemComponent {
         const { type, payload } = update;
 
         if (type == "delete" && payload.code == this.libCode) {
-            if (this.checkbox) {
-                this.checkbox.checked = false;
-            }
+            this.selected = false; // Sync Model -> Attribute
         }
     }
 }
