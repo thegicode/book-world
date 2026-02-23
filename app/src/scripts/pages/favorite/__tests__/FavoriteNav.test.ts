@@ -61,6 +61,24 @@ describe('FavoriteNav', () => {
     expect(navLinks[2].textContent?.trim()).toBe('에세이');
   });
 
+  it('유효하지 않은 selected-category는 첫 번째 카테고리로 보정되어야 한다.', async () => {
+    element.setAttribute('selected-category', '없는카테고리');
+    await new Promise(resolve => window.requestAnimationFrame(resolve));
+
+    const activeLink = element.querySelector('a.active');
+    expect(activeLink?.textContent?.trim()).toBe('소설');
+    expect(element.getAttribute('selected-category')).toBe('소설');
+  });
+
+  it('ArrowRight 입력 시 다음 탭으로 포커스만 이동해야 한다.', async () => {
+    await new Promise(resolve => window.requestAnimationFrame(resolve));
+    const tabs = element.querySelectorAll('.favorite-category a') as NodeListOf<HTMLElement>;
+    tabs[0].focus();
+
+    element.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(document.activeElement).toBe(tabs[1]);
+  });
+
   it('편집 버튼을 클릭하면 상세 정보를 포함한 커스텀 이벤트가 발생해야 한다.', async () => {
     await new Promise(resolve => window.requestAnimationFrame(resolve));
     const changeButton = element.querySelector('.favorite-changeButton') as HTMLButtonElement;

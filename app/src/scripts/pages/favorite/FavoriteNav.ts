@@ -1,44 +1,102 @@
 import { html, render, TemplateResult } from "lit";
-import { repeat } from "lit/directives/repeat.js";
 import { classMap } from "lit/directives/class-map.js";
+import { repeat } from "lit/directives/repeat.js";
 import bookModel, { BookModelEvent } from "@/model";
 
-// 메모리 누수 방지 및 강력한 캡슐화를 위한 WeakMap 저장소
-const _internalState = new WeakMap<FavoriteNav, { isUpdatePending: boolean }>();
+/**
+ * Interface for Reactive Controllers
+ * Allows external logic to hook into the component's lifecycle.
+ */
+interface ReactiveController {
+    hostConnected(): void;
+    hostDisconnected(): void;
+}
 
 /**
- * FavoriteNav Component (Pragmatic Immortal Version)
- * - Ultra-efficient rendering with requestAnimationFrame
- * - Zero memory leaks via WeakMap state management
- * - Light DOM rendering for CSS/SCSS flexibility & Accessibility
+ * Interface for the Host Component
+ * Defines the contract that the host must fulfill for controllers.
  */
-export default class FavoriteNav extends HTMLElement {
+interface ReactiveControllerHost extends HTMLElement {
+    addController(controller: ReactiveController): void;
+    requestUpdate(): void;
+}
+
+/**
+ * FavoriteNav Component
+ *
+ * A high-performance, accessible navigation component for favorite categories.
+ *
+ * Key Features:
+ * - **Reactive Architecture**: Uses a Controller pattern to decouple model logic.
+ * - **Efficient Rendering**: Batched updates via requestAnimationFrame and smart diffing (lit-html).
+ * - **Accessibility**: Full keyboard support (Arrow keys, Home, End) and ARIA attributes.
+ * - **Clean Code**: Strict typing and separation of concerns.
+ */
+export default class FavoriteNav
+    extends HTMLElement
+    implements ReactiveControllerHost
+{
     static get observedAttributes() {
         return ["selected-category"];
     }
 
+    private controllers = new Set<ReactiveController>();
+    private isUpdatePending = false;
+    private renderTarget: HTMLElement = this;
+    
+    // State cache to avoid redundant renders
+    private lastRenderedState = "";
+
     constructor() {
         super();
-        _internalState.set(this, { isUpdatePending: false });
-        new ModelController(this);
+        // Register the model controller to handle data subscriptions
+        this.addController(new FavoriteNavModelController(this));
     }
 
-    private get _activeCategory(): string | null {
-        return (
-            this.getAttribute("selected-category") ||
-            new URLSearchParams(location.search).get("category") ||
-            bookModel.favoriteCategoryOrder[0] ||
-            null
-        );
+    // --- ReactiveControllerHost Implementation ---
+
+    public addController(controller: ReactiveController) {
+        this.controllers.add(controller);
+        if (this.isConnected) {
+            controller.hostConnected();
+        }
     }
+
+    public requestUpdate() {
+        if (this.isUpdatePending) return;
+        this.isUpdatePending = true;
+
+        // Batch updates to the next animation frame for performance
+        requestAnimationFrame(() => {
+            if (!this.isConnected) {
+                this.isUpdatePending = false;
+                return;
+            }
+            this.performUpdate();
+            this.isUpdatePending = false;
+        });
+    }
+
+    // --- Lifecycle Methods ---
 
     connectedCallback() {
-        this.dispatchEvent(new CustomEvent("connected"));
+        this.renderTarget = this;
+        this.addEventListener("keydown", this.handleKeydown);
+        this.addEventListener("click", this.handleClick);
+
+        // Notify controllers that the host is connected
+        this.controllers.forEach((c) => c.hostConnected());
+        
+        // Initial render
         this.requestUpdate();
     }
 
     disconnectedCallback() {
-        this.dispatchEvent(new CustomEvent("disconnected"));
+        this.removeEventListener("keydown", this.handleKeydown);
+        this.removeEventListener("click", this.handleClick);
+
+        // Notify controllers that the host is disconnected
+        this.controllers.forEach((c) => c.hostDisconnected());
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -47,119 +105,181 @@ export default class FavoriteNav extends HTMLElement {
         }
     }
 
-    /**
-     * 프레임워크급 렌더링 스케줄러 (rAF 기반)
-     */
-    public requestUpdate() {
-        const state = _internalState.get(this);
-        if (!state || state.isUpdatePending) return;
+    // --- Update & Render Logic ---
 
-        state.isUpdatePending = true;
+    private performUpdate() {
+        const categories = this.getCategories();
+        const activeCategory = this.resolveActiveCategory(categories);
 
-        window.requestAnimationFrame(() => {
-            state.isUpdatePending = false;
-            this._performUpdate();
-        });
-    }
-
-    private _performUpdate() {
-        const isDev = process.env.NODE_ENV === "development";
-        if (isDev) console.time("FavoriteNav: Render");
-
-        try {
-            const current = this._activeCategory;
-            if (current && this.getAttribute("selected-category") !== current) {
-                this.setAttribute("selected-category", current);
-            }
-
-            this.render();
-            this._updated();
-        } catch (error) {
-            console.error("FavoriteNav error:", error);
-        } finally {
-            if (isDev) console.timeEnd("FavoriteNav: Render");
+        // Sync attribute if needed (single source of truth reflection)
+        if (activeCategory && this.getAttribute("selected-category") !== activeCategory) {
+             this.setAttribute("selected-category", activeCategory);
+        } else if (!activeCategory && this.hasAttribute("selected-category")) {
+            this.removeAttribute("selected-category");
         }
+
+        // Optimization: Check if semantic state has changed before asking lit-html to diff
+        const stateKey = `${categories.join(",")}|${activeCategory}`;
+        if (this.lastRenderedState === stateKey) return;
+        this.lastRenderedState = stateKey;
+
+        this.render(categories, activeCategory);
     }
 
-    private _updated() {
-        // 사후 처리 로직
-    }
-
-    private _handleEditClick = (e: Event) => {
-        e.preventDefault();
-        this.dispatchEvent(new CustomEvent("edit-categories", {
-            bubbles: true,
-            composed: true,
-            detail: { source: "FavoriteNav" }
-        }));
-        
-        const overlay = document.querySelector("overlay-category") as HTMLElement;
-        if (overlay) overlay.hidden = !overlay.hidden;
-    };
-
-    private _renderTab(cat: string, active: string | null): TemplateResult {
-        const isActive = cat === active;
-        return html`
-            <a
-                href="?category=${encodeURIComponent(cat)}"
-                class="${classMap({ "category-item": true, active: isActive })}"
-                aria-selected="${isActive}"
-                role="tab"
-                tabindex="${isActive ? "0" : "-1"}"
-            >
-                ${cat}
-            </a>
-        `;
-    }
-
-    protected render() {
-        const categories = Object.freeze([...bookModel.favoriteCategoryOrder]);
-        const selected = this._activeCategory;
-
-        this.toggleAttribute("hidden", categories.length === 0);
+    private render(categories: string[], activeCategory: string | null) {
+        this.hidden = categories.length === 0;
         if (categories.length === 0) return;
 
         const template = html`
-            <nav class="favorite-category" role="tablist" aria-label="도서 카테고리">
+            <nav
+                class="favorite-category"
+                role="tablist"
+                aria-label="도서 카테고리"
+            >
                 ${repeat(
                     categories,
-                    (cat) => cat,
-                    (cat) => this._renderTab(cat, selected),
+                    (category) => category, // Key function for efficient list reconciliation
+                    (category) => this.renderTab(category, activeCategory)
                 )}
             </nav>
             <button
                 type="button"
                 class="favorite-changeButton"
                 aria-haspopup="dialog"
-                @click=${this._handleEditClick}
+                aria-label="카테고리 편집"
             >
                 카테고리 편집
             </button>
         `;
 
-        // Light DOM에 렌더링 (기존 SCSS와 100% 호환)
-        render(template, this);
+        render(template, this.renderTarget);
+    }
+
+    private renderTab(category: string, activeCategory: string | null): TemplateResult {
+        const isActive = category === activeCategory;
+        return html`
+            <a
+                href="?category=${encodeURIComponent(category)}"
+                class="${classMap({ "category-item": true, active: isActive })}"
+                role="tab"
+                aria-selected="${isActive}"
+                tabindex="${isActive ? "0" : "-1"}"
+                data-category="${category}"
+            >
+                ${category}
+            </a>
+        `;
+    }
+
+    // --- Data Helpers ---
+
+    private getCategories(): string[] {
+        return bookModel.favoriteCategoryOrder;
+    }
+
+    private resolveActiveCategory(categories: string[]): string | null {
+        if (categories.length === 0) return null;
+
+        // 1. Check attribute (highest priority if set programmatically)
+        const selected = this.getAttribute("selected-category");
+        if (selected && categories.includes(selected)) {
+            return selected;
+        }
+
+        // 2. Check URL Query
+        const queryCategory = new URLSearchParams(location.search).get("category");
+        if (queryCategory && categories.includes(queryCategory)) {
+            return queryCategory;
+        }
+
+        // 3. Fallback to first category
+        return categories[0];
+    }
+
+    // --- Event Handlers ---
+
+    private handleClick = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+
+        // Handle "Edit Categories" button
+        if (target.closest(".favorite-changeButton")) {
+            event.preventDefault();
+            this.dispatchEditEvent();
+            return;
+        }
+    };
+
+    private handleKeydown = (event: KeyboardEvent) => {
+        const tabs = Array.from(this.querySelectorAll('[role="tab"]')) as HTMLElement[];
+        if (tabs.length === 0) return;
+
+        const currentTab = document.activeElement as HTMLElement;
+        const currentIndex = tabs.indexOf(currentTab);
+        
+        // Only handle navigation if focus is on a tab
+        if (currentIndex === -1) return;
+
+        let nextIndex: number | null = null;
+
+        switch (event.key) {
+            case "ArrowRight":
+                nextIndex = (currentIndex + 1) % tabs.length;
+                break;
+            case "ArrowLeft":
+                nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                break;
+            case "Home":
+                nextIndex = 0;
+                break;
+            case "End":
+                nextIndex = tabs.length - 1;
+                break;
+            case "Enter":
+            case " ":
+                event.preventDefault();
+                currentTab.click();
+                return;
+        }
+
+        if (nextIndex !== null) {
+            event.preventDefault();
+            const nextTab = tabs[nextIndex];
+            nextTab.focus();
+        }
+    };
+
+    private dispatchEditEvent() {
+        this.dispatchEvent(
+            new CustomEvent("edit-categories", {
+                bubbles: true,
+                composed: true,
+                detail: { source: "FavoriteNav" },
+            })
+        );
     }
 }
 
 /**
- * Immortal Reactive Controller
+ * Controller to bridge BookModel and FavoriteNav
  */
-class ModelController {
-    constructor(private host: FavoriteNav) {
-        this.host.addEventListener("connected", () => {
-            const update = () => this.host.requestUpdate();
-            bookModel.subscribe(BookModelEvent.FavoriteCategoriesUpdate, update);
-            bookModel.subscribe(BookModelEvent.BookStateUpdate, update);
-            window.addEventListener("popstate", update);
-            
-            // 해제 로직 보관
-            this.host.addEventListener("disconnected", () => {
-                bookModel.unsubscribe(BookModelEvent.FavoriteCategoriesUpdate, update);
-                bookModel.unsubscribe(BookModelEvent.BookStateUpdate, update);
-                window.removeEventListener("popstate", update);
-            }, { once: true });
-        });
-    }
-}
+class FavoriteNavModelController implements ReactiveController {
+    constructor(private host: ReactiveControllerHost) {}
 
+    hostConnected() {
+        // Subscribe to relevant model events
+        bookModel.subscribe(BookModelEvent.FavoriteCategoriesUpdate, this.update);
+        bookModel.subscribe(BookModelEvent.BookStateUpdate, this.update);
+        window.addEventListener("popstate", this.update);
+    }
+
+    hostDisconnected() {
+        // Clean up subscriptions
+        bookModel.unsubscribe(BookModelEvent.FavoriteCategoriesUpdate, this.update);
+        bookModel.unsubscribe(BookModelEvent.BookStateUpdate, this.update);
+        window.removeEventListener("popstate", this.update);
+    }
+
+    private update = () => {
+        this.host.requestUpdate();
+    };
+}
