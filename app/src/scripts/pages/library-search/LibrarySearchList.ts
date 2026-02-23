@@ -1,7 +1,7 @@
 import LibrarySearchItem from "./LibrarySearchItem";
 import { manageFocus } from "@/utils/helpers";
 
-export default class LibraryList extends HTMLElement {
+export default class LibrarySearchList extends HTMLElement {
     private listContainer: HTMLElement;
     private notFoundTemplate: HTMLTemplateElement | null = null;
 

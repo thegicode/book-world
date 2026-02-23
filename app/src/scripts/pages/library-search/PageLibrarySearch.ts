@@ -1,12 +1,12 @@
 import { CustomFetch } from "@/services";
 import { manageFocus } from "@/utils/helpers";
-import LibraryList from "./LibraryList";
+import LibrarySearchList from "./LibrarySearchList";
 import { LoadingComponent } from "@/components"; // Assuming LoadingComponent is exported from components/index or similar
 
-export default class LibrarySearchKeyword extends HTMLElement {
+export default class PageLibrarySearch extends HTMLElement {
     private searchForm: HTMLFormElement | null;
     private keywordInput: HTMLInputElement | null;
-    private libraryList: LibraryList | null;
+    private libraryList: LibrarySearchList | null;
     private loadingComponent: LoadingComponent | null;
     
     // Pagination & State
@@ -26,7 +26,7 @@ export default class LibrarySearchKeyword extends HTMLElement {
         super();
         this.searchForm = this.querySelector(".search-form");
         this.keywordInput = this.querySelector('input[name="keyword"]');
-        this.libraryList = this.querySelector("library-list");
+        this.libraryList = this.querySelector("library-search-list");
         this.loadingComponent = this.querySelector("loading-component");
 
         this.handleSearch = this.handleSearch.bind(this);

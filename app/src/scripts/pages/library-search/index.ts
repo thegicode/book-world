@@ -1,15 +1,15 @@
 import { NavGnb } from "@/components/index";
-import LibrarySearchKeyword from "./LibrarySearchKeyword";
+import PageLibrarySearch from "./PageLibrarySearch";
 import LibrarySearchStored from "./LibrarySearchStored";
 import LibrarySearchItem from "./LibrarySearchItem";
-import LibraryList from "./LibraryList";
+import LibrarySearchList from "./LibrarySearchList";
 
 // Register custom elements
 if (!customElements.get("nav-gnb")) {
     customElements.define("nav-gnb", NavGnb);
 }
-if (!customElements.get("app-library-search")) {
-    customElements.define("app-library-search", LibrarySearchKeyword);
+if (!customElements.get("page-library-search")) {
+    customElements.define("page-library-search", PageLibrarySearch);
 }
 // We reuse components from library-search
 if (!customElements.get("library-search-stored")) {
@@ -19,6 +19,6 @@ if (!customElements.get("library-search-stored")) {
 if (!customElements.get("library-search-item")) {
     customElements.define("library-search-item", LibrarySearchItem);
 }
-if (!customElements.get("library-list")) {
-    customElements.define("library-list", LibraryList);
+if (!customElements.get("library-search-list")) {
+    customElements.define("library-search-list", LibrarySearchList);
 }
