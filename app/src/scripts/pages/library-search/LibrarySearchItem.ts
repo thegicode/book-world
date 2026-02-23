@@ -17,16 +17,17 @@ export default class LibrarySearchItem extends BaseItemComponent {
     protected onMount(): void {
         this.checkbox =
             this.querySelector<HTMLInputElement>("[name=myLibrary]");
+        this.setAttribute("role", "listitem");
             
         this.render();
 
-        this.checkbox?.addEventListener("click", this.onChange);
+        this.checkbox?.addEventListener("change", this.onChange);
 
         bookModel.subscribe(BookModelEvent.LibraryUpdate, this.subscribeUpdate);
     }
 
     disconnectedCallback() {
-        this.checkbox?.removeEventListener("click", this.onChange);
+        this.checkbox?.removeEventListener("change", this.onChange);
         bookModel.unsubscribe(
             BookModelEvent.LibraryUpdate,
             this.subscribeUpdate
@@ -53,23 +54,29 @@ export default class LibrarySearchItem extends BaseItemComponent {
             if (key === 'libName' || key === 'homepage') return; // Skip libName and homepage
             const element = this.querySelector(`.${key}`);
             if (element && value) {
-                element.innerHTML = value;
+                element.textContent = String(value);
             }
         });
 
-        const hoempageLink = this.querySelector<HTMLLinkElement>(".homepage");
-        if (hoempageLink && data.homepage) {
-            hoempageLink.href = data.homepage;
-            hoempageLink.textContent = data.homepage; // Set visible text to URL
+        const homepageLink = this.querySelector<HTMLAnchorElement>(".homepage");
+        if (homepageLink && data.homepage) {
+            homepageLink.href = data.homepage;
+            homepageLink.textContent = data.homepage; // Set visible text to URL
             
             const srText = document.createElement("span");
             srText.className = "visually-hidden";
             srText.textContent = "(새 창)";
-            hoempageLink.appendChild(srText);
+            homepageLink.appendChild(srText);
         }
 
         if (this.checkbox) {
             this.checkbox.checked = bookModel.hasLibrary(this.libCode);
+            this.checkbox.id = `my-library-${this.libCode}`;
+            this.checkbox.setAttribute("aria-label", `${data.libName} 관심 도서관`);
+            const checkboxLabel = this.querySelector<HTMLLabelElement>(".my-library-label");
+            if (checkboxLabel) {
+                checkboxLabel.htmlFor = this.checkbox.id;
+            }
         }
     }
 

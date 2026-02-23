@@ -5,6 +5,7 @@ import LibrarySearchItem from "./LibrarySearchItem";
 export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySearchByBookResult, ILibraryData> {
     private searchForm: HTMLFormElement | null;
     private keywordInput: HTMLInputElement | null;
+    private statusElement: HTMLElement | null;
     private readonly PAGE_SIZE = 20;
     private currentPage = 1;
     private currentKeyword = "";
@@ -15,6 +16,7 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
         super();
         this.searchForm = this.querySelector(".search-form");
         this.keywordInput = this.querySelector('input[name="keyword"]');
+        this.statusElement = this.querySelector("[data-result-status]");
         
         this.handleSearch = this.handleSearch.bind(this);
         this.handleIntersect = this.handleIntersect.bind(this);
@@ -40,6 +42,7 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
         // Create a sentinel element for infinite scrolling
         this.sentinel = document.createElement("div");
         this.sentinel.className = "sentinel";
+        this.sentinel.setAttribute("aria-hidden", "true");
         this.querySelector(".library-body")?.appendChild(this.sentinel);
         
         if (this.sentinel) {
@@ -61,12 +64,16 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
     private async handleSearch(event: Event) {
         event.preventDefault();
         const keyword = this.keywordInput?.value.trim();
-        if (!keyword) return;
+        if (!keyword) {
+            this.keywordInput?.reportValidity();
+            return;
+        }
 
         this.currentKeyword = keyword;
         this.currentPage = 1;
         this.currentItemCount = 0; // Reset count
         this.listContainer.innerHTML = "";
+        this.updateStatus(`"${keyword}" 검색 중`);
         
         await this.loadData();
         
@@ -100,9 +107,28 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
     }
 
     protected onRenderComplete(): void {
+        this.updateStatus(`"${this.currentKeyword}" 검색 결과 ${this.currentItemCount}건 표시 중 (총 ${this.total}건)`);
         // Move sentinel to the end
         if (this.sentinel && this.querySelector(".library-body")) {
              this.querySelector(".library-body")?.appendChild(this.sentinel);
+        }
+    }
+
+    protected handleFetchSuccess(data: ILibrarySearchByBookResult) {
+        super.handleFetchSuccess(data);
+        if (this.total === 0) {
+            this.updateStatus(`"${this.currentKeyword}" 검색 결과가 없습니다.`);
+        }
+    }
+
+    protected handleFetchError(error: unknown) {
+        super.handleFetchError(error);
+        this.updateStatus("검색 중 오류가 발생했습니다.");
+    }
+
+    private updateStatus(message: string) {
+        if (this.statusElement) {
+            this.statusElement.textContent = message;
         }
     }
 }

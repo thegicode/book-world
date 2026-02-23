@@ -193,6 +193,16 @@ library-search-stored {
     border-top: 1px solid #ecf7f5;
 }
 
+.library-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    &:focus {
+        outline: 2px solid #417f80;
+        outline-offset: -2px;
+    }
+}
+
 library-search-item {
     display: block;
     position: relative;
