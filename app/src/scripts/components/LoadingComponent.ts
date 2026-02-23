@@ -27,8 +27,8 @@ export default class LoadingComponent extends HTMLElement {
 
         // 2. 내부 마크업 렌더링
         const template = html`
-            <div class="loading-overlay">
-                <div class="loader"></div>
+            <div class="loading-overlay" role="status" aria-live="polite">
+                <div class="loader" aria-hidden="true"></div>
                 <p>Loading...</p>
             </div>
         `;

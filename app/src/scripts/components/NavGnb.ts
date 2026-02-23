@@ -67,7 +67,9 @@ export default class NavGnb extends HTMLElement {
 
     protected setSelectedMenu(): void {
         const index = this.PATHS.indexOf(document.location.pathname);
-        if (index >= 0) this.querySelectorAll("a")[index].ariaSelected = "true";
+        if (index >= 0) {
+            this.querySelectorAll("a")[index].setAttribute("aria-current", "page");
+        }
     }
 
     protected renderBookSize() {

@@ -53,6 +53,11 @@ export default class LibrarySearchStored extends HTMLElement {
         nameElement.textContent = name;
         nameElement.href = `/library?libCode=${code}`;
 
+        const cancelButton = template.querySelector(".cancelButton") as HTMLButtonElement;
+        if (cancelButton) {
+            cancelButton.setAttribute("aria-label", `${name} 관심 도서관 해제`);
+        }
+
         template.dataset.library = code;
 
         this.addEvents(template);

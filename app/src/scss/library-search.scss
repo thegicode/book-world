@@ -4,6 +4,19 @@
 @use "./components/loading";
 @use "./components/button" as button;
 
+// Accessibility Utility
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 h2 {
     margin: 0;
     padding: 1rem 1rem 0;
@@ -13,6 +26,13 @@ h2 {
     display: flex;
     flex-direction: column;
     height: 100%;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Contains the scrollable area */
 }
 
 app-library-search {
@@ -29,7 +49,15 @@ app-library-search {
     }
 }
 
+// Section styling resets/helpers
+.stored-libraries,
+.search-area,
+.results-area {
+    display: block;
+}
+
 library-search-stored {
+    display: block; // Ensure it behaves like a block since it's a custom element
     padding: 1rem;
     background-color: #364d4e;
     .title {
@@ -59,9 +87,10 @@ library-search-stored {
             .name {
                 color: inherit;
                 text-decoration: none;
-                &:hover {
+                &:hover, &:focus {
                     color: #fff;
                     text-decoration: underline;
+                    outline: 1px dotted #fff; // Visible focus for keyboard users
                 }
             }
         }
@@ -75,9 +104,11 @@ library-search-stored {
         background-color: transparent;
         font-size: 11px;
         color: #567172;
-        &:hover {
+        cursor: pointer;
+        &:hover, &:focus {
             border-color: #567172;
             color: #799394;
+            outline: 2px solid #799394; // Visible focus
         }
     }
 
@@ -135,6 +166,7 @@ library-search-stored {
                 outline: none;
                 border-color: #50ad50;
                 background-color: #fff;
+                box-shadow: 0 0 0 3px rgba(80, 173, 80, 0.3); // Accessible focus ring
             }
         }
 
@@ -146,8 +178,10 @@ library-search-stored {
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            &:hover {
+            &:hover, &:focus {
                 background-color: #2f5f60;
+                outline: 2px solid #2f5f60; // Visible focus
+                outline-offset: 2px;
             }
         }
     }
@@ -196,17 +230,31 @@ library-search-item {
 .actions {
     label {
         display: flex;
-
         position: absolute;
         top: 10px;
         right: 1rem;
         cursor: pointer;
     }
     input[name="myLibrary"] {
+        // Visually hidden but accessible
         position: absolute;
-        left: -10rem;
-        visibility: hidden;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        opacity: 0;
     }
+    
+    // Focus style for the label/span when input is focused
+    input[name="myLibrary"]:focus + span {
+        outline: 2px solid #417f80;
+        outline-offset: 2px;
+    }
+
     span {
         @include button.button2;
     }

@@ -11,7 +11,7 @@
         font-size: 12px;
         text-align: center;
         &:hover,
-        &[aria-selected="true"] {
+        &[aria-current="page"] {
             text-decoration: underline;
             color: rgb(255, 255, 177);
         }

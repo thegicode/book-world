@@ -50,7 +50,7 @@ export default class LibrarySearchItem extends BaseItemComponent {
         
         // Populate other fields as before
         Object.entries(data).forEach(([key, value]) => {
-            if (key === 'libName') return; // Skip libName as it's handled above
+            if (key === 'libName' || key === 'homepage') return; // Skip libName and homepage
             const element = this.querySelector(`.${key}`);
             if (element && value) {
                 element.innerHTML = value;
@@ -58,7 +58,15 @@ export default class LibrarySearchItem extends BaseItemComponent {
         });
 
         const hoempageLink = this.querySelector<HTMLLinkElement>(".homepage");
-        if (hoempageLink && data.homepage) hoempageLink.href = data.homepage;
+        if (hoempageLink && data.homepage) {
+            hoempageLink.href = data.homepage;
+            hoempageLink.textContent = data.homepage; // Set visible text to URL
+            
+            const srText = document.createElement("span");
+            srText.className = "visually-hidden";
+            srText.textContent = "(새 창)";
+            hoempageLink.appendChild(srText);
+        }
 
         if (this.checkbox) {
             this.checkbox.checked = bookModel.hasLibrary(this.libCode);

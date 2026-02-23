@@ -13,10 +13,12 @@ function getToastContainer() {
     return document.getElementById(TOAST_CONTAINER_ID) || createToastContainer();
 }
 
-export function showToast(message: string, duration: number = 3000) {
+export function showToast(message: string, duration = 3000) {
     const container = getToastContainer();
     const toastElement = document.createElement('div');
     toastElement.className = 'toast-message';
+    toastElement.setAttribute('role', 'alert');
+    toastElement.setAttribute('aria-live', 'assertive');
     toastElement.textContent = message;
 
     container.appendChild(toastElement);

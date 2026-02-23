@@ -20,37 +20,49 @@
     </head>
     <body>
         <div class="root">
-            <nav-gnb></nav-gnb>
-            <app-library-search>
-                <library-search-stored>
-                    <h3 class="title">저장된 관심 도서관</h3>
-                    <ul class="libries"></ul>
-                    <template id="tp-stored-item">
-                        <li>
-                            <a href="#" class="name"></a>
-                            <button type="button" class="cancelButton">
-                                해제
-                            </button>
-                        </li>
-                    </template>
-                </library-search-stored>
+            <header>
+                <nav-gnb></nav-gnb>
+            </header>
+            <main id="main-content">
+                <h1 class="visually-hidden">도서관 검색</h1>
+                <app-library-search>
+                    <section class="stored-libraries" aria-label="저장된 관심 도서관">
+                        <library-search-stored>
+                            <h2 class="title">저장된 관심 도서관</h2>
+                            <ul class="libries"></ul>
+                            <template id="tp-stored-item">
+                                <li>
+                                    <a href="#" class="name"></a>
+                                    <button type="button" class="cancelButton" aria-label="관심 도서관 해제">
+                                        해제
+                                    </button>
+                                </li>
+                            </template>
+                        </library-search-stored>
+                    </section>
 
-                <div class="search-header">
-                    <form class="search-form">
-                        <input type="text" name="keyword" placeholder="도서관 이름을 입력하세요" required />
-                        <button type="submit">검색</button>
-                    </form>
-                </div>
+                    <section class="search-area" aria-label="도서관 검색 영역">
+                        <div class="search-header">
+                            <form class="search-form" role="search">
+                                <label for="library-keyword" class="visually-hidden">도서관 이름</label>
+                                <input type="text" id="library-keyword" name="keyword" placeholder="도서관 이름을 입력하세요" required />
+                                <button type="submit">검색</button>
+                            </form>
+                        </div>
+                    </section>
 
-                <div class="library-body">
-                    <div class="library-list" data-list-container></div>
-                    <loading-component>Loading...</loading-component>
-                </div>
-            </app-library-search>
+                    <section class="results-area" aria-live="polite" aria-label="검색 결과">
+                        <div class="library-body">
+                            <div class="library-list" data-list-container></div>
+                            <loading-component>Loading...</loading-component>
+                        </div>
+                    </section>
+                </app-library-search>
+            </main>
         </div>
 
         <template id="tp-notFound">
-            <div class="notFound">데이터가 없습니다.</div>
+            <div class="notFound" role="alert">데이터가 없습니다.</div>
         </template>
     </body>
 </html>

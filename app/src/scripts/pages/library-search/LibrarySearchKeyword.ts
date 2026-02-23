@@ -1,4 +1,5 @@
 import { FetchListComponent } from "@/components";
+import { manageFocus } from "@/utils/helpers";
 import LibrarySearchItem from "./LibrarySearchItem";
 
 export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySearchByBookResult, ILibraryData> {
@@ -68,6 +69,9 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
         this.listContainer.innerHTML = "";
         
         await this.loadData();
+        
+        // Move focus to the results list for accessibility
+        manageFocus(this, ".library-list");
     }
 
     private async loadMore() {
