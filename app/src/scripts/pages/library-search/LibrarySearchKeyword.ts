@@ -1,28 +1,34 @@
-import { FetchListComponent } from "@/components";
+import { CustomFetch } from "@/services";
 import { manageFocus } from "@/utils/helpers";
-import LibrarySearchItem from "./LibrarySearchItem";
+import LibraryList from "./LibraryList";
+import { LoadingComponent } from "@/components"; // Assuming LoadingComponent is exported from components/index or similar
 
-export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySearchByBookResult, ILibraryData> {
+export default class LibrarySearchKeyword extends HTMLElement {
     private searchForm: HTMLFormElement | null;
     private keywordInput: HTMLInputElement | null;
-    private statusElement: HTMLElement | null;
+    private libraryList: LibraryList | null;
+    private loadingComponent: LoadingComponent | null;
+    
+    // Pagination & State
     private readonly PAGE_SIZE = 20;
     private currentPage = 1;
     private currentKeyword = "";
+    private total = 0;
+    private currentItemCount = 0;
     private isFetching = false;
-    private requestSequence = 0;
-    private readonly bodyElement: HTMLElement | null;
+    private abortController: AbortController | null = null;
+
+    // Infinite Scroll
     private observer: IntersectionObserver | null = null;
     private sentinel: HTMLElement | null = null;
-    private requestController: AbortController | null = null;
 
     constructor() {
         super();
         this.searchForm = this.querySelector(".search-form");
         this.keywordInput = this.querySelector('input[name="keyword"]');
-        this.statusElement = this.querySelector("[data-result-status]");
-        this.bodyElement = this.querySelector(".library-body");
-        
+        this.libraryList = this.querySelector("library-list");
+        this.loadingComponent = this.querySelector("loading-component");
+
         this.handleSearch = this.handleSearch.bind(this);
         this.handleIntersect = this.handleIntersect.bind(this);
     }
@@ -35,13 +41,13 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
     disconnectedCallback() {
         this.searchForm?.removeEventListener("submit", this.handleSearch);
         this.observer?.disconnect();
-        this.requestController?.abort();
+        this.abortController?.abort();
     }
 
     private initIntersectionObserver() {
         this.observer = new IntersectionObserver(this.handleIntersect, {
             root: null,
-            rootMargin: "300px 0px",
+            rootMargin: "300px 0px", // Pre-fetch before reaching bottom
             threshold: 0,
         });
 
@@ -49,21 +55,27 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
         this.sentinel = document.createElement("div");
         this.sentinel.className = "sentinel";
         this.sentinel.setAttribute("aria-hidden", "true");
-        this.bodyElement?.appendChild(this.sentinel);
+        this.sentinel.style.height = "1px"; // Make sure it has dimensions
         
-        if (this.sentinel) {
+        // Append sentinel after the list
+        // Note: Ideally, sentinel should be inside library-list or after it.
+        // Since library-list is a custom element, we can append sentinel as a sibling or ask library-list to handle it.
+        // For simplicity, let's append it to the .library-body which contains library-list
+        const body = this.querySelector(".library-body");
+        if (body) {
+            body.appendChild(this.sentinel);
             this.observer.observe(this.sentinel);
         }
     }
 
     private handleIntersect(entries: IntersectionObserverEntry[]) {
-        if (entries[0].isIntersecting && !this.isFetching && this.hasMoreData()) {
+        const entry = entries[0];
+        if (entry.isIntersecting && !this.isFetching && this.hasMoreData()) {
             this.loadMore();
         }
     }
 
     private hasMoreData(): boolean {
-        // currentItemCount is updated in FetchListComponent
         return this.currentItemCount < this.total;
     }
 
@@ -78,77 +90,71 @@ export default class LibrarySearchKeyword extends FetchListComponent<ILibrarySea
         this.currentKeyword = keyword;
         this.currentPage = 1;
         this.total = 0;
-        this.currentItemCount = 0; // Reset count
-        this.listContainer.innerHTML = "";
-        this.updateStatus(`"${keyword}" 검색 중`);
-        this.requestSequence += 1;
-        this.requestController?.abort();
-        this.requestController = new AbortController();
+        this.currentItemCount = 0;
         
-        await this.loadData(1, this.requestSequence);
+        // Abort previous request
+        if (this.abortController) {
+            this.abortController.abort();
+        }
+        this.abortController = new AbortController();
+
+        // Clear list
+        this.libraryList?.clear();
         
-        // Move focus to the results list for accessibility
-        manageFocus(this, ".library-list");
+        await this.fetchData(1, true);
+
+        // Move focus for accessibility
+        if (this.libraryList) {
+            manageFocus(this.libraryList, ".library-list"); // Focusing the list container
+        }
     }
 
     private async loadMore() {
-        const nextPage = this.currentPage + 1;
-        const didLoad = await this.loadData(nextPage, this.requestSequence);
-        if (didLoad) {
-            this.currentPage = nextPage;
-        }
+        await this.fetchData(this.currentPage + 1, false);
     }
 
-    private async loadData(page: number, sequence: number) {
-        if (!this.currentKeyword || this.isFetching) return;
+    private async fetchData(page: number, isNewSearch: boolean) {
+        if (this.isFetching) return;
         this.isFetching = true;
+        this.loadingComponent?.show();
+
         const url = `/api/library-search-by-keyword?keyword=${encodeURIComponent(this.currentKeyword)}&page=${page}&pageSize=${this.PAGE_SIZE}`;
+
         try {
-            const didLoad = await this.fetchData(url, { signal: this.requestController?.signal });
-            return didLoad && sequence === this.requestSequence;
+            const response = await CustomFetch.fetch<IApiResponse<ILibrarySearchByBookResult>>(url, {
+                signal: this.abortController?.signal
+            });
+
+            if (response.status === 'success') {
+                const data = response.data;
+                const items = data.libraries || [];
+                this.total = data.numFound || 0;
+                
+                if (isNewSearch) {
+                    this.libraryList?.setItems(items);
+                    this.currentPage = 1;
+                    this.currentItemCount = items.length;
+                } else {
+                    this.libraryList?.appendItems(items);
+                    this.currentPage = page;
+                    this.currentItemCount += items.length;
+                }
+                
+                // Re-append sentinel to end of container if necessary
+                // (Depends on DOM structure, but if sentinel is sibling to library-list, it stays at bottom)
+            } else {
+                this.libraryList?.renderError(response.message || 'API Error');
+            }
+        } catch (error: unknown) {
+            if (error instanceof DOMException && error.name === "AbortError") {
+                // Ignore abort errors
+                return;
+            }
+            console.error(error);
+            this.libraryList?.renderError("데이터를 불러오는 중 오류가 발생했습니다.");
         } finally {
             this.isFetching = false;
-        }
-    }
-
-    // --- Implementation of abstract/overridden methods ---
-
-    protected getItems(data: ILibrarySearchByBookResult): ILibraryData[] {
-        return data.libraries || [];
-    }
-
-    protected getTotal(data: ILibrarySearchByBookResult): number {
-        // server returns numFound as total count
-        return data.numFound || 0;
-    }
-
-    protected createItem(lib: ILibraryData): HTMLElement {
-        return new LibrarySearchItem(lib);
-    }
-
-    protected onRenderComplete(): void {
-        this.updateStatus(`"${this.currentKeyword}" 검색 결과 ${this.currentItemCount}건 표시 중 (총 ${this.total}건)`);
-        // Move sentinel to the end
-        if (this.sentinel && this.bodyElement) {
-             this.bodyElement.appendChild(this.sentinel);
-        }
-    }
-
-    protected handleFetchSuccess(data: ILibrarySearchByBookResult) {
-        super.handleFetchSuccess(data);
-        if (this.total === 0) {
-            this.updateStatus(`"${this.currentKeyword}" 검색 결과가 없습니다.`);
-        }
-    }
-
-    protected handleFetchError(error: unknown) {
-        super.handleFetchError(error);
-        this.updateStatus("검색 중 오류가 발생했습니다.");
-    }
-
-    private updateStatus(message: string) {
-        if (this.statusElement) {
-            this.statusElement.textContent = message;
+            this.loadingComponent?.hide();
         }
     }
 }
