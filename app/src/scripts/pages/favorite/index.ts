@@ -22,3 +22,8 @@ customElements.define("library-book-exist", LibraryBookExist);
 customElements.define("category-selector", CategorySelector);
 customElements.define("overlay-category", OverlayCategory);
 customElements.define("kyobo-info", KyoboInfo);
+
+document.addEventListener("edit-categories", () => {
+    const overlay = document.querySelector("overlay-category");
+    overlay?.removeAttribute("hidden");
+});
