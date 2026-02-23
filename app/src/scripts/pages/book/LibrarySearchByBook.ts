@@ -59,7 +59,7 @@ export default class LibrarySearchByBook extends HTMLElement {
                         libName,
                         homepage,
                         address: address || '',
-                        telephone: tel || '',
+                        tel: tel || '',
                     }]
                 };
                 

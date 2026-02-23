@@ -1,45 +1,30 @@
+import { html, render } from "lit";
 import { CustomFetch } from "@/services";
-import { manageFocus } from "@/utils/helpers";
-import LibrarySearchList from "./LibrarySearchList";
-import { LoadingComponent } from "@/components"; // Assuming LoadingComponent is exported from components/index or similar
+import "./LibrarySearchList";
+import "./LibrarySearchStored";
 
 export default class PageLibrarySearch extends HTMLElement {
-    private searchForm: HTMLFormElement | null;
-    private keywordInput: HTMLInputElement | null;
-    private libraryList: LibrarySearchList | null;
-    private loadingComponent: LoadingComponent | null;
+    private _keyword = "";
+    private _page = 1;
+    private _pageSize = 20;
+    private _total = 0;
+    private _items: ILibraryData[] = [];
+    private _loading = false;
+    private _error: string | null = null;
     
-    // Pagination & State
-    private readonly PAGE_SIZE = 20;
-    private currentPage = 1;
-    private currentKeyword = "";
-    private total = 0;
-    private currentItemCount = 0;
-    private isFetching = false;
     private abortController: AbortController | null = null;
-
-    // Infinite Scroll
     private observer: IntersectionObserver | null = null;
-    private sentinel: HTMLElement | null = null;
 
     constructor() {
         super();
-        this.searchForm = this.querySelector(".search-form");
-        this.keywordInput = this.querySelector('input[name="keyword"]');
-        this.libraryList = this.querySelector("library-search-list");
-        this.loadingComponent = this.querySelector("loading-component");
-
-        this.handleSearch = this.handleSearch.bind(this);
-        this.handleIntersect = this.handleIntersect.bind(this);
-    }
-
-    connectedCallback() {
-        this.searchForm?.addEventListener("submit", this.handleSearch);
         this.initIntersectionObserver();
     }
 
+    connectedCallback() {
+        this.render();
+    }
+
     disconnectedCallback() {
-        this.searchForm?.removeEventListener("submit", this.handleSearch);
         this.observer?.disconnect();
         this.abortController?.abort();
     }
@@ -47,78 +32,55 @@ export default class PageLibrarySearch extends HTMLElement {
     private initIntersectionObserver() {
         this.observer = new IntersectionObserver(this.handleIntersect, {
             root: null,
-            rootMargin: "300px 0px", // Pre-fetch before reaching bottom
+            rootMargin: "200px",
             threshold: 0,
         });
-
-        // Create a sentinel element for infinite scrolling
-        this.sentinel = document.createElement("div");
-        this.sentinel.className = "sentinel";
-        this.sentinel.setAttribute("aria-hidden", "true");
-        this.sentinel.style.height = "1px"; // Make sure it has dimensions
-        
-        // Append sentinel after the list
-        // Note: Ideally, sentinel should be inside library-list or after it.
-        // Since library-list is a custom element, we can append sentinel as a sibling or ask library-list to handle it.
-        // For simplicity, let's append it to the .library-body which contains library-list
-        const body = this.querySelector(".library-body");
-        if (body) {
-            body.appendChild(this.sentinel);
-            this.observer.observe(this.sentinel);
-        }
     }
 
-    private handleIntersect(entries: IntersectionObserverEntry[]) {
+    private handleIntersect = (entries: IntersectionObserverEntry[]) => {
         const entry = entries[0];
-        if (entry.isIntersecting && !this.isFetching && this.hasMoreData()) {
+        if (entry.isIntersecting && !this._loading && this.hasMoreData()) {
             this.loadMore();
         }
+    };
+
+    private hasMoreData() {
+        return this._items.length < this._total;
     }
 
-    private hasMoreData(): boolean {
-        return this.currentItemCount < this.total;
-    }
+    private handleSearch = async (e: Event) => {
+        e.preventDefault();
+        const formData = new FormData(e.target as HTMLFormElement);
+        const keyword = formData.get("keyword") as string;
 
-    private async handleSearch(event: Event) {
-        event.preventDefault();
-        const keyword = this.keywordInput?.value.trim();
-        if (!keyword) {
-            this.keywordInput?.reportValidity();
-            return;
-        }
+        if (!keyword?.trim()) return;
 
-        this.currentKeyword = keyword;
-        this.currentPage = 1;
-        this.total = 0;
-        this.currentItemCount = 0;
+        this._keyword = keyword.trim();
+        this._page = 1;
+        this._items = [];
+        this._total = 0;
+        this._error = null;
         
-        // Abort previous request
         if (this.abortController) {
             this.abortController.abort();
         }
         this.abortController = new AbortController();
 
-        // Clear list
-        this.libraryList?.clear();
-        
-        await this.fetchData(1, true);
-
-        // Move focus for accessibility
-        if (this.libraryList) {
-            manageFocus(this.libraryList, ".library-list"); // Focusing the list container
-        }
-    }
+        await this.fetchData();
+    };
 
     private async loadMore() {
-        await this.fetchData(this.currentPage + 1, false);
+        this._page++;
+        await this.fetchData();
     }
 
-    private async fetchData(page: number, isNewSearch: boolean) {
-        if (this.isFetching) return;
-        this.isFetching = true;
-        this.loadingComponent?.show();
+    private async fetchData() {
+        if (this._loading) return;
 
-        const url = `/api/library-search-by-keyword?keyword=${encodeURIComponent(this.currentKeyword)}&page=${page}&pageSize=${this.PAGE_SIZE}`;
+        this._loading = true;
+        this.render();
+
+        const url = `/api/library-search-by-keyword?keyword=${encodeURIComponent(this._keyword)}&page=${this._page}&pageSize=${this._pageSize}`;
 
         try {
             const response = await CustomFetch.fetch<IApiResponse<ILibrarySearchByBookResult>>(url, {
@@ -127,38 +89,152 @@ export default class PageLibrarySearch extends HTMLElement {
 
             if (response.status === 'success') {
                 const data = response.data;
-                const items = data.libraries || [];
-                this.total = data.numFound || 0;
+                const newItems = data.libraries || [];
                 
-                if (isNewSearch) {
-                    this.libraryList?.setItems(items);
-                    this.currentPage = 1;
-                    this.currentItemCount = items.length;
+                if (this._page === 1) {
+                    this._items = newItems;
                 } else {
-                    this.libraryList?.appendItems(items);
-                    this.currentPage = page;
-                    this.currentItemCount += items.length;
-                }
-
-                if (this.libraryList) {
-                    this.libraryList.total = this.total;
+                    this._items = [...this._items, ...newItems];
                 }
                 
-                // Re-append sentinel to end of container if necessary
-                // (Depends on DOM structure, but if sentinel is sibling to library-list, it stays at bottom)
+                this._total = data.numFound || 0;
             } else {
-                this.libraryList?.renderError(response.message || 'API Error');
+                this._error = response.message || "API Error";
             }
         } catch (error: unknown) {
             if (error instanceof DOMException && error.name === "AbortError") {
-                // Ignore abort errors
                 return;
             }
             console.error(error);
-            this.libraryList?.renderError("데이터를 불러오는 중 오류가 발생했습니다.");
+            this._error = "데이터를 불러오는 중 오류가 발생했습니다.";
         } finally {
-            this.isFetching = false;
-            this.loadingComponent?.hide();
+            this._loading = false;
+            this.render();
         }
     }
-}
+
+        private render() {
+
+            render(this.template(), this);
+
+            this.updateSentinel();
+
+        }
+
+    
+
+        private updateSentinel() {
+
+            // We need a sentinel element at the bottom for infinite scroll.
+
+            // It should be rendered after the list.
+
+            const sentinel = this.querySelector(".sentinel");
+
+            if (sentinel && this.observer) {
+
+                this.observer.unobserve(sentinel);
+
+                if (this.hasMoreData() && !this._loading) {
+
+                     this.observer.observe(sentinel);
+
+                }
+
+            }
+
+        }
+
+    
+
+        private template() {
+
+            return html`
+
+                            <section class="stored-libraries" aria-label="저장된 관심 도서관">
+
+                                <library-search-stored></library-search-stored>
+
+                            </section>
+
+                
+
+    
+
+                            <section class="search-area" aria-label="도서관 검색 영역">
+
+                
+
+    
+
+                                <div class="search-container">
+
+                
+
+    
+
+                                    <form class="search-form" role="search" @submit="${this.handleSearch}">
+
+                
+
+    
+
+                
+
+                            <label for="library-keyword" class="visually-hidden">도서관 이름</label>
+
+                            <input 
+
+                                type="text" 
+
+                                id="library-keyword" 
+
+                                name="keyword" 
+
+                                placeholder="도서관 이름을 입력하세요" 
+
+                                required 
+
+                                .value="${this._keyword}"
+
+                            />
+
+                            <button type="submit">검색</button>
+
+                        </form>
+
+                    </div>
+
+                </section>
+
+    
+
+                <section class="results-area" aria-live="polite" aria-label="검색 결과">
+
+                    <div class="library-body">
+
+                        <library-search-list
+
+                            .items="${this._items}"
+
+                            .total="${this._total}"
+
+                            .error="${this._error}"
+
+                        ></library-search-list>
+
+                        ${this._loading ? html`<div class="loading">Loading...</div>` : ""}
+
+                        <div class="sentinel" style="height: 10px; width: 100%;"></div>
+
+                    </div>
+
+                </section>
+
+            `;
+
+        }
+
+    }
+
+    

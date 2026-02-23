@@ -15,7 +15,8 @@ describe('CategorySelector', () => {
     bookModel.state = {
       favorites: { '소설': [], '만화': [] },
       favoriteCategoryOrder: ['소설', '만화'],
-      libraries: {}
+      libraries: {},
+      libraryOrder: []
     };
 
     element = document.createElement('category-selector') as CategorySelector;

@@ -15,7 +15,8 @@ describe('FavoriteNav Component', () => {
         bookModel.state = {
             favorites: { 'Novel': [], 'Comics': [], 'Essay': [] },
             favoriteCategoryOrder: ['Novel', 'Comics', 'Essay'],
-            libraries: {}
+            libraries: {},
+            libraryOrder: []
         };
         
         container = document.createElement('div');
@@ -59,7 +60,8 @@ describe('FavoriteNav Component', () => {
             bookModel.state = {
                 favorites: {},
                 favoriteCategoryOrder: [],
-                libraries: {}
+                libraries: {},
+                libraryOrder: []
             };
             
             await waitForRender();

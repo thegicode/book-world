@@ -18,6 +18,7 @@ const initialState: IBookState = {
     favorites: {},
     favoriteCategoryOrder: [],
     libraries: {},
+    libraryOrder: [],
 };
 
 class BookModel {
@@ -33,9 +34,9 @@ class BookModel {
         this._state = this.loadStorage() || cloneDeep(initialState);
         console.log("BookModel Initialized (v2) with state:", this._state);
 
-        const { favorites, favoriteCategoryOrder, libraries } = this._state;
+        const { favorites, favoriteCategoryOrder, libraries, libraryOrder } = this._state;
         this.favoriteModel = new FavoriteModel(favorites, favoriteCategoryOrder);
-        this.libraryModel = new LibraryModel(libraries);
+        this.libraryModel = new LibraryModel(libraries, libraryOrder);
 
         this.publishers = {
             [BookModelEvent.FavoriteCategoriesUpdate]:
@@ -78,6 +79,11 @@ class BookModel {
             parsed.libraries = migratedLibraries;
         }
         
+        // Migrate libraryOrder if missing
+        if (!parsed.libraryOrder && parsed.libraries) {
+            parsed.libraryOrder = Object.keys(parsed.libraries);
+        }
+
         return parsed;
     }
 
@@ -98,10 +104,11 @@ class BookModel {
     set state(newState: IBookState) {
         this._state = newState;
 
-        const { favorites, favoriteCategoryOrder, libraries } = newState;
+        const { favorites, favoriteCategoryOrder, libraries, libraryOrder } = newState;
         this.favoriteModel.favorites = favorites;
         this.favoriteModel.categoryOrder = favoriteCategoryOrder;
         this.libraryModel.libraries = libraries;
+        this.libraryModel.libraryOrder = libraryOrder;
 
         this._commit();
         console.log("set state");
@@ -117,6 +124,10 @@ class BookModel {
 
     get libraries() {
         return this.libraryModel.libraries;
+    }
+
+    get libraryOrder() {
+        return this.libraryModel.libraryOrder;
     }
 
     resetState() {
@@ -203,6 +214,7 @@ class BookModel {
         });
 
         this._state.libraries = this.libraries;
+        this._state.libraryOrder = this.libraryModel.libraryOrder;
         this._commit();
     }
 
@@ -210,6 +222,7 @@ class BookModel {
         this.libraryModel.remove(code);
 
         this._state.libraries = this.libraries;
+        this._state.libraryOrder = this.libraryModel.libraryOrder;
         this._commit();
     }
 

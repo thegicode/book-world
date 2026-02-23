@@ -25,39 +25,7 @@
             </header>
             <main id="main-content">
                 <h1 class="visually-hidden">도서관 검색</h1>
-                <page-library-search>
-                    <section class="stored-libraries" aria-label="저장된 관심 도서관">
-                        <library-search-stored>
-                            <h2 class="title">저장된 관심 도서관</h2>
-                            <ul class="libries"></ul>
-                            <template id="tp-stored-item">
-                                <li>
-                                    <a href="#" class="name"></a>
-                                    <button type="button" class="cancelButton" aria-label="관심 도서관 해제">
-                                        해제
-                                    </button>
-                                </li>
-                            </template>
-                        </library-search-stored>
-                    </section>
-
-                    <section class="search-area" aria-label="도서관 검색 영역">
-                        <div class="search-header">
-                            <form class="search-form" role="search">
-                                <label for="library-keyword" class="visually-hidden">도서관 이름</label>
-                                <input type="text" id="library-keyword" name="keyword" placeholder="도서관 이름을 입력하세요" required />
-                                <button type="submit">검색</button>
-                            </form>
-                        </div>
-                    </section>
-
-                    <section class="results-area" aria-live="polite" aria-label="검색 결과">
-                        <div class="library-body">
-                            <library-search-list></library-search-list>
-                            <loading-component>Loading...</loading-component>
-                        </div>
-                    </section>
-                </page-library-search>
+                <page-library-search></page-library-search>
             </main>
         </div>
 

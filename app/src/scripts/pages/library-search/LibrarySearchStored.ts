@@ -1,111 +1,77 @@
+import { LitElement, html, nothing } from "lit";
+import { repeat } from "lit/directives/repeat.js";
 import bookModel, { BookModelEvent } from "@/model";
-import { cloneTemplate } from "@/utils/helpers";
 
-export default class LibrarySearchStored extends HTMLElement {
-    private template: HTMLTemplateElement | null = null;
-    private listElement: HTMLElement | null = null;
-
+export default class LibrarySearchStored extends LitElement {
+    // items will be derived from bookModel, so we don't strictly need a property for it unless we want to pass it down.
+    // However, to trigger updates, we can use a private property or just requestUpdate.
+    
     constructor() {
         super();
+    }
 
-        this.subscribeUpdate = this.subscribeUpdate.bind(this);
+    createRenderRoot() {
+        return this;
     }
 
     connectedCallback() {
-        this.template = this.querySelector("#tp-stored-item");
-        this.listElement = this.querySelector("ul");
-
-        if (!this.listElement) return;
-
-        this.render();
-        bookModel.subscribe(BookModelEvent.LibraryUpdate, this.subscribeUpdate);
+        super.connectedCallback();
+        bookModel.subscribe(BookModelEvent.LibraryUpdate, this.handleUpdate);
     }
 
     disconnectedCallback() {
-        bookModel.unsubscribe(
-            BookModelEvent.LibraryUpdate,
-            this.subscribeUpdate
-        );
+        super.disconnectedCallback();
+        bookModel.unsubscribe(BookModelEvent.LibraryUpdate, this.handleUpdate);
     }
 
-    private render() {
-        if (!this.listElement) return;
-        this.listElement.innerHTML = "";
+    private handleUpdate = () => {
+        this.requestUpdate();
+    };
 
+    private handleRemove(code: string) {
+        bookModel.removeLibraries(code);
+    }
+
+    render() {
         const libraries = bookModel.libraries;
+        const libraryOrder = bookModel.libraryOrder;
 
-        const fragment = new DocumentFragment();
-        for (const [code, data] of Object.entries(libraries)) {
-            const libName = typeof data === "string" ? data : data.libName;
-            const element = this.createElement(code, libName);
-            if (!element) return;
-            fragment.appendChild(element);
+        if (libraryOrder.length === 0) {
+            return html`
+                <h2 class="title">저장된 관심 도서관</h2>
+                <p class="empty-message">저장된 도서관이 없습니다.</p>
+            `;
         }
 
-        this.listElement.appendChild(fragment);
-    }
+        return html`
+            <h2 class="title">저장된 관심 도서관</h2>
+            <ul class="libries">
+                ${repeat(
+                    libraryOrder,
+                    (code) => code,
+                    (code) => {
+                        const data = libraries[code];
+                        if (!data) return nothing; // 데이터가 없는 경우 건너뜀
 
-    private createElement(code: string, name: string): HTMLElement | void {
-        if (!this.template) return;
-
-        const template = cloneTemplate(this.template);
-        const nameElement = template.querySelector(".name") as HTMLAnchorElement;
-        nameElement.textContent = name;
-        nameElement.href = `/library?libCode=${code}`;
-
-        const cancelButton = template.querySelector(".cancelButton") as HTMLButtonElement;
-        if (cancelButton) {
-            cancelButton.setAttribute("aria-label", `${name} 관심 도서관 해제`);
-        }
-
-        template.dataset.library = code;
-
-        this.addEvents(template);
-        return template;
-    }
-
-    private addEvents(element: HTMLElement) {
-        const cancelButton = element.querySelector(
-            ".cancelButton",
-        ) as HTMLButtonElement;
-
-        cancelButton.addEventListener("click", () => {
-            const code = element.dataset.library;
-            if (!code) return;
-            bookModel.removeLibraries(code);
-        });
-    }
-
-    private subscribeUpdate(update?: TLibraryUpdateProps) {
-        if (!update) return;
-        const { type, payload } = update;
-
-        switch (type) {
-            case "add":
-                this.add(payload);
-                break;
-            case "delete":
-                this.delete(payload.code);
-                break;
-            default:
-                console.error("Unknown type");
-        }
-    }
-
-    private add({ code, data }: TLibraryPayload) {
-        if (!this.listElement || !data) return;
-        const libName = typeof data === "string" ? data : data.libName;
-        const element = this.createElement(code, libName) as HTMLElement;
-        this.listElement.appendChild(element);
-    }
-
-    private delete(code: string) {
-        if (!this.listElement) return;
-
-        for (const element of this.listElement.querySelectorAll("li")) {
-            if (element.dataset.library === code) {
-                element.remove();
-            }
-        }
+                        const libName = typeof data === "string" ? data : data.libName;
+                        return html`
+                            <li data-library="${code}">
+                                <a href="/library?libCode=${encodeURIComponent(code)}" class="name">
+                                    ${libName}
+                                </a>
+                                <button 
+                                    type="button" 
+                                    class="cancelButton" 
+                                    aria-label="${libName} 관심 도서관 해제"
+                                    @click="${() => this.handleRemove(code)}"
+                                >
+                                    해제
+                                </button>
+                            </li>
+                        `;
+                    }
+                )}
+            </ul>
+        `;
     }
 }

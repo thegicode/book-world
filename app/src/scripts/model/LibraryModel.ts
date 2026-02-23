@@ -2,10 +2,12 @@ import Publisher from "@/utils/Publisher";
 
 export default class LibraryModel {
     private _libraries: TLibraries;
+    private _libraryOrder: string[];
     private publisher: Publisher<TLibraryUpdateProps> = new Publisher();
 
-    constructor(libraries: TLibraries) {
+    constructor(libraries: TLibraries, libraryOrder: string[] = []) {
         this._libraries = libraries;
+        this._libraryOrder = libraryOrder;
     }
 
     get libraries() {
@@ -16,8 +18,20 @@ export default class LibraryModel {
         this._libraries = newLibries;
     }
 
+    get libraryOrder() {
+        return [...this._libraryOrder];
+    }
+
+    set libraryOrder(newOrder: string[]) {
+        this._libraryOrder = newOrder;
+    }
+
     add(code: string, data: ILibraryData) {
         this._libraries[code] = data;
+        if (!this._libraryOrder.includes(code)) {
+            this._libraryOrder.push(code);
+        }
+        
         this.publisher.notify({
             type: "add",
             payload: {
@@ -30,6 +44,8 @@ export default class LibraryModel {
 
     remove(code: string) {
         delete this._libraries[code];
+        this._libraryOrder = this._libraryOrder.filter((c) => c !== code);
+
         this.publisher.notify({
             type: "delete",
             payload: {

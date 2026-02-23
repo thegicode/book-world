@@ -74,13 +74,13 @@ interface ILibraryData {
     homepage?: string;
     libCode: string;
     libName: string;
-    telephone?: string;
-    fax?: string; // Add fax
-    latitude?: string; // Add latitude
-    longitude?: string; // Add longitude
-    closed?: string; // Add closed
-    operatingTime?: string; // Add operatingTime
-    BookCount?: string; // Add BookCount
+    tel?: string;
+    fax?: string;
+    latitude?: string;
+    longitude?: string;
+    closed?: string;
+    operatingTime?: string;
+    BookCount?: string;
 }
 
 interface ILibrarySearchByBookResult {
@@ -185,6 +185,7 @@ interface IBookState {
     favorites: TFavoriteFavorites;
     favoriteCategoryOrder: TFavoriteCategoryOrder;
     libraries: TLibraries;
+    libraryOrder: string[]; // Added libraryOrder
 }
 
 interface IApiResponse<T> {

@@ -15,7 +15,8 @@ describe('OverlayCategory', () => {
     bookModel.state = {
       favorites: { '소설': [], '만화': [] },
       favoriteCategoryOrder: ['소설', '만화'],
-      libraries: {}
+      libraries: {},
+      libraryOrder: []
     };
 
     // 템플릿 및 기본 DOM 설정

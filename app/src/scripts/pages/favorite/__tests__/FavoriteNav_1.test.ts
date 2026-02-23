@@ -15,7 +15,8 @@ describe('FavoriteNav (Transcendent Version)', () => {
     bookModel.state = {
       favorites: { '소설': [], '만화': [] },
       favoriteCategoryOrder: ['소설', '만화'],
-      libraries: {}
+      libraries: {},
+      libraryOrder: []
     };
 
     // DOM 설정
@@ -91,7 +92,7 @@ describe('FavoriteNav (Transcendent Version)', () => {
   });
 
   it('카테고리가 비어있으면 컴포넌트가 hidden 상태가 되어야 한다.', async () => {
-    bookModel.state = { favorites: {}, favoriteCategoryOrder: [], libraries: {} };
+    bookModel.state = { favorites: {}, favoriteCategoryOrder: [], libraries: {}, libraryOrder: [] };
     await new Promise(resolve => setTimeout(resolve, 50));
     
     expect(element.hasAttribute('hidden')).toBe(true);
