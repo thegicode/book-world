@@ -43,7 +43,7 @@ export default class LibrarySearchItem extends BaseItemComponent {
         const libNameElement = this.querySelector('.libName');
         if (libNameElement) {
             const link = document.createElement('a');
-            link.href = `/library?libCode=${this.libCode}`;
+            link.href = `/library?libCode=${encodeURIComponent(this.libCode)}`;
             link.textContent = data.libName;
             libNameElement.innerHTML = ''; // Clear existing content
             libNameElement.appendChild(link);
@@ -53,7 +53,7 @@ export default class LibrarySearchItem extends BaseItemComponent {
         Object.entries(data).forEach(([key, value]) => {
             if (key === 'libName' || key === 'homepage') return; // Skip libName and homepage
             const element = this.querySelector(`.${key}`);
-            if (element && value) {
+            if (element && value !== null && value !== undefined) {
                 element.textContent = String(value);
             }
         });

@@ -4,9 +4,9 @@ import LoadingComponent from "./LoadingComponent";
 export abstract class FetchListComponent<T, U> extends HTMLElement {
     protected listContainer: HTMLElement;
     protected loadingComponent: LoadingComponent | null;
-    protected currentItemCount: number = 0;
-    protected itemsPerPage: number = 10;
-    protected total: number = 0;
+    protected currentItemCount = 0;
+    protected itemsPerPage = 10;
+    protected total = 0;
 
     constructor() {
         super();
@@ -14,18 +14,25 @@ export abstract class FetchListComponent<T, U> extends HTMLElement {
         this.loadingComponent = this.querySelector<LoadingComponent>("loading-component");
     }
 
-    protected async fetchData(url: string) {
+    protected async fetchData(url: string, options?: RequestInit): Promise<boolean> {
+        this.listContainer.setAttribute("aria-busy", "true");
         this.loadingComponent?.show();
         try {
-            const response = await CustomFetch.fetch<IApiResponse<T>>(url);
+            const response = await CustomFetch.fetch<IApiResponse<T>>(url, options);
             if (response.status === 'success') {
                 this.handleFetchSuccess(response.data);
+                return true;
             } else {
                 throw new Error(response.message || 'API returned an error');
             }
         } catch (error: unknown) {
+            if (error instanceof DOMException && error.name === "AbortError") {
+                return false;
+            }
             this.handleFetchError(error);
+            return false;
         } finally {
+            this.listContainer.setAttribute("aria-busy", "false");
             this.loadingComponent?.hide();
         }
     }
