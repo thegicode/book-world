@@ -1,4 +1,3 @@
-import template from "../../../markup/templates/library-search-item.html";
 import bookModel, { BookModelEvent } from "@/model";
 import { BaseItemComponent } from "@/components";
 
@@ -8,7 +7,7 @@ export default class LibrarySearchItem extends BaseItemComponent {
     data!: ILibraryData;
 
     constructor(data: ILibraryData) {
-        super(template);
+        super("#tp-library-search-item", true);
         this.data = data;
         this.onChange = this.onChange.bind(this);
         this.subscribeUpdate = this.subscribeUpdate.bind(this);

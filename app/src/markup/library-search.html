@@ -67,5 +67,33 @@
         <template id="tp-error">
             <div class="notFound" role="alert">검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</div>
         </template>
+        <template id="tp-library-search-item">
+            <h3 class="libName"></h3>
+            <ul>
+                <li>
+                    <span>도서관 코드 : </span><span class="libCode"></span>
+                </li>
+                <li><span>주소 : </span><span class="address"></span></li>
+                <li><span>전화번호 : </span><span class="tel"></span></li>
+                <li><span>팩스 : </span><span class="fax"></span></li>
+                <li>
+                    <span>홈페이지 : </span>
+                    <a class="homepage" href="" target="_blank" rel="noopener noreferrer"></a>
+                </li>
+                <li><span>휴관일 : </span><span class="closed"></span></li>
+                <li>
+                    <span>운영시간 : </span><span class="operatingTime"></span>
+                </li>
+                <li>
+                    <span>단행본수 : </span><span class="BookCount"></span>
+                </li>
+            </ul>
+            <div class="actions">
+                <label class="my-library-label">
+                    <input type="checkbox" name="myLibrary" />
+                    <span>관심 도서관</span>
+                </label>
+            </div>
+        </template>
     </body>
 </html>

@@ -2,12 +2,19 @@
 const templateCache = new Map<string, HTMLTemplateElement>();
 
 export default class BaseItemComponent extends HTMLElement {
-    protected templateString: string;
+    protected templateString = "";
+    protected templateSelector = "";
+    protected isSelector = false;
     protected template: HTMLTemplateElement | null = null;
 
-    constructor(templateString: string) {
+    constructor(templateSource: string, isSelector = false) {
         super();
-        this.templateString = templateString;
+        this.isSelector = isSelector;
+        if (isSelector) {
+            this.templateSelector = templateSource;
+        } else {
+            this.templateString = templateSource;
+        }
     }
 
     connectedCallback() {
@@ -19,9 +26,21 @@ export default class BaseItemComponent extends HTMLElement {
     }
 
     protected loadTemplate() {
+        if (this.isSelector) {
+            // 셀렉터로 템플릿 찾기
+            const template = document.querySelector(this.templateSelector) as HTMLTemplateElement;
+            if (template) {
+                this.template = template;
+            } else {
+                console.error(`Template not found for selector: ${this.templateSelector}`);
+            }
+            return;
+        }
+
         // 동일한 템플릿 문자열에 대해서는 파싱을 한 번만 수행
-        if (templateCache.has(this.templateString)) {
-            this.template = templateCache.get(this.templateString)!;
+        const cachedTemplate = templateCache.get(this.templateString);
+        if (cachedTemplate) {
+            this.template = cachedTemplate;
             return;
         }
 
