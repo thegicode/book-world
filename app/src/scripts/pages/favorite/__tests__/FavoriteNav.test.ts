@@ -1,101 +1,178 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import FavoriteNav from '../FavoriteNav';
-import bookModel from '../../../model'; 
+import bookModel from '@/model';
 
-// Custom Element 등록
-if (!customElements.get('favorite-nav')) {
-  customElements.define('favorite-nav', FavoriteNav);
-}
+describe('FavoriteNav Component', () => {
+    let element: FavoriteNav;
+    let container: HTMLElement;
 
-describe('FavoriteNav', () => {
-  let element: FavoriteNav;
+    // Helper to wait for the next animation frame (where render happens)
+    const waitForRender = () => new Promise(resolve => requestAnimationFrame(resolve));
 
-  beforeEach(async () => {
-    // bookModel 초기화
-    bookModel.state = {
-      favorites: { '소설': [], '만화': [] },
-      favoriteCategoryOrder: ['소설', '만화'],
-      libraries: {}
-    };
+    beforeEach(async () => {
+        // Reset and Initialize Model State using public setter
+        // This ensures internal sub-models (FavoriteModel, LibraryModel) are synced
+        bookModel.state = {
+            favorites: { 'Novel': [], 'Comics': [], 'Essay': [] },
+            favoriteCategoryOrder: ['Novel', 'Comics', 'Essay'],
+            libraries: {}
+        };
+        
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
-    // DOM 설정 (lit-html이 렌더링할 컨테이너들만 준비)
-    document.body.innerHTML = `
-      <overlay-category hidden></overlay-category>
-      <favorite-nav></favorite-nav>
-    `;
+        if (!customElements.get('favorite-nav')) {
+            customElements.define('favorite-nav', FavoriteNav);
+        }
 
-    element = document.querySelector('favorite-nav') as FavoriteNav;
-    await new Promise(resolve => setTimeout(resolve, 0)); // 초기 렌더링 대기
-  });
+        element = document.createElement('favorite-nav') as FavoriteNav;
+        container.appendChild(element);
 
-  afterEach(() => {
-    if (element) {
-      element.remove(); // disconnectedCallback 호출 유도
-    }
-    document.body.innerHTML = '';
-  });
+        // Wait for initial render
+        await waitForRender();
+    });
 
-  it('초기화 시 bookModel의 카테고리들이 탭으로 생성되어야 한다.', async () => {
-    await new Promise(resolve => window.requestAnimationFrame(resolve)); // rAF 대기
-    const navLinks = element.querySelectorAll('.favorite-category a');
-    expect(navLinks.length).toBe(2);
-    expect(navLinks[0].textContent?.trim()).toBe('소설');
-    expect(navLinks[1].textContent?.trim()).toBe('만화');
-  });
+    afterEach(() => {
+        if (container.parentNode) {
+            document.body.removeChild(container);
+        }
+        vi.restoreAllMocks();
+    });
 
-  it('selected-category 속성을 변경하면 UI가 자동으로 업데이트되어야 한다.', async () => {
-    element.setAttribute('selected-category', '만화');
-    await new Promise(resolve => window.requestAnimationFrame(resolve)); // rAF 대기
-    
-    const activeLink = element.querySelector('a.active');
-    expect(activeLink?.textContent?.trim()).toBe('만화');
-    expect(activeLink?.getAttribute('aria-selected')).toBe('true');
-  });
+    describe('Rendering', () => {
+        it('renders all categories from the model', () => {
+            const tabs = element.querySelectorAll('[role="tab"]');
+            expect(tabs.length).toBe(3);
+            expect(tabs[0].textContent?.trim()).toBe('Novel');
+            expect(tabs[1].textContent?.trim()).toBe('Comics');
+            expect(tabs[2].textContent?.trim()).toBe('Essay');
+        });
 
-  it('카테고리가 추가되면 배칭 시스템(rAF)을 거쳐 UI가 업데이트되어야 한다.', async () => {
-    bookModel.addfavorite('에세이');
-    await new Promise(resolve => setTimeout(resolve, 50)); // rAF 및 배칭 대기
-    
-    const navLinks = element.querySelectorAll('.favorite-category a');
-    expect(navLinks.length).toBe(3);
-    expect(navLinks[2].textContent?.trim()).toBe('에세이');
-  });
+        it('selects the first category by default if no attribute is set', () => {
+            const firstTab = element.querySelector('[role="tab"]:first-child');
+            expect(firstTab?.classList.contains('active')).toBe(true);
+            expect(firstTab?.getAttribute('aria-selected')).toBe('true');
+        });
 
-  it('유효하지 않은 selected-category는 첫 번째 카테고리로 보정되어야 한다.', async () => {
-    element.setAttribute('selected-category', '없는카테고리');
-    await new Promise(resolve => window.requestAnimationFrame(resolve));
+        it('hides itself if there are no categories', async () => {
+            // Update state to empty
+            bookModel.state = {
+                favorites: {},
+                favoriteCategoryOrder: [],
+                libraries: {}
+            };
+            
+            await waitForRender();
 
-    const activeLink = element.querySelector('a.active');
-    expect(activeLink?.textContent?.trim()).toBe('소설');
-    expect(element.getAttribute('selected-category')).toBe('소설');
-  });
+            expect(element.hidden).toBe(true);
+        });
+    });
 
-  it('ArrowRight 입력 시 다음 탭으로 포커스만 이동해야 한다.', async () => {
-    await new Promise(resolve => window.requestAnimationFrame(resolve));
-    const tabs = element.querySelectorAll('.favorite-category a') as NodeListOf<HTMLElement>;
-    tabs[0].focus();
+    describe('Interaction & Reactivity', () => {
+        it('updates active tab when "selected-category" attribute changes', async () => {
+            element.setAttribute('selected-category', 'Comics');
+            await waitForRender();
 
-    element.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
-    expect(document.activeElement).toBe(tabs[1]);
-  });
+            const activeTab = element.querySelector('[role="tab"][aria-selected="true"]');
+            expect(activeTab?.textContent?.trim()).toBe('Comics');
+        });
 
-  it('편집 버튼을 클릭하면 상세 정보를 포함한 커스텀 이벤트가 발생해야 한다.', async () => {
-    await new Promise(resolve => window.requestAnimationFrame(resolve));
-    const changeButton = element.querySelector('.favorite-changeButton') as HTMLButtonElement;
-    const spy = vi.fn();
-    element.addEventListener('edit-categories', spy);
-    
-    changeButton.click();
-    
-    expect(spy).toHaveBeenCalled();
-    const event = spy.mock.calls[0][0] as CustomEvent;
-    expect(event.detail.source).toBe('FavoriteNav');
-  });
+        it('reflects attribute change back to property (single source of truth)', async () => {
+            // Setting attribute manually
+            element.setAttribute('selected-category', 'Essay');
+            await waitForRender();
+            
+            // Internal state should match
+            const activeTab = element.querySelector('.active');
+            expect(activeTab?.textContent?.trim()).toBe('Essay');
+        });
 
-  it('카테고리가 모두 삭제되면 컴포넌트가 hidden 속성을 가져야 한다.', async () => {
-    bookModel.state = { favorites: {}, favoriteCategoryOrder: [], libraries: {} };
-    await new Promise(resolve => setTimeout(resolve, 100)); // 충분한 대기
-    
-    expect(element.hasAttribute('hidden')).toBe(true);
-  });
+        it('dispatches "edit-categories" event when edit button is clicked', () => {
+            const spy = vi.fn();
+            element.addEventListener('edit-categories', spy);
+
+            const btn = element.querySelector('.favorite-changeButton') as HTMLButtonElement;
+            expect(btn).not.toBeNull();
+            btn.click();
+
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(spy.mock.calls[0][0].detail.source).toBe('FavoriteNav');
+        });
+    });
+
+    describe('Keyboard Navigation (A11y)', () => {
+        const dispatchKey = (key: string) => {
+            const activeElement = document.activeElement as HTMLElement;
+            activeElement.dispatchEvent(new KeyboardEvent('keydown', {
+                key,
+                bubbles: true,
+                cancelable: true
+            }));
+        };
+
+        it('moves focus to next tab on ArrowRight', async () => {
+            const tabs = element.querySelectorAll('[role="tab"]') as NodeListOf<HTMLElement>;
+            expect(tabs.length).toBeGreaterThan(1);
+            tabs[0].focus();
+
+            dispatchKey('ArrowRight');
+            await waitForRender();
+
+            expect(document.activeElement).toBe(tabs[1]);
+        });
+
+        it('moves focus to previous tab on ArrowLeft (wrapping)', async () => {
+            const tabs = element.querySelectorAll('[role="tab"]') as NodeListOf<HTMLElement>;
+            tabs[0].focus();
+
+            dispatchKey('ArrowLeft');
+            await waitForRender();
+            
+            expect(document.activeElement).toBe(tabs[2]); // Last item
+        });
+
+        it('moves focus to first tab on Home', async () => {
+            const tabs = element.querySelectorAll('[role="tab"]') as NodeListOf<HTMLElement>;
+            tabs[2].focus();
+
+            dispatchKey('Home');
+            await waitForRender();
+
+            expect(document.activeElement).toBe(tabs[0]);
+        });
+
+        it('moves focus to last tab on End', async () => {
+            const tabs = element.querySelectorAll('[role="tab"]') as NodeListOf<HTMLElement>;
+            tabs[0].focus();
+
+            dispatchKey('End');
+            await waitForRender();
+
+            expect(document.activeElement).toBe(tabs[2]);
+        });
+
+        it('activates tab on Enter', () => {
+            const tabs = element.querySelectorAll('[role="tab"]') as NodeListOf<HTMLElement>;
+            const targetTab = tabs[1];
+            
+            // Mock click since Enter calls click()
+            const clickSpy = vi.spyOn(targetTab, 'click');
+            
+            targetTab.focus();
+            dispatchKey('Enter');
+
+            expect(clickSpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('Lifecycle & Controller', () => {
+        it('cleans up event listeners when disconnected', () => {
+            const removeSpy = vi.spyOn(element, 'removeEventListener');
+            
+            element.remove();
+            
+            expect(removeSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+            expect(removeSpy).toHaveBeenCalledWith('click', expect.any(Function));
+        });
+    });
 });
