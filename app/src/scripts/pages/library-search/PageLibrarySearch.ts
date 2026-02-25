@@ -5,6 +5,7 @@ import { librarySearchStore, LibrarySearchState } from "@/model/LibrarySearchSto
 import { InfiniteScrollController } from "@/utils/InfiniteScrollController";
 import "./LibrarySearchItem";
 import "./LibrarySearchStored";
+import "./LibrarySearchForm";
 
 export default class PageLibrarySearch extends LitElement {
     private _state: LibrarySearchState;
@@ -66,16 +67,13 @@ export default class PageLibrarySearch extends LitElement {
     };
 
     private handleSearch = (e: Event) => {
-        e.preventDefault();
-        const formData = new FormData(e.target as HTMLFormElement);
-        const keyword = formData.get("keyword") as string;
-        librarySearchStore.search(keyword);
+        const customEvent = e as CustomEvent<{ keyword: string }>;
+        librarySearchStore.search(customEvent.detail.keyword);
     };
 
     private handleInput = (e: Event) => {
-        const input = e.target as HTMLInputElement;
-        const keyword = input.value;
-        this.debouncedSearch(keyword);
+        const customEvent = e as CustomEvent<{ keyword: string }>;
+        this.debouncedSearch(customEvent.detail.keyword);
     };
 
     render() {
@@ -87,21 +85,11 @@ export default class PageLibrarySearch extends LitElement {
             </section>
 
             <section class="search-area" aria-label="도서관 검색 영역">
-                <div class="search-container">
-                    <form class="search-form" role="search" @submit="${this.handleSearch}">
-                        <label for="library-keyword" class="visually-hidden">도서관 이름</label>
-                        <input 
-                            type="text" 
-                            id="library-keyword" 
-                            name="keyword" 
-                            placeholder="도서관 이름을 입력하세요" 
-                            required 
-                            .value="${keyword}"
-                            @input="${this.handleInput}"
-                        />
-                        <button type="submit">검색</button>
-                    </form>
-                </div>
+                <library-search-form
+                    .keyword="${keyword}"
+                    @search="${this.handleSearch}"
+                    @input-change="${this.handleInput}"
+                ></library-search-form>
             </section>
 
             <section class="results-area" aria-live="polite" aria-label="검색 결과">

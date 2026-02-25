@@ -88,7 +88,8 @@ library-search-stored {
             .name {
                 color: inherit;
                 text-decoration: none;
-                &:hover, &:focus {
+                &:hover,
+                &:focus {
                     color: #fff;
                     text-decoration: underline;
                     outline: 1px dotted #fff; // Visible focus for keyboard users
@@ -106,7 +107,8 @@ library-search-stored {
         font-size: 11px;
         color: #567172;
         cursor: pointer;
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
             border-color: #567172;
             color: #799394;
             outline: 2px solid #799394; // Visible focus
@@ -147,7 +149,8 @@ library-search-stored {
     }
 }
 
-.search-container {
+library-search-form {
+    display: block;
     padding: 1rem;
     border-top: 1px solid #f1f1f1;
     background-color: #f1fff4;
@@ -179,7 +182,8 @@ library-search-stored {
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            &:hover, &:focus {
+            &:hover,
+            &:focus {
                 background-color: #2f5f60;
                 outline: 2px solid #2f5f60; // Visible focus
                 outline-offset: 2px;
@@ -210,7 +214,7 @@ library-search-item {
     margin: 0;
     padding: 1rem;
     border-bottom: 1px solid #ededed;
-    
+
     // Performance optimization for long lists (replaces JS virtual scrolling)
     content-visibility: auto;
     contain-intrinsic-size: auto 200px; // Estimated average height
@@ -263,7 +267,7 @@ library-search-item {
         border: 0;
         opacity: 0;
     }
-    
+
     // Focus style for the label/span when input is focused
     input[name="myLibrary"]:focus + span {
         outline: 2px solid #417f80;

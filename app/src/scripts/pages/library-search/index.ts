@@ -2,6 +2,7 @@ import { NavGnb, ErrorFallback } from "@/components/index";
 import PageLibrarySearch from "./PageLibrarySearch";
 import LibrarySearchStored from "./LibrarySearchStored";
 import LibrarySearchItem from "./LibrarySearchItem";
+import LibrarySearchForm from "./LibrarySearchForm";
 
 // Register custom elements
 if (!customElements.get("nav-gnb")) {
@@ -9,6 +10,9 @@ if (!customElements.get("nav-gnb")) {
 }
 if (!customElements.get("error-fallback")) {
     customElements.define("error-fallback", ErrorFallback);
+}
+if (!customElements.get("library-search-form")) {
+    customElements.define("library-search-form", LibrarySearchForm);
 }
 if (!customElements.get("page-library-search")) {
     customElements.define("page-library-search", PageLibrarySearch);
