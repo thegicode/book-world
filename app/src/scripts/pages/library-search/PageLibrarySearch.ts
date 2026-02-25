@@ -128,7 +128,13 @@ export default class PageLibrarySearch extends HTMLElement {
     }
 
     private updateSentinel() {
-        // ... (existing code)
+        const sentinel = this.querySelector(".sentinel");
+        if (sentinel && this.observer) {
+            this.observer.unobserve(sentinel);
+            if (this.hasMoreData() && !this._loading) {
+                 this.observer.observe(sentinel);
+            }
+        }
     }
 
     private template() {
@@ -169,6 +175,7 @@ export default class PageLibrarySearch extends HTMLElement {
                                     (item) => html`
                                         <library-search-item
                                             .data=${item}
+                                            class="virtual-item"
                                         ></library-search-item>
                                     `,
                                 )}

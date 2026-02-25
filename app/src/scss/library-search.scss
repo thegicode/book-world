@@ -209,6 +209,10 @@ library-search-item {
     margin: 0;
     padding: 1rem;
     border-bottom: 1px solid #ededed;
+    
+    // Performance optimization for long lists (replaces JS virtual scrolling)
+    content-visibility: auto;
+    contain-intrinsic-size: auto 200px; // Estimated average height
 
     .libName {
         margin: 0 0 10px;
