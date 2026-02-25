@@ -1,5 +1,5 @@
 import Publisher from "@/utils/Publisher";
-import { CustomFetch } from "@/services";
+import { LibraryApiService } from "@/services";
 
 export interface LibrarySearchState {
     keyword: string;
@@ -76,19 +76,24 @@ class LibrarySearchStore extends Publisher<LibrarySearchState> {
 
     private async fetchData() {
         const { keyword, page, pageSize } = this.state;
-        const url = `/api/library-search-by-keyword?keyword=${encodeURIComponent(keyword)}&page=${page}&pageSize=${pageSize}`;
 
         try {
-            const response = await CustomFetch.fetch<IApiResponse<ILibrarySearchByBookResult>>(url, {
-                signal: this.abortController?.signal
-            });
+            const response = await LibraryApiService.searchLibrariesByKeyword(
+                keyword,
+                page,
+                pageSize,
+                this.abortController?.signal
+            );
 
-            if (response.status === 'success') {
+            if (response.status === "success") {
                 const data = response.data;
                 const newItems = data.libraries || [];
-                
+
                 this.setState({
-                    items: page === 1 ? newItems : [...this.state.items, ...newItems],
+                    items:
+                        page === 1
+                            ? newItems
+                            : [...this.state.items, ...newItems],
                     total: data.numFound || 0,
                     loading: false,
                     error: null,
