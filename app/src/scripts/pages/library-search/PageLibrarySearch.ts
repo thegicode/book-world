@@ -2,6 +2,7 @@ import { LitElement, html } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 import { manageFocus, debounce } from "@/utils/helpers";
 import { librarySearchStore, LibrarySearchState } from "@/model/LibrarySearchStore";
+import bookModel from "@/model";
 import { InfiniteScrollController } from "@/utils/InfiniteScrollController";
 import "./LibrarySearchItem";
 import "./LibrarySearchStored";
@@ -76,6 +77,27 @@ export default class PageLibrarySearch extends LitElement {
         this.debouncedSearch(customEvent.detail.keyword);
     };
 
+    // Event Delegation for list items
+    private handleListChange = (e: Event) => {
+        const target = e.target as HTMLInputElement;
+        if (target && target.name === "myLibrary") {
+            const itemElement = target.closest("library-search-item") as any;
+            if (!itemElement || !itemElement.data) return;
+
+            const data = itemElement.data as ILibraryData;
+            const isChecked = target.checked;
+
+            // Sync with attribute in real-time, just like it did in child
+            itemElement.selected = isChecked;
+
+            if (isChecked) {
+                bookModel.addLibraries(data.libCode, data);
+            } else {
+                bookModel.removeLibraries(data.libCode);
+            }
+        }
+    };
+
     render() {
         const { keyword, items, loading, error, hasSearched, total } = this._state;
 
@@ -94,7 +116,7 @@ export default class PageLibrarySearch extends LitElement {
 
             <section class="results-area" aria-live="polite" aria-label="검색 결과">
                 <div class="library-body">
-                    <div class="library-list" role="list">
+                    <div class="library-list" role="list" @change="${this.handleListChange}">
                         ${error
                             ? html`<error-fallback 
                                   message="${error}" 

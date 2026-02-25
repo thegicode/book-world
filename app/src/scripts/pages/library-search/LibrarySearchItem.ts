@@ -49,20 +49,6 @@ export default class LibrarySearchItem extends LitElement {
         }
     }
 
-    private handleCheckboxChange = (e: Event) => {
-        const checkbox = e.target as HTMLInputElement;
-        const isChecked = checkbox.checked;
-        this.selected = isChecked; // Sync UI -> Attribute
-
-        if (this.data) {
-            if (isChecked) {
-                bookModel.addLibraries(this.data.libCode, this.data);
-            } else {
-                bookModel.removeLibraries(this.data.libCode);
-            }
-        }
-    };
-
     render() {
         if (!this.data) return html``;
 
@@ -135,7 +121,6 @@ export default class LibrarySearchItem extends LitElement {
                         type="checkbox"
                         name="myLibrary"
                         .checked="${isSelected}"
-                        @change="${this.handleCheckboxChange}"
                     />
                     <span>관심 도서관</span>
                 </label>
