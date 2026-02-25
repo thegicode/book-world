@@ -2,22 +2,28 @@ import { LitElement, html } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 import { manageFocus } from "@/utils/helpers";
 import { librarySearchStore, LibrarySearchState } from "@/model/LibrarySearchStore";
+import { InfiniteScrollController } from "@/utils/InfiniteScrollController";
 import "./LibrarySearchItem";
 import "./LibrarySearchStored";
 
 export default class PageLibrarySearch extends LitElement {
     private _state: LibrarySearchState;
+    private infiniteScroll: InfiniteScrollController;
 
     static properties = {
         _state: { state: true }
     };
 
-    private observer: IntersectionObserver | null = null;
-
     constructor() {
         super();
         this._state = librarySearchStore.getState();
-        this.initIntersectionObserver();
+        
+        // Infinite Scroll Controller 초기화
+        this.infiniteScroll = new InfiniteScrollController(
+            this,
+            ".sentinel",
+            () => librarySearchStore.loadMore()
+        );
     }
 
     createRenderRoot() {
@@ -32,7 +38,6 @@ export default class PageLibrarySearch extends LitElement {
     disconnectedCallback() {
         super.disconnectedCallback();
         librarySearchStore.unsubscribe(this.handleStoreUpdate);
-        this.observer?.disconnect();
     }
 
     private handleStoreUpdate = (newState?: LibrarySearchState) => {
@@ -41,27 +46,16 @@ export default class PageLibrarySearch extends LitElement {
         
         this._state = newState;
         
+        // 데이터 상태에 따라 무한 스크롤 감시 여부 조절
+        this.infiniteScroll.setPaused(
+            this._state.loading || !librarySearchStore.hasMoreData()
+        );
+        
         // Focus management logic
         if (this._state.items.length > 0 && this._state.page === 1 && previousItemsLength === 0) {
-            // Need to wait for DOM update
             this.updateComplete.then(() => {
                 manageFocus(this, "library-search-item");
             });
-        }
-    };
-
-    private initIntersectionObserver() {
-        this.observer = new IntersectionObserver(this.handleIntersect, {
-            root: null,
-            rootMargin: "200px",
-            threshold: 0,
-        });
-    }
-
-    private handleIntersect = (entries: IntersectionObserverEntry[]) => {
-        const entry = entries[0];
-        if (entry.isIntersecting && !this._state.loading && librarySearchStore.hasMoreData()) {
-            librarySearchStore.loadMore();
         }
     };
 
@@ -71,20 +65,6 @@ export default class PageLibrarySearch extends LitElement {
         const keyword = formData.get("keyword") as string;
         librarySearchStore.search(keyword);
     };
-
-    protected updated() {
-        this.updateSentinel();
-    }
-
-    private updateSentinel() {
-        const sentinel = this.querySelector(".sentinel");
-        if (sentinel && this.observer) {
-            this.observer.unobserve(sentinel);
-            if (librarySearchStore.hasMoreData() && !this._state.loading) {
-                 this.observer.observe(sentinel);
-            }
-        }
-    }
 
     render() {
         const { keyword, items, loading, error, hasSearched, total } = this._state;
