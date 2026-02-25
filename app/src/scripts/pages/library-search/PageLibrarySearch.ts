@@ -2,8 +2,9 @@ import { LitElement, html } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 import { manageFocus, debounce } from "@/utils/helpers";
 import { librarySearchStore, LibrarySearchState } from "@/model/LibrarySearchStore";
-import bookModel from "@/model";
+import bookModel, { BookModelEvent } from "@/model";
 import { InfiniteScrollController } from "@/utils/InfiniteScrollController";
+import { StoreController } from "@/utils/StoreController";
 import "./LibrarySearchItem";
 import "./LibrarySearchStored";
 import "./LibrarySearchForm";
@@ -21,6 +22,9 @@ export default class PageLibrarySearch extends LitElement {
         super();
         this._state = librarySearchStore.getState();
         
+        // 전역 관심 도서관 모델 단일 구독 (O(1) 구독 아키텍처 적용)
+        new StoreController(this, BookModelEvent.LibraryUpdate);
+
         // Infinite Scroll Controller 초기화
         this.infiniteScroll = new InfiniteScrollController(
             this,
@@ -130,6 +134,7 @@ export default class PageLibrarySearch extends LitElement {
                                     (item) => html`
                                         <library-search-item
                                             .data=${item}
+                                            .selected=${bookModel.hasLibrary(item.libCode)}
                                             class="virtual-item"
                                         ></library-search-item>
                                     `,

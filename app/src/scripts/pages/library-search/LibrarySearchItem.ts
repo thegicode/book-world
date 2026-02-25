@@ -1,6 +1,4 @@
-import { LitElement, html, PropertyValues } from "lit";
-import bookModel, { BookModelEvent } from "@/model";
-import { StoreController } from "@/utils/StoreController";
+import { LitElement, html } from "lit";
 
 export default class LibrarySearchItem extends LitElement {
     declare data: ILibraryData;
@@ -14,24 +12,6 @@ export default class LibrarySearchItem extends LitElement {
     constructor() {
         super();
         this.selected = false;
-
-        new StoreController<TLibraryUpdateProps>(
-            this,
-            BookModelEvent.LibraryUpdate,
-            (update) => {
-                if (!update || !this.data) return;
-                const { type, payload } = update;
-
-                if (type === "delete" && payload.code === this.data.libCode) {
-                    this.selected = false; // Sync Model -> Attribute
-                } else if (
-                    type === "add" &&
-                    payload.code === this.data.libCode
-                ) {
-                    this.selected = true; // Sync Model -> Attribute
-                }
-            },
-        );
     }
 
     createRenderRoot() {
@@ -41,12 +21,6 @@ export default class LibrarySearchItem extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         this.setAttribute("role", "listitem");
-    }
-
-    willUpdate(changedProperties: PropertyValues) {
-        if (changedProperties.has("data") && this.data) {
-            this.selected = bookModel.hasLibrary(this.data.libCode);
-        }
     }
 
     render() {
@@ -128,3 +102,4 @@ export default class LibrarySearchItem extends LitElement {
         `;
     }
 }
+
