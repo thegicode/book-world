@@ -11,6 +11,7 @@ export default class PageLibrarySearch extends HTMLElement {
     private _items: ILibraryData[] = [];
     private _loading = false;
     private _error: string | null = null;
+    private _hasSearched = false;
     
     private abortController: AbortController | null = null;
     private observer: IntersectionObserver | null = null;
@@ -60,6 +61,7 @@ export default class PageLibrarySearch extends HTMLElement {
         this._items = [];
         this._total = 0;
         this._error = null;
+        this._hasSearched = true;
         
         if (this.abortController) {
             this.abortController.abort();
@@ -211,19 +213,21 @@ export default class PageLibrarySearch extends HTMLElement {
 
                 <section class="results-area" aria-live="polite" aria-label="검색 결과">
 
-                    <div class="library-body">
+                                        <div class="library-body">
 
-                        <library-search-list
+                                            <library-search-list
 
-                            .items="${this._items}"
+                                                .items="${this._items}"
 
-                            .total="${this._total}"
+                                                .total="${this._total}"
 
-                            .error="${this._error}"
+                                                .error="${this._error}"
 
-                        ></library-search-list>
+                                                .hasSearched="${this._hasSearched}"
 
-                        ${this._loading ? html`<div class="loading">Loading...</div>` : ""}
+                                            ></library-search-list>
+
+                                            ${this._loading ? html`<div class="loading">Loading...</div>` : ""}
 
                         <div class="sentinel" style="height: 10px; width: 100%;"></div>
 

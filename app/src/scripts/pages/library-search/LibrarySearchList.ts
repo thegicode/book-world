@@ -7,11 +7,13 @@ export default class LibrarySearchList extends LitElement {
     declare items: ILibraryData[];
     declare total: number;
     declare error: string | null;
+    declare hasSearched: boolean;
 
     static properties = {
         items: { type: Array },
         total: { type: Number },
         error: { type: String },
+        hasSearched: { type: Boolean },
     };
 
     constructor() {
@@ -19,6 +21,7 @@ export default class LibrarySearchList extends LitElement {
         this.items = [];
         this.total = 0;
         this.error = null;
+        this.hasSearched = false;
     }
 
     createRenderRoot() {
@@ -39,7 +42,7 @@ export default class LibrarySearchList extends LitElement {
                     ? html`<div class="error-message" role="alert">
                           ${this.error}
                       </div>`
-                    : this.items.length === 0 && this.total === 0
+                    : this.hasSearched && this.items.length === 0 && this.total === 0
                       ? html`<div class="no-data">데이터가 없습니다.</div>`
                       : repeat(
                             this.items,
