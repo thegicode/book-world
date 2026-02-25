@@ -63,6 +63,13 @@ class LibrarySearchStore extends Publisher<LibrarySearchState> {
         await this.fetchData();
     }
 
+    public async retry() {
+        if (this.state.loading) return;
+
+        this.setState({ loading: true, error: null });
+        await this.fetchData();
+    }
+
     public hasMoreData() {
         return this.state.items.length < this.state.total;
     }

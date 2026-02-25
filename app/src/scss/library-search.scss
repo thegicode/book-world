@@ -2,6 +2,7 @@
 @use "./components/gnb";
 @use "./components/toast";
 @use "./components/loading";
+@use "./components/error-fallback";
 @use "./components/button" as button;
 
 // Accessibility Utility

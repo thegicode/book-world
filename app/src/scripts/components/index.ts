@@ -6,3 +6,4 @@ export { default as NavGnb } from "./NavGnb";
 export { default as LoadingComponent } from "./LoadingComponent";
 export { default as BaseItemComponent } from "./BaseItemComponent";
 export { FetchListComponent } from "./FetchListComponent";
+export * from "./ErrorFallback";

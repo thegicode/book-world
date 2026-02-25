@@ -108,9 +108,10 @@ export default class PageLibrarySearch extends LitElement {
                 <div class="library-body">
                     <div class="library-list" role="list">
                         ${error
-                            ? html`<div class="error-message" role="alert">
-                                  ${error}
-                              </div>`
+                            ? html`<error-fallback 
+                                  message="${error}" 
+                                  @retry="${() => librarySearchStore.retry()}">
+                              </error-fallback>`
                             : hasSearched && items.length === 0 && total === 0
                               ? html`<div class="no-data">데이터가 없습니다.</div>`
                               : repeat(
