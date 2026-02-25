@@ -38,7 +38,7 @@ export function fillElementsWithData<T>(data: T, container: HTMLElement) {
  * @param container 포커스를 맞출 요소를 포함하는 컨테이너
  * @param selector 포커스를 맞출 대상 요소의 CSS 선택자 (기본값: 'h1')
  */
-export function manageFocus(container: HTMLElement, selector: string = 'h1') {
+export function manageFocus(container: HTMLElement, selector = 'h1') {
     const targetElement = container.querySelector<HTMLElement>(selector);
 
     if (targetElement) {
@@ -51,4 +51,27 @@ export function manageFocus(container: HTMLElement, selector: string = 'h1') {
             targetElement.removeAttribute('tabindex');
         }, { once: true });
     }
+}
+
+/**
+ * 주어진 함수의 실행을 지연시킵니다.
+ * 지정된 시간 내에 함수가 다시 호출되면 타이머가 초기화됩니다.
+ * @param func 실행할 함수
+ * @param delay 지연 시간 (밀리초)
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function debounce<T extends (...args: any[]) => void>(
+    func: T,
+    delay: number
+): (...args: Parameters<T>) => void {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    return function (...args: Parameters<T>) {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(() => {
+            func(...args);
+        }, delay);
+    };
 }

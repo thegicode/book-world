@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit";
 import { repeat } from "lit/directives/repeat.js";
-import { manageFocus } from "@/utils/helpers";
+import { manageFocus, debounce } from "@/utils/helpers";
 import { librarySearchStore, LibrarySearchState } from "@/model/LibrarySearchStore";
 import { InfiniteScrollController } from "@/utils/InfiniteScrollController";
 import "./LibrarySearchItem";
@@ -9,6 +9,7 @@ import "./LibrarySearchStored";
 export default class PageLibrarySearch extends LitElement {
     private _state: LibrarySearchState;
     private infiniteScroll: InfiniteScrollController;
+    private debouncedSearch: (keyword: string) => void;
 
     static properties = {
         _state: { state: true }
@@ -24,6 +25,11 @@ export default class PageLibrarySearch extends LitElement {
             ".sentinel",
             () => librarySearchStore.loadMore()
         );
+        
+        // 타이핑 시 실시간 검색을 위한 디바운싱 초기화 (300ms)
+        this.debouncedSearch = debounce((keyword: string) => {
+            librarySearchStore.search(keyword);
+        }, 300);
     }
 
     createRenderRoot() {
@@ -66,6 +72,12 @@ export default class PageLibrarySearch extends LitElement {
         librarySearchStore.search(keyword);
     };
 
+    private handleInput = (e: Event) => {
+        const input = e.target as HTMLInputElement;
+        const keyword = input.value;
+        this.debouncedSearch(keyword);
+    };
+
     render() {
         const { keyword, items, loading, error, hasSearched, total } = this._state;
 
@@ -85,6 +97,7 @@ export default class PageLibrarySearch extends LitElement {
                             placeholder="도서관 이름을 입력하세요" 
                             required 
                             .value="${keyword}"
+                            @input="${this.handleInput}"
                         />
                         <button type="submit">검색</button>
                     </form>
