@@ -1,6 +1,7 @@
 import { LitElement, html, nothing } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 import bookModel, { BookModelEvent } from "@/model";
+import { StoreController } from "@/utils/StoreController";
 
 export default class LibrarySearchStored extends LitElement {
     // items will be derived from bookModel, so we don't strictly need a property for it unless we want to pass it down.
@@ -8,25 +9,12 @@ export default class LibrarySearchStored extends LitElement {
     
     constructor() {
         super();
+        new StoreController(this, BookModelEvent.LibraryUpdate);
     }
 
     createRenderRoot() {
         return this;
     }
-
-    connectedCallback() {
-        super.connectedCallback();
-        bookModel.subscribe(BookModelEvent.LibraryUpdate, this.handleUpdate);
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        bookModel.unsubscribe(BookModelEvent.LibraryUpdate, this.handleUpdate);
-    }
-
-    private handleUpdate = () => {
-        this.requestUpdate();
-    };
 
     private handleRemove(code: string) {
         bookModel.removeLibraries(code);
