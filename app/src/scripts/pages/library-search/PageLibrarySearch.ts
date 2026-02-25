@@ -1,6 +1,8 @@
 import { html, render } from "lit";
+import { repeat } from "lit/directives/repeat.js";
 import { CustomFetch } from "@/services";
-import "./LibrarySearchList";
+import { manageFocus } from "@/utils/helpers";
+import "./LibrarySearchItem";
 import "./LibrarySearchStored";
 
 export default class PageLibrarySearch extends HTMLElement {
@@ -115,129 +117,68 @@ export default class PageLibrarySearch extends HTMLElement {
         }
     }
 
-        private render() {
-
-            render(this.template(), this);
-
-            this.updateSentinel();
-
+    private render() {
+        render(this.template(), this);
+        this.updateSentinel();
+        
+        // 검색 결과가 업데이트된 후 포커스 관리
+        if (this._items.length > 0 && this._page === 1) {
+            manageFocus(this, "library-search-item");
         }
+    }
 
-    
+    private updateSentinel() {
+        // ... (existing code)
+    }
 
-        private updateSentinel() {
+    private template() {
+        return html`
+            <section class="stored-libraries" aria-label="저장된 관심 도서관">
+                <library-search-stored></library-search-stored>
+            </section>
 
-            // We need a sentinel element at the bottom for infinite scroll.
+            <section class="search-area" aria-label="도서관 검색 영역">
+                <div class="search-container">
+                    <form class="search-form" role="search" @submit="${this.handleSearch}">
+                        <label for="library-keyword" class="visually-hidden">도서관 이름</label>
+                        <input 
+                            type="text" 
+                            id="library-keyword" 
+                            name="keyword" 
+                            placeholder="도서관 이름을 입력하세요" 
+                            required 
+                            .value="${this._keyword}"
+                        />
+                        <button type="submit">검색</button>
+                    </form>
+                </div>
+            </section>
 
-            // It should be rendered after the list.
-
-            const sentinel = this.querySelector(".sentinel");
-
-            if (sentinel && this.observer) {
-
-                this.observer.unobserve(sentinel);
-
-                if (this.hasMoreData() && !this._loading) {
-
-                     this.observer.observe(sentinel);
-
-                }
-
-            }
-
-        }
-
-    
-
-        private template() {
-
-            return html`
-
-                            <section class="stored-libraries" aria-label="저장된 관심 도서관">
-
-                                <library-search-stored></library-search-stored>
-
-                            </section>
-
-                
-
-    
-
-                            <section class="search-area" aria-label="도서관 검색 영역">
-
-                
-
-    
-
-                                <div class="search-container">
-
-                
-
-    
-
-                                    <form class="search-form" role="search" @submit="${this.handleSearch}">
-
-                
-
-    
-
-                
-
-                            <label for="library-keyword" class="visually-hidden">도서관 이름</label>
-
-                            <input 
-
-                                type="text" 
-
-                                id="library-keyword" 
-
-                                name="keyword" 
-
-                                placeholder="도서관 이름을 입력하세요" 
-
-                                required 
-
-                                .value="${this._keyword}"
-
-                            />
-
-                            <button type="submit">검색</button>
-
-                        </form>
-
+            <section class="results-area" aria-live="polite" aria-label="검색 결과">
+                <div class="library-body">
+                    <div class="library-list" role="list">
+                        ${this._error
+                            ? html`<div class="error-message" role="alert">
+                                  ${this._error}
+                              </div>`
+                            : this._hasSearched && this._items.length === 0 && this._total === 0
+                              ? html`<div class="no-data">데이터가 없습니다.</div>`
+                              : repeat(
+                                    this._items,
+                                    (item) => item.libCode,
+                                    (item) => html`
+                                        <library-search-item
+                                            .data=${item}
+                                        ></library-search-item>
+                                    `,
+                                )}
                     </div>
-
-                </section>
-
-    
-
-                <section class="results-area" aria-live="polite" aria-label="검색 결과">
-
-                                        <div class="library-body">
-
-                                            <library-search-list
-
-                                                .items="${this._items}"
-
-                                                .total="${this._total}"
-
-                                                .error="${this._error}"
-
-                                                .hasSearched="${this._hasSearched}"
-
-                                            ></library-search-list>
-
-                                            ${this._loading ? html`<div class="loading">Loading...</div>` : ""}
-
-                        <div class="sentinel" style="height: 10px; width: 100%;"></div>
-
-                    </div>
-
-                </section>
-
-            `;
-
-        }
+                    ${this._loading ? html`<div class="loading">Loading...</div>` : ""}
+                    <div class="sentinel" style="height: 10px; width: 100%;"></div>
+                </div>
+            </section>
+        `;
+    }
 
     }
 

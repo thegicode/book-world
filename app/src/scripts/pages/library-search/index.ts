@@ -2,7 +2,6 @@ import { NavGnb } from "@/components/index";
 import PageLibrarySearch from "./PageLibrarySearch";
 import LibrarySearchStored from "./LibrarySearchStored";
 import LibrarySearchItem from "./LibrarySearchItem";
-import LibrarySearchList from "./LibrarySearchList";
 
 // Register custom elements
 if (!customElements.get("nav-gnb")) {
@@ -18,7 +17,4 @@ if (!customElements.get("library-search-stored")) {
 // library-search-item is registered here as well to ensure it works
 if (!customElements.get("library-search-item")) {
     customElements.define("library-search-item", LibrarySearchItem);
-}
-if (!customElements.get("library-search-list")) {
-    customElements.define("library-search-list", LibrarySearchList);
 }
