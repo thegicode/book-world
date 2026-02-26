@@ -84,9 +84,6 @@ export default class PageLibrarySearch extends LitElement {
             const data = itemElement.data as ILibraryData;
             const isChecked = target.checked;
 
-            // Sync with attribute in real-time, just like it did in child
-            itemElement.selected = isChecked;
-
             if (isChecked) {
                 bookModel.addLibraries(data.libCode, data);
             } else {
