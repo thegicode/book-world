@@ -1,30 +1,34 @@
 import { ReactiveController, ReactiveControllerHost } from "lit";
-import bookModel, { BookModelEvent } from "@/model";
+import Publisher from "./Publisher";
 
 export class StoreController<T = unknown> implements ReactiveController {
     private host: ReactiveControllerHost;
-    private eventName: BookModelEvent;
-    private callback?: (update?: T) => void;
+    private publisher: Publisher<T>;
+    private callback?: (payload?: T) => void;
 
-    private handleUpdate = (update?: T) => {
+    private handleUpdate = (payload?: T) => {
         if (this.callback) {
-            this.callback(update);
+            this.callback(payload);
         } else {
             this.host.requestUpdate();
         }
     };
 
-    constructor(host: ReactiveControllerHost, eventName: BookModelEvent, callback?: (update?: T) => void) {
+    constructor(
+        host: ReactiveControllerHost,
+        publisher: Publisher<T>,
+        callback?: (payload?: T) => void
+    ) {
         (this.host = host).addController(this);
-        this.eventName = eventName;
+        this.publisher = publisher;
         this.callback = callback;
     }
 
     hostConnected() {
-        bookModel.subscribe(this.eventName, this.handleUpdate);
+        this.publisher.subscribe(this.handleUpdate);
     }
 
     hostDisconnected() {
-        bookModel.unsubscribe(this.eventName, this.handleUpdate);
+        this.publisher.unsubscribe(this.handleUpdate);
     }
 }

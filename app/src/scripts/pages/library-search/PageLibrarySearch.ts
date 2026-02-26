@@ -23,7 +23,7 @@ export default class PageLibrarySearch extends LitElement {
         this._state = librarySearchStore.getState();
         
         // 전역 관심 도서관 모델 단일 구독 (O(1) 구독 아키텍처 적용)
-        new StoreController(this, BookModelEvent.LibraryUpdate);
+        new StoreController(this, bookModel.getPublisher(BookModelEvent.LibraryUpdate));
 
         // Infinite Scroll Controller 초기화
         this.infiniteScroll = new InfiniteScrollController(
@@ -36,20 +36,13 @@ export default class PageLibrarySearch extends LitElement {
         this.debouncedSearch = debounce((keyword: string) => {
             librarySearchStore.search(keyword);
         }, 300);
+
+        // 로컬 스토어를 Reactive Controller에 위임하여 생명주기 보일러플레이트 제거
+        new StoreController(this, librarySearchStore, this.handleStoreUpdate);
     }
 
     createRenderRoot() {
         return this; // Keep light DOM
-    }
-
-    connectedCallback() {
-        super.connectedCallback();
-        librarySearchStore.subscribe(this.handleStoreUpdate);
-    }
-
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        librarySearchStore.unsubscribe(this.handleStoreUpdate);
     }
 
     private handleStoreUpdate = (newState?: LibrarySearchState) => {

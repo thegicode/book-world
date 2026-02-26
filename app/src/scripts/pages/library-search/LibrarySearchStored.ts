@@ -9,7 +9,7 @@ export default class LibrarySearchStored extends LitElement {
     
     constructor() {
         super();
-        new StoreController(this, BookModelEvent.LibraryUpdate);
+        new StoreController(this, bookModel.getPublisher(BookModelEvent.LibraryUpdate));
     }
 
     createRenderRoot() {

@@ -230,6 +230,10 @@ class BookModel {
         return this.libraryModel.has(code);
     }
 
+    public getPublisher<T>(eventName: BookModelEvent): Publisher<T> {
+        return this.publishers[eventName] as Publisher<T>;
+    }
+
     public subscribe<T>(
         eventName: BookModelEvent,
         subscriber: TSubscriberCallback<T>
