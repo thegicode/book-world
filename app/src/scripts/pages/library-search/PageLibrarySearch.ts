@@ -1,10 +1,8 @@
 import { LitElement, html } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 import { manageFocus, debounce } from "@/utils/helpers";
-import bookModel from "@/model";
 import { InfiniteScrollController } from "@/utils/InfiniteScrollController";
 import { LibrarySearchController } from "./LibrarySearchController";
-import LibrarySearchItem from "./LibrarySearchItem";
 import "./LibrarySearchFavoriteList";
 import "./LibrarySearchForm";
 
@@ -65,21 +63,6 @@ export default class PageLibrarySearch extends LitElement {
         this.debouncedSearch(customEvent.detail.keyword);
     };
 
-    private handleListChange = (e: Event) => {
-        const target = e.target as HTMLInputElement;
-        if (target && target.name === "myLibrary") {
-            const itemElement = target.closest("library-search-item") as LibrarySearchItem;
-            if (!itemElement || !itemElement.data) return;
-
-            const data = itemElement.data;
-            if (target.checked) {
-                bookModel.addLibraries(data.libCode, data);
-            } else {
-                bookModel.removeLibraries(data.libCode);
-            }
-        }
-    };
-
     render() {
         const { keyword, items, loading, error, hasSearched, total } = this.searchController;
 
@@ -98,7 +81,7 @@ export default class PageLibrarySearch extends LitElement {
 
             <section class="results-area" aria-live="polite" aria-label="검색 결과">
                 <div class="library-body">
-                    <div class="library-list" role="list" @change="${this.handleListChange}">
+                    <div class="library-list" role="list">
                         ${error
                             ? html`<error-fallback 
                                   message="${error}" 
