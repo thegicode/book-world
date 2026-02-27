@@ -1,17 +1,21 @@
 import { LitElement, html } from "lit";
+import bookModel, { BookModelEvent } from "@/model";
+import { StoreController } from "@/utils/StoreController";
 
 export default class LibrarySearchItem extends LitElement {
     declare data: ILibraryData;
-    declare selected: boolean;
 
     static properties = {
         data: { type: Object },
-        selected: { type: Boolean, reflect: true },
     };
 
     constructor() {
         super();
-        this.selected = false;
+        new StoreController(this, bookModel.getPublisher(BookModelEvent.LibraryUpdate));
+    }
+
+    private get selected() {
+        return this.data ? bookModel.hasLibrary(this.data.libCode) : false;
     }
 
     createRenderRoot() {
