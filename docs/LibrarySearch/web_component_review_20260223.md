@@ -1,6 +1,6 @@
 # 웹 컴포넌트 리뷰: 도서관 검색 페이지 (Library Search Page)
 **작성일:** 2026-02-23
-**범위:** `library-search` 페이지 컴포넌트 (`LibrarySearchKeyword`, `LibrarySearchStored`, `LibrarySearchItem`)
+**범위:** `library-search` 페이지 컴포넌트 (`LibrarySearchKeyword`, `LibrarySearchFavoriteList`, `LibrarySearchItem`)
 
 ## 개요
 이 문서는 `library-search` 페이지에 구현된 웹 컴포넌트의 아키텍처 패턴, 캡슐화 수준, 그리고 웹 표준 준수 여부를 분석합니다. 기능적으로는 안정적이나, 웹 컴포넌트 표준의 잠재력을 최대한 활용하여 재사용성과 유지보수성을 높일 수 있는 개선 방안을 제안합니다.
@@ -15,7 +15,7 @@
 - **UI와 로직 분리 (Container/Presentational 패턴 도입):**
   - 리스트 렌더링만을 전담하는 **`library-list` (또는 `search-result-list`)** 컴포넌트를 분리합니다.
   - `LibrarySearchKeyword`는 데이터를 조회하고 하위 컴포넌트에 주입하는 **컨테이너(Container)** 역할에 집중합니다.
-- **`LibrarySearchStored` 의존성 제거:** 특정 페이지(`library-search`)의 스타일이나 로직에 종속되지 않도록 설계하여, 마이페이지 등 다른 곳에서도 재사용할 수 있도록 합니다.
+- **`LibrarySearchFavoriteList` 의존성 제거:** 특정 페이지(`library-search`)의 스타일이나 로직에 종속되지 않도록 설계하여, 마이페이지 등 다른 곳에서도 재사용할 수 있도록 합니다.
 
 ## 2. 템플릿 최적화 (Template Optimization) 🥈
 

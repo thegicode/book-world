@@ -3,7 +3,7 @@ import { repeat } from "lit/directives/repeat.js";
 import bookModel, { BookModelEvent } from "@/model";
 import { StoreController } from "@/utils/StoreController";
 
-export default class LibrarySearchStored extends LitElement {
+export default class LibrarySearchFavoriteList extends LitElement {
     // items will be derived from bookModel, so we don't strictly need a property for it unless we want to pass it down.
     // However, to trigger updates, we can use a private property or just requestUpdate.
     

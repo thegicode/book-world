@@ -1,6 +1,6 @@
 import { NavGnb, ErrorFallback } from "@/components/index";
 import PageLibrarySearch from "./PageLibrarySearch";
-import LibrarySearchStored from "./LibrarySearchStored";
+import LibrarySearchFavoriteList from "./LibrarySearchFavoriteList";
 import LibrarySearchItem from "./LibrarySearchItem";
 import LibrarySearchForm from "./LibrarySearchForm";
 
@@ -18,8 +18,8 @@ if (!customElements.get("page-library-search")) {
     customElements.define("page-library-search", PageLibrarySearch);
 }
 // We reuse components from library-search
-if (!customElements.get("library-search-stored")) {
-    customElements.define("library-search-stored", LibrarySearchStored);
+if (!customElements.get("library-search-favorite-list")) {
+    customElements.define("library-search-favorite-list", LibrarySearchFavoriteList);
 }
 // library-search-item is registered here as well to ensure it works
 if (!customElements.get("library-search-item")) {

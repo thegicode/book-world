@@ -5,8 +5,8 @@ import { librarySearchStore, LibrarySearchState } from "@/model/LibrarySearchSto
 import bookModel, { BookModelEvent } from "@/model";
 import { InfiniteScrollController } from "@/utils/InfiniteScrollController";
 import { StoreController } from "@/utils/StoreController";
-import "./LibrarySearchItem";
-import "./LibrarySearchStored";
+import LibrarySearchItem from "./LibrarySearchItem";
+import "./LibrarySearchFavoriteList";
 import "./LibrarySearchForm";
 
 export default class PageLibrarySearch extends LitElement {
@@ -78,10 +78,10 @@ export default class PageLibrarySearch extends LitElement {
     private handleListChange = (e: Event) => {
         const target = e.target as HTMLInputElement;
         if (target && target.name === "myLibrary") {
-            const itemElement = target.closest("library-search-item") as any;
+            const itemElement = target.closest("library-search-item") as LibrarySearchItem;
             if (!itemElement || !itemElement.data) return;
 
-            const data = itemElement.data as ILibraryData;
+            const data = itemElement.data;
             const isChecked = target.checked;
 
             if (isChecked) {
@@ -97,7 +97,7 @@ export default class PageLibrarySearch extends LitElement {
 
         return html`
             <section class="stored-libraries" aria-label="저장된 관심 도서관">
-                <library-search-stored></library-search-stored>
+                <library-search-favorite-list></library-search-favorite-list>
             </section>
 
             <section class="search-area" aria-label="도서관 검색 영역">

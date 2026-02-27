@@ -1,30 +1,46 @@
-# Library Search 페이지 아키텍처 분석 및 개선 제안 (2026-02-26)
+# Library Search Architecture Analysis & Recommendations (2026-02-26)
 
-## 1. 현 구조 분석 및 평가
-현재 `library-search` 페이지는 Lit 기반의 웹 컴포넌트 아키텍처와 현대적인 성능 최적화 기법이 조화롭게 적용되어 있습니다.
+## 1. 현재 아키텍처 분석 (Current State Analysis)
 
-### 핵심 강점
-- **성능 최적화**: CSS `content-visibility: auto`를 활용하여 대량의 리스트 렌더링 성능을 확보함 (JS 기반 가상 스크롤의 복잡도 제거).
-- **관심사 분리**: `Reactive Controller`(`StoreController`, `InfiniteScrollController`)를 통해 컴포넌트 로직과 부가 기능을 깔끔하게 분리함.
-- **안정성**: `AbortController`를 통한 네트워크 요청 제어 및 `debounce` 처리가 충실히 구현됨.
+현재 `library-search`는 **LitElement(UI 렌더링) + 순수 바닐라 JS Store(상태 관리)**가 결합된 하이브리드 아키텍처를 띄고 있습니다.
 
----
-
-## 2. 아키텍처 개선 방향
-
-### 2.1. 상태 관리의 완전한 선언적 추상화
-현재 `librarySearchStore`는 컴포넌트 내에서 수동으로 `subscribe`/`unsubscribe`를 관리하고 있습니다. 이를 `Reactive Controller` 패턴으로 통일하여 보일러플레이트를 제거하고 선언적 바인딩을 강화합니다.
-
-### 2.2. 엄격한 단방향 데이터 흐름(Unidirectional Data Flow)
-이벤트 위임 시 하위 컴포넌트의 속성을 직접 조작(`itemElement.selected = isChecked`)하는 명령형 코드를 제거해야 합니다. 오직 Model(`bookModel`)만 업데이트하고, 변경된 상태가 다시 아래로 흐르는(Top-down) 순수성을 확보합니다.
-
-### 2.3. Shadow DOM 및 스타일 캡슐화 점진적 도입
-현재는 전역 스타일 활용을 위해 Light DOM을 사용 중이나, 프로젝트 규모 확장 시 스타일 충돌 방지를 위해 `Shadow DOM`과 `Constructable Stylesheets` 도입을 검토합니다.
-
-### 2.4. 시맨틱 마크업 및 접근성(a11y) 강화
-리스트 구조를 시맨틱한 `<ul>`, `<li>` 구조로 명확히 하고, 커스텀 엘리먼트 자체에 `display: list-item` 또는 적절한 ARIA 역할을 부여하여 보조 공학 기기 지원을 강화합니다.
+**👍 주요 장점:**
+*   **관심사 분리 (Separation of Concerns):** `LibrarySearchStore`가 비즈니스 로직(API, 페이징)을, 컴포넌트가 UI를 전담함.
+*   **네트워크 최적화:** `AbortController`를 통한 경쟁 상태(Race Condition) 방지 및 `debounce` 적용.
+*   **효율적 이벤트 핸들링:** 부모 컨테이너에서 이벤트 위임(Event Delegation)을 통해 메모리 사용 최적화.
+*   **렌더링 경량화:** Light DOM을 활용하여 Shadow DOM 오버헤드 제거.
 
 ---
 
-## 3. 결론
-현재의 구현은 기술적 숙련도가 매우 높으며 실무적으로 견고합니다. 제안된 개선 사항은 컴포넌트 간 결합도를 낮추고 상태 예측 가능성을 높여 장기적인 유지보수 비용을 절감하는 데 목적이 있습니다.
+## 2. 성능 병목 및 구조적 한계점 (Identify Bottlenecks)
+
+**🚨 1. 가상 스크롤(Virtual Scrolling) 부재**
+*   데이터 누적 시 DOM 노드 증가로 인한 브라우저 렌더링 성능(Layout/Paint) 저하.
+*   수백 개 이상의 결과 출력 시 스크롤 성능(Jank) 발생 가능성.
+
+**🚨 2. 과도한 리렌더링 (Over-rendering)**
+*   전역 상태(`bookModel`) 변경 시 부모 컴포넌트(`PageLibrarySearch`) 전체가 반응하여 리스트 전체를 Diffing함.
+*   세밀한 반응성(Fine-grained Reactivity) 부족으로 인한 불필요한 연산 발생.
+
+**🚨 3. 프레임워크 의존성**
+*   LitElement의 생명주기 관리 및 템플릿 파싱 오버헤드가 순수 바닐라 JS 대비 존재함.
+
+---
+
+## 3. 아키텍처 개선 방향 (Architectural Recommendations)
+
+### 단계 1: 데이터 기반 가상 스크롤 (Virtual Scrolling) 도입
+*   **목표:** 실제 화면에 보이는 영역만 DOM으로 렌더링하여 60fps 유지.
+*   **방안:** 스크롤 위치에 따라 `startIndex`, `endIndex`를 계산하고 해당 배열만 슬라이싱하여 렌더링하는 Virtual List 알고리즘 구현.
+
+### 단계 2: 세밀한 반응성 (Fine-grained Reactivity) 적용
+*   **목표:** 상태 변경 시 영향을 받는 최소 단위의 DOM만 직접 업데이트.
+*   **방안:** 부모의 전체 구독을 해제하고, 데이터 ID(`libCode`)를 기반으로 특정 아이템의 상태만 O(1) 비용으로 직접 조작(Direct DOM Manipulation).
+
+### 단계 3: 상태 업데이트 배칭 (State Batching) 구현
+*   **목표:** 짧은 시간 내 다수의 상태 변경을 하나로 묶어 렌더링 횟수 최소화.
+*   **방안:** `Microtask Queue`(`queueMicrotask` 등)를 활용하여 이벤트 루프 1틱당 단 한 번의 통지만 발생하도록 `Publisher` 개선.
+
+### 단계 4: 순수 Web Components (Vanilla JS) 전환
+*   **목표:** 프레임워크 추상화 레이어를 제거하여 런타임 성능 극대화.
+*   **방안:** `HTMLElement`를 상속받는 네이티브 커스텀 엘리먼트로 전환하고, 필요한 시점에만 부분 업데이트를 수행하는 최적화된 렌더링 엔진 구축.
