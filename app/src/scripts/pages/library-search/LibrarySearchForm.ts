@@ -1,15 +1,8 @@
 import { LitElement, html } from "lit";
 
 export default class LibrarySearchForm extends LitElement {
-    static properties = {
-        keyword: { type: String },
-    };
-
-    declare keyword: string;
-
     constructor() {
         super();
-        this.keyword = "";
     }
 
     createRenderRoot() {
@@ -61,7 +54,6 @@ export default class LibrarySearchForm extends LitElement {
                     name="keyword"
                     placeholder="도서관 이름을 입력하세요"
                     required
-                    .value="${this.keyword}"
                     @input="${this.handleInput}"
                 />
                 <button type="submit">검색</button>

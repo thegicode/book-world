@@ -64,7 +64,7 @@ export default class PageLibrarySearch extends LitElement {
     };
 
     render() {
-        const { keyword, items, loading, error, hasSearched, total } = this.searchController;
+        const { items, loading, error, hasSearched, total } = this.searchController;
 
         return html`
             <section class="stored-libraries" aria-label="저장된 관심 도서관">
@@ -73,7 +73,6 @@ export default class PageLibrarySearch extends LitElement {
 
             <section class="search-area" aria-label="도서관 검색 영역">
                 <library-search-form
-                    .keyword="${keyword}"
                     @search="${this.handleSearch}"
                     @input-change="${this.handleInput}"
                 ></library-search-form>
