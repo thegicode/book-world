@@ -1,5 +1,6 @@
 import Publisher from "@/utils/Publisher";
 import { CustomFetch } from "@/services";
+import { showToast } from "@/utils/toast";
 import { URL } from "@/utils/constants";
 
 // 검색 기능과 관련된 애플리케이션의 상태를 정의하는 인터페이스
@@ -82,6 +83,7 @@ class Store extends Publisher<AppState> {
             }
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+            showToast(errorMessage);
             this.setState({
                 apiStatus: 'error',
                 error: errorMessage,

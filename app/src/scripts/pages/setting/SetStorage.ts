@@ -1,4 +1,5 @@
 import { CustomFetch } from "@/services/index";
+import { showToast } from "@/utils/toast";
 import bookModel from "@/model";
 const SAMPLE_JSON_URL = `/assets/json/storage-sample.json`;
 
@@ -69,8 +70,9 @@ export default class SetStorage extends HTMLElement {
 
             console.log("Saved local stronage by base data!");
         } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : '기본 데이터를 불러오는 중 오류가 발생했습니다.';
+            showToast(errorMessage);
             console.error(error);
-            throw new Error("Fail to get storage sample data.");
         }
     };
 

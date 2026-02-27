@@ -1,5 +1,4 @@
 
-import { showToast } from '@/utils/toast';
 
 
 
@@ -61,10 +60,6 @@ class CustomFetch {
 
         } catch(error: unknown) {
 
-            const errorMessage = error instanceof Error ? error.message : '알 수 없는 네트워크 오류가 발생했습니다.';
-
-            showToast(errorMessage);
-
             console.error(`Error fetching data: ${error}`);
 
             // Re-throw the error so that the calling code can still handle it if needed
@@ -90,8 +85,6 @@ class CustomFetch {
         
 
         const apiErrorMessage = response.message || `API 요청 실패: 상태 ${response.status}`;
-
-        showToast(apiErrorMessage);
 
         throw new Error(apiErrorMessage);
 

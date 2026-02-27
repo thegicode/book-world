@@ -1,4 +1,5 @@
 import { CustomFetch } from "@/services";
+import { showToast } from "@/utils/toast";
 import store from "@/model/Store";
 import { searchForm, searchInputElement } from "./selectors";
 
@@ -28,8 +29,9 @@ export default class MonthlyKeywords extends HTMLElement {
             );
             this.render(response.data.keywords);
         } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : '월간 키워드를 불러오는 중 오류가 발생했습니다.';
+            showToast(errorMessage);
             console.error(error);
-            throw new Error(`Fail to get monthly keyword.`);
         }
     }
 
