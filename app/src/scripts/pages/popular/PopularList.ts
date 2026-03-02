@@ -4,9 +4,7 @@ import PopularItem from "./PopularItem";
 export default class PopularList extends FetchListComponent<IPopularBookResponse, IPopularBook> {
     private params?: IPopularFetchParams;
 
-    constructor() {
-        super();
-    }
+
 
     public loadPopularBooks(params: IPopularFetchParams) {
         this.params = params;

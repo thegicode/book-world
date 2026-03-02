@@ -51,6 +51,8 @@ export default class PopularSearch extends HTMLElement {
         this.form.addEventListener("change", this.onChangeForm);
         this.form.addEventListener("reset", this.onReset);
         this.form.addEventListener("submit", this.onSubmit);
+
+        this.querySelector(".dateRange")?.addEventListener("click", this.onClickDateRange);
     }
 
     disconnectedCallback() {
@@ -140,7 +142,7 @@ export default class PopularSearch extends HTMLElement {
             detailKdc: () => this.handleDetailSubject(target),
             detailRegion: () => this.handleDetailRegion(target),
             gender: () => this.handleGender(target),
-            loanDuration: () => this.handleLoanDuration(event),
+            loanDuration: () => this.handleLoanDuration(target),
             kdc: () => this.handleSubject(target),
             region: () => this.handleRegion(target),
         };
@@ -163,7 +165,7 @@ export default class PopularSearch extends HTMLElement {
             if (!durationInput) return;
 
             durationInput.checked = true;
-            this.handleLoanDuration({ target: durationInput } as unknown as Event);
+            this.handleLoanDuration(durationInput);
         };
 
         if (target.value === "M") {
@@ -213,19 +215,29 @@ export default class PopularSearch extends HTMLElement {
         this.toggleAllCheckbox('age', target);
     }
 
+    /**
+     * 체크된 항목이 정확히 1개일 때만 세부 옵션(detail checkbox + sub section)을 활성화한다.
+     */
+    private updateDetailToggle(
+        name: string,
+        detailEl: HTMLInputElement,
+        subEl: HTMLInputElement
+    ) {
+        const checkedCount = this.querySelectorAll<HTMLInputElement>(
+            `[name="${name}"]:checked:not([value="A"])`
+        ).length;
+        const isOnly = checkedCount === 1;
+
+        detailEl.disabled = !isOnly;
+        if (detailEl.checked) {
+            subEl.hidden = !isOnly;
+        }
+    }
+
     private handleRegion(target: HTMLInputElement) {
         this.toggleAllCheckbox('region', target);
-
-        const checkedEls = Array.from(
-            this.querySelectorAll<HTMLInputElement>('[name="region"]:checked')
-        ).filter((el) => el.value !== "A");
-
         if (this.detailRegion && this.subRegion) {
-            const isOnly = checkedEls.length === 1;
-            this.detailRegion.disabled = !isOnly;
-            if (this.detailRegion.checked) {
-                this.subRegion.hidden = !isOnly;
-            }
+            this.updateDetailToggle('region', this.detailRegion, this.subRegion);
         }
     }
 
@@ -239,17 +251,8 @@ export default class PopularSearch extends HTMLElement {
 
     private handleSubject(target: HTMLInputElement) {
         this.toggleAllCheckbox('kdc', target);
-
-        const checkedEls = Array.from(
-            this.querySelectorAll<HTMLInputElement>('[name="kdc"]:checked')
-        ).filter((el) => el.value !== "A");
-
         if (this.detailSubject && this.subSubject) {
-            const isOnly = checkedEls.length === 1;
-            this.detailSubject.disabled = !isOnly;
-            if (this.detailSubject.checked) {
-                this.subSubject.hidden = !isOnly;
-            }
+            this.updateDetailToggle('kdc', this.detailSubject, this.subSubject);
         }
     }
 
@@ -258,11 +261,9 @@ export default class PopularSearch extends HTMLElement {
         this.subSubject.hidden = !target.checked;
     }
 
-    private handleLoanDuration(event?: Event) {
+    private handleLoanDuration(target?: HTMLInputElement) {
         const { currentDate, currentYear, currentMonth, currentDay } =
             getCurrentDates();
-
-        const target = event?.target as HTMLInputElement;
 
         switch (target?.value) {
             case "year":
@@ -293,14 +294,14 @@ export default class PopularSearch extends HTMLElement {
             case "custom":
                 break;
         }
-
-        this.querySelector(".dateRange")?.addEventListener("click", () => {
-            const customDateInput = this.querySelector(
-                "input[name='loanDuration'][value='custom']"
-            ) as HTMLInputElement;
-            customDateInput.checked = true;
-        });
     }
+
+    private onClickDateRange = () => {
+        const customDateInput = this.querySelector(
+            "input[name='loanDuration'][value='custom']"
+        ) as HTMLInputElement;
+        if (customDateInput) customDateInput.checked = true;
+    };
 
     private initialLoanDuration() {
         const { currentDate, currentMonth, currentDay } = getCurrentDates();

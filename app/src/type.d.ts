@@ -139,14 +139,6 @@ interface IBookImageData {
     bookname: string;
 }
 
-interface ICustomEvent<T> extends Event {
-    detail: T;
-}
-
-interface ICustomEventDetail {
-    [key: string]: unknown;
-}
-
 interface IPopularBook {
     addition_symbol: string;
     authors: string;
