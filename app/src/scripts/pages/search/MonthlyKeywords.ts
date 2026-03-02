@@ -1,6 +1,6 @@
 import { CustomFetch } from "@/services";
 import { showToast } from "@/utils/toast";
-import store from "@/model/Store";
+import searchStore from "@/model/SearchStore";
 import { searchForm, searchInputElement } from "./selectors";
 
 export default class MonthlyKeywords extends HTMLElement {
@@ -64,7 +64,7 @@ export default class MonthlyKeywords extends HTMLElement {
         window.history.pushState({}, "", url.toString());
 
         searchInputElement.value = word;
-        store.searchBooks(word, sort);
+        searchStore.searchBooks(word, sort);
     }
 }
 

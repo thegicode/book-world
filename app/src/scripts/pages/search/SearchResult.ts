@@ -1,7 +1,7 @@
 import { manageFocus } from "@/utils/helpers";
 import BookItem from "./BookItem";
 import { Observer } from "@/utils/index";
-import store, { AppState } from "@/model/Store";
+import searchStore, { AppState } from "@/model/SearchStore";
 import LoadingComponent from "@/components/LoadingComponent";
 
 export default class SearchResult extends HTMLElement {
@@ -24,15 +24,15 @@ export default class SearchResult extends HTMLElement {
     }
 
     connectedCallback() {
-        store.subscribe(this.boundHandleStateChange);
-        this.observer = new Observer(this.observeTarget, () => store.loadMoreBooks());
+        searchStore.subscribe(this.boundHandleStateChange);
+        this.observer = new Observer(this.observeTarget, () => searchStore.loadMoreBooks());
         
         // 초기 상태로 렌더링
-        this.handleStateChange(store.getState());
+        this.handleStateChange(searchStore.getState());
     }
 
     disconnectedCallback() {
-        store.unsubscribe(this.boundHandleStateChange);
+        searchStore.unsubscribe(this.boundHandleStateChange);
         this.observer?.disconnect();
     }
 

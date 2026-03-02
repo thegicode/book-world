@@ -1,4 +1,4 @@
-import store from "@/model/Store";
+import searchStore from "@/model/SearchStore";
 import { searchInputElement } from "./selectors";
 
 export default class AppSearch extends HTMLElement {
@@ -31,7 +31,7 @@ export default class AppSearch extends HTMLElement {
         const sort = params.get("sort") || "sim";
 
         if (keyword) {
-            store.searchBooks(keyword, sort);
+            searchStore.searchBooks(keyword, sort);
             if (searchInputElement) {
                 searchInputElement.value = keyword;
             }

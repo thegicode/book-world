@@ -1,4 +1,4 @@
-import store from "@/model/Store";
+import searchStore from "@/model/SearchStore";
 
 export default class InputSearch extends HTMLElement {
     private form: HTMLFormElement;
@@ -46,6 +46,6 @@ export default class InputSearch extends HTMLElement {
 
         window.history.pushState({}, "", url.toString());
 
-        store.searchBooks(keyword, sort);
+        searchStore.searchBooks(keyword, sort);
     };
 }
