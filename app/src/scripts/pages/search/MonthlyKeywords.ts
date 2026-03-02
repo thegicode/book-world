@@ -1,6 +1,6 @@
 import { CustomFetch } from "@/services";
 import { showToast } from "@/utils/toast";
-import searchStore from "@/model/SearchStore";
+import searchStore from "./SearchStore";
 import { searchForm, searchInputElement } from "./selectors";
 
 export default class MonthlyKeywords extends HTMLElement {

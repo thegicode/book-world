@@ -1,4 +1,4 @@
-import searchStore from "@/model/SearchStore";
+import searchStore from "./SearchStore";
 
 export default class InputSearch extends HTMLElement {
     private form: HTMLFormElement;

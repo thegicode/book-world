@@ -1,7 +1,7 @@
 import { manageFocus } from "@/utils/helpers";
 import BookItem from "./BookItem";
 import { Observer } from "@/utils/index";
-import searchStore, { AppState } from "@/model/SearchStore";
+import searchStore, { AppState } from "./SearchStore";
 import LoadingComponent from "@/components/LoadingComponent";
 
 export default class SearchResult extends HTMLElement {

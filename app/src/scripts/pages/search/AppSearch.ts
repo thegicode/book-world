@@ -1,4 +1,4 @@
-import searchStore from "@/model/SearchStore";
+import searchStore from "./SearchStore";
 import { searchInputElement } from "./selectors";
 
 export default class AppSearch extends HTMLElement {
