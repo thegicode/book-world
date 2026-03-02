@@ -1,4 +1,3 @@
-import { CustomEventEmitter } from "@/utils";
 import { getCurrentDates } from "@/utils/helpers";
 
 export default class PopularSearch extends HTMLElement {
@@ -41,7 +40,6 @@ export default class PopularSearch extends HTMLElement {
         this.pageNav = this.querySelector(".page-nav") as HTMLElement;
         this.pageSize = null;
 
-        this.onRenderPageNav = this.onRenderPageNav.bind(this);
         this.onClickPageNav = this.onClickPageNav.bind(this);
     }
 
@@ -52,12 +50,7 @@ export default class PopularSearch extends HTMLElement {
         this.closeButton.addEventListener("click", this.closeForm);
         this.form.addEventListener("change", this.onChangeForm);
         this.form.addEventListener("reset", this.onReset);
-        this.form.addEventListener("submit", this.onSumbit);
-
-        CustomEventEmitter.add(
-            "renderPageNav",
-            this.onRenderPageNav as EventListener
-        );
+        this.form.addEventListener("submit", this.onSubmit);
     }
 
     disconnectedCallback() {
@@ -69,19 +62,15 @@ export default class PopularSearch extends HTMLElement {
         );
         this.form.removeEventListener("change", this.onChangeForm);
         this.form.removeEventListener("reset", this.onReset);
-        this.form.removeEventListener("submit", this.onSumbit);
-        CustomEventEmitter.remove(
-            "renderPageNav",
-            this.onRenderPageNav as EventListener
-        );
+        this.form.removeEventListener("submit", this.onSubmit);
     }
 
     private closeForm = () => {
         this.form.hidden = true;
     };
 
-    private onRenderPageNav = (event: ICustomEvent<{ pageSize: number }>) => {
-        this.pageSize = event.detail.pageSize;
+    public renderPageNav(pageSize: number) {
+        this.pageSize = pageSize;
 
         this.pageNav.innerHTML = "";
 
@@ -96,7 +85,7 @@ export default class PopularSearch extends HTMLElement {
         this.pageNav.hidden = false;
 
         this.insertBefore(this.pageNav, this.filterButton);
-    };
+    }
 
     private createNavItem(index: number) {
         if (!this.pageSize) return;
@@ -131,9 +120,10 @@ export default class PopularSearch extends HTMLElement {
             this.pageNav.appendChild(el);
         }
 
-        CustomEventEmitter.dispatch("clickPageNav", {
-            pageIndex: Number(target.value) + 1,
-        });
+        this.dispatchEvent(new CustomEvent("click-page-nav", {
+            bubbles: true,
+            detail: { pageIndex: Number(target.value) + 1 },
+        }));
     };
 
     private onClickFilterButton = () => {
@@ -161,59 +151,70 @@ export default class PopularSearch extends HTMLElement {
     };
 
     private handleDataSource(target: HTMLInputElement) {
-        console.log(target.value);
+        const durationInputs = this.querySelectorAll<HTMLInputElement>(
+            "input[name='loanDuration']"
+        );
+        if (!durationInputs.length) return;
+
+        const setDuration = (value: string) => {
+            const durationInput = this.querySelector(
+                `input[name='loanDuration'][value='${value}']`
+            ) as HTMLInputElement | null;
+            if (!durationInput) return;
+
+            durationInput.checked = true;
+            this.handleLoanDuration({ target: durationInput } as unknown as Event);
+        };
+
+        if (target.value === "M") {
+            durationInputs.forEach((input) => {
+                input.disabled = input.value !== "month";
+            });
+            setDuration("month");
+            return;
+        }
+
+        if (target.value === "Y") {
+            durationInputs.forEach((input) => {
+                input.disabled = input.value !== "year";
+            });
+            setDuration("year");
+            return;
+        }
+
+        durationInputs.forEach((input) => {
+            input.disabled = false;
+        });
+    }
+
+    /**
+     * "전체(A)" 체크박스와 개별 체크박스의 상호 배타적 토글을 처리한다.
+     * - "A" 선택 시: 나머지 체크박스 전부 해제
+     * - 개별 선택 시: "A" 체크박스 해제
+     */
+    private toggleAllCheckbox(name: string, target: HTMLInputElement) {
+        if (target.value !== "A") {
+            const allCheckbox = this.querySelector(
+                `input[name='${name}'][value='A']`
+            ) as HTMLInputElement | null;
+            if (allCheckbox) allCheckbox.checked = false;
+        } else {
+            this.querySelectorAll<HTMLInputElement>(
+                `input[type='checkbox'][name='${name}']`
+            ).forEach((item) => (item.checked = false));
+        }
     }
 
     private handleGender(target: HTMLInputElement) {
-        if (!(target.value === "A")) {
-            const element = this.querySelector(
-                "input[name='gender'][value='A']"
-            ) as HTMLInputElement;
-            element.checked = false;
-        }
-
-        if (target.value === "A") {
-            const elements = this.querySelectorAll<HTMLInputElement>(
-                "input[type='checkbox'][name='gender']"
-            );
-            elements.forEach((item) => (item.checked = false));
-        }
+        this.toggleAllCheckbox('gender', target);
     }
 
     private handleAge(target: HTMLInputElement) {
-        if (!(target.value === "A")) {
-            const element = this.querySelector(
-                "input[name='age'][value='A']"
-            ) as HTMLInputElement;
-
-            element.checked = false;
-        }
-
-        if (target.value === "A") {
-            const elements = this.querySelectorAll<HTMLInputElement>(
-                "input[type='checkbox'][name='age']"
-            );
-
-            elements.forEach((item) => (item.checked = false));
-        }
+        this.toggleAllCheckbox('age', target);
     }
 
     private handleRegion(target: HTMLInputElement) {
-        const element = this.querySelector(
-            "input[name='region'][value='A']"
-        ) as HTMLInputElement;
-
-        const elements = this.querySelectorAll<HTMLInputElement>(
-            "input[type='checkbox'][name='region']"
-        );
-
-        if (!(target.value === "A")) {
-            element.checked = false;
-        }
-
-        if (target.value === "A") {
-            elements.forEach((item) => (item.checked = false));
-        }
+        this.toggleAllCheckbox('region', target);
 
         const checkedEls = Array.from(
             this.querySelectorAll<HTMLInputElement>('[name="region"]:checked')
@@ -233,39 +234,11 @@ export default class PopularSearch extends HTMLElement {
     }
 
     private handleAddCode(target: HTMLInputElement) {
-        if (!(target.value === "A")) {
-            const elA = this.querySelector(
-                "input[name='addCode'][value='A']"
-            ) as HTMLInputElement;
-
-            elA.checked = false;
-        }
-
-        if (target.value === "A") {
-            const els = this.querySelectorAll<HTMLInputElement>(
-                "input[type='checkbox'][name='addCode']"
-            );
-
-            els.forEach((item) => (item.checked = false));
-        }
+        this.toggleAllCheckbox('addCode', target);
     }
 
     private handleSubject(target: HTMLInputElement) {
-        const elA = this.querySelector(
-            "input[name='kdc'][value='A']"
-        ) as HTMLInputElement;
-
-        const els = this.querySelectorAll<HTMLInputElement>(
-            "input[type='checkbox'][name='kdc']"
-        );
-
-        if (!(target.value === "A")) {
-            elA.checked = false;
-        }
-
-        if (target.value === "A") {
-            els.forEach((item) => (item.checked = false));
-        }
+        this.toggleAllCheckbox('kdc', target);
 
         const checkedEls = Array.from(
             this.querySelectorAll<HTMLInputElement>('[name="kdc"]:checked')
@@ -342,7 +315,7 @@ export default class PopularSearch extends HTMLElement {
         }, 100);
     };
 
-    private onSumbit = (event: Event) => {
+    private onSubmit = (event: Event) => {
         event.preventDefault();
 
         const formData = new FormData(this.form);
@@ -365,9 +338,10 @@ export default class PopularSearch extends HTMLElement {
             }
         }
 
-        CustomEventEmitter.dispatch("requestPopular", {
-            params,
-        });
+        this.dispatchEvent(new CustomEvent("request-popular", {
+            bubbles: true,
+            detail: { params },
+        }));
 
         this.closeForm();
     };

@@ -1,43 +1,32 @@
-import { CustomEventEmitter } from "@/utils";
 import { getCurrentDates } from "@/utils/helpers";
 import PopularList from "./PopularList";
+import PopularSearch from "./PopularSearch";
 
 export default class Popular extends HTMLElement {
     private popularList!: PopularList;
+    private popularSearch!: PopularSearch;
     private params: IPopularFetchParams | null;
 
     constructor() {
         super();
-        this.onRequestPopular = this.onRequestPopular.bind(this);
-        this.onClickPageNav = this.onClickPageNav.bind(this);
         this.params = null;
     }
 
     connectedCallback() {
         this.popularList = this.querySelector('popular-list') as PopularList;
+        this.popularSearch = this.querySelector('popular-search') as PopularSearch;
         this.params = this.getParams();
         this.popularList.loadPopularBooks(this.params);
 
-        CustomEventEmitter.add(
-            "requestPopular",
-            this.onRequestPopular as EventListener
-        );
-
-        CustomEventEmitter.add(
-            "clickPageNav",
-            this.onClickPageNav as EventListener
-        );
+        this.addEventListener("request-popular", this.onRequestPopular as EventListener);
+        this.addEventListener("click-page-nav", this.onClickPageNav as EventListener);
+        this.addEventListener("render-page-nav", this.onRenderPageNav as EventListener);
     }
 
     disconnectedCallback() {
-        CustomEventEmitter.remove(
-            "requestPopular",
-            this.onRequestPopular as EventListener
-        );
-        CustomEventEmitter.remove(
-            "clickPageNav",
-            this.onClickPageNav as EventListener
-        );
+        this.removeEventListener("request-popular", this.onRequestPopular as EventListener);
+        this.removeEventListener("click-page-nav", this.onClickPageNav as EventListener);
+        this.removeEventListener("render-page-nav", this.onRenderPageNav as EventListener);
     }
 
     private getParams(): IPopularFetchParams {
@@ -55,16 +44,18 @@ export default class Popular extends HTMLElement {
         };
     }
 
-    private onRequestPopular(
-        event: ICustomEvent<{ params: IPopularFetchParams }>
-    ) {
+    private onRequestPopular = (event: CustomEvent<{ params: IPopularFetchParams }>) => {
         this.params = event.detail.params;
         this.popularList.loadPopularBooks(this.params);
-    }
+    };
 
-    private onClickPageNav(event: ICustomEvent<{ pageIndex: number }>) {
+    private onClickPageNav = (event: CustomEvent<{ pageIndex: number }>) => {
         if (!this.params) return;
         this.params.pageNo = event.detail.pageIndex.toString();
         this.popularList.loadPopularBooks(this.params);
-    }
+    };
+
+    private onRenderPageNav = (event: CustomEvent<{ pageSize: number }>) => {
+        this.popularSearch.renderPageNav(Number(event.detail.pageSize));
+    };
 }
