@@ -11,7 +11,7 @@ export default class LibraryModel {
     }
 
     get libraries() {
-        return { ...this._libraries };
+        return structuredClone(this._libraries);
     }
 
     set libraries(newLibries: TLibraries) {
@@ -19,7 +19,7 @@ export default class LibraryModel {
     }
 
     get libraryOrder() {
-        return [...this._libraryOrder];
+        return structuredClone(this._libraryOrder);
     }
 
     set libraryOrder(newOrder: string[]) {

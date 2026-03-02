@@ -30,9 +30,9 @@ export default class LibrarySearchItem extends LitElement {
     private handleChange = (e: Event) => {
         const target = e.target as HTMLInputElement;
         if (target.checked) {
-            bookModel.addLibraries(this.data.libCode, this.data);
+            bookModel.addLibrary(this.data.libCode, this.data);
         } else {
-            bookModel.removeLibraries(this.data.libCode);
+            bookModel.removeLibrary(this.data.libCode);
         }
     };
 

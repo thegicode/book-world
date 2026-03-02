@@ -17,7 +17,7 @@ export default class LibrarySearchFavoriteList extends LitElement {
     }
 
     private handleRemove(code: string) {
-        bookModel.removeLibraries(code);
+        bookModel.removeLibrary(code);
     }
 
     render() {

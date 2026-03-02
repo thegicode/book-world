@@ -13,10 +13,13 @@ export default class CategorySelector extends HTMLElement {
 
     connectedCallback() {
         this.render();
-        bookModel.subscribe(
-            BookModelEvent.FavoriteCategoriesUpdate,
-            this.handleCategoryUpdate,
-        );
+        bookModel.getPublisher(BookModelEvent.FavoriteCategoriesUpdate)
+            .subscribe(this.handleCategoryUpdate);
+    }
+
+    disconnectedCallback() {
+        bookModel.getPublisher(BookModelEvent.FavoriteCategoriesUpdate)
+            .unsubscribe(this.handleCategoryUpdate);
     }
 
     private getISBN(): string | null {

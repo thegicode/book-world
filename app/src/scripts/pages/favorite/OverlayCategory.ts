@@ -198,7 +198,7 @@ export default class OverlayCategory extends HTMLElement {
             return;
         }
 
-        bookModel.addfavorite(favorite);
+        bookModel.addFavorite(favorite);
 
         const index = bookModel.favoriteCategoryOrder.length;
         const cloned = this.createItem(favorite, index);

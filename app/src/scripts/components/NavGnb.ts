@@ -26,25 +26,17 @@ export default class NavGnb extends HTMLElement {
 
         this.sizeElement = this.querySelector(".size") as HTMLElement;
 
-        bookModel.subscribe(
-            BookModelEvent.FavoriteBookUpdate,
-            this.renderBookSize,
-        );
-        bookModel.subscribe(
-            BookModelEvent.BookStateUpdate,
-            this.renderBookSize,
-        );
+        bookModel.getPublisher(BookModelEvent.FavoriteBookUpdate)
+            .subscribe(this.renderBookSize);
+        bookModel.getPublisher(BookModelEvent.BookStateUpdate)
+            .subscribe(this.renderBookSize);
     }
 
     disconnectedCallback() {
-        bookModel.unsubscribe(
-            BookModelEvent.FavoriteBookUpdate,
-            this.renderBookSize,
-        );
-        bookModel.unsubscribe(
-            BookModelEvent.BookStateUpdate,
-            this.renderBookSize,
-        );
+        bookModel.getPublisher(BookModelEvent.FavoriteBookUpdate)
+            .unsubscribe(this.renderBookSize);
+        bookModel.getPublisher(BookModelEvent.BookStateUpdate)
+            .unsubscribe(this.renderBookSize);
     }
 
     get bookSize() {

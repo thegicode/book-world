@@ -10,9 +10,7 @@ export enum BookModelEvent {
     BookStateUpdate = "bookStateUpdate",
 }
 
-const cloneDeep = <T>(obj: T): T => {
-    return JSON.parse(JSON.stringify(obj));
-};
+
 
 const initialState: IBookState = {
     favorites: {},
@@ -28,14 +26,11 @@ class BookModel {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private publishers: Record<string, Publisher<any>>;
 
-    private _state: IBookState;
-
     constructor() {
-        this._state = this.loadStorage() || cloneDeep(initialState);
+        const loaded = this.loadStorage() || structuredClone(initialState);
 
-        const { favorites, favoriteCategoryOrder, libraries, libraryOrder } = this._state;
-        this.favoriteModel = new FavoriteModel(favorites, favoriteCategoryOrder);
-        this.libraryModel = new LibraryModel(libraries, libraryOrder);
+        this.favoriteModel = new FavoriteModel(loaded.favorites, loaded.favoriteCategoryOrder);
+        this.libraryModel = new LibraryModel(loaded.libraries, loaded.libraryOrder);
 
         this.publishers = {
             [BookModelEvent.FavoriteCategoriesUpdate]:
@@ -61,11 +56,6 @@ class BookModel {
             delete parsed.sortedFavoriteKeys;
         }
 
-        // Remove regions if it exists in stored data
-        if (parsed.regions) {
-            delete parsed.regions;
-        }
-
         // Migrate libraries to keep only libCode and libName
         if (parsed.libraries) {
             const migratedLibraries: TLibraries = {};
@@ -86,17 +76,9 @@ class BookModel {
         return parsed;
     }
 
-    private _syncState() {
-        this._state.favorites = this.favoriteModel.favorites;
-        this._state.favoriteCategoryOrder = this.favoriteModel.categoryOrder;
-        this._state.libraries = this.libraryModel.libraries;
-        this._state.libraryOrder = this.libraryModel.libraryOrder;
-    }
-
     private _commit() {
         try {
-            this._syncState();
-            localStorage.setItem(STORAGE_NAME, JSON.stringify(this._state));
+            localStorage.setItem(STORAGE_NAME, JSON.stringify(this.state));
             this.bookStateUpdatePublisher.notify();
         } catch (error) {
             console.error(error);
@@ -105,18 +87,19 @@ class BookModel {
 
     // state 관련
     get state(): IBookState {
-        return this._state;
+        return {
+            favorites: this.favoriteModel.favorites,
+            favoriteCategoryOrder: this.favoriteModel.categoryOrder,
+            libraries: this.libraryModel.libraries,
+            libraryOrder: this.libraryModel.libraryOrder,
+        };
     }
 
     set state(newState: IBookState) {
-        this._state = newState;
-
-        const { favorites, favoriteCategoryOrder, libraries, libraryOrder } = newState;
-        this.favoriteModel.favorites = favorites;
-        this.favoriteModel.categoryOrder = favoriteCategoryOrder;
-        this.libraryModel.libraries = libraries;
-        this.libraryModel.libraryOrder = libraryOrder;
-
+        this.favoriteModel.favorites = newState.favorites;
+        this.favoriteModel.categoryOrder = newState.favoriteCategoryOrder;
+        this.libraryModel.libraries = newState.libraries;
+        this.libraryModel.libraryOrder = newState.libraryOrder;
         this._commit();
     }
 
@@ -141,7 +124,7 @@ class BookModel {
     }
 
     // favorites 관련 메서드
-    addfavorite(name: string) {
+    addFavorite(name: string) {
         this.favoriteModel.addCategoryOrder(name);
         this.favoriteModel.add(name);
         this._commit();
@@ -194,7 +177,7 @@ class BookModel {
     }
 
     // Library 관련 메서드
-    addLibraries(code: string, data: ILibraryData) {
+    addLibrary(code: string, data: ILibraryData) {
         this.libraryModel.add(code, {
             libCode: data.libCode,
             libName: data.libName,
@@ -202,7 +185,7 @@ class BookModel {
         this._commit();
     }
 
-    removeLibraries(code: string) {
+    removeLibrary(code: string) {
         this.libraryModel.remove(code);
         this._commit();
     }
@@ -213,26 +196,6 @@ class BookModel {
 
     public getPublisher<T>(eventName: BookModelEvent): Publisher<T> {
         return this.publishers[eventName] as Publisher<T>;
-    }
-
-    public subscribe<T>(
-        eventName: BookModelEvent,
-        subscriber: TSubscriberCallback<T>
-    ) {
-        const publisher = this.publishers[eventName];
-        if (publisher) {
-            publisher.subscribe(subscriber);
-        }
-    }
-
-    public unsubscribe<T>(
-        eventName: BookModelEvent,
-        subscriber: TSubscriberCallback<T>
-    ) {
-        const publisher = this.publishers[eventName];
-        if (publisher) {
-            publisher.unsubscribe(subscriber);
-        }
     }
 }
 

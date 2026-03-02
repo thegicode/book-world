@@ -16,7 +16,7 @@ export default class FavoriteModel {
     }
 
     get favorites(): TFavoriteFavorites {
-        return { ...this._favorites };
+        return structuredClone(this._favorites);
     }
 
     set favorites(newCategories: TFavoriteFavorites) {
@@ -24,7 +24,7 @@ export default class FavoriteModel {
     }
 
     get categoryOrder(): TFavoriteCategoryOrder {
-        return [...this._categoryOrder];
+        return structuredClone(this._categoryOrder);
     }
 
     set categoryOrder(newKeys: TFavoriteCategoryOrder) {

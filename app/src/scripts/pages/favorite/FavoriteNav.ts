@@ -263,19 +263,22 @@ export default class FavoriteNav
  * Controller to bridge BookModel and FavoriteNav
  */
 class FavoriteNavModelController implements ReactiveController {
-    constructor(private host: ReactiveControllerHost) {}
+    private publishers;
+
+    constructor(private host: ReactiveControllerHost) {
+        this.publishers = [
+            bookModel.getPublisher(BookModelEvent.FavoriteCategoriesUpdate),
+            bookModel.getPublisher(BookModelEvent.BookStateUpdate),
+        ];
+    }
 
     hostConnected() {
-        // Subscribe to relevant model events
-        bookModel.subscribe(BookModelEvent.FavoriteCategoriesUpdate, this.update);
-        bookModel.subscribe(BookModelEvent.BookStateUpdate, this.update);
+        this.publishers.forEach((p) => p.subscribe(this.update));
         window.addEventListener("popstate", this.update);
     }
 
     hostDisconnected() {
-        // Clean up subscriptions
-        bookModel.unsubscribe(BookModelEvent.FavoriteCategoriesUpdate, this.update);
-        bookModel.unsubscribe(BookModelEvent.BookStateUpdate, this.update);
+        this.publishers.forEach((p) => p.unsubscribe(this.update));
         window.removeEventListener("popstate", this.update);
     }
 
