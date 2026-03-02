@@ -5,7 +5,6 @@ export default class PopularList extends FetchListComponent<IPopularBookResponse
     private params?: IPopularFetchParams;
 
 
-
     public loadPopularBooks(params: IPopularFetchParams) {
         this.params = params;
         const searchParams = new URLSearchParams(

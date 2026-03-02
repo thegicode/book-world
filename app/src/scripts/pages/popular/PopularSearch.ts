@@ -65,6 +65,7 @@ export default class PopularSearch extends HTMLElement {
         this.form.removeEventListener("change", this.onChangeForm);
         this.form.removeEventListener("reset", this.onReset);
         this.form.removeEventListener("submit", this.onSubmit);
+        this.querySelector(".dateRange")?.removeEventListener("click", this.onClickDateRange);
     }
 
     private closeForm = () => {
@@ -310,7 +311,7 @@ export default class PopularSearch extends HTMLElement {
         this.endDateInput.value = `${currentDate.getFullYear()}-${currentMonth}-${currentDay}`;
     }
 
-    onReset = () => {
+    private onReset = () => {
         setTimeout(() => {
             this.initialLoanDuration();
         }, 100);
