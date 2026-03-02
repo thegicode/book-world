@@ -1,5 +1,4 @@
 import { FetchListComponent } from "@/components";
-import { CustomEventEmitter } from "@/utils";
 import PopularItem from "./PopularItem";
 
 export default class PopularList extends FetchListComponent<IPopularBookResponse, IPopularBook> {
@@ -33,10 +32,13 @@ export default class PopularList extends FetchListComponent<IPopularBookResponse
 
     protected onRenderComplete(data: IPopularBookResponse): void {
         if (this.params?.pageNo === "1") {
-            CustomEventEmitter.dispatch("renderPageNav", {
-                total: data.resultNum,
-                pageSize: this.params.pageSize,
-            });
+            this.dispatchEvent(new CustomEvent("render-page-nav", {
+                bubbles: true,
+                detail: {
+                    total: data.resultNum,
+                    pageSize: this.params.pageSize,
+                },
+            }));
         }
     }
 }

@@ -1,4 +1,3 @@
-import { CustomEventEmitter } from "@/utils";
 import { getCurrentDates } from "@/utils/helpers";
 
 export default class PopularSearch extends HTMLElement {
@@ -41,7 +40,6 @@ export default class PopularSearch extends HTMLElement {
         this.pageNav = this.querySelector(".page-nav") as HTMLElement;
         this.pageSize = null;
 
-        this.onRenderPageNav = this.onRenderPageNav.bind(this);
         this.onClickPageNav = this.onClickPageNav.bind(this);
     }
 
@@ -52,12 +50,7 @@ export default class PopularSearch extends HTMLElement {
         this.closeButton.addEventListener("click", this.closeForm);
         this.form.addEventListener("change", this.onChangeForm);
         this.form.addEventListener("reset", this.onReset);
-        this.form.addEventListener("submit", this.onSumbit);
-
-        CustomEventEmitter.add(
-            "renderPageNav",
-            this.onRenderPageNav as EventListener
-        );
+        this.form.addEventListener("submit", this.onSubmit);
     }
 
     disconnectedCallback() {
@@ -69,19 +62,15 @@ export default class PopularSearch extends HTMLElement {
         );
         this.form.removeEventListener("change", this.onChangeForm);
         this.form.removeEventListener("reset", this.onReset);
-        this.form.removeEventListener("submit", this.onSumbit);
-        CustomEventEmitter.remove(
-            "renderPageNav",
-            this.onRenderPageNav as EventListener
-        );
+        this.form.removeEventListener("submit", this.onSubmit);
     }
 
     private closeForm = () => {
         this.form.hidden = true;
     };
 
-    private onRenderPageNav = (event: ICustomEvent<{ pageSize: number }>) => {
-        this.pageSize = event.detail.pageSize;
+    public renderPageNav(pageSize: number) {
+        this.pageSize = pageSize;
 
         this.pageNav.innerHTML = "";
 
@@ -96,7 +85,7 @@ export default class PopularSearch extends HTMLElement {
         this.pageNav.hidden = false;
 
         this.insertBefore(this.pageNav, this.filterButton);
-    };
+    }
 
     private createNavItem(index: number) {
         if (!this.pageSize) return;
@@ -131,9 +120,10 @@ export default class PopularSearch extends HTMLElement {
             this.pageNav.appendChild(el);
         }
 
-        CustomEventEmitter.dispatch("clickPageNav", {
-            pageIndex: Number(target.value) + 1,
-        });
+        this.dispatchEvent(new CustomEvent("click-page-nav", {
+            bubbles: true,
+            detail: { pageIndex: Number(target.value) + 1 },
+        }));
     };
 
     private onClickFilterButton = () => {
@@ -161,7 +151,40 @@ export default class PopularSearch extends HTMLElement {
     };
 
     private handleDataSource(target: HTMLInputElement) {
-        console.log(target.value);
+        const durationInputs = this.querySelectorAll<HTMLInputElement>(
+            "input[name='loanDuration']"
+        );
+        if (!durationInputs.length) return;
+
+        const setDuration = (value: string) => {
+            const durationInput = this.querySelector(
+                `input[name='loanDuration'][value='${value}']`
+            ) as HTMLInputElement | null;
+            if (!durationInput) return;
+
+            durationInput.checked = true;
+            this.handleLoanDuration({ target: durationInput } as unknown as Event);
+        };
+
+        if (target.value === "M") {
+            durationInputs.forEach((input) => {
+                input.disabled = input.value !== "month";
+            });
+            setDuration("month");
+            return;
+        }
+
+        if (target.value === "Y") {
+            durationInputs.forEach((input) => {
+                input.disabled = input.value !== "year";
+            });
+            setDuration("year");
+            return;
+        }
+
+        durationInputs.forEach((input) => {
+            input.disabled = false;
+        });
     }
 
     private handleGender(target: HTMLInputElement) {
@@ -342,7 +365,7 @@ export default class PopularSearch extends HTMLElement {
         }, 100);
     };
 
-    private onSumbit = (event: Event) => {
+    private onSubmit = (event: Event) => {
         event.preventDefault();
 
         const formData = new FormData(this.form);
@@ -365,9 +388,10 @@ export default class PopularSearch extends HTMLElement {
             }
         }
 
-        CustomEventEmitter.dispatch("requestPopular", {
-            params,
-        });
+        this.dispatchEvent(new CustomEvent("request-popular", {
+            bubbles: true,
+            detail: { params },
+        }));
 
         this.closeForm();
     };
