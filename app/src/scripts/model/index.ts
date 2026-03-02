@@ -32,7 +32,6 @@ class BookModel {
 
     constructor() {
         this._state = this.loadStorage() || cloneDeep(initialState);
-        console.log("BookModel Initialized (v2) with state:", this._state);
 
         const { favorites, favoriteCategoryOrder, libraries, libraryOrder } = this._state;
         this.favoriteModel = new FavoriteModel(favorites, favoriteCategoryOrder);
@@ -87,8 +86,16 @@ class BookModel {
         return parsed;
     }
 
+    private _syncState() {
+        this._state.favorites = this.favoriteModel.favorites;
+        this._state.favoriteCategoryOrder = this.favoriteModel.categoryOrder;
+        this._state.libraries = this.libraryModel.libraries;
+        this._state.libraryOrder = this.libraryModel.libraryOrder;
+    }
+
     private _commit() {
         try {
+            this._syncState();
             localStorage.setItem(STORAGE_NAME, JSON.stringify(this._state));
             this.bookStateUpdatePublisher.notify();
         } catch (error) {
@@ -111,7 +118,6 @@ class BookModel {
         this.libraryModel.libraryOrder = libraryOrder;
 
         this._commit();
-        console.log("set state");
     }
 
     get favorites() {
@@ -138,41 +144,28 @@ class BookModel {
     addfavorite(name: string) {
         this.favoriteModel.addCategoryOrder(name);
         this.favoriteModel.add(name);
-
-        this._state.favorites = this.favorites;
-        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
     renameFavorite(prevName: string, newName: string) {
         this.favoriteModel.renameCategoryOrder(prevName, newName);
         this.favoriteModel.rename(prevName, newName);
-
-        this._state.favorites = this.favorites;
-        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
     renameCategoryOrderKey(prevName: string, newName: string) {
         this.favoriteModel.renameCategoryOrder(prevName, newName);
-
-        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
     deleteFavorite(name: string) {
         this.favoriteModel.deleteCategoryOrder(name);
         this.favoriteModel.delete(name);
-
-        this._state.favorites = this.favorites;
-        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
     deleteCategoryOrderKey(name: string) {
         const index = this.favoriteModel.deleteCategoryOrder(name);
-
-        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
         return index;
     }
@@ -183,15 +176,11 @@ class BookModel {
 
     changeFavorite(draggedKey: string, targetKey: string) {
         this.favoriteModel.change(draggedKey, targetKey);
-
-        this._state.favoriteCategoryOrder = this.favoriteCategoryOrder;
         this._commit();
     }
 
     addFavoriteBook(name: string, isbn: string) {
         this.favoriteModel.addBook(name, isbn);
-
-        this._state.favorites = this.favorites;
         this._commit();
     }
 
@@ -201,8 +190,6 @@ class BookModel {
 
     removeFavoriteBook(name: string, isbn: string) {
         this.favoriteModel.removeBook(name, isbn);
-
-        this._state.favorites = this.favorites;
         this._commit();
     }
 
@@ -212,17 +199,11 @@ class BookModel {
             libCode: data.libCode,
             libName: data.libName,
         });
-
-        this._state.libraries = this.libraries;
-        this._state.libraryOrder = this.libraryModel.libraryOrder;
         this._commit();
     }
 
     removeLibraries(code: string) {
         this.libraryModel.remove(code);
-
-        this._state.libraries = this.libraries;
-        this._state.libraryOrder = this.libraryModel.libraryOrder;
         this._commit();
     }
 

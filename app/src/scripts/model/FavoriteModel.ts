@@ -111,7 +111,7 @@ export default class FavoriteModel {
     removeBook(name: string, isbn: string) {
         if (name in this._favorites) {
             const index = this._favorites[name].indexOf(isbn);
-            if (index != -1) {
+            if (index !== -1) {
                 this._favorites[name].splice(index, 1);
             }
         }

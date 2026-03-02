@@ -36,7 +36,6 @@ export default class LibraryModel {
             type: "add",
             payload: {
                 code,
-                // name,
                 data,
             },
         });
