@@ -22,9 +22,11 @@
         <div class="root">
             <nav-gnb></nav-gnb>
 
+            <main>
             <app-popular class="popular">
+                <h1 class="sr-only">인기 도서</h1>
                 <popular-search>
-                    <nav class="page-nav" hidden></nav>
+                    <nav class="page-nav" role="navigation" aria-label="페이지 탐색" hidden></nav>
                     <button type="button" class="filterButton">
                         조건 검색
                     </button>
@@ -96,9 +98,9 @@
                                     <span class="label">기간설정</span>
                                 </label>
                                 <div class="dateRange">
-                                    <input type="date" name="startDt" />
+                                    <input type="date" name="startDt" aria-label="시작일" />
                                     ~
-                                    <input type="date" name="endDt" />
+                                    <input type="date" name="endDt" aria-label="종료일" />
                                 </div>
                             </div>
                         </fieldset>
@@ -694,6 +696,7 @@
                     <loading-component hidden>Loading...</loading-component>
                 </popular-list>
             </app-popular>
+            </main>
         </div>
 
     </body>

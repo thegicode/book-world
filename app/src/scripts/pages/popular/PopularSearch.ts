@@ -75,6 +75,7 @@ export default class PopularSearch extends HTMLElement {
     public renderPageNav(pageSize: number) {
         this.pageSize = pageSize;
 
+        this.cleanupPageNav();
         this.pageNav.innerHTML = "";
 
         const fragment = new DocumentFragment();
@@ -100,7 +101,7 @@ export default class PopularSearch extends HTMLElement {
             this.pageSize * (index + 1)
         }`;
 
-        if (index === 0) el.ariaSelected = "true";
+        if (index === 0) el.ariaCurrent = "page";
 
         el.addEventListener("click", this.onClickPageNav);
         return el;
@@ -110,11 +111,11 @@ export default class PopularSearch extends HTMLElement {
         const target = event.target as HTMLButtonElement;
         if (!target || !this.pageNav) return;
 
-        const targeted = this.pageNav.querySelector("[aria-selected=true]");
+        const targeted = this.pageNav.querySelector("[aria-current]");
         if (targeted) {
-            targeted.ariaSelected = "false";
+            targeted.removeAttribute("aria-current");
         }
-        target.ariaSelected = "true";
+        target.ariaCurrent = "page";
 
         if (this.pageNav.lastChild === target) {
             const el = this.createNavItem(
@@ -128,6 +129,12 @@ export default class PopularSearch extends HTMLElement {
             detail: { pageIndex: Number(target.value) + 1 },
         }));
     };
+
+    private cleanupPageNav() {
+        this.pageNav.querySelectorAll("button").forEach((btn) => {
+            btn.removeEventListener("click", this.onClickPageNav);
+        });
+    }
 
     private onClickFilterButton = () => {
         this.form.hidden = !this.form.hidden;
