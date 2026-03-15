@@ -107,6 +107,7 @@ interface ISearchBook {
     discount: string;
     image: string;
     isbn: string;
+    isbn13?: string;
     link: string;
     pubdate: string;
     publisher: string;
@@ -239,4 +240,3 @@ declare module "*.html" {
 declare module 'critical';
 
 declare module 'html-minifier-terser';
-

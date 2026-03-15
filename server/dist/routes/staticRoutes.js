@@ -9,6 +9,7 @@ const config_1 = require("../config");
 const staticRoutes = (app) => {
     const routes = [
         "",
+        "book-side",
         "search",
         "favorite",
         "library-search",

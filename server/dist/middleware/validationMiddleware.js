@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSrchBooksInLibrary = exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookExistence = exports.validateSearchLibrariesByKeyword = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
+exports.validateSrchBooksInLibrary = exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookAvailabilityBatch = exports.validateCheckBookExistence = exports.validateSearchLibrariesByKeyword = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
 const express_validator_1 = require("express-validator");
 const apiErrors_1 = require("../errors/apiErrors");
 const validate = (req, res, next) => {
@@ -38,6 +38,11 @@ exports.validateSearchLibrariesByKeyword = [
 exports.validateCheckBookExistence = [
     (0, express_validator_1.query)('isbn13').notEmpty().withMessage('isbn13 is required'),
     (0, express_validator_1.query)('libCode').notEmpty().withMessage('libCode is required'),
+    validate,
+];
+exports.validateCheckBookAvailabilityBatch = [
+    (0, express_validator_1.query)('isbn13').notEmpty().withMessage('isbn13 is required'),
+    (0, express_validator_1.query)('libCodes').notEmpty().withMessage('libCodes is required'),
     validate,
 ];
 exports.validateGetUsageAnalysis = [

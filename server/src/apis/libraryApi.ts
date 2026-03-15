@@ -9,6 +9,24 @@ const AUTH_KEY = process.env.LIBRARY_KEY as string;
 const API_FORMAT = "json";
 const CACHE_DIR = path.join(rootDirectoryPath, "server/data");
 const CACHE_FILE = path.join(CACHE_DIR, "libraries.json");
+const BOOK_SIDE_AVAILABILITY_CACHE_TTL_MS = 1000 * 60 * 3;
+
+type TBookSideAvailabilityCacheItem = {
+    expiresAt: number;
+    value: {
+        libraries: Array<{
+            libCode: string;
+            libName: string;
+            address: string;
+            homepage: string;
+            hasBook: string;
+            loanAvailable: string;
+            error?: string;
+        }>;
+    };
+};
+
+const bookSideAvailabilityCache = new Map<string, TBookSideAvailabilityCacheItem>();
 
 interface ILibrary {
     libCode: string;
@@ -56,6 +74,33 @@ const parseURL = (apiPath: string, params: Record<string, string>) => {
         format: API_FORMAT,
     });
     return `${LIBRARY_API_BASE_URL}/${apiPath}?${queryParams}`;
+};
+
+const getBookSideAvailabilityCacheKey = (isbn13: string, libCodes: string[]) =>
+    `${isbn13}:${[...libCodes].sort().join(",")}`;
+
+const getCachedBookSideAvailability = (key: string) => {
+    const cached = bookSideAvailabilityCache.get(key);
+    if (!cached) {
+        return null;
+    }
+
+    if (cached.expiresAt < Date.now()) {
+        bookSideAvailabilityCache.delete(key);
+        return null;
+    }
+
+    return cached.value;
+};
+
+const setCachedBookSideAvailability = (
+    key: string,
+    value: TBookSideAvailabilityCacheItem["value"],
+) => {
+    bookSideAvailabilityCache.set(key, {
+        value,
+        expiresAt: Date.now() + BOOK_SIDE_AVAILABILITY_CACHE_TTL_MS,
+    });
 };
 
 // Helper to ensure cache directory exists
@@ -124,6 +169,27 @@ export async function searchLibrariesByKeyword(params: {
     };
 }
 
+export async function searchBookSideLibrariesByKeyword(params: {
+    keyword: string;
+    page: string;
+    pageSize: string;
+}) {
+    const result = await searchLibrariesByKeyword(params);
+
+    return {
+        pageNo: result.pageNo,
+        pageSize: result.pageSize,
+        numFound: result.numFound,
+        resultNum: result.resultNum,
+        libraries: result.libraries.map((library) => ({
+            libCode: library.libCode,
+            libName: library.libName,
+            address: library.address,
+            homepage: library.homepage,
+        })),
+    };
+}
+
 // Get library detail by libCode
 export async function getLibraryDetail(params: { libCode: string }) {
     let libraries: ILibrary[] = [];
@@ -157,6 +223,70 @@ export async function checkBookAvailability(params: {
             "Invalid API response from library server",
         );
     return data.response.result;
+}
+
+export async function checkBookAvailabilityBatch(params: {
+    isbn13: string;
+    libCodes: string[];
+}) {
+    const cacheKey = getBookSideAvailabilityCacheKey(
+        params.isbn13,
+        params.libCodes,
+    );
+    const cached = getCachedBookSideAvailability(cacheKey);
+    if (cached) {
+        return cached;
+    }
+
+    const libraries = await Promise.all(
+        params.libCodes.map(async (libCode) => {
+            try {
+                const [availability, detail] = await Promise.all([
+                    checkBookAvailability({
+                        isbn13: params.isbn13,
+                        libCode,
+                    }),
+                    getLibraryDetail({ libCode }),
+                ]);
+
+                return {
+                    libCode,
+                    libName: detail.libName,
+                    address: detail.address,
+                    homepage: detail.homepage,
+                    hasBook: availability.hasBook,
+                    loanAvailable: availability.loanAvailable,
+                };
+            } catch (error) {
+                console.error(
+                    `Failed to check book availability for library ${libCode}`,
+                    error,
+                );
+
+                const detail = await getLibraryDetail({ libCode }).catch(() => ({
+                    libCode,
+                    libName: libCode,
+                    address: "",
+                    homepage: "",
+                }));
+
+                return {
+                    libCode,
+                    libName: detail.libName,
+                    address: detail.address,
+                    homepage: detail.homepage,
+                    hasBook: "N",
+                    loanAvailable: "N",
+                    error: "조회 실패",
+                };
+            }
+        }),
+    );
+
+    const result = { libraries };
+    setCachedBookSideAvailability(cacheKey, result);
+
+    return result;
 }
 
 // Usage analysis per book

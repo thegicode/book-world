@@ -1,0 +1,521 @@
+@use "./base/reset";
+@use "./components/gnb";
+
+body {
+    overflow: auto;
+}
+
+.root {
+    min-height: 100%;
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(255, 239, 204, 0.9),
+            transparent 32%
+        ),
+        linear-gradient(180deg, #f8f2e8 0%, #f4efe8 38%, #efe5d6 100%);
+    color: #2f2419;
+}
+
+nav-gnb {
+    display: block;
+}
+
+book-side-app {
+    display: block;
+    padding: 24px 16px 48px;
+
+    .book-side {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .hero {
+        margin-bottom: 24px;
+        padding: 28px 24px;
+        border: 1px solid rgba(92, 62, 34, 0.12);
+        border-radius: 24px;
+        background: rgba(255, 251, 245, 0.78);
+        box-shadow: 0 20px 50px rgba(85, 57, 29, 0.08);
+    }
+
+    .brand {
+        margin: 0;
+        font-size: clamp(2rem, 6vw, 3.8rem);
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+    }
+
+    .hero-copy {
+        max-width: 720px;
+        margin: 12px 0 0;
+        font-size: 1rem;
+        line-height: 1.7;
+        color: #5b4a39;
+    }
+
+    .flow-steps {
+        display: grid;
+        gap: 8px;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+        font-size: 0.92rem;
+        color: #5b4a39;
+
+        li {
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(255, 248, 238, 0.75);
+        }
+
+        strong {
+            margin-right: 6px;
+            color: #2f2419;
+        }
+    }
+
+    .workspace {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    }
+
+    .panel {
+        padding: 20px;
+        border: 1px solid rgba(92, 62, 34, 0.12);
+        border-radius: 20px;
+        background: rgba(255, 251, 245, 0.84);
+        box-shadow: 0 14px 40px rgba(85, 57, 29, 0.06);
+    }
+
+    .panel h2,
+    .panel h3,
+    .panel h4 {
+        margin: 0;
+        letter-spacing: -0.03em;
+    }
+
+    .panel-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: end;
+        margin-bottom: 14px;
+    }
+
+    .panel-copy {
+        margin: 8px 0 0;
+        font-size: 0.92rem;
+        color: #6a5949;
+    }
+
+    .inline-label {
+        font-size: 0.8rem;
+        color: #876b4f;
+    }
+
+    .panel-actions {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .clear-button {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(92, 62, 34, 0.08);
+        color: #5b4632;
+        font-size: 0.82rem;
+    }
+
+    .share-button {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(60, 110, 82, 0.1);
+        color: #22513c;
+        font-size: 0.86rem;
+    }
+
+    .share-status {
+        margin: 10px 0 0;
+        font-size: 0.84rem;
+        color: #5b4a39;
+    }
+
+    .filter-toggle {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        font-size: 0.84rem;
+        color: #6a5949;
+
+        input {
+            margin: 0;
+        }
+    }
+
+    .search-form {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .recent-search-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 16px;
+    }
+
+    .recent-search-chip {
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(92, 62, 34, 0.08);
+        color: #5b4632;
+        font-size: 0.84rem;
+    }
+
+    .search-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    input[type="search"] {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #dbc9b3;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.78);
+        font-size: 0.98rem;
+        color: #2f2419;
+    }
+
+    input[type="search"]:focus {
+        outline: none;
+        border-color: #b97838;
+        box-shadow: 0 0 0 4px rgba(185, 120, 56, 0.12);
+    }
+
+    button {
+        border: 0;
+        border-radius: 14px;
+        background: #3c6e52;
+        color: #fffdf8;
+        font-size: 0.95rem;
+        cursor: pointer;
+    }
+
+    .submit-button {
+        min-width: 104px;
+        padding: 0 18px;
+    }
+
+    .section-stack {
+        display: grid;
+        gap: 16px;
+    }
+
+    .result-list,
+    .availability-list,
+    .selected-library-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .book-card,
+    .library-card,
+    .availability-card {
+        border: 1px solid rgba(92, 62, 34, 0.1);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+    }
+
+    .book-card button,
+    .library-card button {
+        width: 100%;
+        padding: 16px;
+        background: transparent;
+        color: inherit;
+        text-align: left;
+    }
+
+    .book-card button[aria-pressed="true"],
+    .library-card button[aria-pressed="true"] {
+        background: rgba(60, 110, 82, 0.1);
+        box-shadow: inset 0 0 0 1px rgba(60, 110, 82, 0.22);
+    }
+
+    .book-title,
+    .library-name {
+        margin: 0 0 8px;
+        font-size: 1rem;
+    }
+
+    .book-meta,
+    .library-meta,
+    .availability-meta {
+        margin: 0;
+        font-size: 0.87rem;
+        line-height: 1.6;
+        color: #645444;
+    }
+
+    .summary-grid {
+        display: grid;
+        gap: 16px;
+    }
+
+    .selected-book {
+        padding: 16px;
+        border-radius: 18px;
+        background: linear-gradient(
+            135deg,
+            rgba(255, 246, 233, 0.92),
+            rgba(248, 237, 218, 0.88)
+        );
+    }
+
+    .selected-book p,
+    .status-copy,
+    .empty-copy {
+        margin: 8px 0 0;
+        font-size: 0.92rem;
+        line-height: 1.6;
+        color: #5f5143;
+    }
+
+    .selected-library-chip {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255, 247, 235, 0.88);
+        font-size: 0.9rem;
+    }
+
+    .status-panel {
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: rgba(255, 248, 238, 0.82);
+    }
+
+    .status-panel.is-info {
+        background: rgba(247, 241, 231, 0.92);
+    }
+
+    .status-panel.is-empty {
+        background: rgba(255, 248, 238, 0.92);
+    }
+
+    .status-panel.is-error {
+        background: rgba(255, 239, 239, 0.92);
+    }
+
+    .selected-library-chip button {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(92, 62, 34, 0.08);
+        color: #5b4632;
+    }
+
+    .availability-card {
+        padding: 16px;
+    }
+
+    .availability-card.is-available {
+        border-color: rgba(60, 110, 82, 0.28);
+        background: linear-gradient(135deg, rgba(239, 250, 244, 0.95), rgba(250, 255, 252, 0.86));
+    }
+
+    .availability-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: baseline;
+        margin-bottom: 8px;
+    }
+
+    .availability-state {
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .availability-state.is-available {
+        background: rgba(60, 110, 82, 0.12);
+        color: #20523b;
+    }
+
+    .availability-state.is-unavailable {
+        background: rgba(130, 90, 44, 0.12);
+        color: #825a2c;
+    }
+
+    .availability-state.is-missing {
+        background: rgba(92, 62, 34, 0.1);
+        color: #5d4531;
+    }
+
+    .availability-state.is-error {
+        background: rgba(147, 54, 54, 0.12);
+        color: #8a3030;
+    }
+
+    .availability-action {
+        margin: 12px 0 0;
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(60, 110, 82, 0.1);
+            color: #22513c;
+            font-size: 0.86rem;
+            text-decoration: none;
+        }
+    }
+
+    .notice {
+        margin-top: 14px;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        color: #786554;
+    }
+
+    @media (max-width: 960px) {
+        .workspace {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        padding: 16px 12px 32px;
+
+        .hero {
+            margin-bottom: 16px;
+            padding: 20px 16px;
+            border-radius: 20px;
+        }
+
+        .hero-copy {
+            font-size: 0.94rem;
+        }
+
+        .flow-steps {
+            gap: 6px;
+            margin-top: 14px;
+            font-size: 0.86rem;
+
+            li {
+                padding: 9px 10px;
+            }
+        }
+
+        .workspace,
+        .section-stack,
+        .summary-grid {
+            gap: 12px;
+        }
+
+        .panel {
+            padding: 16px;
+            border-radius: 18px;
+        }
+
+        .panel-head {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .panel-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .search-row {
+            flex-direction: column;
+        }
+
+        .submit-button {
+            min-width: 0;
+            width: 100%;
+            min-height: 46px;
+        }
+
+        input[type="search"] {
+            min-height: 46px;
+            padding: 12px 14px;
+            font-size: 0.95rem;
+        }
+
+        .recent-search-group {
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .recent-search-chip,
+        .clear-button,
+        .share-button {
+            min-height: 36px;
+            font-size: 0.82rem;
+        }
+
+        .book-card button,
+        .library-card button,
+        .availability-card,
+        .selected-book {
+            padding: 14px;
+        }
+
+        .book-title,
+        .library-name {
+            font-size: 0.95rem;
+        }
+
+        .book-meta,
+        .library-meta,
+        .availability-meta,
+        .selected-book p,
+        .status-copy,
+        .empty-copy {
+            font-size: 0.84rem;
+        }
+
+        .selected-library-chip {
+            flex-wrap: wrap;
+            align-items: flex-start;
+            padding: 10px;
+        }
+
+        .selected-library-chip button {
+            width: 100%;
+        }
+
+        .availability-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .availability-action {
+            a {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .notice,
+        .share-status {
+            font-size: 0.8rem;
+        }
+    }
+}

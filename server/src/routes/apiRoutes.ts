@@ -2,8 +2,10 @@ import { Application } from "express";
 
 import {
     searchNaverBook,
+    searchBookSideBooks,
     getLibraryDetail,
     checkBookExistence,
+    checkBookSideAvailabilityBatch,
     getUsageAnalysis,
     searchLibrariesByBook,
     getPopularBooks,
@@ -11,10 +13,12 @@ import {
     getKyoboBookInfo,
     srchBooksInLibrary,
     searchLibrariesByKeyword,
+    searchBookSideLibraries,
 } from "../controllers/apiController";
 import {
     validateNaverBookSearch,
     validateCheckBookExistence,
+    validateCheckBookAvailabilityBatch,
     validateGetUsageAnalysis,
     validateSearchLibrariesByBook,
     validateGetPopularBooks,
@@ -26,6 +30,9 @@ import {
 
 const apiRoutes = (app: Application) => {
     app.get("/search-naver-book", validateNaverBookSearch, searchNaverBook);
+    app.get("/api/book-side/books", validateNaverBookSearch, searchBookSideBooks);
+    app.get("/api/book-side/libraries", validateSearchLibrariesByKeyword, searchBookSideLibraries);
+    app.get("/api/book-side/availability", validateCheckBookAvailabilityBatch, checkBookSideAvailabilityBatch);
     app.get("/api/library-search-by-keyword", validateSearchLibrariesByKeyword, searchLibrariesByKeyword);
     app.get("/api/library-detail", getLibraryDetail);
     app.get("/book-exist", validateCheckBookExistence, checkBookExistence);

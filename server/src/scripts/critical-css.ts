@@ -1,5 +1,3 @@
-/// <reference path="../../../app/src/type.d.ts" />
-
 import fs from 'fs-extra';
 import path from 'path';
 import { glob } from 'glob';
@@ -8,13 +6,31 @@ export const generateCriticalCss = async () => {
     const isProduction = process.env.NODE_ENV === 'production';
     const BASE_PATH = isProduction ? 'app/build' : 'app/public';
     const ENV_NAME = isProduction ? 'Production' : 'Development';
+    const isCriticalCssEnabled = process.env.ENABLE_CRITICAL_CSS === 'true';
 
     if (!isProduction) {
         console.log('Skipping critical CSS generation in development mode.');
         return;
     }
 
-    const { generate } = await import('critical');
+    if (!isCriticalCssEnabled) {
+        console.log('Skipping critical CSS generation. Set ENABLE_CRITICAL_CSS=true to enable it.');
+        return;
+    }
+
+    let generate: ((options: Record<string, unknown>) => Promise<{ html?: string }>) | undefined;
+    try {
+        ({ generate } = await import('critical'));
+    } catch (error) {
+        console.warn('Failed to load critical CSS generator. Skipping.', error);
+        return;
+    }
+
+    if (!generate) {
+        console.warn('Critical CSS generator is unavailable. Skipping.');
+        return;
+    }
+
     console.log(`--- Generating Critical CSS for ${ENV_NAME} ---`);
 
     const htmlFiles = await getHtmlFiles(BASE_PATH);
@@ -41,6 +57,11 @@ export const generateCriticalCss = async () => {
                 css: [`css/${cssFile}`],
                 width: 1300,
                 height: 900,
+                penthouse: {
+                    puppeteer: {
+                        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                    },
+                },
             });
 
             if (criticalHtml) {

@@ -46,6 +46,12 @@ export const validateCheckBookExistence = [
     validate,
 ];
 
+export const validateCheckBookAvailabilityBatch = [
+    query('isbn13').notEmpty().withMessage('isbn13 is required'),
+    query('libCodes').notEmpty().withMessage('libCodes is required'),
+    validate,
+];
+
 export const validateGetUsageAnalysis = [
     query('isbn13').notEmpty().withMessage('isbn13 is required'),
     validate,

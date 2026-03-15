@@ -21,6 +21,12 @@ interface NaverBookSearchParams {
     sort: string;
 }
 
+function extractIsbn13(isbn: string) {
+    return isbn
+        .split(/\s+/)
+        .find((value) => /^\d{13}$/.test(value)) || "";
+}
+
 // 키워드 검색
 export async function searchNaverBooks(params: NaverBookSearchParams) {
     const queryParams = new URLSearchParams({
@@ -37,4 +43,23 @@ export async function searchNaverBooks(params: NaverBookSearchParams) {
     // Return only the necessary fields
     const { total, start, display, items } = data;
     return { total, start, display, items };
+}
+
+export async function searchBookSideBooks(params: NaverBookSearchParams) {
+    const data = await searchNaverBooks(params);
+
+    return {
+        total: data.total,
+        start: data.start,
+        display: data.display,
+        items: data.items.map((item: Record<string, string>) => ({
+            title: item.title,
+            author: item.author,
+            publisher: item.publisher,
+            pubdate: item.pubdate,
+            isbn: item.isbn,
+            isbn13: extractIsbn13(item.isbn),
+            link: item.link,
+        })),
+    };
 }

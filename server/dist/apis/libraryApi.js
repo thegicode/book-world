@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchLibrariesByKeyword = void 0;
+exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailabilityBatch = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchBookSideLibrariesByKeyword = exports.searchLibrariesByKeyword = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const apiUtils_1 = require("./apiUtils");
@@ -23,9 +23,29 @@ const AUTH_KEY = process.env.LIBRARY_KEY;
 const API_FORMAT = "json";
 const CACHE_DIR = path_1.default.join(config_1.rootDirectoryPath, "server/data");
 const CACHE_FILE = path_1.default.join(CACHE_DIR, "libraries.json");
+const BOOK_SIDE_AVAILABILITY_CACHE_TTL_MS = 1000 * 60 * 3;
+const bookSideAvailabilityCache = new Map();
 const parseURL = (apiPath, params) => {
     const queryParams = new URLSearchParams(Object.assign(Object.assign({}, params), { authKey: AUTH_KEY, format: API_FORMAT }));
     return `${LIBRARY_API_BASE_URL}/${apiPath}?${queryParams}`;
+};
+const getBookSideAvailabilityCacheKey = (isbn13, libCodes) => `${isbn13}:${[...libCodes].sort().join(",")}`;
+const getCachedBookSideAvailability = (key) => {
+    const cached = bookSideAvailabilityCache.get(key);
+    if (!cached) {
+        return null;
+    }
+    if (cached.expiresAt < Date.now()) {
+        bookSideAvailabilityCache.delete(key);
+        return null;
+    }
+    return cached.value;
+};
+const setCachedBookSideAvailability = (key, value) => {
+    bookSideAvailabilityCache.set(key, {
+        value,
+        expiresAt: Date.now() + BOOK_SIDE_AVAILABILITY_CACHE_TTL_MS,
+    });
 };
 const ensureCacheDir = () => {
     if (!fs_1.default.existsSync(CACHE_DIR)) {
@@ -73,6 +93,24 @@ function searchLibrariesByKeyword(params) {
     });
 }
 exports.searchLibrariesByKeyword = searchLibrariesByKeyword;
+function searchBookSideLibrariesByKeyword(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield searchLibrariesByKeyword(params);
+        return {
+            pageNo: result.pageNo,
+            pageSize: result.pageSize,
+            numFound: result.numFound,
+            resultNum: result.resultNum,
+            libraries: result.libraries.map((library) => ({
+                libCode: library.libCode,
+                libName: library.libName,
+                address: library.address,
+                homepage: library.homepage,
+            })),
+        };
+    });
+}
+exports.searchBookSideLibrariesByKeyword = searchBookSideLibrariesByKeyword;
 function getLibraryDetail(params) {
     return __awaiter(this, void 0, void 0, function* () {
         let libraries = [];
@@ -101,6 +139,56 @@ function checkBookAvailability(params) {
     });
 }
 exports.checkBookAvailability = checkBookAvailability;
+function checkBookAvailabilityBatch(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const cacheKey = getBookSideAvailabilityCacheKey(params.isbn13, params.libCodes);
+        const cached = getCachedBookSideAvailability(cacheKey);
+        if (cached) {
+            return cached;
+        }
+        const libraries = yield Promise.all(params.libCodes.map((libCode) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const [availability, detail] = yield Promise.all([
+                    checkBookAvailability({
+                        isbn13: params.isbn13,
+                        libCode,
+                    }),
+                    getLibraryDetail({ libCode }),
+                ]);
+                return {
+                    libCode,
+                    libName: detail.libName,
+                    address: detail.address,
+                    homepage: detail.homepage,
+                    hasBook: availability.hasBook,
+                    loanAvailable: availability.loanAvailable,
+                };
+            }
+            catch (error) {
+                console.error(`Failed to check book availability for library ${libCode}`, error);
+                const detail = yield getLibraryDetail({ libCode }).catch(() => ({
+                    libCode,
+                    libName: libCode,
+                    address: "",
+                    homepage: "",
+                }));
+                return {
+                    libCode,
+                    libName: detail.libName,
+                    address: detail.address,
+                    homepage: detail.homepage,
+                    hasBook: "N",
+                    loanAvailable: "N",
+                    error: "조회 실패",
+                };
+            }
+        })));
+        const result = { libraries };
+        setCachedBookSideAvailability(cacheKey, result);
+        return result;
+    });
+}
+exports.checkBookAvailabilityBatch = checkBookAvailabilityBatch;
 function getBookUsageAnalysis(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = parseURL("usageAnalysisList", Object.assign(Object.assign({}, params), { loaninfoYN: "Y" }));

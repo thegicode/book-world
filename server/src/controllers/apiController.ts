@@ -18,6 +18,25 @@ export const searchNaverBook = asyncHandler(
     }
 );
 
+export const searchBookSideBooks = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { keyword, display, start, sort } = req.query as {
+            keyword: string;
+            display: string;
+            start: string;
+            sort: string;
+        };
+
+        const books = await BookService.searchBookSideBooks({
+            keyword,
+            display,
+            start,
+            sort,
+        });
+        res.status(200).json({ status: "success", data: books });
+    },
+);
+
 // Kyobo Book Info
 export const getKyoboBookInfo = asyncHandler(
     async (req: Request, res: Response) => {
@@ -41,6 +60,23 @@ export const searchLibrariesByKeyword = asyncHandler(
     }
 );
 
+export const searchBookSideLibraries = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { keyword, page, pageSize } = req.query as {
+            keyword: string;
+            page: string;
+            pageSize: string;
+        };
+
+        const libraries = await BookService.searchBookSideLibrariesByKeyword({
+            keyword,
+            page,
+            pageSize,
+        });
+        res.status(200).json({ status: "success", data: libraries });
+    },
+);
+
 // Get Library Detail by libCode
 export const getLibraryDetail = asyncHandler(
     async (req: Request, res: Response) => {
@@ -61,6 +97,21 @@ export const checkBookExistence = asyncHandler(
         });
         res.status(200).json({ status: "success", data: result });
     }
+);
+
+export const checkBookSideAvailabilityBatch = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { isbn13, libCodes } = req.query as {
+            isbn13: string;
+            libCodes: string;
+        };
+
+        const libraries = await BookService.checkBookAvailabilityBatch({
+            isbn13,
+            libCodes: libCodes.split(",").filter(Boolean),
+        });
+        res.status(200).json({ status: "success", data: libraries });
+    },
 );
 
 // Get Book Usage Analysis

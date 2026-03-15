@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchNaverBooks = void 0;
+exports.searchBookSideBooks = exports.searchNaverBooks = void 0;
 const apiErrors_1 = require("../errors/apiErrors");
 function fetchNaver(url) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -23,6 +23,11 @@ function fetchNaver(url) {
         }
         return response.json();
     });
+}
+function extractIsbn13(isbn) {
+    return isbn
+        .split(/\s+/)
+        .find((value) => /^\d{13}$/.test(value)) || "";
 }
 function searchNaverBooks(params) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -38,3 +43,23 @@ function searchNaverBooks(params) {
     });
 }
 exports.searchNaverBooks = searchNaverBooks;
+function searchBookSideBooks(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield searchNaverBooks(params);
+        return {
+            total: data.total,
+            start: data.start,
+            display: data.display,
+            items: data.items.map((item) => ({
+                title: item.title,
+                author: item.author,
+                publisher: item.publisher,
+                pubdate: item.pubdate,
+                isbn: item.isbn,
+                isbn13: extractIsbn13(item.isbn),
+                link: item.link,
+            })),
+        };
+    });
+}
+exports.searchBookSideBooks = searchBookSideBooks;
