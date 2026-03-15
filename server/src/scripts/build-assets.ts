@@ -56,13 +56,17 @@ async function buildCss() {
 
         const result = sass.compile(srcPath, {
             style: isProduction ? "compressed" : "expanded",
-            sourceMap: !isProduction
+            sourceMap: !isProduction,
+            sourceMapIncludeSources: !isProduction,
         });
 
-        await fs.writeFile(distPath, result.css);
         if (result.sourceMap) {
             await fs.writeFile(`${distPath}.map`, JSON.stringify(result.sourceMap));
         }
+        const cssOutput = result.sourceMap
+            ? `${result.css}\n/*# sourceMappingURL=${path.basename(distPath)}.map */\n`
+            : result.css;
+        await fs.writeFile(distPath, cssOutput);
         console.log(`Compiled: ${file}`);
     }
 }
