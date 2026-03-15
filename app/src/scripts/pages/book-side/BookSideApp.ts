@@ -116,7 +116,7 @@ export default class BookSideApp extends HTMLElement {
                             <div class="selected-book-panel"></div>
                             ${
                                 this.shareStatusMessage
-                                    ? `<p class="share-status">${this.escapeHtml(this.shareStatusMessage)}</p>`
+                                    ? `<p class="share-status" role="status" aria-live="polite">${this.escapeHtml(this.shareStatusMessage)}</p>`
                                     : ""
                             }
                         </section>
@@ -378,7 +378,7 @@ export default class BookSideApp extends HTMLElement {
         }
 
         if (message) {
-            container.innerHTML = `<div class="status-panel is-info"><p class="status-copy">${message}</p></div>`;
+            container.innerHTML = `<div class="status-panel is-info" role="status" aria-live="polite"><p class="status-copy">${message}</p></div>`;
             return;
         }
 
@@ -421,7 +421,7 @@ export default class BookSideApp extends HTMLElement {
         }
 
         if (message) {
-            container.innerHTML = `<div class="status-panel is-info"><p class="status-copy">${message}</p></div>`;
+            container.innerHTML = `<div class="status-panel is-info" role="status" aria-live="polite"><p class="status-copy">${message}</p></div>`;
             return;
         }
 
@@ -465,7 +465,7 @@ export default class BookSideApp extends HTMLElement {
         }
 
         container.innerHTML = `
-            <div class="recent-search-group" aria-label="최근 검색어">
+            <div class="recent-search-group" role="group" aria-label="최근 검색어">
                 ${this.recentSearches
                     .map(
                         (keyword) => `
@@ -536,7 +536,7 @@ export default class BookSideApp extends HTMLElement {
 
         if (emptyState === "loading") {
             container.innerHTML =
-                '<div class="status-panel is-info"><p class="status-copy">선택한 책과 도서관 기준으로 대출 가능 여부를 확인하고 있습니다.</p></div>';
+                '<div class="status-panel is-info" role="status" aria-live="polite"><p class="status-copy">선택한 책과 도서관 기준으로 대출 가능 여부를 확인하고 있습니다.</p></div>';
             return;
         }
 
