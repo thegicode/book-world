@@ -20,7 +20,8 @@ export const generateCriticalCss = async () => {
 
     let generate: ((options: Record<string, unknown>) => Promise<{ html?: string }>) | undefined;
     try {
-        ({ generate } = await import('critical'));
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        ({ generate } = require('critical'));
     } catch (error) {
         console.warn('Failed to load critical CSS generator. Skipping.', error);
         return;

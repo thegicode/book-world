@@ -6,6 +6,7 @@
     },
     "include": [
         "server/src/scripts/**/*.ts",
+        "server/src/scripts/**/*.d.ts",
         "app/src/type.d.ts"
     ]
 }

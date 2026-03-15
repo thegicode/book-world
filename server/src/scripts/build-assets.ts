@@ -3,11 +3,12 @@ import fs from "fs-extra";
 import { glob } from "glob";
 import * as esbuild from "esbuild";
 import * as sass from "sass";
-import { minify } from "html-minifier-terser";
 import { optimizeImages } from "./optimize-images";
 import { generateCriticalCss } from "./critical-css";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const htmlLoaderPlugin = require("../../../esbuild-html-plugin");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { minify } = require("html-minifier-terser");
 
 const isProduction = process.env.NODE_ENV === "production";
 const BASE_SRC_PATH = "app/src";

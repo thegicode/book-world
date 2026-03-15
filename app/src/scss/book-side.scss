@@ -330,7 +330,11 @@ book-side-app {
 
     .availability-card.is-available {
         border-color: rgba(60, 110, 82, 0.28);
-        background: linear-gradient(135deg, rgba(239, 250, 244, 0.95), rgba(250, 255, 252, 0.86));
+        background: linear-gradient(
+            135deg,
+            rgba(239, 250, 244, 0.95),
+            rgba(250, 255, 252, 0.86)
+        );
     }
 
     .availability-top {
@@ -380,6 +384,7 @@ book-side-app {
             color: #22513c;
             font-size: 0.86rem;
             text-decoration: none;
+            box-sizing: border-box;
         }
     }
 
@@ -501,7 +506,6 @@ book-side-app {
         }
 
         .availability-top {
-            flex-direction: column;
             align-items: flex-start;
             gap: 8px;
         }
