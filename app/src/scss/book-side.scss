@@ -30,7 +30,7 @@ book-side-app {
         margin: 0 auto;
     }
 
-    .hero {
+    .book-side-hero {
         margin-bottom: 24px;
         padding: 28px 24px;
         border: 1px solid rgba(92, 62, 34, 0.12);
@@ -75,13 +75,16 @@ book-side-app {
         }
     }
 
-    .workspace {
+    .book-side-workspace {
         display: grid;
         gap: 16px;
         grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
     }
 
-    .panel {
+    .book-search-section,
+    .library-selection-section,
+    .selected-book-section,
+    .availability-section {
         padding: 20px;
         border: 1px solid rgba(92, 62, 34, 0.12);
         border-radius: 20px;
@@ -89,19 +92,45 @@ book-side-app {
         box-shadow: 0 14px 40px rgba(85, 57, 29, 0.06);
     }
 
-    .panel h2,
-    .panel h3,
-    .panel h4 {
+    .book-side-summary {
+        display: grid;
+        gap: 16px;
+        align-content: start;
+    }
+
+    .book-search-section h2,
+    .book-search-section h3,
+    .book-search-section h4,
+    .library-selection-section h2,
+    .library-selection-section h3,
+    .library-selection-section h4,
+    .selected-book-section h2,
+    .selected-book-section h3,
+    .selected-book-section h4,
+    .availability-section h2,
+    .availability-section h3,
+    .availability-section h4 {
         margin: 0;
         letter-spacing: -0.03em;
     }
 
-    .panel-head {
+    .panel-head,
+    .availability-head {
         display: flex;
         justify-content: space-between;
         gap: 12px;
         align-items: end;
         margin-bottom: 14px;
+    }
+
+    .library-selection-section .panel-head {
+        align-items: start;
+    }
+
+    .book-search-section,
+    .library-selection-section,
+    .availability-section {
+        position: relative;
     }
 
     .panel-copy {
@@ -216,11 +245,26 @@ book-side-app {
         gap: 16px;
     }
 
+    .book-results {
+        max-height: 560px;
+        overflow: auto;
+        padding-right: 4px;
+    }
+
+    .library-results {
+        max-height: 420px;
+        overflow: auto;
+        padding-right: 4px;
+    }
+
+    .selected-libraries {
+        margin-bottom: 14px;
+    }
+
     .result-list,
     .availability-list,
     .selected-library-list {
         display: grid;
-        gap: 10px;
         margin: 0;
         padding: 0;
         list-style: none;
@@ -234,6 +278,10 @@ book-side-app {
         background: rgba(255, 255, 255, 0.72);
     }
 
+    .book-card {
+        margin-bottom: 7px;
+    }
+
     .book-card button,
     .library-card button {
         width: 100%;
@@ -241,6 +289,26 @@ book-side-app {
         background: transparent;
         color: inherit;
         text-align: left;
+    }
+
+    .book-card-layout {
+        display: grid;
+        grid-template-columns: 80px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+    }
+
+    .book-thumb {
+        display: block;
+        width: 80px;
+        height: 114px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: #efe5d6;
+    }
+
+    .book-copy {
+        min-width: 0;
     }
 
     .book-card button[aria-pressed="true"],
@@ -264,19 +332,24 @@ book-side-app {
         color: #645444;
     }
 
-    .summary-grid {
-        display: grid;
-        gap: 16px;
+    .selected-book-section {
+        margin-bottom: 0;
+    }
+
+    .selected-book-section header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(92, 62, 34, 0.12);
     }
 
     .selected-book {
         padding: 16px;
         border-radius: 18px;
-        background: linear-gradient(
-            135deg,
-            rgba(255, 246, 233, 0.92),
-            rgba(248, 237, 218, 0.88)
-        );
+        border: 1px solid rgba(92, 62, 34, 0.08);
+        background: rgba(255, 255, 255, 0.52);
     }
 
     .selected-book p,
@@ -293,7 +366,7 @@ book-side-app {
         justify-content: space-between;
         gap: 10px;
         align-items: center;
-        padding: 10px 12px;
+        padding: 5px;
         border-radius: 14px;
         background: rgba(255, 247, 235, 0.88);
         font-size: 0.9rem;
@@ -325,6 +398,7 @@ book-side-app {
     }
 
     .availability-card {
+        margin-bottom: 5px;
         padding: 16px;
     }
 
@@ -396,7 +470,7 @@ book-side-app {
     }
 
     @media (max-width: 960px) {
-        .workspace {
+        .book-side-workspace {
             grid-template-columns: 1fr;
         }
     }
@@ -404,7 +478,7 @@ book-side-app {
     @media (max-width: 640px) {
         padding: 16px 12px 32px;
 
-        .hero {
+        .book-side-hero {
             margin-bottom: 16px;
             padding: 20px 16px;
             border-radius: 20px;
@@ -424,18 +498,25 @@ book-side-app {
             }
         }
 
-        .workspace,
+        .book-side-workspace,
         .section-stack,
         .summary-grid {
             gap: 12px;
         }
 
-        .panel {
+        .book-search-section,
+        .library-selection-section,
+        .selected-book-section,
+        .availability-section {
             padding: 16px;
             border-radius: 18px;
         }
 
-        .panel-head {
+        .panel-head,
+        .availability-head,
+        .selected-book-section header {
+            flex-direction: column;
+            align-items: flex-start;
             gap: 10px;
         }
 
@@ -465,6 +546,14 @@ book-side-app {
             margin-bottom: 12px;
         }
 
+        .book-results {
+            max-height: 420px;
+        }
+
+        .library-results {
+            max-height: 320px;
+        }
+
         .recent-search-chip,
         .clear-button,
         .share-button {
@@ -475,8 +564,15 @@ book-side-app {
         .book-card button,
         .library-card button,
         .availability-card,
-        .selected-book {
+        .selected-book,
+        .selected-book-section {
             padding: 14px;
+        }
+
+        .book-thumb {
+            width: 64px;
+            height: 94px;
+            border-radius: 10px;
         }
 
         .book-title,
@@ -496,7 +592,6 @@ book-side-app {
         .selected-library-chip {
             flex-wrap: wrap;
             align-items: flex-start;
-            padding: 10px;
         }
 
         .availability-top {

@@ -53,6 +53,7 @@ function searchBookSideBooks(params) {
             items: data.items.map((item) => ({
                 title: item.title,
                 author: item.author,
+                image: item.image,
                 publisher: item.publisher,
                 pubdate: item.pubdate,
                 isbn: item.isbn,

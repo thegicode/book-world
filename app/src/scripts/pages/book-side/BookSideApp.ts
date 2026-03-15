@@ -8,6 +8,9 @@ type TAvailabilityState = {
     error?: string;
 };
 
+const BOOK_THUMBNAIL_PLACEHOLDER =
+    "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2280%22%20height%3D%22114%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%20114%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%2280%22%20height%3D%22114%22%20rx%3D%2212%22%20fill%3D%22%23efe5d6%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2210%22%20fill%3D%22%238f7b68%22%3EBOOK%3C%2Ftext%3E%3C%2Fsvg%3E";
+
 export default class BookSideApp extends HTMLElement {
     private static readonly STORAGE_KEY = "book-side:selected-libraries";
     private static readonly RECENT_SEARCHES_KEY = "book-side:recent-searches";
@@ -37,7 +40,7 @@ export default class BookSideApp extends HTMLElement {
     private render() {
         this.innerHTML = `
             <main class="book-side">
-                <section class="hero">
+                <section class="book-side-hero">
                     <h1 class="brand">책곁</h1>
                     <p class="hero-copy">
                         찾고 싶은 책을 고르고, 확인하고 싶은 도서관을 모아서,
@@ -49,9 +52,9 @@ export default class BookSideApp extends HTMLElement {
                         <li><strong>3.</strong> 선택한 도서관별 소장 및 대출 가능 여부 확인</li>
                     </ol>
                 </section>
-                <section class="workspace">
+                <section class="book-side-workspace">
                     <div class="section-stack">
-                        <section class="panel">
+                        <section class="book-search-section">
                             <div class="panel-head">
                                 <div>
                                     <h2>1. 도서 검색</h2>
@@ -74,7 +77,7 @@ export default class BookSideApp extends HTMLElement {
                             <div class="recent-searches"></div>
                             <div class="book-results"></div>
                         </section>
-                        <section class="panel">
+                        <section class="library-selection-section">
                             <div class="panel-head">
                                 <div>
                                     <h2>2. 도서관 선택</h2>
@@ -89,6 +92,7 @@ export default class BookSideApp extends HTMLElement {
                                     }
                                 </div>
                             </div>
+                            <div class="selected-libraries"></div>
                             <form class="search-form" data-role="library-form">
                                 <div class="search-row">
                                     <input
@@ -101,18 +105,15 @@ export default class BookSideApp extends HTMLElement {
                                     <button type="submit" class="submit-button">찾기</button>
                                 </div>
                             </form>
-                            <div class="selected-libraries"></div>
                             <div class="library-results"></div>
                         </section>
                     </div>
-                    <aside class="panel summary-grid">
-                        <section>
-                            <div class="panel-head">
-                                <div>
-                                    <h3>선택한 책</h3>
-                                </div>
+                    <aside class="book-side-summary summary-grid">
+                        <section class="selected-book-section">
+                            <header>
+                                <h3>선택한 책</h3>
                                 <button type="button" class="share-button" data-role="share-link">공유</button>
-                            </div>
+                            </header>
                             <div class="selected-book-panel"></div>
                             ${
                                 this.shareStatusMessage
@@ -120,8 +121,8 @@ export default class BookSideApp extends HTMLElement {
                                     : ""
                             }
                         </section>
-                        <section>
-                            <div class="panel-head">
+                        <section class="availability-section">
+                            <div class="availability-head">
                                 <div>
                                     <h3>3. 대출 가능 조회</h3>
                                     <p class="panel-copy">선택한 책과 도서관 기준으로 결과를 바로 확인합니다.</p>
@@ -131,10 +132,10 @@ export default class BookSideApp extends HTMLElement {
                                     <span>대출 가능만 보기</span>
                                 </label>
                             </div>
-                            <div class="availability-results"></div>
                             <p class="notice">
                                 도서관 API 특성상 소장 여부는 비교적 정확하지만, 대출 가능 상태는 실제와 차이가 있을 수 있습니다.
                             </p>
+                            <div class="availability-results"></div>
                         </section>
                     </aside>
                 </section>
@@ -211,7 +212,8 @@ export default class BookSideApp extends HTMLElement {
 
     private handleClick = (event: Event) => {
         const target = event.target as HTMLElement;
-        const bookButton = target.closest<HTMLButtonElement>("[data-book-index]");
+        const bookButton =
+            target.closest<HTMLButtonElement>("[data-book-index]");
         if (bookButton) {
             const index = Number(bookButton.dataset.bookIndex);
             this.selectedBook = this.bookResults[index] || null;
@@ -332,9 +334,9 @@ export default class BookSideApp extends HTMLElement {
 
         let response: { libraries: TAvailabilityState[] };
         try {
-            response = await this.fetchData<{ libraries: TAvailabilityState[] }>(
-                `/api/book-side/availability?${query.toString()}`,
-            );
+            response = await this.fetchData<{
+                libraries: TAvailabilityState[];
+            }>(`/api/book-side/availability?${query.toString()}`);
         } catch (error) {
             if (currentRequestId !== this.availabilityRequestId) {
                 return;
@@ -397,9 +399,20 @@ export default class BookSideApp extends HTMLElement {
                         return `
                             <li class="book-card">
                                 <button type="button" data-book-index="${index}" aria-pressed="${isSelected}">
-                                    <h3 class="book-title">${this.escapeHtml(this.stripMarkup(book.title))}</h3>
-                                    <p class="book-meta">${this.escapeHtml(this.stripMarkup(book.author || ""))}</p>
-                                    <p class="book-meta">${this.escapeHtml(book.publisher)} · ${this.formatPubdate(book.pubdate)}</p>
+                                    <div class="book-card-layout">
+                                        <img
+                                            class="book-thumb"
+                                            src="${this.escapeAttribute(book.image || BOOK_THUMBNAIL_PLACEHOLDER)}"
+                                            alt="${this.escapeAttribute(this.stripMarkup(book.title))}"
+                                            loading="lazy"
+                                            onerror="this.onerror=null;this.src='${BOOK_THUMBNAIL_PLACEHOLDER}'"
+                                        />
+                                        <div class="book-copy">
+                                            <h3 class="book-title">${this.escapeHtml(this.stripMarkup(book.title))}</h3>
+                                            <p class="book-meta">${this.escapeHtml(this.stripMarkup(book.author || ""))}</p>
+                                            <p class="book-meta">${this.escapeHtml(book.publisher)} · ${this.formatPubdate(book.pubdate)}</p>
+                                        </div>
+                                    </div>
                                 </button>
                             </li>
                         `;
@@ -645,7 +658,9 @@ export default class BookSideApp extends HTMLElement {
     }
 
     private readKeyword(form: HTMLFormElement) {
-        const input = form.querySelector<HTMLInputElement>('input[name="keyword"]');
+        const input = form.querySelector<HTMLInputElement>(
+            'input[name="keyword"]',
+        );
         return input?.value.trim() || "";
     }
 
@@ -669,16 +684,17 @@ export default class BookSideApp extends HTMLElement {
 
     private restoreRecentSearches() {
         try {
-            const stored = localStorage.getItem(BookSideApp.RECENT_SEARCHES_KEY);
+            const stored = localStorage.getItem(
+                BookSideApp.RECENT_SEARCHES_KEY,
+            );
             if (!stored) {
                 return;
             }
 
             const parsed = JSON.parse(stored) as string[];
-            this.recentSearches = parsed.filter(Boolean).slice(
-                0,
-                BookSideApp.RECENT_SEARCH_LIMIT,
-            );
+            this.recentSearches = parsed
+                .filter(Boolean)
+                .slice(0, BookSideApp.RECENT_SEARCH_LIMIT);
         } catch (error) {
             console.error("Failed to restore recent searches", error);
         }
@@ -714,7 +730,9 @@ export default class BookSideApp extends HTMLElement {
         const params = new URLSearchParams(window.location.search);
         const bookKeyword = this.readKeywordFromRole("book-form");
         const isbn13 = this.selectedBook
-            ? this.extractIsbn13(this.selectedBook.isbn13 || this.selectedBook.isbn)
+            ? this.extractIsbn13(
+                  this.selectedBook.isbn13 || this.selectedBook.isbn,
+              )
             : "";
 
         if (bookKeyword) {
@@ -743,7 +761,9 @@ export default class BookSideApp extends HTMLElement {
     }
 
     private readKeywordFromRole(role: string) {
-        const form = this.querySelector<HTMLFormElement>(`[data-role="${role}"]`);
+        const form = this.querySelector<HTMLFormElement>(
+            `[data-role="${role}"]`,
+        );
         return form ? this.readKeyword(form) : "";
     }
 

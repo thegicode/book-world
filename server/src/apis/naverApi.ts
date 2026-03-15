@@ -55,6 +55,7 @@ export async function searchBookSideBooks(params: NaverBookSearchParams) {
         items: data.items.map((item: Record<string, string>) => ({
             title: item.title,
             author: item.author,
+            image: item.image,
             publisher: item.publisher,
             pubdate: item.pubdate,
             isbn: item.isbn,
