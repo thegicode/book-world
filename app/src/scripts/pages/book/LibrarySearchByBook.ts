@@ -4,7 +4,8 @@ import bookModel from "@/model";
 
 export default class LibrarySearchByBook extends HTMLElement {
     protected librarySearchByBookContainer: HTMLElement | null = null;
-    protected librarySearchByBookItemTemplate: HTMLTemplateElement | null = null;
+    protected librarySearchByBookItemTemplate: HTMLTemplateElement | null =
+        null;
     protected feedbackElement: HTMLElement | null = null;
 
     constructor() {
@@ -13,13 +14,21 @@ export default class LibrarySearchByBook extends HTMLElement {
 
     connectedCallback() {
         setTimeout(async () => {
-            this.librarySearchByBookContainer = this.querySelector(".library-search-by-book");
+            this.librarySearchByBookContainer = this.querySelector(
+                ".library-search-by-book",
+            );
             if (!this.librarySearchByBookContainer) {
-                console.error("LibrarySearchByBook: Container .library-search-by-book not found");
+                console.error(
+                    "LibrarySearchByBook: Container .library-search-by-book not found",
+                );
             }
-            
-            this.librarySearchByBookItemTemplate = document.querySelector("#tp-librarySearchByBookItem");
-            this.feedbackElement = this.querySelector(".library-search-feedback");
+
+            this.librarySearchByBookItemTemplate = document.querySelector(
+                "#tp-librarySearchByBookItem",
+            );
+            this.feedbackElement = this.querySelector(
+                ".library-search-feedback",
+            );
 
             const params = new URLSearchParams(location.search);
             const isbn = params.get("isbn") as string;
@@ -42,27 +51,34 @@ export default class LibrarySearchByBook extends HTMLElement {
         }, 0);
     }
 
-    protected async fetchSpecificLibrary(isbn: string, libCode: string): Promise<void> {
+    protected async fetchSpecificLibrary(
+        isbn: string,
+        libCode: string,
+    ): Promise<void> {
         try {
-            const response = await CustomFetch.fetch<IApiResponse<{
-                libName: string;
-                homepage: string;
-                address: string;
-                tel: string;
-            }>>(`/api/library-detail?libCode=${libCode}`);
-            
-            if (response.status === 'success' && response.data) {
+            const response = await CustomFetch.fetch<
+                IApiResponse<{
+                    libName: string;
+                    homepage: string;
+                    address: string;
+                    tel: string;
+                }>
+            >(`/api/library-detail?libCode=${libCode}`);
+
+            if (response.status === "success" && response.data) {
                 const { libName, homepage, address, tel } = response.data;
                 const dummyResult: ILibrarySearchByBookResult = {
-                    libraries: [{
-                        libCode,
-                        libName,
-                        homepage,
-                        address: address || '',
-                        tel: tel || '',
-                    }]
+                    libraries: [
+                        {
+                            libCode,
+                            libName,
+                            homepage,
+                            address: address || "",
+                            tel: tel || "",
+                        },
+                    ],
                 };
-                
+
                 this.render(dummyResult, isbn);
             }
         } catch (error) {
@@ -75,13 +91,14 @@ export default class LibrarySearchByBook extends HTMLElement {
 
         if (libraries.length === 0) {
             if (this.feedbackElement) {
-                this.feedbackElement.textContent = "즐겨찾기한 도서관이 없습니다.";
+                this.feedbackElement.textContent =
+                    "즐겨찾기한 도서관이 없습니다.";
             }
             return;
         }
 
         const result: ILibrarySearchByBookResult = {
-            libraries: libraries
+            libraries: libraries,
         };
 
         this.render(result, isbn);
@@ -89,7 +106,7 @@ export default class LibrarySearchByBook extends HTMLElement {
 
     protected render(
         { libraries }: ILibrarySearchByBookResult,
-        isbn: string
+        isbn: string,
     ): void {
         if (libraries.length < 1) return;
 
@@ -103,8 +120,8 @@ export default class LibrarySearchByBook extends HTMLElement {
                         isbn,
                         homepage,
                         libCode,
-                        libName
-                    ) as HTMLElement
+                        libName,
+                    ) as HTMLElement,
             )
             .forEach((element) => fragment.appendChild(element));
 
@@ -119,7 +136,7 @@ export default class LibrarySearchByBook extends HTMLElement {
         isbn: string,
         homepage: string | undefined,
         libCode: string,
-        libName: string
+        libName: string,
     ) {
         const template = this.librarySearchByBookItemTemplate;
         if (!template) return null;
@@ -140,30 +157,42 @@ export default class LibrarySearchByBook extends HTMLElement {
     protected async loanAvailable(
         isbn: string,
         libCode: string,
-        el: HTMLElement
+        el: HTMLElement,
     ) {
         try {
             const { hasBook, loanAvailable } = await this.fetchLoadnAvailabilty(
                 isbn,
-                libCode
+                libCode,
             );
             const hasBookEl = el.querySelector(".hasBook");
-            const isAvailableEl = el.querySelector(".loanAvailable");
+            const isAvailableEl = el.querySelector(
+                ".loanAvailable",
+            ) as HTMLElement;
             if (hasBookEl) {
                 hasBookEl.textContent = hasBook === "Y" ? "소장" : "미소장";
             }
+
+            const isLoanAvailable = loanAvailable === "Y";
             if (isAvailableEl) {
-                const isLoanAvailable = loanAvailable === "Y";
                 isAvailableEl.textContent = isLoanAvailable
-                    ? "대출 가능"
+                    ? "대출 가능(상태 확인필요)"
                     : "대출 불가";
+
                 if (isLoanAvailable) {
-                    el.dataset.available = "true";
+                    isAvailableEl.classList.add("available");
                 }
+            }
+
+            // Add notice if not already present
+            if (!this.querySelector(".loan-notice")) {
+                const notice = document.createElement("p");
+                notice.className = "loan-notice";
+                notice.textContent =
+                    "※ 도서 소장 여부는 정확하나, 실시간 대출 상태는 도서관 시스템 연동 지연으로 인해 실제와 다를 수 있습니다. 방문 전 홈페이지에서 재확인 권장드립니다.";
+                this.appendChild(notice);
             }
         } catch (error) {
             console.warn(`Failed to check availability for ${libCode}`, error);
-            // Optionally update UI to show check failed
         }
     }
 

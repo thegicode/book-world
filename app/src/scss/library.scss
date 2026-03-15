@@ -130,6 +130,15 @@ app-library-detail {
         flex: 1;
         position: relative;
         border-top: 1px solid #ecf7f5;
+
+        .search-notice {
+            padding: 10px;
+            border-bottom: 1px dashed #ddd;
+            font-size: 0.8rem;
+            color: #777;
+            line-height: 1.5;
+            background-color: #fcfcfc;
+        }
         
         ul {
             list-style: none;

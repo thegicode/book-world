@@ -61,7 +61,7 @@ export default class LibraryBookExist extends HTMLElement {
         const loanAvailableText =
             hasBook === "Y"
                 ? loanAvailable === "Y"
-                    ? "| 대출가능"
+                    ? "| 대출가능(상태 확인필요)"
                     : "| 대출불가"
                 : "";
 

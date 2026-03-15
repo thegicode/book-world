@@ -188,6 +188,14 @@ export default class LibraryDetail extends HTMLElement {
         });
         list.appendChild(fragment);
 
+        // Add notice after the first search result render
+        if (!this.searchResultsContainer.querySelector('.search-notice')) {
+            const notice = document.createElement('div');
+            notice.className = 'search-notice';
+            notice.innerHTML = '※ 도서 소장 여부는 정확하나, 실시간 대출 상태는 도서관 시스템 연동 지연으로 인해 실제와 다를 수 있습니다. 방문 전 홈페이지에서 재확인 권장드립니다.';
+            this.searchResultsContainer.insertBefore(notice, list);
+        }
+
         // Update sentinel position
         if (!this.sentinel) {
             this.sentinel = document.createElement('div');
@@ -240,7 +248,7 @@ export default class LibraryDetail extends HTMLElement {
         
         if (statusEl && book.loanAvailable) {
             if (book.loanAvailable === 'Y') {
-                statusEl.textContent = '대출 가능';
+                statusEl.textContent = '대출 가능(상태 확인필요)';
                 statusEl.className = 'loan-status available';
             } else if (book.loanAvailable === 'N') {
                 statusEl.textContent = '대출 중';
