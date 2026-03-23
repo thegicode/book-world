@@ -55,18 +55,16 @@ book-side-app {
     }
 
     .flow-steps {
-        display: grid;
-        gap: 8px;
-        margin: 18px 0 0;
+        display: flex;
+        flex-direction: column;
+        margin: 14px 0 0;
         padding: 0;
         list-style: none;
         font-size: 0.92rem;
         color: #5b4a39;
 
         li {
-            padding: 10px 12px;
-            border-radius: 14px;
-            background: rgba(255, 248, 238, 0.75);
+            padding: 5px 10px;
         }
 
         strong {
@@ -114,7 +112,6 @@ book-side-app {
         letter-spacing: -0.03em;
     }
 
-    .panel-head,
     .availability-head {
         display: flex;
         justify-content: space-between;
@@ -123,14 +120,14 @@ book-side-app {
         margin-bottom: 14px;
     }
 
-    .library-selection-section .panel-head {
-        align-items: start;
-    }
-
     .book-search-section,
     .library-selection-section,
     .availability-section {
         position: relative;
+    }
+
+    .book-search-section header {
+        margin-bottom: 5px;
     }
 
     .panel-copy {
@@ -145,9 +142,12 @@ book-side-app {
     }
 
     .panel-actions {
-        display: inline-flex;
-        gap: 8px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        width: 100%;
         align-items: center;
+        margin-bottom: 5px;
     }
 
     .clear-button {
@@ -231,7 +231,7 @@ book-side-app {
         border-radius: 14px;
         background: #3c6e52;
         color: #fffdf8;
-        font-size: 0.95rem;
+        font-size: 0.82rem;
         cursor: pointer;
     }
 
@@ -279,7 +279,7 @@ book-side-app {
     }
 
     .book-card {
-        margin-bottom: 7px;
+        margin-bottom: 5px;
     }
 
     .book-card button,
@@ -489,13 +489,8 @@ book-side-app {
         }
 
         .flow-steps {
-            gap: 6px;
-            margin-top: 14px;
+            margin-top: 10px;
             font-size: 0.86rem;
-
-            li {
-                padding: 9px 10px;
-            }
         }
 
         .book-side-workspace,
@@ -512,17 +507,10 @@ book-side-app {
             border-radius: 18px;
         }
 
-        .panel-head,
-        .availability-head,
-        .selected-book-section header {
+        .availability-head {
             flex-direction: column;
             align-items: flex-start;
             gap: 10px;
-        }
-
-        .panel-actions {
-            width: 100%;
-            justify-content: space-between;
         }
 
         .search-row {

@@ -27,16 +27,20 @@ export default class NavGnb extends HTMLElement {
 
         this.sizeElement = this.querySelector(".size") as HTMLElement;
 
-        bookModel.getPublisher(BookModelEvent.FavoriteBookUpdate)
+        bookModel
+            .getPublisher(BookModelEvent.FavoriteBookUpdate)
             .subscribe(this.renderBookSize);
-        bookModel.getPublisher(BookModelEvent.BookStateUpdate)
+        bookModel
+            .getPublisher(BookModelEvent.BookStateUpdate)
             .subscribe(this.renderBookSize);
     }
 
     disconnectedCallback() {
-        bookModel.getPublisher(BookModelEvent.FavoriteBookUpdate)
+        bookModel
+            .getPublisher(BookModelEvent.FavoriteBookUpdate)
             .unsubscribe(this.renderBookSize);
-        bookModel.getPublisher(BookModelEvent.BookStateUpdate)
+        bookModel
+            .getPublisher(BookModelEvent.BookStateUpdate)
             .unsubscribe(this.renderBookSize);
     }
 
@@ -50,7 +54,7 @@ export default class NavGnb extends HTMLElement {
     protected render() {
         this.innerHTML = `
             <nav class="gnb">
-                <a class="gnb-item" href=".${this.PATHS[0]}">책곁</a>
+                <a class="gnb-item" href=".${this.PATHS[0]}">책</a>
                 <a class="gnb-item" href=".${this.PATHS[1]}">책 검색</a>
                 <a class="gnb-item" href=".${this.PATHS[2]}">나의 책 (<span class="size">${this.bookSize}</span>)</a>
                 <a class="gnb-item" href=".${this.PATHS[3]}">인기대출도서</a>
@@ -62,7 +66,10 @@ export default class NavGnb extends HTMLElement {
     protected setSelectedMenu(): void {
         const index = this.PATHS.indexOf(document.location.pathname);
         if (index >= 0) {
-            this.querySelectorAll("a")[index].setAttribute("aria-current", "page");
+            this.querySelectorAll("a")[index].setAttribute(
+                "aria-current",
+                "page",
+            );
         }
     }
 

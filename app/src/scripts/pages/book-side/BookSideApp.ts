@@ -27,6 +27,7 @@ export default class BookSideApp extends HTMLElement {
     private initialSelectedIsbn13 = "";
     private shareStatusMessage = "";
     private recentSearches: string[] = [];
+    private desktopLayoutQuery = window.matchMedia("(min-width: 640px)");
 
     connectedCallback() {
         this.restoreUrlState();
@@ -34,6 +35,10 @@ export default class BookSideApp extends HTMLElement {
         this.restoreRecentSearches();
         this.render();
         this.bindEvents();
+        this.desktopLayoutQuery.addEventListener(
+            "change",
+            this.handleLayoutChange,
+        );
         this.restoreInitialBookSearch();
     }
 
@@ -41,12 +46,12 @@ export default class BookSideApp extends HTMLElement {
         this.innerHTML = `
             <main class="book-side">
                 <section class="book-side-hero">
-                    <h1 class="brand">책곁</h1>
+                    <h1 class="brand">책</h1>
                     <p class="hero-copy">
                         찾고 싶은 책을 고르고, 확인하고 싶은 도서관을 모아서,
                         소장 여부와 대출 가능 상태를 한 화면에서 확인합니다.
                     </p>
-                    <ol class="flow-steps" aria-label="책곁 이용 단계">
+                    <ol class="flow-steps" aria-label="책 이용 단계">
                         <li><strong>1.</strong> 책 검색 후 결과에서 한 권 선택</li>
                         <li><strong>2.</strong> 도서관 검색 후 조회할 도서관 추가</li>
                         <li><strong>3.</strong> 선택한 도서관별 소장 및 대출 가능 여부 확인</li>
@@ -55,12 +60,10 @@ export default class BookSideApp extends HTMLElement {
                 <section class="book-side-workspace">
                     <div class="section-stack">
                         <section class="book-search-section">
-                            <div class="panel-head">
-                                <div>
+                            <header class="panel-head">
                                     <h2>1. 도서 검색</h2>
                                     <p class="panel-copy">네이버 도서 검색 결과에서 조회할 책을 먼저 고릅니다.</p>
-                                </div>
-                            </div>
+                            </header>
                             <form class="search-form" data-role="book-form">
                                 <div class="search-row">
                                     <input
@@ -79,10 +82,10 @@ export default class BookSideApp extends HTMLElement {
                         </section>
                         <section class="library-selection-section">
                             <div class="panel-head">
-                                <div>
+                                <header>
                                     <h2>2. 도서관 선택</h2>
                                     <p class="panel-copy">책을 고른 뒤 도서관명을 검색해서 조회 대상에 추가합니다.</p>
-                                </div>
+                                </header>
                                 <div class="panel-actions">
                                     <span class="inline-label">선택 ${this.selectedLibraries.size}곳</span>
                                     ${
@@ -148,6 +151,7 @@ export default class BookSideApp extends HTMLElement {
         this.renderSelectedLibraries();
         this.renderSelectedBook();
         this.renderAvailability();
+        this.updateSelectedBookPlacement();
     }
 
     private bindEvents() {
@@ -172,6 +176,43 @@ export default class BookSideApp extends HTMLElement {
             this.handleLibrarySearch,
         );
         this.removeEventListener("click", this.handleClick);
+        this.desktopLayoutQuery.removeEventListener(
+            "change",
+            this.handleLayoutChange,
+        );
+    }
+
+    private handleLayoutChange = () => {
+        this.updateSelectedBookPlacement();
+    };
+
+    private updateSelectedBookPlacement() {
+        const selectedBookSection = this.querySelector(
+            ".selected-book-section",
+        );
+        const sectionStack = this.querySelector(".section-stack");
+        const librarySelectionSection = this.querySelector(
+            ".library-selection-section",
+        );
+        const summary = this.querySelector(".book-side-summary");
+        const availabilitySection = this.querySelector(".availability-section");
+
+        if (
+            !selectedBookSection ||
+            !sectionStack ||
+            !librarySelectionSection ||
+            !summary ||
+            !availabilitySection
+        ) {
+            return;
+        }
+
+        if (this.desktopLayoutQuery.matches) {
+            summary.insertBefore(selectedBookSection, availabilitySection);
+            return;
+        }
+
+        sectionStack.insertBefore(selectedBookSection, librarySelectionSection);
     }
 
     private handleBookSearch = async (event: Event) => {
@@ -530,11 +571,20 @@ export default class BookSideApp extends HTMLElement {
         }
 
         container.innerHTML = `
-            <div class="selected-book">
-                <h4>${this.escapeHtml(this.stripMarkup(this.selectedBook.title))}</h4>
-                <p>${this.escapeHtml(this.stripMarkup(this.selectedBook.author || ""))}</p>
-                <p>${this.escapeHtml(this.selectedBook.publisher)} · ${this.formatPubdate(this.selectedBook.pubdate)}</p>
-                <p>ISBN13 ${this.escapeHtml(this.extractIsbn13(this.selectedBook.isbn) || "정보 없음")}</p>
+            <div class="selected-book book-card-layout">
+                <img
+                    class="book-thumb"
+                    src="${this.escapeAttribute(this.selectedBook.image || BOOK_THUMBNAIL_PLACEHOLDER)}"
+                    alt="${this.escapeAttribute(this.stripMarkup(this.selectedBook.title))}"
+                    loading="lazy"
+                    onerror="this.onerror=null;this.src='${BOOK_THUMBNAIL_PLACEHOLDER}'"
+                />
+                <div class="book-copy">
+                    <h4 class="book-title">${this.escapeHtml(this.stripMarkup(this.selectedBook.title))}</h4>
+                    <p class="book-meta">${this.escapeHtml(this.stripMarkup(this.selectedBook.author || ""))}</p>
+                    <p class="book-meta">${this.escapeHtml(this.selectedBook.publisher)} · ${this.formatPubdate(this.selectedBook.pubdate)}</p>
+                    <p class="book-meta">ISBN13 ${this.escapeHtml(this.extractIsbn13(this.selectedBook.isbn) || "정보 없음")}</p>
+                </div>
             </div>
         `;
     }
