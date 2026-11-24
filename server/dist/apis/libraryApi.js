@@ -129,12 +129,27 @@ function getLibraryDetail(params) {
     });
 }
 exports.getLibraryDetail = getLibraryDetail;
+function cleanIsbn(isbn) {
+    if (!isbn)
+        return "";
+    const parts = isbn.trim().split(/\s+/);
+    const isbn13 = parts.find((v) => /^\d{13}$/.test(v));
+    if (isbn13)
+        return isbn13;
+    const isbn10 = parts.find((v) => /^\d{9}[\dX]$/i.test(v));
+    if (isbn10)
+        return isbn10;
+    return isbn.replace(/[^\dX]/gi, "");
+}
 function checkBookAvailability(params) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const url = parseURL("bookExist", params);
+        const formattedIsbn = cleanIsbn(params.isbn13);
+        const url = parseURL("bookExist", Object.assign(Object.assign({}, params), { isbn13: formattedIsbn }));
         const data = yield (0, apiUtils_1.fetchData)(url);
-        if (!data.response)
-            throw new apiErrors_1.LibraryApiError(502, "Invalid API response from library server");
+        if (!data.response || !data.response.result) {
+            throw new apiErrors_1.LibraryApiError(502, ((_a = data.response) === null || _a === void 0 ? void 0 : _a.error) || "Invalid API response from library server");
+        }
         return data.response.result;
     });
 }
@@ -147,6 +162,7 @@ function checkBookAvailabilityBatch(params) {
             return cached;
         }
         const libraries = yield Promise.all(params.libCodes.map((libCode) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             try {
                 const [availability, detail] = yield Promise.all([
                     checkBookAvailability({
@@ -160,12 +176,12 @@ function checkBookAvailabilityBatch(params) {
                     libName: detail.libName,
                     address: detail.address,
                     homepage: detail.homepage,
-                    hasBook: availability.hasBook,
-                    loanAvailable: availability.loanAvailable,
+                    hasBook: (_a = availability === null || availability === void 0 ? void 0 : availability.hasBook) !== null && _a !== void 0 ? _a : "N",
+                    loanAvailable: (_b = availability === null || availability === void 0 ? void 0 : availability.loanAvailable) !== null && _b !== void 0 ? _b : "N",
                 };
             }
             catch (error) {
-                console.error(`Failed to check book availability for library ${libCode}`, error);
+                console.error(`Failed to check book availability for library ${libCode}:`, error instanceof Error ? error.message : error);
                 const detail = yield getLibraryDetail({ libCode }).catch(() => ({
                     libCode,
                     libName: libCode,

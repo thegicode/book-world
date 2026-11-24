@@ -34,9 +34,20 @@ export default class AppBookSearchLibrary extends HTMLElement {
         this.fetchLibraryData();
     }
 
+    private cleanIsbn(isbn: string): string {
+        if (!isbn) return "";
+        const parts = isbn.trim().split(/\s+/);
+        const isbn13 = parts.find((v) => /^\d{13}$/.test(v));
+        if (isbn13) return isbn13;
+        const isbn10 = parts.find((v) => /^\d{9}[\dX]$/i.test(v));
+        if (isbn10) return isbn10;
+        return isbn.replace(/[^\dX]/gi, "");
+    }
+
     private parseQueryParams() {
         const urlParams = new URLSearchParams(window.location.search);
-        this.isbn = urlParams.get("isbn") || "9791161571188";
+        const rawIsbn = urlParams.get("isbn") || "9791161571188";
+        this.isbn = this.cleanIsbn(rawIsbn);
         this.bookTitle = urlParams.get("title") || "불편한 편의점";
         this.author = urlParams.get("author") || "김호연";
         this.publisher = urlParams.get("publisher") || "나무옆의자";

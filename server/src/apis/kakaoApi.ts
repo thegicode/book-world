@@ -33,7 +33,13 @@ export interface BookItem {
 }
 
 function extractIsbn13(isbn: string) {
-    return isbn.split(/\s+/).find((value) => /^\d{13}$/.test(value)) || "";
+    if (!isbn) return "";
+    const parts = isbn.trim().split(/\s+/);
+    const isbn13 = parts.find((value) => /^\d{13}$/.test(value));
+    if (isbn13) return isbn13;
+    const isbn10 = parts.find((value) => /^\d{9}[\dX]$/i.test(value));
+    if (isbn10) return isbn10;
+    return isbn.replace(/[^\dX]/gi, "");
 }
 
 export async function searchKakaoBooks(params: BookSearchParams) {
@@ -53,16 +59,20 @@ export async function searchKakaoBooks(params: BookSearchParams) {
     );
 
     const total = data.meta?.total_count || 0;
-    const items: BookItem[] = (data.documents || []).map((doc: Record<string, any>) => ({
-        title: doc.title || "",
-        link: doc.url || "",
-        image: doc.thumbnail || "",
-        author: Array.isArray(doc.authors) ? doc.authors.join(", ") : (doc.authors || ""),
-        publisher: doc.publisher || "",
-        pubdate: doc.datetime ? doc.datetime.substring(0, 10).replace(/-/g, "") : "",
-        isbn: doc.isbn || "",
-        description: doc.contents || "",
-    }));
+    const items: BookItem[] = (data.documents || []).map((doc: Record<string, any>) => {
+        const rawIsbn = doc.isbn || "";
+        const cleanIsbn = extractIsbn13(rawIsbn);
+        return {
+            title: doc.title || "",
+            link: doc.url || "",
+            image: doc.thumbnail || "",
+            author: Array.isArray(doc.authors) ? doc.authors.join(", ") : (doc.authors || ""),
+            publisher: doc.publisher || "",
+            pubdate: doc.datetime ? doc.datetime.substring(0, 10).replace(/-/g, "") : "",
+            isbn: cleanIsbn || rawIsbn,
+            description: doc.contents || "",
+        };
+    });
 
     return { total, start: startIndex, display: displayCount, items };
 }

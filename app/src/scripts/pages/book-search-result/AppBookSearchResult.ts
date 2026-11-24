@@ -174,14 +174,25 @@ export default class AppBookSearchResult extends HTMLElement {
         }
     }
 
+    private cleanIsbn(isbn: string): string {
+        if (!isbn) return "";
+        const parts = isbn.trim().split(/\s+/);
+        const isbn13 = parts.find((v) => /^\d{13}$/.test(v));
+        if (isbn13) return isbn13;
+        const isbn10 = parts.find((v) => /^\d{9}[\dX]$/i.test(v));
+        if (isbn10) return isbn10;
+        return isbn.replace(/[^\dX]/gi, "");
+    }
+
     private renderBookCardHtml(book: KakaoBookItem): string {
         const pubYear = book.pubdate ? book.pubdate.substring(0, 4) : "";
         const pubText = [book.publisher, pubYear].filter(Boolean).join(" · ");
-        const isbnText = book.isbn ? `ISBN ${book.isbn}` : "";
+        const cleanIsbnValue = this.cleanIsbn(book.isbn);
+        const isbnText = cleanIsbnValue ? `ISBN ${cleanIsbnValue}` : "";
         const coverImg = book.image || "/assets/images/favicon.ico";
 
         return `
-            <article class="book-card" style="cursor: pointer;" data-isbn="${book.isbn}" data-title="${this.escapeHtml(book.title)}" data-author="${this.escapeHtml(book.author)}" data-publisher="${this.escapeHtml(book.publisher)}" data-pubdate="${book.pubdate}" data-image="${encodeURIComponent(coverImg)}">
+            <article class="book-card" style="cursor: pointer;" data-isbn="${cleanIsbnValue}" data-title="${this.escapeHtml(book.title)}" data-author="${this.escapeHtml(book.author)}" data-publisher="${this.escapeHtml(book.publisher)}" data-pubdate="${book.pubdate}" data-image="${encodeURIComponent(coverImg)}">
                 <div class="book-cover-wrapper">
                     <img src="${coverImg}" alt="${this.escapeHtml(this.stripHtml(book.title))}" class="book-cover-img" loading="lazy" />
                 </div>

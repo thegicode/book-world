@@ -210,18 +210,30 @@ export async function getLibraryDetail(params: { libCode: string }) {
     return library;
 }
 
+function cleanIsbn(isbn: string): string {
+    if (!isbn) return "";
+    const parts = isbn.trim().split(/\s+/);
+    const isbn13 = parts.find((v) => /^\d{13}$/.test(v));
+    if (isbn13) return isbn13;
+    const isbn10 = parts.find((v) => /^\d{9}[\dX]$/i.test(v));
+    if (isbn10) return isbn10;
+    return isbn.replace(/[^\dX]/gi, "");
+}
+
 // Check book availability
 export async function checkBookAvailability(params: {
     isbn13: string;
     libCode: string;
 }) {
-    const url = parseURL("bookExist", params);
+    const formattedIsbn = cleanIsbn(params.isbn13);
+    const url = parseURL("bookExist", { ...params, isbn13: formattedIsbn });
     const data = await fetchData(url);
-    if (!data.response)
+    if (!data.response || !data.response.result) {
         throw new LibraryApiError(
             502,
-            "Invalid API response from library server",
+            data.response?.error || "Invalid API response from library server",
         );
+    }
     return data.response.result;
 }
 
@@ -254,13 +266,13 @@ export async function checkBookAvailabilityBatch(params: {
                     libName: detail.libName,
                     address: detail.address,
                     homepage: detail.homepage,
-                    hasBook: availability.hasBook,
-                    loanAvailable: availability.loanAvailable,
+                    hasBook: availability?.hasBook ?? "N",
+                    loanAvailable: availability?.loanAvailable ?? "N",
                 };
             } catch (error) {
                 console.error(
-                    `Failed to check book availability for library ${libCode}`,
-                    error,
+                    `Failed to check book availability for library ${libCode}:`,
+                    error instanceof Error ? error.message : error,
                 );
 
                 const detail = await getLibraryDetail({ libCode }).catch(() => ({
