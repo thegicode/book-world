@@ -13,7 +13,7 @@ const validate = (req: Request, res: Response, next: NextFunction) => {
     throw new ApiError(`Validation Error: ${extractedErrors.join(', ')}`, 400);
 };
 
-export const validateNaverBookSearch = [
+export const validateKakaoBookSearch = [
     query('keyword').notEmpty().withMessage('keyword is required'),
     query('display').notEmpty().withMessage('display is required').isInt({ gt: 0 }).withMessage('display must be a positive integer'),
     query('start').notEmpty().withMessage('start is required').isInt({ gt: 0 }).withMessage('start must be a positive integer'),

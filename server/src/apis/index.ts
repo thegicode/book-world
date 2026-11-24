@@ -1,4 +1,4 @@
-export * from "./naverApi";
+export * from "./kakaoApi";
 export * from "./kyoboApi";
 export {
     searchLibrariesByKeyword,

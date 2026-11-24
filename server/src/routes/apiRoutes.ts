@@ -1,7 +1,7 @@
 import { Application } from "express";
 
 import {
-    searchNaverBook,
+    searchKakaoBook,
     searchBookSideBooks,
     getLibraryDetail,
     checkBookExistence,
@@ -16,7 +16,7 @@ import {
     searchBookSideLibraries,
 } from "../controllers/apiController";
 import {
-    validateNaverBookSearch,
+    validateKakaoBookSearch,
     validateCheckBookExistence,
     validateCheckBookAvailabilityBatch,
     validateGetUsageAnalysis,
@@ -29,8 +29,8 @@ import {
 } from "../middleware/validationMiddleware";
 
 const apiRoutes = (app: Application) => {
-    app.get("/search-naver-book", validateNaverBookSearch, searchNaverBook);
-    app.get("/api/book-side/books", validateNaverBookSearch, searchBookSideBooks);
+    app.get("/search-kakao-book", validateKakaoBookSearch, searchKakaoBook);
+    app.get("/api/book-side/books", validateKakaoBookSearch, searchBookSideBooks);
     app.get("/api/book-side/libraries", validateSearchLibrariesByKeyword, searchBookSideLibraries);
     app.get("/api/book-side/availability", validateCheckBookAvailabilityBatch, checkBookSideAvailabilityBatch);
     app.get("/api/library-search-by-keyword", validateSearchLibrariesByKeyword, searchLibrariesByKeyword);

@@ -15,7 +15,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.searchPopularBooks = exports.searchLibrariesByBook = exports.getBookUsageAnalysis = exports.checkBookAvailabilityBatch = exports.checkBookAvailability = exports.getLibraryDetail = exports.searchBookSideLibrariesByKeyword = exports.searchLibrariesByKeyword = void 0;
-__exportStar(require("./naverApi"), exports);
+__exportStar(require("./kakaoApi"), exports);
 __exportStar(require("./kyoboApi"), exports);
 var libraryApi_1 = require("./libraryApi");
 Object.defineProperty(exports, "searchLibrariesByKeyword", { enumerable: true, get: function () { return libraryApi_1.searchLibrariesByKeyword; } });

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LibraryApiError = exports.KyoboApiError = exports.NaverApiError = exports.UpstreamApiError = exports.MissingParameterError = exports.ApiError = void 0;
+exports.LibraryApiError = exports.KyoboApiError = exports.KakaoApiError = exports.NaverApiError = exports.UpstreamApiError = exports.MissingParameterError = exports.ApiError = void 0;
 class ApiError extends Error {
     constructor(message, statusCode) {
         super(message);
@@ -28,6 +28,12 @@ class NaverApiError extends UpstreamApiError {
     }
 }
 exports.NaverApiError = NaverApiError;
+class KakaoApiError extends UpstreamApiError {
+    constructor(statusCode, statusText) {
+        super("Kakao", statusCode, statusText);
+    }
+}
+exports.KakaoApiError = KakaoApiError;
 class KyoboApiError extends UpstreamApiError {
     constructor(statusCode, statusText) {
         super("Kyobo", statusCode, statusText);

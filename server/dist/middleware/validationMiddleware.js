@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSrchBooksInLibrary = exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookAvailabilityBatch = exports.validateCheckBookExistence = exports.validateSearchLibrariesByKeyword = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateNaverBookSearch = void 0;
+exports.validateSrchBooksInLibrary = exports.validateGetMonthlyKeywords = exports.validateGetPopularBooks = exports.validateSearchLibrariesByBook = exports.validateGetUsageAnalysis = exports.validateCheckBookAvailabilityBatch = exports.validateCheckBookExistence = exports.validateSearchLibrariesByKeyword = exports.validateSearchLibraries = exports.validateKyoboBookInfo = exports.validateKakaoBookSearch = void 0;
 const express_validator_1 = require("express-validator");
 const apiErrors_1 = require("../errors/apiErrors");
 const validate = (req, res, next) => {
@@ -12,7 +12,7 @@ const validate = (req, res, next) => {
     errors.array().map(err => extractedErrors.push(err.msg));
     throw new apiErrors_1.ApiError(`Validation Error: ${extractedErrors.join(', ')}`, 400);
 };
-exports.validateNaverBookSearch = [
+exports.validateKakaoBookSearch = [
     (0, express_validator_1.query)('keyword').notEmpty().withMessage('keyword is required'),
     (0, express_validator_1.query)('display').notEmpty().withMessage('display is required').isInt({ gt: 0 }).withMessage('display must be a positive integer'),
     (0, express_validator_1.query)('start').notEmpty().withMessage('start is required').isInt({ gt: 0 }).withMessage('start must be a positive integer'),

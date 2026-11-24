@@ -1,4 +1,3 @@
-
 export class ApiError extends Error {
     public statusCode: number;
 
@@ -25,6 +24,12 @@ export class UpstreamApiError extends ApiError {
 export class NaverApiError extends UpstreamApiError {
     constructor(statusCode: number, statusText: string) {
         super("Naver", statusCode, statusText);
+    }
+}
+
+export class KakaoApiError extends UpstreamApiError {
+    constructor(statusCode: number, statusText: string) {
+        super("Kakao", statusCode, statusText);
     }
 }
 

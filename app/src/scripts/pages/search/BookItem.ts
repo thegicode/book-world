@@ -79,9 +79,9 @@ export default class BookItem extends BaseItemComponent {
             summaryLinkElement.appendChild(bookImage);
         }
 
-        // Set the link for Naver books
-        const naverLinkEl = this.querySelector(".link") as HTMLAnchorElement;
-        if (naverLinkEl) naverLinkEl.href = link;
+        // Set the link for Kakao book detail
+        const kakaoLinkEl = this.querySelector(".link") as HTMLAnchorElement;
+        if (kakaoLinkEl) kakaoLinkEl.href = link;
 
         // Set the description
         const descriptionEl = this.querySelector(

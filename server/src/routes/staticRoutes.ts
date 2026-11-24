@@ -6,6 +6,8 @@ import { finalBuildPath } from "../config";
 const staticRoutes = (app: Application) => {
     const routes = [
         "",
+        "book-where",
+        "book-search-result",
         "book-side",
         "search",
         "favorite",

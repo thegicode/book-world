@@ -10,42 +10,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.searchBookSideBooks = exports.searchNaverBooks = void 0;
-const apiErrors_1 = require("../errors/apiErrors");
-function fetchNaver(url) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const headers = {
-            "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
-            "X-Naver-Client-Secret": process.env.NAVER_SECRET_KEY,
-        };
-        const response = yield fetch(url, { headers });
-        if (!response.ok) {
-            throw new apiErrors_1.NaverApiError(response.status, response.statusText);
-        }
-        return response.json();
-    });
-}
+const kakaoApi_1 = require("./kakaoApi");
 function extractIsbn13(isbn) {
-    return isbn
-        .split(/\s+/)
-        .find((value) => /^\d{13}$/.test(value)) || "";
+    return isbn.split(/\s+/).find((value) => /^\d{13}$/.test(value)) || "";
 }
 function searchNaverBooks(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        const queryParams = new URLSearchParams({
-            query: params.keyword,
-            display: params.display,
-            start: params.start,
-            sort: params.sort,
-        });
-        const data = yield fetchNaver(`https://openapi.naver.com/v1/search/book.json?${queryParams}`);
-        const { total, start, display, items } = data;
-        return { total, start, display, items };
+        return yield (0, kakaoApi_1.searchKakaoBooks)(params);
     });
 }
 exports.searchNaverBooks = searchNaverBooks;
 function searchBookSideBooks(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        const data = yield searchNaverBooks(params);
+        const data = yield (0, kakaoApi_1.searchKakaoBooks)(params);
         return {
             total: data.total,
             start: data.start,

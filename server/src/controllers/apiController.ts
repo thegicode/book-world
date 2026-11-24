@@ -2,13 +2,13 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import * as BookService from "../apis";
 
-// Naver Book Search
+// Kakao Book Search
 
-export const searchNaverBook = asyncHandler(
+export const searchKakaoBook = asyncHandler(
     async (req: Request, res: Response) => {
         const { keyword, display, start, sort } = req.query as { keyword: string, display: string, start: string, sort: string };
 
-        const books = await BookService.searchNaverBooks({
+        const books = await BookService.searchKakaoBooks({
             keyword: keyword as string,
             display: display as string,
             start: start as string,

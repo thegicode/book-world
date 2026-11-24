@@ -43,12 +43,12 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.getPopularBooks = exports.searchLibrariesByBook = exports.getUsageAnalysis = exports.checkBookSideAvailabilityBatch = exports.checkBookExistence = exports.getLibraryDetail = exports.searchBookSideLibraries = exports.searchLibrariesByKeyword = exports.getKyoboBookInfo = exports.searchBookSideBooks = exports.searchNaverBook = void 0;
+exports.srchBooksInLibrary = exports.getMonthlyKeywords = exports.getPopularBooks = exports.searchLibrariesByBook = exports.getUsageAnalysis = exports.checkBookSideAvailabilityBatch = exports.checkBookExistence = exports.getLibraryDetail = exports.searchBookSideLibraries = exports.searchLibrariesByKeyword = exports.getKyoboBookInfo = exports.searchBookSideBooks = exports.searchKakaoBook = void 0;
 const asyncHandler_1 = require("../utils/asyncHandler");
 const BookService = __importStar(require("../apis"));
-exports.searchNaverBook = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.searchKakaoBook = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { keyword, display, start, sort } = req.query;
-    const books = yield BookService.searchNaverBooks({
+    const books = yield BookService.searchKakaoBooks({
         keyword: keyword,
         display: display,
         start: start,
