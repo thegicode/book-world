@@ -181,7 +181,7 @@ export default class AppBookSearchResult extends HTMLElement {
         const coverImg = book.image || "/assets/images/favicon.ico";
 
         return `
-            <article class="book-card" data-isbn="${book.isbn}">
+            <article class="book-card" style="cursor: pointer;" data-isbn="${book.isbn}" data-title="${this.escapeHtml(book.title)}" data-author="${this.escapeHtml(book.author)}" data-publisher="${this.escapeHtml(book.publisher)}" data-pubdate="${book.pubdate}" data-image="${encodeURIComponent(coverImg)}">
                 <div class="book-cover-wrapper">
                     <img src="${coverImg}" alt="${this.escapeHtml(this.stripHtml(book.title))}" class="book-cover-img" loading="lazy" />
                 </div>
@@ -190,7 +190,7 @@ export default class AppBookSearchResult extends HTMLElement {
                     <div class="book-author">${book.author || "저자 미상"}</div>
                     <div class="book-meta">${pubText}</div>
                     ${isbnText ? `<div class="book-isbn">${isbnText}</div>` : ""}
-                    <button type="button" class="btn-info-check" data-link="${book.link || "#"}">
+                    <button type="button" class="btn-info-check">
                         도서 정보 확인
                     </button>
                 </div>
@@ -228,15 +228,20 @@ export default class AppBookSearchResult extends HTMLElement {
             }
         });
 
-        // 도서 정보 확인 클릭 위임
+        // 도서 클릭 시 도서관 찾는 페이지(book-search-library)로 이동
         const container = this.querySelector("#bookListContainer");
         container?.addEventListener("click", (e) => {
-            const btn = (e.target as HTMLElement).closest(".btn-info-check");
-            if (btn) {
-                const link = btn.getAttribute("data-link");
-                if (link && link !== "#") {
-                    window.open(link, "_blank");
-                }
+            const card = (e.target as HTMLElement).closest(".book-card") as HTMLElement;
+            if (card) {
+                const isbn = card.getAttribute("data-isbn") || "";
+                const title = card.getAttribute("data-title") || "";
+                const author = card.getAttribute("data-author") || "";
+                const publisher = card.getAttribute("data-publisher") || "";
+                const pubdate = card.getAttribute("data-pubdate") || "";
+                const image = card.getAttribute("data-image") || "";
+
+                const targetUrl = `/book-search-library?isbn=${encodeURIComponent(isbn)}&title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}&publisher=${encodeURIComponent(publisher)}&pubdate=${encodeURIComponent(pubdate)}&image=${image}`;
+                window.location.href = targetUrl;
             }
         });
 
