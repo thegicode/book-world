@@ -673,22 +673,28 @@ export default class BookSideApp extends HTMLElement {
 
     private getAvailabilityLabel(item: TAvailabilityState) {
         if (item.error) {
-            return { label: "조회 실패", className: "is-error" };
-        }
-        if (item.loanAvailable === "Y") {
-            return {
-                label: "대출 가능",
-                className: "is-available",
-            };
+            return { label: "확인 필요", className: "is-warning" };
         }
         if (item.hasBook === "Y") {
+            if (item.loanAvailable === "Y") {
+                return {
+                    label: "대출 가능",
+                    className: "is-available",
+                };
+            }
+            if (item.loanAvailable === "N") {
+                return {
+                    label: "대출 중",
+                    className: "is-unavailable",
+                };
+            }
             return {
-                label: "소장 중",
-                className: "is-unavailable",
+                label: "확인 필요",
+                className: "is-warning",
             };
         }
         return {
-            label: "미소장",
+            label: "소장 정보 없음",
             className: "is-missing",
         };
     }

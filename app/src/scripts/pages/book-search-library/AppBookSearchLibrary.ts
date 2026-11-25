@@ -136,7 +136,7 @@ export default class AppBookSearchLibrary extends HTMLElement {
                 address: "서울 강동구 구천면로",
                 homepage: "https://chlib.or.kr",
                 hasBook: "Y",
-                loanAvailable: "Y",
+                loanAvailable: "N",
                 distance: "2.4km",
             },
             {
@@ -145,7 +145,7 @@ export default class AppBookSearchLibrary extends HTMLElement {
                 address: "서울 강동구 올림픽로",
                 homepage: "https://amsalib.or.kr",
                 hasBook: "Y",
-                loanAvailable: "N",
+                loanAvailable: "CHECK",
                 distance: "3.8km",
             },
             {
@@ -250,23 +250,30 @@ export default class AppBookSearchLibrary extends HTMLElement {
     private renderLibraryCardHtml(lib: ILibraryInfo): string {
         const isAvailable = lib.hasBook === "Y" && lib.loanAvailable === "Y";
         const isLoaned = lib.hasBook === "Y" && lib.loanAvailable === "N";
+        const isNeedCheck = lib.hasBook === "Y" && lib.loanAvailable !== "Y" && lib.loanAvailable !== "N";
 
-        let statusClass = "unknown";
-        let statusBadgeText = "대출 상태 확인 불가";
-        let statusTimeText = "소장 정보만 확인";
+        let statusClass = "no-info";
+        let statusBadgeText = "소장 정보 없음";
+        let statusTimeText = "소장 정보 없음";
         let actionRightText = "홈페이지 ↗";
         let actionRightUrl = lib.homepage || "#";
 
         if (isAvailable) {
             statusClass = "available";
             statusBadgeText = "대출 가능";
-            statusTimeText = "확인 10:42";
+            statusTimeText = "대출 가능";
             actionRightText = "길찾기 ↗";
             actionRightUrl = `https://map.kakao.com/link/search/${encodeURIComponent(lib.libName)}`;
         } else if (isLoaned) {
             statusClass = "loaned";
             statusBadgeText = "대출 중";
-            statusTimeText = "소장 확인";
+            statusTimeText = "대출 중";
+            actionRightText = "홈페이지 ↗";
+            actionRightUrl = lib.homepage || "#";
+        } else if (isNeedCheck) {
+            statusClass = "need-check";
+            statusBadgeText = "확인 필요";
+            statusTimeText = "상태 확인 필요";
             actionRightText = "홈페이지 ↗";
             actionRightUrl = lib.homepage || "#";
         }
@@ -275,7 +282,9 @@ export default class AppBookSearchLibrary extends HTMLElement {
             ? `<svg class="status-icon available" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`
             : isLoaned
             ? `<svg class="status-icon loaned" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
-            : `<svg class="status-icon unknown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+            : isNeedCheck
+            ? `<svg class="status-icon need-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="8"></line><line x1="12" y1="12" x2="12" y2="16"></line></svg>`
+            : `<svg class="status-icon no-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
 
         return `
             <article class="library-card">

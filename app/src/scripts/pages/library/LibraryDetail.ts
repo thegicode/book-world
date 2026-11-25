@@ -248,14 +248,17 @@ export default class LibraryDetail extends HTMLElement {
         
         if (statusEl && book.loanAvailable) {
             if (book.loanAvailable === 'Y') {
-                statusEl.textContent = '대출 가능(상태 확인필요)';
+                statusEl.textContent = '대출 가능';
                 statusEl.className = 'loan-status available';
             } else if (book.loanAvailable === 'N') {
                 statusEl.textContent = '대출 중';
                 statusEl.className = 'loan-status loaned';
+            } else if (book.loanAvailable === 'CHECK') {
+                statusEl.textContent = '확인 필요';
+                statusEl.className = 'loan-status need-check';
             } else {
-                statusEl.textContent = '상태 알 수 없음';
-                statusEl.className = 'loan-status error';
+                statusEl.textContent = '소장 정보 없음';
+                statusEl.className = 'loan-status no-info';
             }
         }
 

@@ -172,14 +172,19 @@ export default class LibrarySearchByBook extends HTMLElement {
                 hasBookEl.textContent = hasBook === "Y" ? "소장" : "미소장";
             }
 
-            const isLoanAvailable = loanAvailable === "Y";
             if (isAvailableEl) {
-                isAvailableEl.textContent = isLoanAvailable
-                    ? "대출 가능(상태 확인필요)"
-                    : "대출 불가";
-
-                if (isLoanAvailable) {
-                    isAvailableEl.classList.add("available");
+                if (hasBook === "N") {
+                    isAvailableEl.textContent = "소장 정보 없음";
+                    isAvailableEl.className = "loanAvailable no-info";
+                } else if (loanAvailable === "Y") {
+                    isAvailableEl.textContent = "대출 가능";
+                    isAvailableEl.className = "loanAvailable available";
+                } else if (loanAvailable === "N") {
+                    isAvailableEl.textContent = "대출 중";
+                    isAvailableEl.className = "loanAvailable loaned";
+                } else {
+                    isAvailableEl.textContent = "확인 필요";
+                    isAvailableEl.className = "loanAvailable need-check";
                 }
             }
 

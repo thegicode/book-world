@@ -58,12 +58,18 @@ export default class LibraryBookExist extends HTMLElement {
         // 대출 가능여부는 조회일 기준 전날의 대출 상태를 기준으로 제공
         const { libName, homepage } = libData;
 
-        const loanAvailableText =
-            hasBook === "Y"
-                ? loanAvailable === "Y"
-                    ? "| 대출가능(상태 확인필요)"
-                    : "| 대출불가"
-                : "";
+        let loanAvailableText = "";
+        if (hasBook === "Y") {
+            if (loanAvailable === "Y") {
+                loanAvailableText = "| 대출 가능";
+            } else if (loanAvailable === "N") {
+                loanAvailableText = "| 대출 중";
+            } else {
+                loanAvailableText = "| 확인 필요";
+            }
+        } else {
+            loanAvailableText = "| 소장 정보 없음";
+        }
 
         const element = this.querySelectorAll(".library-item")[
             index

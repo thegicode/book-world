@@ -16,10 +16,12 @@
     /* Status badge colors */
     --badge-available-bg: #e8f5e9;
     --badge-available-text: #2e7d32;
-    --badge-loaned-bg: #fbe9e7;
-    --badge-loaned-text: #d84315;
-    --badge-unknown-bg: #eeeeee;
-    --badge-unknown-text: #616161;
+    --badge-loaned-bg: #f5f5f0;
+    --badge-loaned-text: #616161;
+    --badge-need-check-bg: #fff8e1;
+    --badge-need-check-text: #b78103;
+    --badge-no-info-bg: #eceff1;
+    --badge-no-info-text: #78909c;
 }
 
 html, body {
@@ -280,10 +282,13 @@ app-book-search-library {
                         color: #2e7d32;
                     }
                     &.loaned {
-                        color: #d84315;
+                        color: #616161;
                     }
-                    &.unknown {
-                        color: #757575;
+                    &.need-check {
+                        color: #b78103;
+                    }
+                    &.no-info {
+                        color: #78909c;
                     }
                 }
 
@@ -323,10 +328,16 @@ app-book-search-library {
                     &.loaned {
                         background-color: var(--badge-loaned-bg);
                         color: var(--badge-loaned-text);
+                        border: 1px solid #e0e0e0;
                     }
-                    &.unknown {
-                        background-color: var(--badge-unknown-bg);
-                        color: var(--badge-unknown-text);
+                    &.need-check {
+                        background-color: var(--badge-need-check-bg);
+                        color: var(--badge-need-check-text);
+                        border: 1px solid #ffe082;
+                    }
+                    &.no-info {
+                        background-color: var(--badge-no-info-bg);
+                        color: var(--badge-no-info-text);
                     }
                 }
             }
