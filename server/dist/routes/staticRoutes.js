@@ -22,6 +22,7 @@ const staticRoutes = (app) => {
         "book",
         "popular",
         "setting",
+        "book-where-setting",
     ];
     routes.forEach((route) => {
         app.get(`/${route}`, (req, res) => {

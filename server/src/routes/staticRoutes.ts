@@ -19,6 +19,7 @@ const staticRoutes = (app: Application) => {
         "book",
         "popular",
         "setting",
+        "book-where-setting",
     ];
 
     routes.forEach((route) => {
