@@ -1,0 +1,371 @@
+@use "./base/reset";
+@use "./components/toast";
+
+:root {
+    --bg-color: #f5f5f0;
+    --card-bg: #ffffff;
+    --text-primary: #1e211e;
+    --text-secondary: #585d56;
+    --text-muted: #8d9289;
+    --brand-green: #38634a;
+    --brand-green-hover: #2d5240;
+    --brand-green-light: #e8eee6;
+    --border-color: #e5e7e1;
+    --line-color: #f1f2ec;
+
+    /* Status badge colors */
+    --badge-available-bg: #e8f5e9;
+    --badge-available-text: #2e7d32;
+    --badge-loaned-bg: #f5f5f0;
+    --badge-loaned-text: #616161;
+    --badge-need-check-bg: #fff8e1;
+    --badge-need-check-text: #b78103;
+    --badge-no-info-bg: #eceff1;
+    --badge-no-info-text: #78909c;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    position: relative;
+}
+
+app-book-where-library {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 18px 32px 18px;
+    box-sizing: border-box;
+    position: relative;
+
+    .library-info-view {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: transform 0.15s ease;
+
+            &:active {
+                transform: scale(0.9);
+            }
+
+            svg {
+                width: 22px;
+                height: 22px;
+            }
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+    }
+
+    /* Image Gallery Banner */
+    .gallery-container {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        margin-bottom: 16px;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gallery-item {
+            flex: 0 0 160px;
+            height: 110px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--border-color);
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+        }
+    }
+
+    /* Library Base Info Header */
+    .lib-basic-info {
+        margin-bottom: 16px;
+
+        .lib-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 0 0 6px 0;
+            word-break: keep-all;
+        }
+
+        .lib-address {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .lib-distance {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+
+            .location-icon {
+                width: 16px;
+                height: 16px;
+                stroke-width: 2;
+                color: var(--brand-green);
+            }
+        }
+    }
+
+    /* White Info Cards (Rounded UI) */
+    .info-card {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        padding: 18px 20px;
+        margin-bottom: 14px;
+
+        .card-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 12px 0;
+        }
+
+        /* Status Badge inside Card 1 */
+        .status-badge-wrap {
+            margin-bottom: 8px;
+
+            .status-badge {
+                display: inline-block;
+                padding: 3px 10px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 600;
+
+                &.available {
+                    background-color: var(--badge-available-bg);
+                    color: var(--badge-available-text);
+                }
+                &.loaned {
+                    background-color: var(--badge-loaned-bg);
+                    color: var(--badge-loaned-text);
+                    border: 1px solid #e0e0e0;
+                }
+                &.need-check {
+                    background-color: var(--badge-need-check-bg);
+                    color: var(--badge-need-check-text);
+                    border: 1px solid #ffe082;
+                }
+                &.no-info {
+                    background-color: var(--badge-no-info-bg);
+                    color: var(--badge-no-info-text);
+                }
+            }
+        }
+
+        .book-target-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .confirm-time-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Description List inside Card 2 */
+        .use-info-list {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            .info-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 14px;
+
+                dt {
+                    color: var(--text-muted);
+                    font-weight: 500;
+                }
+
+                dd {
+                    margin: 0;
+                    color: var(--text-primary);
+                    font-weight: 600;
+
+                    .phone-link {
+                        color: var(--brand-green);
+                        text-decoration: underline;
+                        font-weight: 600;
+
+                        &:hover {
+                            color: var(--brand-green-hover);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Action Buttons Group (Bottom) */
+    .action-buttons-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+
+        .btn-action-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            background-color: var(--brand-green-light);
+            color: var(--brand-green);
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 14px;
+            text-decoration: none;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+
+            &:active {
+                transform: scale(0.98);
+                background-color: #d8e5d5;
+            }
+        }
+
+        .btn-action-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 14px;
+            text-decoration: none;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+
+            &:active {
+                transform: scale(0.98);
+                background-color: #fafafa;
+            }
+        }
+    }
+
+    .loading-state {
+        padding: 60px 0;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 14px;
+    }
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav-bar {
+    flex: none;
+    width: 100%;
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    z-index: 100;
+
+    .bottom-nav-inner {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 6px 0 8px 0;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 500;
+        transition: color 0.15s ease;
+        padding: 4px 16px;
+
+        svg {
+            width: 22px;
+            height: 22px;
+            stroke-width: 1.8;
+        }
+
+        &.active,
+        &[aria-current="page"] {
+            color: var(--brand-green);
+            font-weight: 700;
+        }
+
+        &:hover {
+            color: var(--brand-green);
+        }
+    }
+}

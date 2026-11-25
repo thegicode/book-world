@@ -286,6 +286,8 @@ export default class AppBookSearchLibrary extends HTMLElement {
             ? `<svg class="status-icon need-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="8"></line><line x1="12" y1="12" x2="12" y2="16"></line></svg>`
             : `<svg class="status-icon no-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
 
+        const detailUrl = `/book-where-library?libCode=${lib.libCode}&isbn=${encodeURIComponent(this.isbn)}&title=${encodeURIComponent(this.bookTitle)}&hasBook=${lib.hasBook || "Y"}&loanAvailable=${lib.loanAvailable || "Y"}&distance=${encodeURIComponent(lib.distance || "1.2km")}`;
+
         return `
             <article class="library-card">
                 <div class="card-top">
@@ -293,9 +295,11 @@ export default class AppBookSearchLibrary extends HTMLElement {
                         ${statusIconSvg}
                         <span class="lib-name">${this.escapeHtml(lib.libName)}</span>
                     </div>
-                    <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
+                    <a href="${detailUrl}" aria-label="도서관 상세보기">
+                        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
                 </div>
 
                 <div class="card-body">
@@ -309,7 +313,7 @@ export default class AppBookSearchLibrary extends HTMLElement {
                 <div class="card-divider"></div>
 
                 <div class="card-actions">
-                    <a href="/library?libCode=${lib.libCode}" class="btn-action btn-detail">
+                    <a href="${detailUrl}" class="btn-action btn-detail">
                         <span>도서관 정보 보기</span>
                     </a>
                     <a href="${actionRightUrl}" target="_blank" class="btn-action btn-link">
